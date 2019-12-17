@@ -42,6 +42,7 @@ public class AmigoApplication {
 			Role adminRole = new Role(Role.ADMIN_ROLE);
 			Role userRole = new Role(Role.USER_ROLE);
 
+
 			User admin = new User("admin@c9.it",encoder.encode("admin123"));
 			admin.addRole(adminRole);
 
