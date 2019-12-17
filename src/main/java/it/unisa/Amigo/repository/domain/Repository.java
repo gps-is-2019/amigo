@@ -1,4 +1,4 @@
 package it.unisa.Amigo.repository.domain;
 
-public class Documento {
+public class Repository {
 }
