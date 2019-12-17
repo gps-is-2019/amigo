@@ -1,4 +1,7 @@
 package it.unisa.Amigo.task.services;
 
-public interface TaskService {
+public interface TaskService
+{
+
+
 }
