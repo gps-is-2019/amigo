@@ -14,6 +14,7 @@ import java.util.Set;
 public class Dipartimento implements Serializable {
     private final static long serialVersionUID = 41L;
 
+    @NonNull
     @Id
     private int id;
 

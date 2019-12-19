@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -16,6 +17,7 @@ public class Persona implements Serializable {
 
     private final static long serialVersionUID = 43L;
 
+    @NonNull
     @Id
     private  int id;
 
@@ -38,28 +40,21 @@ public class Persona implements Serializable {
     @ManyToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<Supergruppo> supergruppo;
+    private Set<Supergruppo> supergruppo = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private User user;
+    private User user = new User();
 
+    public void addSupergruppo(Supergruppo s){
+        this.supergruppo.add(s);
+    }
 
+    public void addDipartimento(Dipartimento d){
+        dipartimento = d;
+    }
 
-
-
-
-    /*
-    * id
-    * nome
-    * cognome
-    * ruolo
-    * id dip
-    * id supergruppp
-    * id user
-    * rel persona e user
-    * */
 
 
 }

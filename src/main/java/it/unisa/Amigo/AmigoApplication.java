@@ -3,6 +3,12 @@ package it.unisa.Amigo;
 import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
+import it.unisa.Amigo.gruppo.dao.PersonaDAO;
+import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
+import it.unisa.Amigo.gruppo.domain.Dipartimento;
+import it.unisa.Amigo.gruppo.domain.Persona;
+import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -34,7 +40,13 @@ public class AmigoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner demo(UserDAO userDAO , PasswordEncoder encoder){
+	public CommandLineRunner demo(
+			UserDAO userDAO
+			, PasswordEncoder encoder
+			, DipartimentoDAO dipartimentoDAO
+			, SupergruppoDAO supergruppoDAO
+			, PersonaDAO personaDAO
+	){
 		return args -> {
 
 			log.info("Creating two admin and user");
@@ -72,6 +84,32 @@ public class AmigoApplication {
 			});
 
 			*/
+
+			Dipartimento dipartimentoInf = new Dipartimento(1,"informatica");
+			dipartimentoDAO.save(dipartimentoInf);
+			log.info(dipartimentoInf.toString());
+
+			//Supergruppo supergruppoInf = new Supergruppo(1,"supergruppoInf","gruppo", true);
+			Supergruppo supergruppoInf = new Supergruppo(1,"superguruppoInf","gruppo",true);
+			supergruppoDAO.save(supergruppoInf);
+			log.info(supergruppoInf.toString());
+
+			Persona ferrucci = new Persona(111 , "filomena" , "ferrucci", "presidenteCdS");
+			log.info(ferrucci.getNome(), ferrucci.getCognome());
+			ferrucci.addDipartimento(dipartimentoInf);
+			ferrucci.addSupergruppo(supergruppoInf);
+			personaDAO.save(ferrucci);
+
+			Persona scarano = new Persona(222 , "vittorio" , "scarano", "capogruppo");
+			scarano.addDipartimento(dipartimentoInf);
+			scarano.addSupergruppo(supergruppoInf);
+			personaDAO.save(scarano);
+
+			Persona delfina = new Persona(333 , "delfina" , "malandrino", "delegato");
+			delfina.addDipartimento(dipartimentoInf);
+			delfina.addSupergruppo(supergruppoInf);
+			personaDAO.save(delfina);
+
 
 
 			log.info("----------");

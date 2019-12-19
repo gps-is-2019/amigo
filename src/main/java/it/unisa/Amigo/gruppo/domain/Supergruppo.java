@@ -3,6 +3,7 @@ package it.unisa.Amigo.gruppo.domain;
 import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -13,6 +14,7 @@ public class Supergruppo implements Serializable {
 
     private final static long serialVersionUID = 42L;
 
+    @NonNull
     @Id
     private int id;
 
@@ -25,14 +27,13 @@ public class Supergruppo implements Serializable {
     @NonNull
     boolean state;
 
-    /*
 
-    @ManyToOne(cascade = CascadeType.ALL)
+
+    @ManyToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Persona persona;
+    private Set<Persona> persona = new HashSet<>();
 
-    */
 
 
 }
