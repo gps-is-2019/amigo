@@ -3,9 +3,11 @@ package it.unisa.Amigo;
 import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
+import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
 import it.unisa.Amigo.gruppo.domain.Dipartimento;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
@@ -46,6 +48,7 @@ public class AmigoApplication {
 			, DipartimentoDAO dipartimentoDAO
 			, SupergruppoDAO supergruppoDAO
 			, PersonaDAO personaDAO
+			, ConsiglioDidatticoDAO consiglioDidatticoDAO
 	){
 		return args -> {
 
@@ -85,8 +88,18 @@ public class AmigoApplication {
 
 			*/
 
+			ConsiglioDidattico consiglioDidattico = new ConsiglioDidattico(1, "Informatica");
+			consiglioDidatticoDAO.save(consiglioDidattico);
+
+			ConsiglioDidattico consiglioDidatticoBoh = new ConsiglioDidattico(2, "Ingegneria");
+			consiglioDidatticoDAO.save(consiglioDidatticoBoh);
+
 			Dipartimento dipartimentoInf = new Dipartimento(1,"informatica");
 			dipartimentoDAO.save(dipartimentoInf);
+			log.info(dipartimentoInf.toString());
+
+			Dipartimento dipartimentoAereo = new Dipartimento(2,"Aereospaziale");
+			dipartimentoDAO.save(dipartimentoAereo);
 			log.info(dipartimentoInf.toString());
 
 			//Supergruppo supergruppoInf = new Supergruppo(1,"supergruppoInf","gruppo", true);
@@ -96,18 +109,21 @@ public class AmigoApplication {
 
 			Persona ferrucci = new Persona(111 , "filomena" , "ferrucci", "presidenteCdS");
 			log.info(ferrucci.getNome(), ferrucci.getCognome());
-			ferrucci.addDipartimento(dipartimentoInf);
+			ferrucci.addDipartimento(dipartimentoAereo);
 			ferrucci.addSupergruppo(supergruppoInf);
+			ferrucci.addConsiglioDidattico(consiglioDidatticoBoh);
 			personaDAO.save(ferrucci);
 
 			Persona scarano = new Persona(222 , "vittorio" , "scarano", "capogruppo");
 			scarano.addDipartimento(dipartimentoInf);
 			scarano.addSupergruppo(supergruppoInf);
+			scarano.addConsiglioDidattico(consiglioDidattico);
 			personaDAO.save(scarano);
 
 			Persona delfina = new Persona(333 , "delfina" , "malandrino", "delegato");
 			delfina.addDipartimento(dipartimentoInf);
 			delfina.addSupergruppo(supergruppoInf);
+			delfina.addConsiglioDidattico(consiglioDidattico);
 			personaDAO.save(delfina);
 
 

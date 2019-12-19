@@ -47,6 +47,12 @@ public class Persona implements Serializable {
     @EqualsAndHashCode.Exclude
     private User user = new User();
 
+
+    @ManyToMany
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<ConsiglioDidattico> consigli = new HashSet<>();
+
     public void addSupergruppo(Supergruppo s){
         this.supergruppo.add(s);
     }
@@ -54,6 +60,8 @@ public class Persona implements Serializable {
     public void addDipartimento(Dipartimento d){
         dipartimento = d;
     }
+
+    public void addConsiglioDidattico(ConsiglioDidattico consiglio){ this.consigli.add(consiglio);}
 
 
 

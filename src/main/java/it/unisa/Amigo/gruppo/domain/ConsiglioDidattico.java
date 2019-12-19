@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Data
@@ -15,6 +16,7 @@ public class ConsiglioDidattico implements Serializable
     private final static long serialVersionUID = 40L;
 
     @Id
+    @NonNull
     private int id;
 
     @NonNull
@@ -29,6 +31,12 @@ public class ConsiglioDidattico implements Serializable
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Supergruppo supergruppoGAQD;
+
+    @ManyToMany
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Persona> persone;
+
 
 
 

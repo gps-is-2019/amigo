@@ -5,6 +5,7 @@ import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -14,8 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GruppoServiceImpl implements GruppoService {
 
+    @Autowired
     private final PersonaDAO personaDAO;
-    private final SupergruppoDAO supergruppoDAO;
 
     @Override
     public List<Persona> visualizzaListaMembriSupergruppo(int id) {
@@ -23,7 +24,21 @@ public class GruppoServiceImpl implements GruppoService {
         result = personaDAO.findBySupergruppo_id(id);
         System.out.println(result.toString());
         return result;
+    }
 
+    @Override
+    public List<Persona> visualizzaListaMembriConsiglioDidattico(int id) {
+        List<Persona> result;
+        result = personaDAO.findByConsigli_id(id);
+        System.out.println(result.toString());
+        return result;
+    }
 
+    @Override
+    public List<Persona> visualizzaListaMembriDipartimento(int id) {
+        List<Persona> result;
+        result = personaDAO.findByDipartimento_id(id);
+        System.out.println(result.toString());
+        return result;
     }
 }

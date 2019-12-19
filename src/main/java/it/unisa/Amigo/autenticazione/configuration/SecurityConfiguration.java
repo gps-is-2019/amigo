@@ -24,10 +24,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
-                /*.inMemoryAuthentication()
-                .withUser("admin").password(passwordEncoder().encode("admin123")).roles("ADMIN")
-                .and()
-                .withUser("gmagi").password(passwordEncoder().encode("tartufo")).roles("USER");*/
     }
 
 
@@ -36,9 +32,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                //.antMatchers("/sites/**").authenticated()
                 .antMatchers("/dashboard/**").authenticated()
-                //.anyRequest().authenticated() ??
                 .and()
                 .httpBasic();
 
