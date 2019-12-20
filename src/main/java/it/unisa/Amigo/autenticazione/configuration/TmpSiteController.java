@@ -40,35 +40,6 @@ public class TmpSiteController {
     @GetMapping("/dashboard")
     @Transactional
     public String getAllSites(Model model) {
-        //Persona persona = get
-        //model.addAttribute("persona",);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String name = auth.getName(); //get logged in username
-        System.out.println("******* utente loggato : " + name);
-        System.out.println("******* utente loggato : " + auth.getDetails().toString());
-        //System.out.println("******* utente loggato : " + auth.getCredentials().toString());
-        System.out.println("******* utente loggato : " + auth.getAuthorities().toString());
-        System.out.println("******* utente loggato : " + auth.getPrincipal().toString());
-        System.out.println("******* utente loggato : " + auth.getClass().toString());
-        String email = name;
-        user = userDAO.findByEmail(email);
-        System.out.println(user.toString());
-        persona = user.getPersona();
-        System.out.println(persona.toString());
-        user.setPersona(persona);
-        System.out.println(user.toString());
-        try {
-            System.out.println("\n" + user.getPersona().toString());
-        }catch (Exception e)
-        {
-
-        }
-        persona = user.getPersona();
-        System.out.println(persona.toString());
-        List<Supergruppo> risSupergruppi = supergruppoDAO.findAllByPersona_id(persona.getId());
-        model.addAttribute("listaSupergruppi" , risSupergruppi.toString());
-
-
         return "/dashboard";
     }
 

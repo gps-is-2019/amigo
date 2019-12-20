@@ -9,11 +9,8 @@ import java.util.List;
 
 @Repository
 public interface PersonaDAO extends CrudRepository<Persona, Integer> {
-    List<Persona> findBySupergruppo(Supergruppo supergruppo);
-    List<Persona> findByDipartimento_id(int idDipartimento);
+    List<Persona> findBySupergruppi_id(int idSupergruppo);
+    List<Persona> findByDipartimenti_id(int idDipartimento);
     List<Persona> findByConsigli_id(int idConsiglioDidattico);
-
-    Persona findByUser_id(int id);
-
 }
 
