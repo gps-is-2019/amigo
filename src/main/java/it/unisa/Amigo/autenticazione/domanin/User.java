@@ -26,13 +26,13 @@ public  class User implements Serializable {
     @NonNull
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Role> roles = new HashSet<>();
 
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Persona persona;

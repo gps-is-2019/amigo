@@ -24,7 +24,7 @@ public class Role {
     @NonNull
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "roles")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<User> users = new HashSet<>();

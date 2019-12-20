@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -22,22 +23,25 @@ public class ConsiglioDidattico implements Serializable
     @NonNull
     private String name;
 
-    @ManyToOne
+    @ManyToOne(cascade =CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Dipartimento dipartimento;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Supergruppo supergruppoGAQD;
+    private Supergruppo supergruppo;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<Persona> persone;
+    private Set<Persona> persone = new HashSet<>();
 
-
-
-
+    public void addPersona(Persona persona){
+        if(!persone.contains(persona)) {
+            persone.add(persona);
+            persona.addConsiglioDidatttico(this);
+        }
+    }
 }

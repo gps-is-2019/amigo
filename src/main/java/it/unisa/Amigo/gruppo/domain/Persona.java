@@ -15,11 +15,11 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class Persona implements Serializable {
 
-    private final static long serialVersionUID = 43L;
+    private final static long serialVersionUID = 48L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
+    private  int id;
 
     @NonNull
     private String nome;
@@ -31,38 +31,46 @@ public class Persona implements Serializable {
     private String ruolo;
 
 
-    @ManyToOne
+    @ManyToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Dipartimento dipartimento;
+    private Set<Dipartimento> dipartimenti = new HashSet<>();
 
 
-    @ManyToMany (cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<Supergruppo> supergruppo = new HashSet<>();
+    private Set<Supergruppo> supergruppi = new HashSet<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private User user;
 
-
-
-    @ManyToMany(cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<ConsiglioDidattico> consigli = new HashSet<>();
 
-    public void addSupergruppo(Supergruppo s){
-        this.supergruppo.add(s);
+    public void addConsiglioDidatttico(ConsiglioDidattico consiglioDidattico){
+        if(!consigli.contains(consiglioDidattico)) {
+            consigli.add(consiglioDidattico);
+            consiglioDidattico.addPersona(this);
+        }
+    }
+    public void addSupergruppo(Supergruppo supergruppo){
+        if(!supergruppi.contains(supergruppo)) {
+            supergruppi.add(supergruppo);
+            supergruppo.addPersona(this);
+        }
     }
 
-//    public void addDipartimento(Dipartimento d){
-//        dipartimento = d;
-//    }
-
-    public void addConsiglioDidattico(ConsiglioDidattico consiglio){ this.consigli.add(consiglio);}
+    public void addDipartimento(Dipartimento dipartimento){
+        if(!dipartimenti.contains(dipartimento)) {
+            dipartimenti.add(dipartimento);
+            dipartimento.addPersona(this);
+        }
+    }
 
 
 
