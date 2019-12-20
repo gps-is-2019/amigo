@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -14,9 +15,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class Persona implements Serializable {
 
-    private final static long serialVersionUID = 43L;
+    private final static long serialVersionUID = 48L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private  int id;
 
     @NonNull
@@ -38,16 +40,30 @@ public class Persona implements Serializable {
     @ManyToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<Supergruppo> supergruppo;
+    private Set<Supergruppo> supergruppi = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private User user;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<ConsiglioDidattico> consigliDidattici = new HashSet<>();
 
-
-
+    public void addConsiglioDidatttico(ConsiglioDidattico consiglioDidattico){
+        if(!consigliDidattici.contains(consiglioDidattico)) {
+            consigliDidattici.add(consiglioDidattico);
+            consiglioDidattico.addPersona(this);
+        }
+    }
+    public void addSupergruppo(Supergruppo supergruppo){
+        if(!supergruppi.contains(supergruppo)) {
+            supergruppi.add(supergruppo);
+            supergruppo.addPersona(this);
+        }
+    }
 
 
     /*

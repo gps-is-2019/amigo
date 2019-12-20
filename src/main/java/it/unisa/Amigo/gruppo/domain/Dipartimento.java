@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -15,6 +16,7 @@ public class Dipartimento implements Serializable {
     private final static long serialVersionUID = 41L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     @NonNull
@@ -23,7 +25,7 @@ public class Dipartimento implements Serializable {
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set <ConsiglioDidattico> consiglioDidattico;
+    private Set <ConsiglioDidattico> consiglioDidattico = new HashSet<>();;
 
     @OneToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
