@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" th:href="@{/webjars/Semantic-UI/semantic.css}">
+    <meta charset="UTF-8">
+    <title>I tuoi gruppi</title>
+</head>
+<body>
+<div class="ui main text container">
+    <h2 class="ui main text">Supergruppi</h2>
+    <table class="ui celled table striped">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Tipo</th>
+            <th>Stato</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="supergruppo : ${supergruppi}">
+            <tr>
+                <td th:text="${supergruppo.name}"></td>
+                <td th:text="${supergruppo.type}"></td>
+                <td th:text="${supergruppo.state}"></td>
+                <td>
+                    <a th:href="@{/visualizzaMembriSupergruppo/} + ${supergruppo.id}" class="ui primary button">
+                        Visualizza Dettagli
+                    </a>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+    <h2 class="ui main text">Dipartimenti</h2>
+    <table class="ui celled table striped">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="dipartimento : ${dipartimenti}">
+            <tr>
+                <td th:text="${dipartimento.name}"></td>
+                <td>
+                    <a th:href="@{/visualizzaMembriDipartimento/} + ${dipartimento.id}" class="ui primary button">
+                        Visualizza Dettagli
+                    </a>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+    <h2 class="ui main text">Consigli Didattici</h2>
+    <table class="ui celled table striped">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="consiglio : ${consigli}">
+            <tr>
+                <td th:text="${consiglio.name}"></td>
+                <td>
+                    <a th:href="@{/visualizzaMembriConsiglio/} + ${consiglio.id} " class="ui primary button">
+                        Visualizza Dettagli
+                    </a>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

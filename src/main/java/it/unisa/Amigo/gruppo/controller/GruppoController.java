@@ -13,7 +13,6 @@ import java.util.List;
 @Controller
 public class GruppoController
 {
-
     @Autowired
     private GruppoService gruppoService;
 
@@ -44,7 +43,14 @@ public class GruppoController
     }
 
 
-
-
+    @GetMapping("/visualizzaGruppi/{idPersona}")
+    public String visualizzaGruppi(Model model, @PathVariable("idPersona")  int idPersona){
+        System.out.println(gruppoService.visualizzaSupergruppi(idPersona));
+        model.addAttribute("supergruppi", gruppoService.visualizzaSupergruppi(idPersona));
+        model.addAttribute("consigli",gruppoService.visualizzaConsigliDidattici(idPersona));
+        model.addAttribute("dipartimenti", gruppoService.visualizzaDipartimenti(idPersona));
+        System.out.println(model.getAttribute("supergruppi"));
+        return "/paginaIMieiGruppi";
+    }
 
 }
