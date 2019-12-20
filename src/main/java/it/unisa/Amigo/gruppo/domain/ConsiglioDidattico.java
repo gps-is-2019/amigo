@@ -16,18 +16,18 @@ public class ConsiglioDidattico implements Serializable
     private final static long serialVersionUID = 40L;
 
     @Id
-    @NonNull
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     @NonNull
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Dipartimento dipartimento;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Supergruppo supergruppoGAQD;

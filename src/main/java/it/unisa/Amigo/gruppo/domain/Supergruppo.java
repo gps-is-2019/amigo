@@ -14,8 +14,8 @@ public class Supergruppo implements Serializable {
 
     private final static long serialVersionUID = 42L;
 
-    @NonNull
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     @NonNull
@@ -29,7 +29,7 @@ public class Supergruppo implements Serializable {
 
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Persona> persona = new HashSet<>();

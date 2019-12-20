@@ -17,9 +17,9 @@ public class Persona implements Serializable {
 
     private final static long serialVersionUID = 43L;
 
-    @NonNull
     @Id
-    private  int id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private int id;
 
     @NonNull
     private String nome;
@@ -31,24 +31,25 @@ public class Persona implements Serializable {
     private String ruolo;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Dipartimento dipartimento;
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany (cascade = CascadeType.MERGE)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Supergruppo> supergruppo = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private User user = new User();
+    private User user;
 
 
-    @ManyToMany
+
+    @ManyToMany(cascade = CascadeType.MERGE)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<ConsiglioDidattico> consigli = new HashSet<>();
@@ -57,9 +58,9 @@ public class Persona implements Serializable {
         this.supergruppo.add(s);
     }
 
-    public void addDipartimento(Dipartimento d){
-        dipartimento = d;
-    }
+//    public void addDipartimento(Dipartimento d){
+//        dipartimento = d;
+//    }
 
     public void addConsiglioDidattico(ConsiglioDidattico consiglio){ this.consigli.add(consiglio);}
 

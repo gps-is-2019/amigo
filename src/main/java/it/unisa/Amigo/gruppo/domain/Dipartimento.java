@@ -14,19 +14,19 @@ import java.util.Set;
 public class Dipartimento implements Serializable {
     private final static long serialVersionUID = 41L;
 
-    @NonNull
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     @NonNull
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set <ConsiglioDidattico> consiglioDidattico;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Supergruppo supergruppoGAQR;

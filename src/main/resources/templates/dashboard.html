@@ -3,9 +3,28 @@
     <head>
         <meta charset="UTF-8">
         <title>Dashboard </title>
+        <link rel="stylesheet" th:href="@{/webjars/Semantic-UI/semantic.css}">
     </head>
     <body>
-        <h1> wellcome in dashboard</h1>
-        <a href="/visualizzaMembriSupergruppo"> visualizza lista membri</a>
+        <h1> welcome in dashboard</h1>
+<!--        <a href="@{'/visualizzaMembriSupergruppo'}"> visualizza lista membri</a> -->
+        </br>
+        <button class="ui button">
+            <a href="/visualizzaMembriSupergruppo/1"> visualizzaMembriSupergruppo</a>
+        </button>
+        </br>
+<!--        <a href="/visualizzaMembriConsiglio/{id}"> visualizza lista membri</a>-->
+        <button class="ui button">
+            <a href="/visualizzaMembriConsiglio/1"> visualizzaMembriConsiglio</a>
+        </button>
+<!--        <a href="/visualizzaMembriDipartimento/{id}"> visualizza lista membri</a>-->
+       </br>
+        <button class="ui button" href="/visualizzaMembriDipartimento/1">
+            <a href="/visualizzaMembriDipartimento/1"> visualizzaMembriDipartimento</a>
+        </button>
+
+    <div th:text="${listaSupergruppi}"></div>
+
+
     </body>
 </html>
