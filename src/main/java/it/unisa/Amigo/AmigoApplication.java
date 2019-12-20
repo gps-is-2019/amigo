@@ -4,6 +4,7 @@ import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.autenticazione.domanin.User;
 import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
+import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
@@ -41,7 +42,7 @@ public class AmigoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner demo(UserDAO userDAO , PersonaDAO personaDAO, ConsiglioDidatticoDAO consiglioDidatticoDAO, SupergruppoDAO supergruppoDAO, PasswordEncoder encoder){
+	public CommandLineRunner demo(DipartimentoDAO dipartimentoDAO, UserDAO userDAO , PersonaDAO personaDAO, ConsiglioDidatticoDAO consiglioDidatticoDAO, SupergruppoDAO supergruppoDAO, PasswordEncoder encoder){
 		return args -> {
 
 			log.info("Creating two admin and user");
@@ -59,6 +60,7 @@ public class AmigoApplication {
 			User userMario = new User("mario@gmail.it.it",encoder.encode("magi123"));
 			userMario.addRole(userRole);
 
+
 			Persona mario = new Persona("Mario","Inglese","ciao");
 			Persona armando = new Persona("Armando","Conte","ciao");
 
@@ -67,6 +69,9 @@ public class AmigoApplication {
 
 			Dipartimento dipartimento = new Dipartimento("Informatica");
 			dipartimento.addPersona(armando);
+
+			Dipartimento dipartimento1 = new Dipartimento("Ingegneria Meccanica");
+			dipartimento1.addPersona(armando);
 
 
 			ConsiglioDidattico cd = new ConsiglioDidattico("Informatica");
@@ -79,6 +84,8 @@ public class AmigoApplication {
 			GAQD.addPersona(mario);
 
 
+			dipartimentoDAO.save(dipartimento);
+			dipartimentoDAO.save(dipartimento1);
 			consiglioDidatticoDAO.save(cd);
 			supergruppoDAO.save(GAQD);
 			personaDAO.save(mario);

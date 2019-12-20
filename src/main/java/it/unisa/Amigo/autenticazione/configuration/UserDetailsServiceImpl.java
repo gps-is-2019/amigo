@@ -20,7 +20,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         User selectedUser = userDao.findByEmail(s);
         UserDetails details =  new UserDetailImpl(selectedUser);
-
         return details;
     }
 }

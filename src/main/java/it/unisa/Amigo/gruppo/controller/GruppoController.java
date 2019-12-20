@@ -18,7 +18,6 @@ public class GruppoController
 
     @GetMapping("/visualizzaMembriSupergruppo/{id}")
     public String visualizzaMembriSupergruppo(Model model, @PathVariable(name = "id")int idSupergruppo){
-        model.addAttribute("message", "La lista dei membri è la seguente: ");
         List<Persona> result =  gruppoService.visualizzaListaMembriSupergruppo(idSupergruppo);
         model.addAttribute("membri" ,result);
         return "/paginaVisualizzaMembri";
@@ -26,30 +25,24 @@ public class GruppoController
 
     @GetMapping("/visualizzaMembriConsiglio/{id}")
     public String visualizzaMembriConsiglio(Model model, @PathVariable(name = "id")int idConsiglio){
-        model.addAttribute("message", "La lista dei membri è la seguente: ");
         List<Persona> result =  gruppoService.visualizzaListaMembriConsiglioDidattico(idConsiglio);
         model.addAttribute("membri" ,result);
-        System.out.println("I miei consigli didattici :\n" + result);
         return "/paginaVisualizzaMembri";
     }
 
     @GetMapping("/visualizzaMembriDipartimento/{id}")
     public String visualizzaMembriDipartimento(Model model, @PathVariable(name = "id")int idDipartimento){
-        model.addAttribute("message", "La lista dei membri è la seguente: ");
         List<Persona> result =  gruppoService.visualizzaListaMembriDipartimento(idDipartimento);
         model.addAttribute("membri" ,result);
-        System.out.println("Il mio dipartimento bello bello :\n" + result);
         return "/paginaVisualizzaMembri";
     }
 
 
     @GetMapping("/visualizzaGruppi/{idPersona}")
     public String visualizzaGruppi(Model model, @PathVariable("idPersona")  int idPersona){
-        System.out.println(gruppoService.visualizzaSupergruppi(idPersona));
         model.addAttribute("supergruppi", gruppoService.visualizzaSupergruppi(idPersona));
         model.addAttribute("consigli",gruppoService.visualizzaConsigliDidattici(idPersona));
         model.addAttribute("dipartimenti", gruppoService.visualizzaDipartimenti(idPersona));
-        System.out.println(model.getAttribute("supergruppi"));
         return "/paginaIMieiGruppi";
     }
 

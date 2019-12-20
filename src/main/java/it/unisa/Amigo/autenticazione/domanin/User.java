@@ -40,6 +40,7 @@ public  class User implements Serializable {
     public void addRole(Role r){
         roles.add(r);
     }
+    public int getId(){return this.id;}
 
 
 

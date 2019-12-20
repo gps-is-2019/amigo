@@ -48,7 +48,6 @@ public class GruppoServiceImpl implements GruppoService {
     public List<Persona> visualizzaListaMembriDipartimento(int id) {
         List<Persona> result;
         result = personaDAO.findByDipartimenti_id(id);
-        System.out.println(result.toString());
         return result;
     }
 
