@@ -63,9 +63,11 @@ public class AmigoApplication {
 
 			Persona mario = new Persona("Mario","Inglese","ciao");
 			Persona armando = new Persona("Armando","Conte","ciao");
+			Persona administrator = new Persona("Admin", "Admin", "ciao");
 
 			mario.setUser(userMario);
 			armando.setUser(userArmando);
+			administrator.setUser(admin);
 
 			Dipartimento dipartimento = new Dipartimento("Informatica");
 			dipartimento.addPersona(armando);
@@ -90,6 +92,7 @@ public class AmigoApplication {
 			supergruppoDAO.save(GAQD);
 			personaDAO.save(mario);
 			personaDAO.save(armando);
+			personaDAO.save(administrator);
 			userDAO.saveAll(Arrays.asList(userArmando,userMario,admin));
 
 			log.info("Saved {} persona",mario);
