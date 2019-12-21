@@ -52,6 +52,11 @@ public class Persona implements Serializable {
     @EqualsAndHashCode.Exclude
     private Set<ConsiglioDidattico> consigli = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Supergruppo> supergruppiResponsabile = new HashSet<>();
+
     public void addConsiglioDidatttico(ConsiglioDidattico consiglioDidattico){
         if(!consigli.contains(consiglioDidattico)) {
             consigli.add(consiglioDidattico);
@@ -76,6 +81,13 @@ public class Persona implements Serializable {
         if(supergruppi.contains(supergruppo)) {
             supergruppi.remove(supergruppo);
             supergruppo.removePersona(this);
+        }
+    }
+
+    public void addSupergruppoResponsabile(Supergruppo supergruppo){
+        if(supergruppi.contains(supergruppo)) {
+            supergruppi.add(supergruppo);
+            supergruppo.setResponsabile(this);
         }
     }
 

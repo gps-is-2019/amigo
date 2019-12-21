@@ -10,6 +10,8 @@ import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -62,6 +64,7 @@ public class GruppoServiceImpl implements GruppoService {
         return dipartimentoDAO.findAllByPersone_id(idPersona);
     }
 
+
     @Override
     public List<Persona> findAllMembriInConsiglioDidatticoNoSupergruppo(int idConsiglioDidattico, int idSupergruppo) {
         List<Persona> inConsiglio = personaDAO.findByConsigli_id(idConsiglioDidattico);
@@ -107,6 +110,21 @@ public class GruppoServiceImpl implements GruppoService {
         supergruppo.removePersona(persona);
         supergruppoDAO.save(supergruppo);
         personaDAO.save(persona);
+    }
+
+    @Override
+    public boolean isResponsabile(int idPersona, int idSupergruppo) {
+        Supergruppo supergruppo = supergruppoDAO.findById(idSupergruppo);
+        if(idPersona==supergruppo.getResponsabile().getId())
+            return true;
+        return false;
+    }
+
+
+    @Override
+    public Persona visualizzaPersonaLoggata() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return personaDAO.findByUser_email(auth.getName());
     }
 
     @Override
