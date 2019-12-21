@@ -11,12 +11,10 @@ import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -207,4 +205,19 @@ class GruppoServiceImplTest {
         ConsiglioDidattico actualConsiglio = gruppoService.findConsiglioBySupergruppo(expectedSupergruppo.getId());
         assertEquals(actualConsiglio, expectedConsiglio);
     }
+
+    @Test
+    void isResponsabile() {
+
+        Persona expectedPersona = new Persona("Mario","Inglese","ciao");
+
+        Supergruppo expectedSupergruppo = new Supergruppo( "GAQD-Informatica","gruppo",true );
+        expectedSupergruppo.addPersona(expectedPersona);
+        expectedSupergruppo.setResponsabile(expectedPersona);
+
+        when(supergruppoDAO.findById(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
+        boolean expectedValue = gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId());
+        assertEquals(true, expectedValue);
+    }
+
 }
