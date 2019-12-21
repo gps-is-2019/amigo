@@ -37,12 +37,10 @@ public class TmpSiteController {
 
     @GetMapping("/dashboard")
     @Transactional
-    @Modifying
     public String getDashboard(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         persona = personaDAO.findByUser_email(auth.getName());
         model.addAttribute("idPersona", persona.getId());
         return "/dashboard";
     }
-
 }

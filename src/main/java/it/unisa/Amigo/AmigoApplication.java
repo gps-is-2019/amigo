@@ -41,72 +41,95 @@ public class AmigoApplication {
 		SpringApplication.run(AmigoApplication.class, args);
 	}
 
-	@Bean
-	public CommandLineRunner demo(DipartimentoDAO dipartimentoDAO, UserDAO userDAO , PersonaDAO personaDAO, ConsiglioDidatticoDAO consiglioDidatticoDAO, SupergruppoDAO supergruppoDAO, PasswordEncoder encoder){
-		return args -> {
+		@Bean
+		public CommandLineRunner demo(UserDAO userDAO , PersonaDAO personaDAO, ConsiglioDidatticoDAO consiglioDidatticoDAO, SupergruppoDAO supergruppoDAO, PasswordEncoder encoder){
+			return args -> {
 
-			log.info("Creating two admin and user");
+				log.info("Creating two admin and user");
 
-			Role adminRole = new Role(Role.ADMIN_ROLE);
-			Role userRole = new Role(Role.USER_ROLE);
-
-
-			User admin = new User("admin@c9.it",encoder.encode("admin123"));
-			admin.addRole(adminRole);
-
-			User userArmando = new User("armando@gmail.it",encoder.encode("magi123"));
-			userArmando.addRole(userRole);
-
-			User userMario = new User("mario@gmail.it.it",encoder.encode("magi123"));
-			userMario.addRole(userRole);
+				Role adminRole = new Role(Role.ADMIN_ROLE);
+				Role userRole = new Role(Role.USER_ROLE);
 
 
-			Persona mario = new Persona("Mario","Inglese","ciao");
-			Persona armando = new Persona("Armando","Conte","ciao");
-			Persona administrator = new Persona("Admin", "Admin", "ciao");
+				User admin = new User("admin@c9.it",encoder.encode("admin123"));
+				admin.addRole(adminRole);
 
-			mario.setUser(userMario);
-			armando.setUser(userArmando);
-			administrator.setUser(admin);
+				User userArmando = new User("armando@gmail.it",encoder.encode("magi123"));
+				userArmando.addRole(userRole);
 
-			Dipartimento dipartimento = new Dipartimento("Informatica");
-			dipartimento.addPersona(armando);
+				User userMario = new User("mario@gmail.it.it",encoder.encode("magi123"));
+				userMario.addRole(userRole);
 
-			Dipartimento dipartimento1 = new Dipartimento("Ingegneria Meccanica");
-			dipartimento1.addPersona(armando);
+				User userGiovanni = new User("giovanni@gmail.it.it",encoder.encode("magi123"));
+				userGiovanni.addRole(userRole);
+
+				User userRaffaele = new User("raffaele@gmail.it.it",encoder.encode("magi123"));
+				userRaffaele.addRole(userRole);
+
+				User userMarco = new User("marco@gmail.it.it",encoder.encode("magi123"));
+				userMarco.addRole(userRole);
+
+				User userAntonio = new User("antonio@gmail.it.it",encoder.encode("magi123"));
+				userAntonio.addRole(userRole);
+
+				Persona mario = new Persona("Mario","Inglese","ciao");
+				Persona armando = new Persona("Armando","Conte","ciao");
+				Persona giovanni = new Persona("Giovanni","Bello","ciao");
+				Persona raffaele = new Persona("Raffaele","Magi","ciao");
+				Persona marco = new Persona("Marco","De Stefano","ciao");
+				Persona antonio = new Persona("Antonio","Lodato","ciao");
+
+				mario.setUser(userMario);
+				armando.setUser(userArmando);
+				giovanni.setUser(userGiovanni);
+				raffaele.setUser(userRaffaele);
+				marco.setUser(userMarco);
+				antonio.setUser(userAntonio);
+
+				Supergruppo GAQD = new Supergruppo( "GAQD-Informatica","gruppo",true );
+				GAQD.addPersona(armando);
 
 
-			ConsiglioDidattico cd = new ConsiglioDidattico("Informatica");
-			cd.addPersona(mario);
-			cd.addPersona(armando);
+				ConsiglioDidattico cd = new ConsiglioDidattico("Informatica");
+				cd.setSupergruppo(GAQD);
+				cd.addPersona(mario);
+				cd.addPersona(armando);
+				cd.addPersona(giovanni);
+				cd.addPersona(raffaele);
+				cd.addPersona(marco);
+				cd.addPersona(antonio);
 
-			Supergruppo GAQD = new Supergruppo( "GAQD-Informatica","gruppo",true );
-			cd.setSupergruppo(GAQD);
-			GAQD.addPersona(armando);
-			GAQD.addPersona(mario);
 
 
-			dipartimentoDAO.save(dipartimento);
-			dipartimentoDAO.save(dipartimento1);
-			consiglioDidatticoDAO.save(cd);
-			supergruppoDAO.save(GAQD);
-			personaDAO.save(mario);
-			personaDAO.save(armando);
-			personaDAO.save(administrator);
-			userDAO.saveAll(Arrays.asList(userArmando,userMario,admin));
 
-			log.info("Saved {} persona",mario);
-			log.info("Saved {} persona",armando);
-			log.info("Saved {} consiglioDidattico",cd);
-			log.info("Saved {} supergruppo",GAQD);
-			log.info("Saved {} user",userArmando);
-			log.info("Saved {} user",userMario);
-			log.info("Saved {} user",admin);
 
-			log.info("----------");
-		};
+				supergruppoDAO.save(GAQD);
+				consiglioDidatticoDAO.save(cd);
+				personaDAO.saveAll(Arrays.asList(mario,armando,giovanni,raffaele,marco,antonio));
+				userDAO.saveAll(Arrays.asList(userArmando,userMario,userGiovanni,userRaffaele,userMarco,userAntonio,admin));
+
+				/*log.info("Saved {} persona",mario);
+				log.info("Saved {} persona",armando);
+				log.info("Saved {} persona",giovanni);
+				log.info("Saved {} persona",raffaele);
+				log.info("Saved {} persona",marco);
+				log.info("Saved {} persona",antonio);*/
+				log.info("Saved {} consiglioDidattico",cd);
+				log.info("Saved {} supergruppo",GAQD);
+
+
+				/*log.info("Saved {} user",userArmando);
+				log.info("Saved {} user",userMario);
+				log.info("Saved {} user",userGiovanni);
+				log.info("Saved {} user",userRaffaele);
+				log.info("Saved {} user",userMarco);
+				log.info("Saved {} user",userAntonio);
+				log.info("Saved {} user",admin);*/
+
+				log.info("----------");
+			};
+		}
 	}
 
 
 
-}

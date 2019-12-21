@@ -1,6 +1,8 @@
 package it.unisa.Amigo.gruppo.domain;
 
 import lombok.*;
+import org.springframework.lang.Nullable;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -32,10 +34,29 @@ public class Supergruppo implements Serializable {
     @EqualsAndHashCode.Exclude
     private Set<Persona> persone = new HashSet<>();
 
+    @OneToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    ConsiglioDidattico consiglio;
+
+    @OneToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    Dipartimento dipartimento;
+
+
+
     public void addPersona(Persona persona){
         if(!persone.contains(persona)){
             persone.add(persona);
             persona.addSupergruppo(this);
+        }
+    }
+
+    public void removePersona(Persona persona){
+        if(persone.contains(persona)) {
+            persone.remove(persona);
+            persona.removeSupergruppo(this);
         }
     }
 

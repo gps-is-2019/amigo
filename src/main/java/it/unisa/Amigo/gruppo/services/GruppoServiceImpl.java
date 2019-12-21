@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,24 +32,19 @@ public class GruppoServiceImpl implements GruppoService {
     private final DipartimentoDAO dipartimentoDAO;
 
     @Override
-    public List<Persona> visualizzaListaMembriSupergruppo(int id) {
-        List<Persona> result = personaDAO.findBySupergruppi_id(id);
+    public List<Persona> visualizzaListaMembriSupergruppo(int idSupergruppo) {
+        List<Persona> result = personaDAO.findBySupergruppi_id(idSupergruppo);
         return result;
     }
 
     @Override
-    public List<Persona> visualizzaListaMembriConsiglioDidattico(int id) {
-        List<Persona> result;
-        result = personaDAO.findByConsigli_id(id);
-        System.out.println(result.toString());
-        return result;
+    public List<Persona> visualizzaListaMembriConsiglioDidattico(int idConsiglio) {
+        return  personaDAO.findByConsigli_id(idConsiglio);
     }
 
     @Override
-    public List<Persona> visualizzaListaMembriDipartimento(int id) {
-        List<Persona> result;
-        result = personaDAO.findByDipartimenti_id(id);
-        return result;
+    public List<Persona> visualizzaListaMembriDipartimento(int idDipartimento) {
+        return  personaDAO.findByDipartimenti_id(idDipartimento);
     }
 
     @Override
@@ -66,5 +62,56 @@ public class GruppoServiceImpl implements GruppoService {
         return dipartimentoDAO.findAllByPersone_id(idPersona);
     }
 
+    @Override
+    public List<Persona> findAllMembriInConsiglioDidatticoNoSupergruppo(int idConsiglioDidattico, int idSupergruppo) {
+        List<Persona> inConsiglio = personaDAO.findByConsigli_id(idConsiglioDidattico);
+        List<Persona> inSupergruppo = personaDAO.findBySupergruppi_id(idSupergruppo);
+        List<Persona> persone = new ArrayList<Persona>();
+        for (Persona p: inConsiglio){
+            if(!inSupergruppo.contains(p))
+                persone.add(p);
+        }
+        return persone;
+    }
+
+    @Override
+    public List<Persona> findAllMembriInConsiglioDidattico(int idConsiglioDidattico) {
+        return null;
+    }
+    @Override
+    public Persona findPersona(int id) {
+        return personaDAO.findById(id);
+    }
+    @Override
+    public Supergruppo findSupergruppo(int id) {
+        return supergruppoDAO.findById(id);
+    }
+    @Override
+    public Dipartimento findDipartimento(int id) {
+        return dipartimentoDAO.findById(id);
+    }
+    @Override
+    public ConsiglioDidattico findConsiglioDidattico(int idConsiglio) {
+        return consiglioDidatticoDAO.findById(idConsiglio);
+    }
+
+    @Override
+    public void addMembro(Persona persona, Supergruppo supergruppo){
+        supergruppo.addPersona(persona);
+        supergruppoDAO.save(supergruppo);
+        personaDAO.save(persona);
+    }
+
+    @Override
+    public void removeMembro(Persona persona, Supergruppo supergruppo){
+        supergruppo.removePersona(persona);
+        supergruppoDAO.save(supergruppo);
+        personaDAO.save(persona);
+    }
+
+    @Override
+    public ConsiglioDidattico findConsiglioBySupergruppo(int idSupergruppo){
+        return consiglioDidatticoDAO.findBySupergruppo_id(idSupergruppo);
+    }
 
 }

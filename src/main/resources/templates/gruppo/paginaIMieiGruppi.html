@@ -24,7 +24,7 @@
                 <td th:text="${supergruppo.type}"></td>
                 <td th:text="${supergruppo.state}"></td>
                 <td>
-                    <a th:href="@{/visualizzaMembriSupergruppo/} + ${supergruppo.id}" class="ui primary button">
+                    <a th:href="@{/gruppo/visualizzaMembriSupergruppo=} + ${supergruppo.id}" class="ui primary button">
                         Visualizza Dettagli
                     </a>
                 </td>
@@ -45,7 +45,7 @@
             <tr>
                 <td th:text="${dipartimento.name}"></td>
                 <td>
-                    <a th:href="@{/visualizzaMembriDipartimento/} + ${dipartimento.id}" class="ui primary button">
+                    <a th:href="@{/gruppo/visualizzaMembriDipartimento=} + ${dipartimento.id}" class="ui primary button">
                         Visualizza Dettagli
                     </a>
                 </td>
@@ -66,7 +66,7 @@
             <tr>
                 <td th:text="${consiglio.name}"></td>
                 <td>
-                    <a th:href="@{/visualizzaMembriConsiglio/} + ${consiglio.id} " class="ui primary button">
+                    <a th:href="@{/gruppo/visualizzaMembriConsiglio=} + ${consiglio.id} " class="ui primary button">
                         Visualizza Dettagli
                     </a>
                 </td>

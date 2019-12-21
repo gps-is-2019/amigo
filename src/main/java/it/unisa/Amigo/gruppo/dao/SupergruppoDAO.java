@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface SupergruppoDAO extends CrudRepository<Supergruppo, Integer> {
-    List<Supergruppo> findAllByPersone_id(int id);
+    List<Supergruppo> findAllByPersone_id(int idPersona);
+    Supergruppo findById(int idSupergruppo);
 }

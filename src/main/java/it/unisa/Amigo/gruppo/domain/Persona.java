@@ -72,7 +72,12 @@ public class Persona implements Serializable {
         }
     }
 
-
+    public void removeSupergruppo(Supergruppo supergruppo){
+        if(supergruppi.contains(supergruppo)) {
+            supergruppi.remove(supergruppo);
+            supergruppo.removePersona(this);
+        }
+    }
 
 
 }
