@@ -185,14 +185,21 @@ class GruppoServiceImplTest {
     void addMembro() {
         Persona expectedPersona = new Persona("Persona1","Persona1","Persona");
         Supergruppo expectedSupergruppo = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        int oldSize = expectedSupergruppo.getPersone().size();
         gruppoService.addMembro(expectedPersona, expectedSupergruppo);
+        int actualSize = expectedSupergruppo.getPersone().size();
+        assertEquals(oldSize+1, actualSize);
     }
 
     @Test
     void removeMembro() {
         Persona expectedPersona = new Persona("Persona1","Persona1","Persona");
         Supergruppo expectedSupergruppo = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        expectedSupergruppo.addPersona(expectedPersona);
+        int oldSize = expectedSupergruppo.getPersone().size();
         gruppoService.removeMembro(expectedPersona, expectedSupergruppo);
+        int actualSize = expectedSupergruppo.getPersone().size();
+        assertEquals(oldSize-1, actualSize);
     }
 
     @Test
