@@ -44,6 +44,11 @@ public class Supergruppo implements Serializable {
     @EqualsAndHashCode.Exclude
     Dipartimento dipartimento;
 
+    @ManyToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    Persona responsabile;
+
 
 
     public void addPersona(Persona persona){
@@ -59,7 +64,6 @@ public class Supergruppo implements Serializable {
             persona.removeSupergruppo(this);
         }
     }
-
 
 
 }

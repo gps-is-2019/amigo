@@ -4,6 +4,8 @@ import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,25 +22,14 @@ public class GruppoController
 
     @GetMapping("/gruppo/visualizzaMembriSupergruppo={id}")
     public String visualizzaMembriSupergruppo(Model model, @PathVariable(name = "id")int idSupergruppo){
-        List<Persona> result =  gruppoService.visualizzaListaMembriSupergruppo(idSupergruppo);
-        model.addAttribute("persone" ,result);
-        model.addAttribute("idSupergruppo", idSupergruppo);
+        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
+        List<Persona> result =  gruppoService.visualizzaListaMembriSupergruppo(idSupergruppo);
+        model.addAttribute("personaLoggata",gruppoService.visualizzaPersonaLoggata().getId());
+        model.addAttribute("persone" ,result);
+        model.addAttribute("supergruppo", supergruppo);
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
         model.addAttribute("idConsiglio", gruppoService.findConsiglioBySupergruppo(idSupergruppo).getId());
-        return "gruppo/paginaVisualizzaMembri";
-    }
-
-    @GetMapping("/gruppo/visualizzaMembriConsiglio={id}")
-    public String visualizzaMembriConsiglio(Model model, @PathVariable(name = "id")int idConsiglio){
-        List<Persona> result =  gruppoService.visualizzaListaMembriConsiglioDidattico(idConsiglio);
-        model.addAttribute("persone" ,result);
-        return "gruppo/paginaVisualizzaMembri";
-    }
-
-    @GetMapping("/gruppo/visualizzaMembriDipartimento={id}")
-    public String visualizzaMembriDipartimento(Model model, @PathVariable(name = "id")int idDipartimento){
-        List<Persona> result =  gruppoService.visualizzaListaMembriDipartimento(idDipartimento);
-        model.addAttribute("persone" ,result);
         return "gruppo/paginaVisualizzaMembri";
     }
 
@@ -46,8 +37,7 @@ public class GruppoController
     @GetMapping("/gruppo/visualizzaGruppi={idPersona}")
     public String visualizzaGruppi(Model model, @PathVariable("idPersona")  int idPersona){
         model.addAttribute("supergruppi", gruppoService.visualizzaSupergruppi(idPersona));
-        model.addAttribute("consigli",gruppoService.visualizzaConsigliDidattici(idPersona));
-        model.addAttribute("dipartimenti", gruppoService.visualizzaDipartimenti(idPersona));
+        model.addAttribute("personaLoggata",gruppoService.visualizzaPersonaLoggata().getId());
         return "gruppo/paginaIMieiGruppi";
     }
 
@@ -57,6 +47,7 @@ public class GruppoController
         persone = gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(id,id2);
         model.addAttribute("persone",persone);
         model.addAttribute("idSupergruppo",id2);
+        model.addAttribute("personaLoggata",gruppoService.visualizzaPersonaLoggata().getId());
         return "gruppo/aggiunta-membro";
     }
     @GetMapping("/gruppo/aggiungi/id={id}&supergruppo={id2}")
@@ -72,6 +63,7 @@ public class GruppoController
         persone = gruppoService.visualizzaListaMembriSupergruppo(id);
         model.addAttribute("persone", persone);
         model.addAttribute("idSupergruppo", id);
+        model.addAttribute("personaLoggata",gruppoService.visualizzaPersonaLoggata().getId());
         return "gruppo/rimozione-membro";
     }
 

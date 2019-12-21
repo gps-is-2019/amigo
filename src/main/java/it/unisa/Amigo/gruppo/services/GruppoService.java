@@ -14,11 +14,16 @@ public interface GruppoService {
     List<Supergruppo> visualizzaSupergruppi(int idPersona);
     List<ConsiglioDidattico> visualizzaConsigliDidattici(int idPersona);
     List<Dipartimento> visualizzaDipartimenti(int idPersona);
-     ConsiglioDidattico findConsiglioBySupergruppo(int idSupergruppo);
-     List<Persona> findAllMembriInConsiglioDidatticoNoSupergruppo(int idConsiglioDidattico, int idSupergruppo);
-     Persona findPersona(int id);
-     Supergruppo findSupergruppo(int id);
-     void addMembro(Persona persona, Supergruppo supergruppo);
-     void removeMembro(Persona persona, Supergruppo supergruppo);
+    ConsiglioDidattico findConsiglioBySupergruppo(int idSupergruppo);
+    List<Persona> findAllMembriInConsiglioDidatticoNoSupergruppo(int idConsiglioDidattico, int idSupergruppo);
+    List<Persona> findAllMembriInConsiglioDidattico (int idConsiglioDidattico);
+    Persona findPersona(int id);
+    Supergruppo findSupergruppo(int id);
+    ConsiglioDidattico findConsiglioDidattico(int id);
+    Dipartimento findDipartimento(int id);
+    void addMembro(Persona persona, Supergruppo supergruppo);
+    void removeMembro(Persona persona, Supergruppo supergruppo);
+    boolean isResponsabile(int idPersona, int idSupergruppo);
+    Persona visualizzaPersonaLoggata();
 
 }
