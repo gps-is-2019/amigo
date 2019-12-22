@@ -77,10 +77,7 @@ public class GruppoServiceImpl implements GruppoService {
         return persone;
     }
 
-    @Override
-    public List<Persona> findAllMembriInConsiglioDidattico(int idConsiglioDidattico) {
-        return null;
-    }
+
     @Override
     public Persona findPersona(int id) {
         return personaDAO.findById(id);
@@ -89,14 +86,7 @@ public class GruppoServiceImpl implements GruppoService {
     public Supergruppo findSupergruppo(int id) {
         return supergruppoDAO.findById(id);
     }
-    @Override
-    public Dipartimento findDipartimento(int id) {
-        return dipartimentoDAO.findById(id);
-    }
-    @Override
-    public ConsiglioDidattico findConsiglioDidattico(int idConsiglio) {
-        return consiglioDidatticoDAO.findById(idConsiglio);
-    }
+
 
     @Override
     public void addMembro(Persona persona, Supergruppo supergruppo){
