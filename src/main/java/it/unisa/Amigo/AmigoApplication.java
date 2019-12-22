@@ -57,19 +57,19 @@ public class AmigoApplication {
 				User userArmando = new User("armando@gmail.it",encoder.encode("magi123"));
 				userArmando.addRole(userRole);
 
-				User userMario = new User("mario@gmail.it.it",encoder.encode("magi123"));
+				User userMario = new User("mario@gmail.it",encoder.encode("magi123"));
 				userMario.addRole(userRole);
 
-				User userGiovanni = new User("giovanni@gmail.it.it",encoder.encode("magi123"));
+				User userGiovanni = new User("giovanni@gmail.it",encoder.encode("magi123"));
 				userGiovanni.addRole(userRole);
 
-				User userRaffaele = new User("raffaele@gmail.it.it",encoder.encode("magi123"));
+				User userRaffaele = new User("raffaele@gmail.it",encoder.encode("magi123"));
 				userRaffaele.addRole(userRole);
 
-				User userMarco = new User("marco@gmail.it.it",encoder.encode("magi123"));
+				User userMarco = new User("marco@gmail.it",encoder.encode("magi123"));
 				userMarco.addRole(userRole);
 
-				User userAntonio = new User("antonio@gmail.it.it",encoder.encode("magi123"));
+				User userAntonio = new User("antonio@gmail.it",encoder.encode("magi123"));
 				userAntonio.addRole(userRole);
 
 				Persona mario = new Persona("Mario","Inglese","ciao");
@@ -88,6 +88,8 @@ public class AmigoApplication {
 
 				Supergruppo GAQD = new Supergruppo( "GAQD-Informatica","gruppo",true );
 				GAQD.addPersona(armando);
+				GAQD.addPersona(mario);
+				GAQD.setResponsabile(mario);
 
 
 				ConsiglioDidattico cd = new ConsiglioDidattico("Informatica");

@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" th:href="@{/webjars/Semantic-UI/semantic.css}">
+
     <head>
-    </head>
-    <body>
         <meta charset="UTF-8">
         <title>Dashboard</title>
-        <h1>Benvenuto nella Dash!</h1>
-    <div class = "ui button">
-        <a th:href="@{gruppo/visualizzaGruppi=} + ${idPersona}">I miei gruppi</a>
-    </div>
+    </head>
+    <body>
+        <div class="ui secondary menu">
+            <a class="item">Home</a>
+            <a class="item" th:href="@{gruppo/visualizzaGruppi=} + ${idPersona}">I miei gruppi</a>
+
+            <div class="right menu">
+                <a class="item">Logout</a>
+            </div>
+        </div>
+        <h1>Benvenuti nel sistema AMIGO</h1>
     </body>
 </html>

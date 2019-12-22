@@ -46,7 +46,7 @@ public class GruppoController
         List<Persona> persone = new ArrayList<>();
         persone = gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(id,id2);
         model.addAttribute("persone",persone);
-        model.addAttribute("idSupergruppo",id2);
+        model.addAttribute("supergruppo",gruppoService.findSupergruppo(id2));
         model.addAttribute("personaLoggata",gruppoService.visualizzaPersonaLoggata().getId());
         return "gruppo/aggiunta-membro";
     }
@@ -56,15 +56,6 @@ public class GruppoController
         Supergruppo supergruppo = gruppoService.findSupergruppo(id2);
         gruppoService.addMembro(persona,supergruppo);
         return "gruppo/aggiungi";
-    }
-    @GetMapping("/gruppo/supergruppo={id}")
-    public String findAllMembriInSupergruppo(@PathVariable(name = "id") int id, Model model) {
-        List<Persona> persone = new ArrayList<>();
-        persone = gruppoService.visualizzaListaMembriSupergruppo(id);
-        model.addAttribute("persone", persone);
-        model.addAttribute("idSupergruppo", id);
-        model.addAttribute("personaLoggata",gruppoService.visualizzaPersonaLoggata().getId());
-        return "gruppo/rimozione-membro";
     }
 
     @GetMapping("/gruppo/rimuovi/id={id}&supergruppo={id2}")
