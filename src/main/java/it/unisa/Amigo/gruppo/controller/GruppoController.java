@@ -20,6 +20,12 @@ public class GruppoController
     @Autowired
     private GruppoService gruppoService;
 
+    /***
+     * Ritorna ad una pagina i membri @{@link Persona} di un supergruppo @{@link Supergruppo}
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idSupergruppo id del supergruppo di cui si vogliono visualizzare i membri
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppo/visualizzaMembriSupergruppo={id}")
     public String visualizzaMembriSupergruppo(Model model, @PathVariable(name = "id")int idSupergruppo){
         Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
@@ -33,7 +39,12 @@ public class GruppoController
         return "gruppo/paginaVisualizzaMembri";
     }
 
-
+    /***
+     * Ritorna ad una pagina i gruppi @{@link Supergruppo} di una persona @{@link Persona}
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idPersona id della persona di cui si vogliono visualizzare i gruppo
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppo/visualizzaGruppi={idPersona}")
     public String visualizzaGruppi(Model model, @PathVariable("idPersona")  int idPersona){
         model.addAttribute("supergruppi", gruppoService.visualizzaSupergruppi(idPersona));
@@ -41,6 +52,13 @@ public class GruppoController
         return "gruppo/paginaIMieiGruppi";
     }
 
+    /***
+     * Ritorna ad una pagina i membri @{@link Persona} di una consiglio didattico @{@link it.unisa.Amigo.gruppo.domain.ConsiglioDidattico} ma non nel @{@link Supergruppo}
+     * @param id id del consiglio didattico
+     * @param id2 id del supergruppo
+     * @param model per salvare informazioni da recuperare nell'html
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppo/id={id}&supergruppo={id2}")
     public String findAllMembriInConsiglioDidatticoNoSupergruppo(@PathVariable(name = "id") int id,@PathVariable(name = "id2") int id2, Model model){
         List<Persona> persone = new ArrayList<>();
@@ -50,6 +68,14 @@ public class GruppoController
         model.addAttribute("personaLoggata",gruppoService.visualizzaPersonaLoggata().getId());
         return "gruppo/aggiunta-membro";
     }
+
+    /***
+     * Aggiunge un membro @{@link Persona} al supergruppo @{@link Supergruppo}
+     * @param id id della persona da aggiungere
+     * @param id2 id del supergruppo in cui aggiungere la persona
+     * @param model per salvare informazioni da recuperare nell'html
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppo/aggiungi/id={id}&supergruppo={id2}")
     public String addMembro(@PathVariable(name = "id") int id,@PathVariable(name = "id2") int id2, Model model){
         Persona persona = gruppoService.findPersona(id);
@@ -58,6 +84,13 @@ public class GruppoController
         return "gruppo/aggiungi";
     }
 
+    /***
+     * Rimuove un membro @{@link Persona} dal supergruppo @{@link Supergruppo}
+     * @param id id della persona da rimuovere
+     * @param id2 id del supergruppo da cui rimuovere la persona
+     * @param model per salvare informazioni da recuperare nell'html
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppo/rimuovi/id={id}&supergruppo={id2}")
     public String removeMembro(@PathVariable(name = "id") int id,@PathVariable(name = "id2") int id2, Model model){
         Persona persona = gruppoService.findPersona(id);
