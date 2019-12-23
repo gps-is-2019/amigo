@@ -153,7 +153,7 @@ public class GruppoServiceImplIT {
        consiglioDidatticoDAO.save(consiglioDidattico);
        supergruppoDAO.save(supergruppo);
 
-        List<Persona> actualPersone = gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(consiglioDidattico.getId(), supergruppo.getId());
+        List<Persona> actualPersone = gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(supergruppo.getId());
         assertEquals(actualPersone, expectedPersone);
     }
 

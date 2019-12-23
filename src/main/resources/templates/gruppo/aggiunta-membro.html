@@ -1,23 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Amigo</title>
-    <link rel="stylesheet" th:href="@{/webjars/Semantic-UI/semantic.css}">
+<head th:include="/fragments/fragments.html :: head">
+    <title id="pageTitle">Amigo|Aggiunta membro</title>
 </head>
-<body>
-<div class="ui secondary menu">
-    <a class="item" href="/dashboard">Home</a>
-    <a class="item" th:href="@{visualizzaGruppi=} + ${personaLoggata}">I miei gruppi</a>
 
-    <div class="right menu">
-        <a class="item">Logout</a>
-    </div>
-</div>
+<body>
+<div th:insert="fragments/fragments.html :: header"></div>
+
+<h1 class="ui header"  align="center">Aggiungi membro al <span th:text="${supergruppo.name}"></span> </h1>
 
 <div class="ui main text container">
-    <h1 class="ui main text">Aggiungi membro al <span th:text="${supergruppo.name}"></span> </h1>
-
     <table class="ui celled table striped">
         <thead>
         <tr class="center aligned">
@@ -35,7 +27,7 @@
                 <td th:text="${persona.cognome}"></td>
                 <td th:text="${persona.user.getEmail()}"></td>
                 <td>
-                    <a th:href="@{'/gruppo/aggiungi/id={id1}&supergruppo={id2}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
+                    <a th:href="@{'/gruppi/{idSupergruppo}/add/{idPersona}'( idPersona=${persona.id},idSupergruppo=${supergruppo.id})}" class="ui primary button">
                         Aggiungi
                     </a>
                 </td>
@@ -43,6 +35,20 @@
         </th:block>
         </tbody>
     </table>
+    <div class="ui message success" th:if="${flagAggiunta==1}">
+        <i class="close icon"></i>
+        <p>Hai aggiunto corettamente <span th:text="${personaAggiunta.nome}"></span> <span th:text="${personaAggiunta.cognome}"></span></p>
+    </div>
+    <script>$('.message .close')
+        .on('click', function() {
+            $(this)
+                .closest('.message')
+                .transition('fade')
+            ;
+        })
+    ;</script>
+
 </div>
+
 </body>
 </html>

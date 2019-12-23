@@ -1,22 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <link rel="stylesheet" th:href="@{/webjars/Semantic-UI/semantic.css}">
-    <meta charset="UTF-8">
-    <title>Amigo</title>
+
+    <head th:include="/fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo|I miei gruppi</title>
+    </head>
 </head>
 <body>
-<div class="ui secondary menu">
-    <a  class="item" href="/dashboard">Home</a>
-    <a class="item" th:href="@{visualizzaGruppi=} + ${personaLoggata}">I miei gruppi</a>
-
-
-    <div class="right menu">
-        <a class="item">Logout</a>
-    </div>
-</div>
+<div th:insert="fragments/fragments.html :: header"></div>
+<h1 class="ui header" align="center">I miei gruppi</h1>
     <div class="ui main text container">
-        <h2 class="ui main text">I miei gruppi</h2>
         <table class="ui celled table striped">
             <thead>
             <tr class="center aligned">
@@ -36,7 +29,7 @@
                         <span th:if="${supergruppo.state==false}"> Chiuso</span>
                     </td>
                     <td>
-                        <a th:href="@{/gruppo/visualizzaMembriSupergruppo=} + ${supergruppo.id}" class="ui primary button">
+                        <a th:href="@{/gruppi/} + ${supergruppo.id}" class="ui primary button">
                             Visualizza Dettagli
                         </a>
                     </td>

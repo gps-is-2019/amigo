@@ -1,21 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<link rel="stylesheet" th:href="@{/webjars/Semantic-UI/semantic.css}">
-
-    <head>
-
-        <meta charset="UTF-8">
-        <title>Dashboard</title>
+    <head th:include="/fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo|Dashboard</title>
     </head>
     <body>
-        <div class="ui secondary menu">
-            <a class="item">Home</a>
-            <a class="item" th:href="@{gruppo/visualizzaGruppi=} + ${idPersona}">I miei gruppi</a>
-
-            <div class="right menu">
-                <a class="item">Logout</a>
-            </div>
-        </div>
-        <h1>Benvenuti nel sistema AMIGO</h1>
+        <div th:insert="fragments/fragments.html :: header"></div>
     </body>
 </html>

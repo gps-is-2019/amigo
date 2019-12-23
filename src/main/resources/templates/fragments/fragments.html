@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <title th:include=":: #pageTitle">Amigo</title>
+    <link rel="stylesheet" th:href="@{/webjars/Semantic-UI/semantic.css}">
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <script th:src="@{/webjars/jquery/jquery.js}"></script>
+    <script th:src="@{/webjars/Semantic-UI/semantic.js}"></script>
+</head>
+<body>
+
+<div class="ui inverted segment stackable"  th:fragment="header">
+    <div class="ui inverted secondary pointing menu">
+        <a class="active item">
+            Home
+        </a>
+        <a class="item" href="/gruppi">
+            I miei gruppi
+        </a>
+        <a class="item">
+            I miei task
+        </a>
+        <a class="item">
+            Repository d'Ateneo
+        </a>
+        <div class="right menu">
+            <a class="item">Logout</a>
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+</html>

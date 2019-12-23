@@ -68,6 +68,7 @@ public class AmigoApplication {
 
 				ConsiglioDidattico cd = new ConsiglioDidattico("Informatica");
 				cd.setSupergruppo(GAQD);
+				GAQD.setConsiglio(cd);
 				cd.addPersona(ferrucci);
 				cd.addPersona(scarano);
 				cd.addPersona(malandrino);
