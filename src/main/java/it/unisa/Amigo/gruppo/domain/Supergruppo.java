@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Questa classe rappresenta l'oggetto di dominio "SuperGruppo"
+ */
 @Entity
 @Data
 @NoArgsConstructor

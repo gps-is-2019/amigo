@@ -35,6 +35,11 @@ public class TmpSiteController {
     private Persona persona;
 
 
+    /**
+     *
+     * @param model
+     * @return
+     */
     @GetMapping("/dashboard")
     @Transactional
     public String getDashboard(Model model) {

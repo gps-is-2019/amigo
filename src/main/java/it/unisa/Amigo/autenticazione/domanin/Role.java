@@ -6,6 +6,9 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Questa classe modella l'oggetto ruolo il quale definisce due ruoli: ADMIN e USER
+ */
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
