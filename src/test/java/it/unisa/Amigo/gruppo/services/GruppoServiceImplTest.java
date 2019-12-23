@@ -155,11 +155,10 @@ class GruppoServiceImplTest {
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(persona2);
 
+        when(supergruppoDAO.findById(supergruppo.getId())).thenReturn(supergruppo);
 
-        when(personaDAO.findByConsigli_id(consiglioDidattico.getId())).thenReturn(exptectedConsiglioPersone);
-        when(personaDAO.findBySupergruppi_id(supergruppo.getId())).thenReturn(expectedSupergruppoPersone);
 
-        List<Persona> actualPersone = gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(consiglioDidattico.getId(), supergruppo.getId());
+        List<Persona> actualPersone = gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(supergruppo.getId());
         assertEquals(actualPersone, expectedPersone);
     }
 

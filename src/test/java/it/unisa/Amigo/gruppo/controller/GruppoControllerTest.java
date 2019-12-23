@@ -1,49 +1,28 @@
 package it.unisa.Amigo.gruppo.controller;
 
-import it.unisa.Amigo.AmigoApplication;
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
-import it.unisa.Amigo.autenticazione.configuration.UserDetailsServiceImpl;
 import it.unisa.Amigo.autenticazione.domanin.User;
 import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import org.thymeleaf.context.IContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.securityContext;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
 
 @RunWith(SpringRunner.class)
 //@ContextConfiguration(classes = WebMvcAutoConfiguration.class)
@@ -81,16 +60,14 @@ class GruppoControllerTest {
         when( gruppoService.findConsiglioBySupergruppo(expectedSupergruppo.getId())).thenReturn(expectedConsiglioDidattico);
 
 
-        this.mockMvc.perform(get("/gruppo/visualizzaMembriSupergruppo={id}", expectedSupergruppo.getId())
+        this.mockMvc.perform(get("/gruppi/{id}", expectedSupergruppo.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("personaLoggata",expectedPersona.getId()))
                 .andExpect(model().attribute("persone" ,expectedPersone))
                 .andExpect(model().attribute("supergruppo", expectedSupergruppo))
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
-                .andExpect(model().attribute("idConsiglio", gruppoService.findConsiglioBySupergruppo(expectedSupergruppo.getId()).getId()))
-                .andDo(print())
-                .andExpect(view().name("gruppo/paginaVisualizzaMembri"));
+                .andExpect(view().name("gruppo/gruppo_detail"));
     }
 
 
@@ -112,13 +89,12 @@ class GruppoControllerTest {
         when(gruppoService.visualizzaSupergruppi(expectedPersona.getId())).thenReturn(expectedSupergruppi);
         when(gruppoService.visualizzaPersonaLoggata()).thenReturn(expectedPersona);
 
-        this.mockMvc.perform(get("/gruppo/visualizzaGruppi={idPersona}", expectedPersona.getId())
+        this.mockMvc.perform(get("/gruppi")
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("personaLoggata",expectedPersona.getId()))
                 .andExpect(model().attribute("supergruppi", expectedSupergruppi))
-                .andDo(print())
-                .andExpect(view().name("gruppo/paginaIMieiGruppi"));
+                .andExpect(view().name("gruppo/miei_gruppi"));
     }
 
     @Test
@@ -145,17 +121,16 @@ class GruppoControllerTest {
         expectedConsiglioDidattico.addPersona(expectedPersona1);
         expectedConsiglioDidattico.addPersona(expectedPersona2);
 
-        when(gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(expectedPersona1.getId(),expectedPersona2.getId())).thenReturn(expectedPersone);
+        when(gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(expectedPersona1.getId())).thenReturn(expectedPersone);
         when(gruppoService.findSupergruppo(expectedPersona2.getId())).thenReturn(expectedSupergruppo);
         when(gruppoService.visualizzaPersonaLoggata()).thenReturn(expectedPersona1);
 
-        this.mockMvc.perform(get("/gruppo/id={id}&supergruppo={id2}", expectedConsiglioDidattico.getId(), expectedSupergruppo.getId())
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/candidati", expectedSupergruppo.getId())
                 .with(user(userDetails1)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("personaLoggata",expectedPersona1.getId()))
                 .andExpect(model().attribute("supergruppo", expectedSupergruppo))
                 .andExpect(model().attribute("persone", expectedPersone))
-                .andDo(print())
                 .andExpect(view().name("gruppo/aggiunta-membro"));
     }
 
@@ -171,12 +146,12 @@ class GruppoControllerTest {
 
         when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
         when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
+        when(gruppoService.visualizzaPersonaLoggata()).thenReturn(expectedPersona);
 
-        this.mockMvc.perform(get("/gruppo/aggiungi/id={id}&supergruppo={id2}", expectedPersona.getId(), expectedSupergruppo.getId())
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}",expectedSupergruppo.getId(), expectedPersona.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(view().name("gruppo/aggiungi"));
+                .andExpect(view().name("gruppo/aggiunta-membro"));
 
     }
 
@@ -193,11 +168,12 @@ class GruppoControllerTest {
 
         when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
         when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
+        when(gruppoService.visualizzaPersonaLoggata()).thenReturn(expectedPersona);
 
-        this.mockMvc.perform(get("/gruppo/rimuovi/id={id}&supergruppo={id2}", expectedPersona.getId(), expectedSupergruppo.getId())
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", expectedSupergruppo.getId(), expectedPersona.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(view().name("gruppo/rimuovi"));
+                .andExpect(view().name("gruppo/gruppo_detail"));
     }
 }

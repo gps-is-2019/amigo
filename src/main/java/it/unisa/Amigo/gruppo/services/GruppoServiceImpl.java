@@ -14,14 +14,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Questa classe implementa i metodi  per la logica di Business del sottositema "Gruppo"
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GruppoServiceImpl implements GruppoService {
 
     @Autowired
@@ -99,19 +102,20 @@ public class GruppoServiceImpl implements GruppoService {
 
     /***
      * Ritorna la lista di tutte le persone @{@link Persona} che sono nel consiglio didattico @{@link ConsiglioDidattico} ma non nel supergruppo @{@link Supergruppo}
-     * @param idConsiglioDidattico id del consiglio didattico
      * @param idSupergruppo id del supergruppo
      * @return lista di persone
      */
     @Override
-    public List<Persona> findAllMembriInConsiglioDidatticoNoSupergruppo(int idConsiglioDidattico, int idSupergruppo) {
-        List<Persona> inConsiglio = personaDAO.findByConsigli_id(idConsiglioDidattico);
-        List<Persona> inSupergruppo = personaDAO.findBySupergruppi_id(idSupergruppo);
-        List<Persona> persone = new ArrayList<Persona>();
-        for (Persona p: inConsiglio){
+    public List<Persona> findAllMembriInConsiglioDidatticoNoSupergruppo(int idSupergruppo) {
+        Supergruppo supergruppo = supergruppoDAO.findById(idSupergruppo);
+        Set<Persona> inSupergruppo = supergruppo.getPersone();/*personaDAO.findBySupergruppi_id(idSupergruppo);*/
+        Set<Persona> inConsiglio = supergruppo.getConsiglio().getPersone();//personaDAO.findByConsigli_id(idConsiglioDidattico);
+        inConsiglio.removeAll(inSupergruppo);
+        List<Persona> persone = new ArrayList<>(inConsiglio);
+        /*for (Persona p: inConsiglio){
             if(!inSupergruppo.contains(p))
                 persone.add(p);
-        }
+        }*/
         return persone;
     }
 

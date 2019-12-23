@@ -18,7 +18,7 @@ public interface GruppoService {
     List<ConsiglioDidattico> visualizzaConsigliDidattici(int idPersona);
     List<Dipartimento> visualizzaDipartimenti(int idPersona);
     ConsiglioDidattico findConsiglioBySupergruppo(int idSupergruppo);
-    List<Persona> findAllMembriInConsiglioDidatticoNoSupergruppo(int idConsiglioDidattico, int idSupergruppo);
+    List<Persona> findAllMembriInConsiglioDidatticoNoSupergruppo(int idSupergruppo);
     Persona findPersona(int id);
     Supergruppo findSupergruppo(int id);
     void addMembro(Persona persona, Supergruppo supergruppo);
