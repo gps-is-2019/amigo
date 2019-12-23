@@ -110,12 +110,12 @@ public class GruppoServiceImpl implements GruppoService {
         Supergruppo supergruppo = supergruppoDAO.findById(idSupergruppo);
         Set<Persona> inSupergruppo = supergruppo.getPersone();/*personaDAO.findBySupergruppi_id(idSupergruppo);*/
         Set<Persona> inConsiglio = supergruppo.getConsiglio().getPersone();//personaDAO.findByConsigli_id(idConsiglioDidattico);
-        inConsiglio.removeAll(inSupergruppo);
-        List<Persona> persone = new ArrayList<>(inConsiglio);
-        /*for (Persona p: inConsiglio){
+        //inConsiglio.removeAll(inSupergruppo);
+        List<Persona> persone = new ArrayList<>();
+        for (Persona p: inConsiglio){
             if(!inSupergruppo.contains(p))
                 persone.add(p);
-        }*/
+        }
         return persone;
     }
 
