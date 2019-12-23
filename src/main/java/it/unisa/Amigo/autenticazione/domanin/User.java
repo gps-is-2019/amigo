@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Questa classe modella l'oggetto user.
+ */
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor

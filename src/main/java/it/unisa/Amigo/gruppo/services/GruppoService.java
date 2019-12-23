@@ -7,6 +7,9 @@ import it.unisa.Amigo.gruppo.domain.Supergruppo;
 
 import java.util.List;
 
+/**
+ * Questa interfaccia definisce i metodi  per la logica di Business del sottositema "Gruppo"
+ */
 public interface GruppoService {
     List<Persona> visualizzaListaMembriSupergruppo(int idSupergruppo);
     List<Persona> visualizzaListaMembriConsiglioDidattico(int idConsiglioDidattico);

@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Questa interfaccia si occupa di fornire un accesso astratto  all'oggetto di dominio "Persona"
+ */
 @Repository
 public interface PersonaDAO extends CrudRepository<Persona, Integer> {
     List<Persona> findBySupergruppi_id(int idSupergruppo);

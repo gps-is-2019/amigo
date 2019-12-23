@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Questa classe implementa i metodi  per la logica di Business del sottositema "Gruppo"
+ */
 @Service
 @RequiredArgsConstructor
 public class GruppoServiceImpl implements GruppoService {

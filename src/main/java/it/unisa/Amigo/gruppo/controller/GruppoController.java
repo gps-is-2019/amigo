@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Questa classe si occupa della logoca di controllo del sottosistema gruppo
+ */
 @Controller
 public class GruppoController
 {
