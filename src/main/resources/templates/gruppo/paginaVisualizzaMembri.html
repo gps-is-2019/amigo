@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/webjars/Semantic-UI/semantic.css}">
+    <title>Pagina Dettaglio</title>
+</head>
+    <body>
+    <div class="ui secondary menu">
+        <a  class="item" href="/dashboard">Home</a>
+        <a class="item" th:href="@{visualizzaGruppi=} + ${personaLoggata}">I miei gruppi</a>
+
+        <div class="right menu">
+            <a class="item">Logout</a>
+        </div>
+    </div>
+    <h1 th:text="${supergruppo.name}" align="center"></h1>
+    <div class="ui main text container">
+        <table class="ui celled table">
+            <thead>
+            <tr class="center aligned">
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Email</th>
+                <th th:if="${isResponsabile==true}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="persona : ${persone}">
+                <tr class="center aligned">
+                    <td th:text="${persona.nome}"></td>
+                    <td th:text="${persona.cognome}"></td>
+                    <td th:text="${persona.user.getEmail()}"></td>
+                    <td th:if="${isResponsabile==true}"><a th:if="${isResponsabile==true and supergruppo.responsabile.getId()!=persona.id}"  th:href="@{'/gruppo/rimuovi/id={id1}&supergruppo={id2}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
+                        Rimuovi
+                    </a></td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+        <a th:if="${isResponsabile==true}"th:href="@{'/gruppo/id={id1}&supergruppo={id2}'( id1=${idConsiglio},id2=${supergruppo.id})}" class="ui primary button">
+            Aggiungi
+        </a>
+    </div>
+    <script>
+
+    </script>
+    </body>
+</html>

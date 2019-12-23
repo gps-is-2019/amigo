@@ -8,17 +8,20 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Questa classe modella l'oggetto user.
+ */
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Entity
-public  class User  implements Serializable {
+public  class User implements Serializable {
 
     private final static long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    private int id;
 
     @NonNull
     private String email;
@@ -26,13 +29,13 @@ public  class User  implements Serializable {
     @NonNull
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Role> roles = new HashSet<>();
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Persona persona;
@@ -40,6 +43,8 @@ public  class User  implements Serializable {
     public void addRole(Role r){
         roles.add(r);
     }
+    public int getId(){return this.id;}
+
 
 
 

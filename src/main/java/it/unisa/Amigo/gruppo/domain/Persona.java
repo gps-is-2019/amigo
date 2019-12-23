@@ -5,18 +5,22 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
-
+/**
+ * Questa classe rappresenta l'oggetto di dominio "Persona"
+ */
 @Entity
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class Persona implements Serializable {
 
-    private final static long serialVersionUID = 43L;
+    private final static long serialVersionUID = 48L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private  int id;
 
     @NonNull
@@ -29,37 +33,65 @@ public class Persona implements Serializable {
     private String ruolo;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Dipartimento dipartimento;
+    private Set<Dipartimento> dipartimenti = new HashSet<>();
 
 
     @ManyToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<Supergruppo> supergruppo;
+    private Set<Supergruppo> supergruppi = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private User user;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<ConsiglioDidattico> consigli = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Supergruppo> supergruppiResponsabile = new HashSet<>();
 
+    public void addConsiglioDidatttico(ConsiglioDidattico consiglioDidattico){
+        if(!consigli.contains(consiglioDidattico)) {
+            consigli.add(consiglioDidattico);
+            consiglioDidattico.addPersona(this);
+        }
+    }
+    public void addSupergruppo(Supergruppo supergruppo){
+        if(!supergruppi.contains(supergruppo)) {
+            supergruppi.add(supergruppo);
+            supergruppo.addPersona(this);
+        }
+    }
 
+    public void addDipartimento(Dipartimento dipartimento){
+        if(!dipartimenti.contains(dipartimento)) {
+            dipartimenti.add(dipartimento);
+            dipartimento.addPersona(this);
+        }
+    }
 
+    public void removeSupergruppo(Supergruppo supergruppo){
+        if(supergruppi.contains(supergruppo)) {
+            supergruppi.remove(supergruppo);
+            supergruppo.removePersona(this);
+        }
+    }
 
-    /*
-    * id
-    * nome
-    * cognome
-    * ruolo
-    * id dip
-    * id supergruppp
-    * id user
-    * rel persona e user
-    * */
+    public void addSupergruppoResponsabile(Supergruppo supergruppo){
+        if(supergruppi.contains(supergruppo)) {
+            supergruppi.add(supergruppo);
+            supergruppo.setResponsabile(this);
+        }
+    }
 
 
 }

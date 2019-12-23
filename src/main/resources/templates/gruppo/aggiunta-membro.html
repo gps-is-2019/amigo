@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Amigo</title>
+    <link rel="stylesheet" th:href="@{/webjars/Semantic-UI/semantic.css}">
+</head>
+<body>
+<div class="ui secondary menu">
+    <a class="item" href="/dashboard">Home</a>
+    <a class="item" th:href="@{visualizzaGruppi=} + ${personaLoggata}">I miei gruppi</a>
+
+    <div class="right menu">
+        <a class="item">Logout</a>
+    </div>
+</div>
+
+<div class="ui main text container">
+    <h1 class="ui main text">Aggiungi membro al <span th:text="${supergruppo.name}"></span> </h1>
+
+    <table class="ui celled table striped">
+        <thead>
+        <tr class="center aligned">
+            <th>Nome</th>
+            <th>Cognome</th>
+            <th>Email</th>
+            <th></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="persona : ${persone}">
+            <tr class="center aligned">
+                <td th:text="${persona.nome}"></td>
+                <td th:text="${persona.cognome}"></td>
+                <td th:text="${persona.user.getEmail()}"></td>
+                <td>
+                    <a th:href="@{'/gruppo/aggiungi/id={id1}&supergruppo={id2}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
+                        Aggiungi
+                    </a>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -5,7 +5,12 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
+/**
+ * Questa classe rappresenta l'oggetto di dominio "ConsiglioDidattico"
+ */
 @Entity
 @Data
 @NoArgsConstructor
@@ -15,12 +20,13 @@ public class ConsiglioDidattico implements Serializable
     private final static long serialVersionUID = 40L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     @NonNull
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade =CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Dipartimento dipartimento;
@@ -28,8 +34,17 @@ public class ConsiglioDidattico implements Serializable
     @OneToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Supergruppo supergruppoGAQD;
+    private Supergruppo supergruppo;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Persona> persone = new HashSet<>();
 
-
+    public void addPersona(Persona persona){
+        if(!persone.contains(persona)) {
+            persone.add(persona);
+            persona.addConsiglioDidatttico(this);
+        }
+    }
 }

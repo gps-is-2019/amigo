@@ -1,6 +1,7 @@
 @import "webjars/Semantic-UI/2.4.1/semantic.css";
 @import "webjars/Semantic-UI/2.4.1/semantic.min.css";
 
+
 body{
     background-image: url('img/background.png');
     background-repeat: no-repeat;
@@ -50,7 +51,6 @@ h1 {
     letter-spacing: 1pt;
     font-size: 30pt;
     padding-top: 4%;
-    margin-left: 39.5%;
     font-family: Impact, Haettenschweiler, Franklin Gothic Bold, Charcoal, Helvetica Inserat, Bitstream Vera Sans Bold, Arial Black, sans serif;
     font-style: italic;
     font-variant: normal;

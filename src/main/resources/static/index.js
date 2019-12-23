@@ -14,7 +14,9 @@ function fade(element) {
         op += op * 0.1;
     }, 10);
 }
-
+$('.message .close').on('click', function() {
+    $(this).closest('.message').fadeOut();
+});
 // Variabili
 
 var h1 = document.querySelector('h1');
