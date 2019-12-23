@@ -31,7 +31,7 @@
                     <td th:text="${persona.nome}"></td>
                     <td th:text="${persona.cognome}"></td>
                     <td th:text="${persona.user.getEmail()}"></td>
-                    <td><a th:if="${isResponsabile==true and supergruppo.responsabile.getId()!=persona.id}"  th:href="@{'/gruppo/rimuovi/id={id1}&supergruppo={id2}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
+                    <td th:if="${isResponsabile==true}"><a th:if="${isResponsabile==true and supergruppo.responsabile.getId()!=persona.id}"  th:href="@{'/gruppo/rimuovi/id={id1}&supergruppo={id2}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
                         Rimuovi
                     </a></td>
                 </tr>
@@ -42,5 +42,8 @@
             Aggiungi
         </a>
     </div>
+    <script>
+
+    </script>
     </body>
 </html>
