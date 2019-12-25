@@ -39,7 +39,7 @@ class GruppoControllerTest {
 
 
     @Test
-    void visualizzaMembriSupergruppo() throws Exception {
+    void findAllMembriInSupergruppo() throws Exception {
 
 
         User user = new User("admin", "admin");
@@ -72,7 +72,7 @@ class GruppoControllerTest {
 
 
     @Test
-    void visualizzaGruppi() throws Exception {
+    void findAllSupergruppi() throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
