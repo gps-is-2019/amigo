@@ -88,7 +88,7 @@ public class GruppoServiceImplIT {
     }
 
     @Test
-    void visualizzaConsigliDidattici() {
+    void findAllConsigliDidattici() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         ConsiglioDidattico consiglioDidattico = new ConsiglioDidattico("Informatica");
         ConsiglioDidattico consiglioDidattico1 = new ConsiglioDidattico("Ingegneria");
@@ -105,7 +105,7 @@ public class GruppoServiceImplIT {
     }
 
     @Test
-    void visualizzaDipartimenti() {
+    void findAllDipartimenti() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Dipartimento dipartimento = new Dipartimento("Informatica");
         Dipartimento dipartimento1 = new Dipartimento("Ingegneria");
