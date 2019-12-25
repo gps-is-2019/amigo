@@ -104,6 +104,7 @@ public class GruppoController
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
         model.addAttribute("flagRimozione",1);
         model.addAttribute("personaRimossa",persona);
+        model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
         return "gruppo/gruppo_detail";
     }
 
