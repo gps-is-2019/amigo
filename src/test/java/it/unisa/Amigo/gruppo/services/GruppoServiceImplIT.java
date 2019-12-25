@@ -37,7 +37,7 @@ public class GruppoServiceImplIT {
 
 
     @Test
-    void visualizzaListaMembriSupergruppo() {
+    void findAllMembriInSupergruppo() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Persona persona2 = new Persona("Persona2","Persona2","Persona");
         Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
@@ -54,7 +54,7 @@ public class GruppoServiceImplIT {
     }
 
     @Test
-    void visualizzaListaMembriDipartimento() {
+    void findAllMembriInDipartimento() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Persona persona2 = new Persona("Persona2","Persona2","Persona");
         Dipartimento dipartimento = new Dipartimento("Informatica");
@@ -71,7 +71,7 @@ public class GruppoServiceImplIT {
     }
 
     @Test
-    void visualizzaSupergruppi() {
+    void findAllSupergruppi() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
         Supergruppo supergruppo1 = new Supergruppo("GAQR Informatica" , "gruppo", true);
