@@ -45,7 +45,7 @@ public class GruppoServiceImpl implements GruppoService {
      * @return lista di persone
      */
     @Override
-    public List<Persona> visualizzaListaMembriSupergruppo(int idSupergruppo) {
+    public List<Persona> findAllMembriInSupergruppo(int idSupergruppo) {
         List<Persona> result = personaDAO.findBySupergruppi_id(idSupergruppo);
         return result;
     }
@@ -56,7 +56,7 @@ public class GruppoServiceImpl implements GruppoService {
      * @return lista di persone
      */
     @Override
-    public List<Persona> visualizzaListaMembriConsiglioDidattico(int idConsiglio) {
+    public List<Persona> findAllMembriInConsiglioDidattico(int idConsiglio) {
         return  personaDAO.findByConsigli_id(idConsiglio);
     }
 
@@ -66,7 +66,7 @@ public class GruppoServiceImpl implements GruppoService {
      * @return lista di persone
      */
     @Override
-    public List<Persona> visualizzaListaMembriDipartimento(int idDipartimento) {
+    public List<Persona> findAllMembriInDipartimento(int idDipartimento) {
         return  personaDAO.findByDipartimenti_id(idDipartimento);
     }
 
@@ -76,7 +76,7 @@ public class GruppoServiceImpl implements GruppoService {
      * @return lista di supergruppi
      */
     @Override
-    public List<Supergruppo> visualizzaSupergruppi(int idPersona) {
+    public List<Supergruppo> findAllSupergruppi(int idPersona) {
         return supergruppoDAO.findAllByPersone_id(idPersona);
     }
 
@@ -86,7 +86,7 @@ public class GruppoServiceImpl implements GruppoService {
      * @return lista di consigli didattici
      */
     @Override
-    public List<ConsiglioDidattico> visualizzaConsigliDidattici(int idPersona) {
+    public List<ConsiglioDidattico> findAllConsigliDidattici(int idPersona) {
         return consiglioDidatticoDAO.findAllByPersone_id(idPersona);
     }
 
@@ -96,7 +96,7 @@ public class GruppoServiceImpl implements GruppoService {
      * @return lista di dipartimenti
      */
     @Override
-    public List<Dipartimento> visualizzaDipartimenti(int idPersona) {
+    public List<Dipartimento> findAllDipartimenti(int idPersona) {
         return dipartimentoDAO.findAllByPersone_id(idPersona);
     }
 
@@ -182,7 +182,7 @@ public class GruppoServiceImpl implements GruppoService {
      * @return persona
      */
     @Override
-    public Persona visualizzaPersonaLoggata() {
+    public Persona getAuthenticatedUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return personaDAO.findByUser_email(auth.getName());
     }

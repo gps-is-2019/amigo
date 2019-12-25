@@ -49,7 +49,7 @@ public class GruppoServiceImplIT {
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(persona1);
         expectedPersone.add(persona2);
-        List<Persona> actualPersone = gruppoService.visualizzaListaMembriSupergruppo(supergruppo.getId());
+        List<Persona> actualPersone = gruppoService.findAllMembriInSupergruppo(supergruppo.getId());
         assertEquals(expectedPersone, actualPersone);
     }
 
@@ -66,7 +66,7 @@ public class GruppoServiceImplIT {
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(persona1);
         expectedPersone.add(persona2);
-        List<Persona> actualPersone = gruppoService.visualizzaListaMembriDipartimento(dipartimento.getId());
+        List<Persona> actualPersone = gruppoService.findAllMembriInDipartimento(dipartimento.getId());
         assertEquals(expectedPersone, actualPersone);
     }
 
@@ -83,7 +83,7 @@ public class GruppoServiceImplIT {
         List<Supergruppo> expectedSupergruppi = new ArrayList<>();
         expectedSupergruppi.add(supergruppo1);
         expectedSupergruppi.add(supergruppo);
-        List<Supergruppo> actualSupergruppi = gruppoService.visualizzaSupergruppi(persona1.getId());
+        List<Supergruppo> actualSupergruppi = gruppoService.findAllSupergruppi(persona1.getId());
         assertEquals(expectedSupergruppi, actualSupergruppi);
     }
 
@@ -100,7 +100,7 @@ public class GruppoServiceImplIT {
         List<ConsiglioDidattico> expectedConsigli = new ArrayList<>();
         expectedConsigli.add(consiglioDidattico1);
         expectedConsigli.add(consiglioDidattico);
-        List<ConsiglioDidattico> actualConsigli = gruppoService.visualizzaConsigliDidattici(persona1.getId());
+        List<ConsiglioDidattico> actualConsigli = gruppoService.findAllConsigliDidattici(persona1.getId());
         assertEquals(expectedConsigli, actualConsigli);
     }
 
@@ -117,7 +117,7 @@ public class GruppoServiceImplIT {
         List<Dipartimento> expectedDipartimenti = new ArrayList<>();
         expectedDipartimenti.add(dipartimento1);
         expectedDipartimenti.add(dipartimento);
-        List<Dipartimento> actualDipartimenti = gruppoService.visualizzaDipartimenti(persona1.getId());
+        List<Dipartimento> actualDipartimenti = gruppoService.findAllDipartimenti(persona1.getId());
         assertEquals(expectedDipartimenti, actualDipartimenti);
     }
 

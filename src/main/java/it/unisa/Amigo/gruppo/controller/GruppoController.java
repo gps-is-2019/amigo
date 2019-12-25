@@ -27,9 +27,9 @@ public class GruppoController
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/{id}")
-    public String visualizzaMembriSupergruppo(Model model, @PathVariable(name = "id")int idSupergruppo){
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
-        prepareCandidateList(idSupergruppo,model,gruppoService.visualizzaListaMembriSupergruppo(idSupergruppo));
+    public String findAllMembriInSupergruppo(Model model, @PathVariable(name = "id")int idSupergruppo){
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInSupergruppo(idSupergruppo));
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
         return "gruppo/gruppo_detail";
     }
@@ -40,10 +40,10 @@ public class GruppoController
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi")
-    public String visualizzaGruppi(Model model){
+    public String findAllSupergruppi(Model model){
 
-        int idPersona = gruppoService.visualizzaPersonaLoggata().getId();
-        model.addAttribute("supergruppi", gruppoService.visualizzaSupergruppi(idPersona));
+        int idPersona = gruppoService.getAuthenticatedUser().getId();
+        model.addAttribute("supergruppi", gruppoService.findAllSupergruppi(idPersona));
         model.addAttribute("personaLoggata",idPersona);
         return "gruppo/miei_gruppi";
     }
@@ -61,10 +61,9 @@ public class GruppoController
     }
 
     private void prepareCandidateList(int idSupergruppo, Model model, List<Persona> allMembri) {
-
         model.addAttribute("persone", allMembri);
         model.addAttribute("supergruppo", gruppoService.findSupergruppo(idSupergruppo));
-        model.addAttribute("personaLoggata", gruppoService.visualizzaPersonaLoggata().getId());
+        model.addAttribute("personaLoggata", gruppoService.getAuthenticatedUser().getId());
     }
 
     /***
@@ -97,8 +96,8 @@ public class GruppoController
         Persona persona = gruppoService.findPersona(idPersona);
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
         gruppoService.removeMembro(persona,supergruppo);
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
-        prepareCandidateList(idSupergruppo,model,gruppoService.visualizzaListaMembriSupergruppo(idSupergruppo));
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInSupergruppo(idSupergruppo));
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
         model.addAttribute("flagRimozione",1);
         model.addAttribute("personaRimossa",persona);

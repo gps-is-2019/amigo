@@ -11,12 +11,12 @@ import java.util.List;
  * Questa interfaccia definisce i metodi  per la logica di Business del sottositema "Gruppo"
  */
 public interface GruppoService {
-    List<Persona> visualizzaListaMembriSupergruppo(int idSupergruppo);
-    List<Persona> visualizzaListaMembriConsiglioDidattico(int idConsiglioDidattico);
-    List<Persona> visualizzaListaMembriDipartimento(int idDipartimento);
-    List<Supergruppo> visualizzaSupergruppi(int idPersona);
-    List<ConsiglioDidattico> visualizzaConsigliDidattici(int idPersona);
-    List<Dipartimento> visualizzaDipartimenti(int idPersona);
+    List<Persona> findAllMembriInSupergruppo(int idSupergruppo);
+    List<Persona> findAllMembriInConsiglioDidattico(int idConsiglioDidattico);
+    List<Persona> findAllMembriInDipartimento(int idDipartimento);
+    List<Supergruppo> findAllSupergruppi(int idPersona);
+    List<ConsiglioDidattico> findAllConsigliDidattici(int idPersona);
+    List<Dipartimento> findAllDipartimenti(int idPersona);
     ConsiglioDidattico findConsiglioBySupergruppo(int idSupergruppo);
     List<Persona> findAllMembriInConsiglioDidatticoNoSupergruppo(int idSupergruppo);
     Persona findPersona(int id);
@@ -24,6 +24,6 @@ public interface GruppoService {
     void addMembro(Persona persona, Supergruppo supergruppo);
     void removeMembro(Persona persona, Supergruppo supergruppo);
     boolean isResponsabile(int idPersona, int idSupergruppo);
-    Persona visualizzaPersonaLoggata();
+    Persona getAuthenticatedUser();
 
 }

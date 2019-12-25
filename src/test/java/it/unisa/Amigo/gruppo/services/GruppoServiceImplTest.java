@@ -39,7 +39,7 @@ class GruppoServiceImplTest {
     private  DipartimentoDAO dipartimentoDAO;
 
     @Test
-    void visualizzaListaMembriSupergruppo() {
+    void findAllMembriInSupergruppo() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Persona persona2 = new Persona("Persona2","Persona2","Persona");
         Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
@@ -49,12 +49,12 @@ class GruppoServiceImplTest {
         expectedPersone.add(persona1);
         expectedPersone.add(persona2);
         when(personaDAO.findBySupergruppi_id(supergruppo.getId())).thenReturn(expectedPersone);
-        List<Persona> actualPersone = gruppoService.visualizzaListaMembriSupergruppo(supergruppo.getId());
+        List<Persona> actualPersone = gruppoService.findAllMembriInSupergruppo(supergruppo.getId());
         assertEquals(expectedPersone, actualPersone);
     }
 
     @Test
-    void visualizzaListaMembriConsiglioDidattico() {
+    void findAllMembriInConsiglioDidattico() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Persona persona2 = new Persona("Persona2","Persona2","Persona");
         ConsiglioDidattico consiglioDidattico = new ConsiglioDidattico("Consiglio Informatica");
@@ -64,12 +64,12 @@ class GruppoServiceImplTest {
         expectedPersone.add(persona1);
         expectedPersone.add(persona2);
         when(personaDAO.findByConsigli_id(consiglioDidattico.getId())).thenReturn(expectedPersone);
-        List<Persona> actualPersone = gruppoService.visualizzaListaMembriConsiglioDidattico(consiglioDidattico.getId());
+        List<Persona> actualPersone = gruppoService.findAllMembriInConsiglioDidattico(consiglioDidattico.getId());
         assertEquals(expectedPersone, actualPersone);
     }
 
     @Test
-    void visualizzaListaMembriDipartimento() {
+    void findAllMembriInDipartimento() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Persona persona2 = new Persona("Persona2","Persona2","Persona");
         Dipartimento dipartimento = new Dipartimento("Informatica");
@@ -79,12 +79,12 @@ class GruppoServiceImplTest {
         expectedPersone.add(persona1);
         expectedPersone.add(persona2);
         when(personaDAO.findByDipartimenti_id(dipartimento.getId())).thenReturn(expectedPersone);
-        List<Persona> actualPersone = gruppoService.visualizzaListaMembriDipartimento(dipartimento.getId());
+        List<Persona> actualPersone = gruppoService.findAllMembriInDipartimento(dipartimento.getId());
         assertEquals(expectedPersone, actualPersone);
     }
 
     @Test
-    void visualizzaSupergruppi() {
+    void findAllSupergruppi() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
         Supergruppo supergruppo1 = new Supergruppo("GAQR Informatica" , "gruppo", true);
@@ -94,12 +94,12 @@ class GruppoServiceImplTest {
         expectedSupergruppi.add(supergruppo1);
         expectedSupergruppi.add(supergruppo);
         when(supergruppoDAO.findAllByPersone_id(persona1.getId())).thenReturn(expectedSupergruppi);
-        List<Supergruppo> actualSupergruppi = gruppoService.visualizzaSupergruppi(persona1.getId());
+        List<Supergruppo> actualSupergruppi = gruppoService.findAllSupergruppi(persona1.getId());
         assertEquals(expectedSupergruppi, actualSupergruppi);
     }
 
     @Test
-    void visualizzaConsigliDidattici() {
+    void findAllConsigliDidattici() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         ConsiglioDidattico consiglioDidattico = new ConsiglioDidattico("Informatica");
         ConsiglioDidattico consiglioDidattico1 = new ConsiglioDidattico("Ingegneria");
@@ -109,12 +109,12 @@ class GruppoServiceImplTest {
         expectedConsigli.add(consiglioDidattico);
         expectedConsigli.add(consiglioDidattico1);
         when(consiglioDidatticoDAO.findAllByPersone_id(persona1.getId())).thenReturn(expectedConsigli);
-        List<ConsiglioDidattico> actualConsigli = gruppoService.visualizzaConsigliDidattici(persona1.getId());
+        List<ConsiglioDidattico> actualConsigli = gruppoService.findAllConsigliDidattici(persona1.getId());
         assertEquals(expectedConsigli, actualConsigli);
     }
 
     @Test
-    void visualizzaDipartimenti() {
+    void findAllDipartimenti() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Dipartimento dipartimento = new Dipartimento("Informatica");
         Dipartimento dipartimento1 = new Dipartimento("Ingegneria");
@@ -124,13 +124,12 @@ class GruppoServiceImplTest {
         expectedDipartimenti.add(dipartimento);
         expectedDipartimenti.add(dipartimento1);
         when(dipartimentoDAO.findAllByPersone_id(persona1.getId())).thenReturn(expectedDipartimenti);
-        List<Dipartimento> actualDipartimenti = gruppoService.visualizzaDipartimenti(persona1.getId());
+        List<Dipartimento> actualDipartimenti = gruppoService.findAllDipartimenti(persona1.getId());
         assertEquals(expectedDipartimenti, actualDipartimenti);
     }
 
     @Test
     void findAllMembriInConsiglioDidatticoNoSupergruppo() {
-
 
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Persona persona2 = new Persona("Persona2","Persona2","Persona");
