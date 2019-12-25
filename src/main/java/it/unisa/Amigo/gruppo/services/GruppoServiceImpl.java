@@ -1,13 +1,7 @@
 package it.unisa.Amigo.gruppo.services;
 
-import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
-import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
-import it.unisa.Amigo.gruppo.dao.PersonaDAO;
-import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
-import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
-import it.unisa.Amigo.gruppo.domain.Dipartimento;
-import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.domain.Supergruppo;
+import it.unisa.Amigo.gruppo.dao.*;
+import it.unisa.Amigo.gruppo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -38,6 +32,12 @@ public class GruppoServiceImpl implements GruppoService {
 
     @Autowired
     private final DipartimentoDAO dipartimentoDAO;
+
+    @Autowired
+    private final CommissioneDAO commissioneDAO;
+
+    @Autowired
+    private final GruppoDAO gruppoDAO;
 
     /***
      * Ritorna la lista di persone @{@link Persona} presenti nel supergruppo @{@link Supergruppo}
@@ -177,6 +177,11 @@ public class GruppoServiceImpl implements GruppoService {
         return false;
     }
 
+    @Override
+    public boolean isCapogruppo(int idPersona) {
+        return findPersona(idPersona).getRuolo().equalsIgnoreCase("Capogruppo");
+    }
+
     /***
      * Ritorna la persona @{@link Persona} loggata nel sistema
      * @return persona
@@ -185,6 +190,11 @@ public class GruppoServiceImpl implements GruppoService {
     public Persona getAuthenticatedUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return personaDAO.findByUser_email(auth.getName());
+    }
+
+    @Override
+    public List<Commissione> findAllCommissioniByGruppo(int idGruppo) {
+        return commissioneDAO.findAllByGruppo_id(idGruppo);
     }
 
     /***
@@ -196,5 +206,7 @@ public class GruppoServiceImpl implements GruppoService {
     public ConsiglioDidattico findConsiglioBySupergruppo(int idSupergruppo){
         return consiglioDidatticoDAO.findBySupergruppo_id(idSupergruppo);
     }
+
+
 
 }

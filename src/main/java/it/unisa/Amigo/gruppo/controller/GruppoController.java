@@ -1,5 +1,6 @@
 package it.unisa.Amigo.gruppo.controller;
 
+import it.unisa.Amigo.gruppo.domain.Commissione;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
@@ -30,6 +31,8 @@ public class GruppoController
     public String findAllMembriInSupergruppo(Model model, @PathVariable(name = "id")int idSupergruppo){
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInSupergruppo(idSupergruppo));
+        model.addAttribute("isCapogruppo", gruppoService.isCapogruppo(personaLoggata.getId()));
+        model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
         return "gruppo/gruppo_detail";
     }
@@ -103,4 +106,5 @@ public class GruppoController
         model.addAttribute("personaRimossa",persona);
         return "gruppo/gruppo_detail";
     }
+
 }

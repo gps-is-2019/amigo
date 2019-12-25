@@ -1,6 +1,7 @@
 package it.unisa.Amigo.gruppo.domain;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
+
 public class Supergruppo implements Serializable {
 
     private final static long serialVersionUID = 42L;

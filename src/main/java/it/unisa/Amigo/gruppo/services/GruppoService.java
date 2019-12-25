@@ -1,9 +1,6 @@
 package it.unisa.Amigo.gruppo.services;
 
-import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
-import it.unisa.Amigo.gruppo.domain.Dipartimento;
-import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.domain.Supergruppo;
+import it.unisa.Amigo.gruppo.domain.*;
 
 import java.util.List;
 
@@ -24,6 +21,8 @@ public interface GruppoService {
     void addMembro(Persona persona, Supergruppo supergruppo);
     void removeMembro(Persona persona, Supergruppo supergruppo);
     boolean isResponsabile(int idPersona, int idSupergruppo);
+    boolean isCapogruppo(int idPersona);
     Persona getAuthenticatedUser();
+    List<Commissione> findAllCommissioniByGruppo(int idGruppo);
 
 }

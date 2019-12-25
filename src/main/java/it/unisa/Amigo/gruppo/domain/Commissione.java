@@ -1,6 +1,7 @@
 package it.unisa.Amigo.gruppo.domain;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -9,6 +10,12 @@ import javax.persistence.ManyToOne;
 @Data
 @NoArgsConstructor
 public class Commissione extends Supergruppo {
+
+
+
+    public Commissione(String name, String type, boolean active){
+        super(name, type, active);
+    }
 
     @ManyToOne
     @ToString.Exclude
