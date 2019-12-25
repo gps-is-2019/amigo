@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 @Entity
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Commissione extends Supergruppo {
 
     @ManyToOne

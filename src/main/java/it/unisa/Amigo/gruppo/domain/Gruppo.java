@@ -11,7 +11,6 @@ import java.util.Set;
 @Entity
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Gruppo extends Supergruppo {
 
     @OneToMany(cascade = CascadeType.ALL)
