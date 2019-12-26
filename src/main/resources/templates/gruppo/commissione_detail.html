@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:insert="fragments/fragments.html :: header"></div>
+<!--TODO Cambiare aggiungere nome supergruppo-->
+<h1  class="ui header"  align="center">Membri del <span th:text="${supergruppo.name}"></span></h1>
+<div class="ui main text container">
+    <table class="ui celled table">
+        <thead>
+        <tr class="center aligned">
+            <th>Nome</th>
+            <th>Cognome</th>
+            <th>Email</th>
+            <th th:if="${isCapogruppo==true}"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="persona : ${persone}">
+            <tr class="center aligned">
+                <td th:text="${persona.nome}"></td>
+                <td th:text="${persona.cognome}"></td>
+                <td th:text="${persona.user.getEmail()}"></td>
+                <td th:if="${isCapogruppo==true}"><a  th:href="@{'/gruppi/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
+                    Rimuovi
+                </a></td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+    <a th:if="${isResponsabile==true}"th:href="@{'/gruppi/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
+        Aggiungi
+    </a>
+    <a th:if="${isResponsabile==true}"th:href="@{'/gruppi/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
+        Chiudi commissione
+    </a>
+    <div class="ui message success" th:if="${flagRimozione==1}">
+        <i class="close icon"></i>
+        <p>Hai rimosso correttamente <span th:text="${personaRimossa.nome}"></span> <span th:text="${personaRimossa.cognome}"></span></p>
+    </div>
+    <div class="ui message success" th:if="${flagRimozione==1}">
+        <i class="close icon"></i>
+        <p>Hai chiuso correttamente la commissione<span th:text="${personaRimossa.cognome}"></span></p>
+    </div>
+</div>
+</body>
+</html>

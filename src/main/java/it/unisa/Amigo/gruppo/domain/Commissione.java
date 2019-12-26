@@ -13,13 +13,14 @@ public class Commissione extends Supergruppo {
 
 
 
-    public Commissione(String name, String type, boolean active){
-        super(name, type, active);
+    public Commissione(String name, String type, boolean state){
+        super(name, type, state);
     }
 
     @ManyToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Gruppo gruppo;
+
 
 }
