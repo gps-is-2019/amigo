@@ -10,11 +10,13 @@ import java.util.List;
 
 @Repository
 public interface TaskDAO extends CrudRepository<Task, Integer> {
-//    Task findById (int idTask);
+    Task findById (int idTask);
 //    List<Task> findAllByDataDataScadenza(Date dataScadenza);
 //    List<Task> findAllByNome(String nome);
-//
-//    List<Task> findAllBysupergruppo_id(int idSupergruppo);
+
+    //List<Task> findAllBySupergruppo_id(int idSupergruppo);
+    List<Task> findAllBySupergruppo_Id(int idSupergruppo);
+    List<Task> findAllByPersona_Id(int id);
 
 
 

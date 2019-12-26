@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+
+    <head th:include="/fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo|I miei gruppi</title>
+    </head>
+</head>
+<body>
+<div th:insert="fragments/fragments.html :: header"></div>
+<h1 class="ui header" align="center">I task del gruppo : </h1>
+<div class="center aligned">
+    <form  th:action="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/definizioneTaskSupergruppo'( idSupergruppo=${idSupergruppo})}" method="post">
+
+        <!--    <form:form th:action="" method="post">-->
+        <input type="text" path="testo" placeholder="descrizione">
+        <input type="submit">
+    </form>
+</div>
+
+
+<!--da allineare al centro -->
+<form class="ui form">
+    <div class="field">
+        <label>Nome task</label>
+        <input type="text" name="first-name" placeholder="First Name">
+    </div>
+    <div class="field">
+        <label>Data scadenza</label>
+        <input type="text" name="last-name" placeholder="">
+    </div>
+    <div class="field">
+        <div class="field">
+            <label>Descrizione</label>
+            <textarea placeholder="descrizione task"></textarea>
+        </div>
+    </div>
+
+    <h3>Input</h3>
+    <div class="ui calendar" id="example1">
+        <div class="ui input left icon">
+            <i class="calendar icon"></i>
+            <input type="text" placeholder="Date/Time">
+        </div>
+    </div>
+    <script>
+        $('#example1').calendar();
+    </script>
+
+    <button class="ui button" type="submit">Submit</button>
+</form>
+
+
+
+
+</body>
+</html>

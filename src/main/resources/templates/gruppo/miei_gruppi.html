@@ -17,6 +17,17 @@
                 <th>Tipo</th>
                 <th>Stato</th>
                 <th></th>
+
+
+<!--                -->
+<!--                -->
+<!--                <th th:if="${ruolo.equals('capogruppo')}"></th>-->
+<!--                -->
+<!--                -->
+                <th></th>
+
+
+
             </tr>
             </thead>
             <tbody>
@@ -33,6 +44,21 @@
                             Visualizza Dettagli
                         </a>
                     </td>
+
+
+<!--                    -->
+<!--                    -->
+                    <td>
+
+                        <a th:href="@{/gruppo/visualizzaListaTaskSupergruppo/} + ${supergruppo.id}" class="ui primary button">
+                            Lista task
+                        </a>
+                    </td>
+
+<!--                    -->
+<!--                    -->
+
+
                 </tr>
             </th:block>
             </tbody>

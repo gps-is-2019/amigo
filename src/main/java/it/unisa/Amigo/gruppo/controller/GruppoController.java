@@ -45,6 +45,11 @@ public class GruppoController
         int idPersona = gruppoService.visualizzaPersonaLoggata().getId();
         model.addAttribute("supergruppi", gruppoService.visualizzaSupergruppi(idPersona));
         model.addAttribute("personaLoggata",idPersona);
+
+        //TODO aggiungere al model il ruolo della persona loggata
+        model.addAttribute("ruolo" , gruppoService.visualizzaPersonaLoggata().getRuolo());
+
+
         return "gruppo/miei_gruppi";
     }
 

@@ -9,6 +9,8 @@ import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
+import it.unisa.Amigo.task.dao.TaskDAO;
+import it.unisa.Amigo.task.domain.Task;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +18,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
+import java.util.Date;
+
 
 @SpringBootApplication
 public class AmigoApplication {
@@ -24,7 +28,14 @@ public class AmigoApplication {
 	}
 
 		@Bean
-		public CommandLineRunner demo(UserDAO userDAO , PersonaDAO personaDAO, ConsiglioDidatticoDAO consiglioDidatticoDAO, SupergruppoDAO supergruppoDAO, PasswordEncoder encoder){
+		public CommandLineRunner demo(
+				UserDAO userDAO
+				, PersonaDAO personaDAO
+				, ConsiglioDidatticoDAO consiglioDidatticoDAO
+				, SupergruppoDAO supergruppoDAO
+				, PasswordEncoder encoder
+				, TaskDAO taskDAO
+		){
 			return args -> {
 
 				Role userRole = new Role(Role.USER_ROLE);
@@ -47,7 +58,8 @@ public class AmigoApplication {
 				User userGravino = new User("gravino@unisa.it",encoder.encode("gravino"));
 				userGravino.addRole(userRole);
 
-				Persona ferrucci = new Persona("Filomena","Ferrucci","Professore Ordinario");
+				//TODO ho cambiato il ruolo per testare la pagina : ruolo ferrucci da Professore Ordinario a capogruppo
+				Persona ferrucci = new Persona("Filomena","Ferrucci","capogruppo");
 				Persona scarano = new Persona("Vittorio","Scarano","Professore Ordinario");
 				Persona malandrino = new Persona("Delfina","Malandrino","Professore Associato");
 				Persona dePrisco = new Persona("Roberto","De Prisco","Professore Ordinario");
@@ -76,10 +88,42 @@ public class AmigoApplication {
 				cd.addPersona(polese);
 				cd.addPersona(gravino);
 
+
+
+				//TODO add task
+
+				Task taskprova = new Task("t1" , new Date(), "task1" , "incompleto");
+
+				taskprova.setPersona(ferrucci);
+				ferrucci.addTask(taskprova);
+
+				taskprova.setSupergruppo(GAQD);
+				GAQD.addTask(taskprova);
+
+
+				Task taskprova2 = new Task("t2" , new Date() , "task2" , "");
+				taskprova2.setPersona(scarano);
+				scarano.addTask(taskprova2);
+
+				taskprova2.setSupergruppo(GAQD);
+				GAQD.addTask(taskprova2);
+
+				//
+
 				supergruppoDAO.save(GAQD);
 				consiglioDidatticoDAO.save(cd);
 				personaDAO.saveAll(Arrays.asList(ferrucci,scarano,malandrino,dePrisco,polese,gravino));
 				userDAO.saveAll(Arrays.asList(userFerrucci,userScarano,userMalandrino,userDePrisco,userPolese,userGravino));
+
+				///////// TODO add taskDAO
+
+				taskDAO.saveAll(Arrays.asList(taskprova,taskprova2));
+
+
+
+
+
+
 
 			};
 		}

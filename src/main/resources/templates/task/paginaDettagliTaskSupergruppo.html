@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/html">
+<head>
+
+    <head th:include="/fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo|I miei gruppi</title>
+    </head>
+</head>
+<body>
+<div class="ui main text container">
+<table class="ui celled table striped">
+    <thead>
+    <tr class="center aligned">
+        <th>Nome</th>
+        <th>Data scadenza</th>
+        <th>Stato</th>
+        <th>Descrizione</th>
+    </tr>
+    </thead>
+    <tbody>
+    <th:block>
+        <tr class="center aligned">
+            <td th:text="${task.nome}"></td>
+            <td th:text="${task.dataScadenza}"></td>
+            <td th:text="${task.stato}"></td>
+<!--            <td th:if="isResponsabile == true">-->
+<!--                <a class="ui primary button" th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}'( idSupergruppo=${idSupergruppo} , idTask=${task.id} ) }">Dettagli</a>-->
+<!--            </td>-->
+            <td th:text="${task.descrizione}"></td>
+        </tr>
+    </th:block>
+    </tbody>
+</table>
+</div>
+
+</body>
+</html>

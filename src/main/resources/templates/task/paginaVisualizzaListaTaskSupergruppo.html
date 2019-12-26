@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/html">
+<head>
+
+    <head th:include="/fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo|I miei gruppi</title>
+    </head>
+</head>
+<body>
+    <div th:insert="fragments/fragments.html :: header"></div>
+    <h1 class="ui header" align="center">I task del gruppo : </h1>
+<!--    <form th:action="@{/gruppo/visualizzaListaTaskSupergruppo/} + ${idSupergruppo} +{/definizioneTaskSupergruppo}" method="post">-->
+
+    <div class="ui main text container">
+        <a class="ui primary button" th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/definizioneTaskSupergruppo'( idSupergruppo=${idSupergruppo} ) }">Assegna nuovo task</a>
+        <table class="ui celled table striped">
+            <thead>
+            <tr class="center aligned">
+                <th>Nome</th>
+                <th>Data scadenza</th>
+                <th>Stato</th>
+                <th>Descrizione</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="task : ${listaTask}">
+                <tr class="center aligned">
+                    <td th:text="${task.nome}"></td>
+                    <td th:text="${task.dataScadenza}"></td>
+                    <td th:text="${task.stato}"></td>
+                    <td>
+                        <a class="ui primary button" th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}'( idSupergruppo=${idSupergruppo} , idTask=${task.id} ) }">Dettagli</a>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+
+
+
+
+</body>
+</html>
