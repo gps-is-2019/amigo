@@ -63,6 +63,12 @@ public class GruppoController
         return "gruppo/aggiunta-membro";
     }
 
+    @GetMapping("/gruppi/commissioni/{idSupergruppo}/candidati")
+    public String findAllMembriInGruppoNoCommissione(@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
+        prepareCandidateList(idSupergruppo, model, gruppoService.findAllMembriInGruppoNoCommissione(idSupergruppo));
+        return "gruppo/aggiunta-membro-commissione";
+    }
+
     private void prepareCandidateList(int idSupergruppo, Model model, List<Persona> allMembri) {
         model.addAttribute("persone", allMembri);
         model.addAttribute("supergruppo", gruppoService.findSupergruppo(idSupergruppo));
@@ -87,6 +93,19 @@ public class GruppoController
         return "gruppo/aggiunta-membro";
     }
 
+    @GetMapping("/gruppi/commissioni/{idSupergruppo}/add/{idPersona}")
+    public String addMembroCommissione(@PathVariable(name = "idPersona") int idPersona,@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
+        Persona persona = gruppoService.findPersona(idPersona);
+        Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
+        gruppoService.addMembro(persona,supergruppo);
+        prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInGruppoNoCommissione(idSupergruppo));
+        model.addAttribute("flagAggiunta",1);
+        model.addAttribute("personaAggiunta",persona);
+        for(Supergruppo s : persona.getSupergruppi())
+            System.out.println(s.getName());
+        return "gruppo/aggiunta-membro-commissione";
+    }
+
     /***
      * Rimuove un membro @{@link Persona} dal supergruppo @{@link Supergruppo}
      * @param idPersona id della persona da rimuovere
@@ -106,6 +125,30 @@ public class GruppoController
         model.addAttribute("personaRimossa",persona);
         model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
         return "gruppo/gruppo_detail";
+    }
+
+    @GetMapping("/gruppi/commissioni/{idSupergruppo}/remove/{idPersona}")
+    public String removeMembroCommissione(@PathVariable(name = "idPersona") int idPersona,@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
+        Persona persona = gruppoService.findPersona(idPersona);
+        Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
+        gruppoService.removeMembro(persona,supergruppo);
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInSupergruppo(idSupergruppo));
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
+        model.addAttribute("flagRimozione",1);
+        model.addAttribute("personaRimossa",persona);
+        model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
+        return "gruppo/commissione_detail";
+    }
+
+    @GetMapping("/gruppi/{id}/commissione_detail/{id_commissione}")
+    public String findAllMembriInCommissione(Model model, @PathVariable(name = "id")int idSupergruppo, @PathVariable(name = "id_commissione")int idCommissione){
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        prepareCandidateList(idCommissione,model,gruppoService.findAllMembriInSupergruppo(idCommissione));
+        model.addAttribute("isCapogruppo", gruppoService.isCapogruppo(personaLoggata.getId()));
+        model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idCommissione));
+        return "gruppo/commissione_detail";
     }
 
 }

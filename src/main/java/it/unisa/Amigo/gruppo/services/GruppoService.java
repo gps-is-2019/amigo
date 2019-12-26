@@ -24,5 +24,5 @@ public interface GruppoService {
     boolean isCapogruppo(int idPersona);
     Persona getAuthenticatedUser();
     List<Commissione> findAllCommissioniByGruppo(int idGruppo);
-
+    List<Persona> findAllMembriInGruppoNoCommissione(int idSupergruppo);
 }

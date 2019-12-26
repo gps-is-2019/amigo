@@ -55,8 +55,8 @@
                             <span th:if="${commissione.state == true}">Aperta</span>
                             <span th:if="${commissione.state == false}">Chiusa</span>
                         </td>
-                        <td ><a class="ui primary button">
-                            Visualizza Dettagli
+                        <td ><a th:href="@{'/gruppi/{id2}/commissione_detail/{id_commissione}'( id2=${supergruppo.id}, id_commissione=${commissione.id})}" class="ui primary button">
+                            Visualizza dettagli
                         </a></td>
                     </tr>
                 </th:block>

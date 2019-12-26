@@ -197,6 +197,20 @@ public class GruppoServiceImpl implements GruppoService {
         return commissioneDAO.findAllByGruppo_id(idGruppo);
     }
 
+    @Override
+    public List<Persona> findAllMembriInGruppoNoCommissione(int idSupergruppo) {
+        Commissione commissione = commissioneDAO.findById(idSupergruppo);
+        Set<Persona> inSupergruppo = commissione.getPersone();/*personaDAO.findBySupergruppi_id(idSupergruppo);*/
+        Set<Persona> inGruppo = commissione.getGruppo().getPersone();//personaDAO.findByConsigli_id(idConsiglioDidattico);
+        //inConsiglio.removeAll(inSupergruppo);
+        List<Persona> persone = new ArrayList<>();
+        for (Persona p: inGruppo){
+            if(!inSupergruppo.contains(p))
+                persone.add(p);
+        }
+        return persone;
+    }
+
     /***
      * Ritorna il consiglio didattico @{@link ConsiglioDidattico} in base ad un superguppo @{@link Supergruppo}
      * @param idSupergruppo id del supergruppo di cui si vuole il consiglio didattico

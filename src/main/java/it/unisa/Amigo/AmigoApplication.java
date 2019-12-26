@@ -64,12 +64,18 @@ public class AmigoApplication {
 				Gruppo GAQD = new Gruppo( "GAQD-Informatica","Gruppo",true );
 				GAQD.addPersona(scarano);
 				GAQD.addPersona(ferrucci);
+				GAQD.addPersona(dePrisco);
+				GAQD.addPersona(malandrino);
+				GAQD.addPersona(gravino);
 				GAQD.setResponsabile(ferrucci);
 				GAQD.addCommissione(commissioneAAL);
 				GAQD.addCommissione(commissioneEL);
 
-
-
+				commissioneAAL.addPersona(scarano);
+				commissioneAAL.addPersona(malandrino);
+				commissioneAAL.setResponsabile(scarano);
+				commissioneEL.addPersona(dePrisco);
+				commissioneEL.setResponsabile(dePrisco);
 
 				ConsiglioDidattico cd = new ConsiglioDidattico("Informatica");
 				cd.setSupergruppo(GAQD);
@@ -87,7 +93,6 @@ public class AmigoApplication {
 				consiglioDidatticoDAO.save(cd);
 				personaDAO.saveAll(Arrays.asList(ferrucci,scarano,malandrino,dePrisco,polese,gravino));
 				userDAO.saveAll(Arrays.asList(userFerrucci,userScarano,userMalandrino,userDePrisco,userPolese,userGravino));
-
 			};
 		}
 	}

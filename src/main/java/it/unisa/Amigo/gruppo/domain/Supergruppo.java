@@ -57,7 +57,7 @@ public class Supergruppo implements Serializable {
 
 
     public void addPersona(Persona persona){
-        if(!persone.contains(persona)){
+        if(!this.persone.contains(persona)) {
             persone.add(persona);
             persona.addSupergruppo(this);
         }

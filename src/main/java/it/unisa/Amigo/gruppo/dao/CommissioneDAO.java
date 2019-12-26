@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface CommissioneDAO extends CrudRepository<Commissione, Integer> {
     List<Commissione> findAllByGruppo_id(int idGruppo);
-
+    Commissione findById(int idCommissione);
 }

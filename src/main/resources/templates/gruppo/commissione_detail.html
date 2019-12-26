@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/fragments/fragments.html :: head">
+    <title id="pageTitle">Amigo|Commissioni</title>
 </head>
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
@@ -15,7 +14,7 @@
             <th>Nome</th>
             <th>Cognome</th>
             <th>Email</th>
-            <th th:if="${isCapogruppo==true}"></th>
+            <th th:if="${isResponsabile==true}"></th>
         </tr>
         </thead>
         <tbody>
@@ -24,26 +23,25 @@
                 <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.cognome}"></td>
                 <td th:text="${persona.user.getEmail()}"></td>
-                <td th:if="${isCapogruppo==true}"><a  th:href="@{'/gruppi/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
+                <td th:if="${isResponsabile==true}"><a th:if="${isResponsabile==true and supergruppo.responsabile.getId()!=persona.id}"  th:href="@{'/gruppi/commissioni/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
                     Rimuovi
                 </a></td>
             </tr>
         </th:block>
         </tbody>
     </table>
-    <a th:if="${isResponsabile==true}"th:href="@{'/gruppi/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
+    <a th:if="${isResponsabile==true}"th:href="@{'/gruppi/commissioni/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
         Aggiungi
     </a>
-    <a th:if="${isResponsabile==true}"th:href="@{'/gruppi/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
+    <a th:if="${isCapogruppo==true}" class="ui primary button">
+        Nomina responsabile
+    </a>
+    <a th:if="${isCapogruppo==true}" class="ui primary button">
         Chiudi commissione
     </a>
     <div class="ui message success" th:if="${flagRimozione==1}">
         <i class="close icon"></i>
         <p>Hai rimosso correttamente <span th:text="${personaRimossa.nome}"></span> <span th:text="${personaRimossa.cognome}"></span></p>
-    </div>
-    <div class="ui message success" th:if="${flagRimozione==1}">
-        <i class="close icon"></i>
-        <p>Hai chiuso correttamente la commissione<span th:text="${personaRimossa.cognome}"></span></p>
     </div>
 </div>
 </body>

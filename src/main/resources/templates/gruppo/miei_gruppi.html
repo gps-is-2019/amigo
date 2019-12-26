@@ -21,7 +21,7 @@
             </thead>
             <tbody>
             <th:block th:each="gruppo : ${supergruppi}">
-                <tr class="center aligned">
+                <tr th:if="${gruppo.type=='Gruppo'}" class="center aligned">
                     <td th:text="${gruppo.name}"></td>
                     <td th:text="${gruppo.type}"></td>
                     <td>
