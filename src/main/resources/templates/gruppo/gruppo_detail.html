@@ -6,8 +6,7 @@
 </head>
     <body>
     <div th:insert="fragments/fragments.html :: header"></div>
-    <!--TODO Cambiare aggiungere nome supergruppo-->
-    <h1  class="ui header"  align="center">Membri </h1>
+    <h1 class="ui header"  align="center">Membri del <span th:text="${supergruppo.name}"></span> </h1>
     <div class="ui main text container">
         <table class="ui celled table">
             <thead>
@@ -38,8 +37,7 @@
             <i class="close icon"></i>
             <p>Hai rimosso correttamente <span th:text="${personaRimossa.nome}"></span> <span th:text="${personaRimossa.cognome}"></span></p>
         </div>
-        <!--TODO Cambiare aggiungere nome supergruppo-->
-        <h1 class="ui header" align="center">Commissioni </h1>
+        <h1 class="ui header"  align="center">Commissioni del <span th:text="${supergruppo.name}"></span> </h1>
         <div class="ui main text container">
             <table class="ui celled table">
                 <thead>
