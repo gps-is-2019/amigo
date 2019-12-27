@@ -90,4 +90,14 @@ public class TaskServiceImpl implements TaskService
     }
 
 
+    @Override
+    public void accettazioneTask(int idTask) {
+        taskDAO.updateStato(idTask, "approvato");
+    }
+
+    @Override
+    public void rifiutoTask(int idTask) {
+        taskDAO.updateStato(idTask, "respinto");
+
+    }
 }

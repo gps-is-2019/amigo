@@ -39,4 +39,7 @@ public interface TaskService {
     List<Task> searchTaskById(int id);
     Task getTaskById(int id);
 
+    void accettazioneTask(int idTask);
+    void rifiutoTask(int idTask);
+
 }

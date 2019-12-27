@@ -92,7 +92,7 @@ public class AmigoApplication {
 
 				//TODO add task
 
-				Task taskprova = new Task("t1" , new Date(), "task1" , "incompleto");
+				Task taskprova = new Task("t1" , new Date(), "task1" , "in valutazione");
 
 				taskprova.setPersona(ferrucci);
 				ferrucci.addTask(taskprova);
@@ -101,7 +101,7 @@ public class AmigoApplication {
 				GAQD.addTask(taskprova);
 
 
-				Task taskprova2 = new Task("t2" , new Date() , "task2" , "");
+				Task taskprova2 = new Task("t2" , new Date() , "task2" , "approvato");
 				taskprova2.setPersona(scarano);
 				scarano.addTask(taskprova2);
 

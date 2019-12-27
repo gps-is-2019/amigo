@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/xhtml">
 <head>
 
     <head th:include="/fragments/fragments.html :: head">
@@ -10,7 +10,7 @@
 <div th:insert="fragments/fragments.html :: header"></div>
 <h1 class="ui header" align="center">I task del gruppo : </h1>
 <div class="center aligned">
-    <form  th:action="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/definizioneTaskSupergruppo'( idSupergruppo=${idSupergruppo})}" method="post">
+    <form  th:action="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/creazioneTaskSupergruppo'( idSupergruppo=${idSupergruppo})}" method="post">
 
         <!--    <form:form th:action="" method="post">-->
         <input type="text" path="testo" placeholder="descrizione">
@@ -20,19 +20,26 @@
 
 
 <!--da allineare al centro -->
-<form class="ui form">
+<form
+        class="ui form"
+        method="post"
+        th:action="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/creazioneTaskSupergruppo'( idSupergruppo=${idSupergruppo})}"
+        th:object="${taskForm}"
+>
+
     <div class="field">
         <label>Nome task</label>
-        <input type="text" name="first-name" placeholder="First Name">
+<!--        <input type="text" name="first-name" placeholder="First Name" path="nome">-->
+        <input type="text" placeholder="First Name" path="nome" th:field="*{nome}">
     </div>
     <div class="field">
         <label>Data scadenza</label>
-        <input type="text" name="last-name" placeholder="">
+        <input type="date" name="last-name" placeholder="" path="dataScadenza" th:field="*{stringData}">
     </div>
     <div class="field">
         <div class="field">
             <label>Descrizione</label>
-            <textarea placeholder="descrizione task"></textarea>
+            <textarea placeholder="descrizione task" path="descrizione" th:field="*{descrizione}"></textarea>
         </div>
     </div>
 
@@ -43,9 +50,17 @@
             <input type="text" placeholder="Date/Time">
         </div>
     </div>
-    <script>
-        $('#example1').calendar();
-    </script>
+<!--    <script>-->
+<!--        $('#example1').calendar();-->
+<!--    </script>-->
+
+
+    <div class="field">
+        <label>Nome task</label>
+        <!--        <input type="text" name="first-name" placeholder="First Name" path="nome">-->
+        <input type="text" placeholder="First Name" path="nome" th:field="nome2">
+    </div>
+
 
     <button class="ui button" type="submit">Submit</button>
 </form>

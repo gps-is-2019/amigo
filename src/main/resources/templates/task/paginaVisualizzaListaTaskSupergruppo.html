@@ -12,7 +12,7 @@
 <!--    <form th:action="@{/gruppo/visualizzaListaTaskSupergruppo/} + ${idSupergruppo} +{/definizioneTaskSupergruppo}" method="post">-->
 
     <div class="ui main text container">
-        <a class="ui primary button" th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/definizioneTaskSupergruppo'( idSupergruppo=${idSupergruppo} ) }">Assegna nuovo task</a>
+        <a th:if="${isResponsabile==true}" class="ui primary button" th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/definizioneTaskSupergruppo'( idSupergruppo=${idSupergruppo} ) }">Assegna nuovo task</a>
         <table class="ui celled table striped">
             <thead>
             <tr class="center aligned">

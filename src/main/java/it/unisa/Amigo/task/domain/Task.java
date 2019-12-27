@@ -5,6 +5,7 @@ import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -31,6 +32,7 @@ public class Task implements Serializable {
     private String descrizione;
 
     @NonNull
+    //@DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date dataScadenza;
 
     @NonNull
@@ -38,6 +40,8 @@ public class Task implements Serializable {
 
     @NonNull
     private String stato;
+
+    private String stringData;
 
 
     @ManyToOne(cascade = CascadeType.ALL)
