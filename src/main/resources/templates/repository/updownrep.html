@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+
+    <head th:include="/fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo|I miei gruppi</title>
+    </head>
+</head>
+<body>
+<div th:insert="fragments/fragments.html :: header"></div>
+
+    <h1 class="ui header" align="center">Carica documento </h1>
+
+    <form action="/home/uploadfiles" method="post" enctype="multipart/form-data" >
+            <label for="file">Filename:</label>
+            <input type="file" name="file" id="file" multiple/>
+            <input type="submit" name="submit" value="Submit" />
+    </form>
+
+
+
+    <h1 class="ui header" align="center">Documenti </h1>
+    <th:block th:each="documento : ${documenti}">
+        <tr class="center aligned">
+            <td>
+                <a th:href="@{'/repository/{idDocumento}' ( idDocumento=${documento.id})}">
+                    <span th:text="${documento.nome}"></span>
+                </a>
+            </td>
+        </tr>
+    </th:block>
+
+
+</body>
+</html>
