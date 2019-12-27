@@ -60,6 +60,8 @@ public class AmigoApplication {
 				Commissione commissioneAAL = new Commissione("Accompagnamento al lavoro", "Commissione", true);
 				Commissione commissioneEL = new Commissione("Piattaforme EL", "Commissione", true);
 
+				System.out.println("Risultato equals: " +  commissioneAAL.equals(commissioneEL));
+
 
 				Gruppo GAQD = new Gruppo( "GAQD-Informatica","Gruppo",true );
 				GAQD.addPersona(scarano);
@@ -74,6 +76,7 @@ public class AmigoApplication {
 				commissioneAAL.addPersona(scarano);
 				commissioneAAL.addPersona(malandrino);
 				commissioneAAL.setResponsabile(scarano);
+				commissioneAAL.addPersona(dePrisco);
 				commissioneEL.addPersona(dePrisco);
 				commissioneEL.setResponsabile(dePrisco);
 
