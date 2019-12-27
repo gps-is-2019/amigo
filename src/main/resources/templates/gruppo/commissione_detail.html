@@ -30,18 +30,22 @@
         </th:block>
         </tbody>
     </table>
-    <a th:if="${isResponsabile==true}"th:href="@{'/gruppi/commissioni/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
+    <a th:if="${isResponsabile==true}" th:href="@{'/gruppi/commissioni/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
         Aggiungi
     </a>
     <a th:if="${isCapogruppo==true}" class="ui primary button">
         Nomina responsabile
     </a>
-    <a th:if="${isCapogruppo==true}" class="ui primary button">
+    <a th:if="${isCapogruppo==true}" th:href="@{'/gruppi/commissioni/{id2}/chiusura'( id2=${supergruppo.id})}" class="ui primary button">
         Chiudi commissione
     </a>
     <div class="ui message success" th:if="${flagRimozione==1}">
         <i class="close icon"></i>
         <p>Hai rimosso correttamente <span th:text="${personaRimossa.nome}"></span> <span th:text="${personaRimossa.cognome}"></span></p>
+    </div>
+    <div class="ui message success" th:if="${flagChiusura==1}">
+        <i class="close icon"></i>
+        <p>Hai chiuso correttamente la commissione <span th:text="${supergruppo.name}"></span> </p>
     </div>
 </div>
 </body>

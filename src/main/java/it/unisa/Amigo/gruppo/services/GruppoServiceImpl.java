@@ -211,6 +211,13 @@ public class GruppoServiceImpl implements GruppoService {
         return persone;
     }
 
+    @Override
+    public void closeCommissione(int idSupergruppo) {
+        Supergruppo supergruppo = supergruppoDAO.findById(idSupergruppo);
+        supergruppo.setState(false);
+        supergruppoDAO.save(supergruppo);
+    }
+
     /***
      * Ritorna il consiglio didattico @{@link ConsiglioDidattico} in base ad un superguppo @{@link Supergruppo}
      * @param idSupergruppo id del supergruppo di cui si vuole il consiglio didattico

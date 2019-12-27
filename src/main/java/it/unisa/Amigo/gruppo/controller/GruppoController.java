@@ -146,9 +146,19 @@ public class GruppoController
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         prepareCandidateList(idCommissione,model,gruppoService.findAllMembriInSupergruppo(idCommissione));
         model.addAttribute("isCapogruppo", gruppoService.isCapogruppo(personaLoggata.getId()));
-        model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
+        //model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idCommissione));
         return "gruppo/commissione_detail";
     }
 
+    @GetMapping("/gruppi/commissioni/{id2}/chiusura")
+    public String closeCommissione(Model model, @PathVariable(name = "id2")int idCommissione){
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        prepareCandidateList(idCommissione,model,gruppoService.findAllMembriInSupergruppo(idCommissione));
+        model.addAttribute("isCapogruppo", gruppoService.isCapogruppo(personaLoggata.getId()));
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idCommissione));
+        model.addAttribute("flagChiusura",1);
+        gruppoService.closeCommissione(idCommissione);
+        return "gruppo/commissione_detail";
+    }
 }

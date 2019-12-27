@@ -25,4 +25,5 @@ public interface GruppoService {
     Persona getAuthenticatedUser();
     List<Commissione> findAllCommissioniByGruppo(int idGruppo);
     List<Persona> findAllMembriInGruppoNoCommissione(int idSupergruppo);
+    void closeCommissione(int idSupergruppo);
 }
