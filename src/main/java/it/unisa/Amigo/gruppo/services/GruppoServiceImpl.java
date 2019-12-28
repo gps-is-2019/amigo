@@ -187,11 +187,22 @@ public class GruppoServiceImpl implements GruppoService {
         return personaDAO.findByUser_email(auth.getName());
     }
 
+    /**
+     * Restituisce tutte le commissioni @{@link Commissione} di un gruppo @{@link Gruppo}
+     * @param idGruppo il gruppo in relazione alle commissioni
+     * @return la lista delle commissioni restistuite dalla chiamata al DAO
+     */
     @Override
     public List<Commissione> findAllCommissioniByGruppo(int idGruppo) {
         return commissioneDAO.findAllByGruppo_id(idGruppo);
     }
 
+    /**
+     * Restituisce la lista delle persone che si trovano  in un determinato gruppo @{@link Gruppo}, ma che non sono ancora
+     * state assegnate a nessuna commissione @{@link Commissione}
+     * @param idSupergruppo l'id della commissione in relazione al gruppo
+     * @return la lista delle persone
+     */
     @Override
     public List<Persona> findAllMembriInGruppoNoCommissione(int idSupergruppo) {
         Commissione commissione = commissioneDAO.findById(idSupergruppo);
@@ -205,6 +216,10 @@ public class GruppoServiceImpl implements GruppoService {
         return persone;
     }
 
+    /**
+     * Chiude una commissione  @{@link Commissione}, rendendone impossibile qualunque modifica da parte dell'utente
+     * @param idSupergruppo l'id della commissione che deve essere chiusa
+     */
     @Override
     public void closeCommissione(int idSupergruppo) {
         Commissione commissione = commissioneDAO.findById(idSupergruppo);
@@ -212,6 +227,11 @@ public class GruppoServiceImpl implements GruppoService {
         commissioneDAO.save(commissione);
     }
 
+    /**
+     * Esegue la creazione di una nuova commissione @{@link Commissione} e la aggiunge al gruppo @{@link Gruppo}
+     * @param commissione
+     * @param idSupergruppo
+     */
     @Override
     public void createCommissione(Commissione commissione, int idSupergruppo) {
         Gruppo gruppo = gruppoDAO.findById(idSupergruppo);
@@ -229,6 +249,11 @@ public class GruppoServiceImpl implements GruppoService {
         return consiglioDidatticoDAO.findBySupergruppo_id(idSupergruppo);
     }
 
+    /**
+     *  Esegue il cambiamento del responsabile @{@link Persona} di una commissione @{@link Commissione}
+     * @param idPersona l'id della persona che diventerà il responsabile
+     * @param idCommissione l'id della commissione che riceverà un nuovo responsabile
+     */
     @Override
     public void nominaResponsabile(int idPersona, int idCommissione){
         Persona responsabile = personaDAO.findById(idPersona);
@@ -239,6 +264,11 @@ public class GruppoServiceImpl implements GruppoService {
         commissioneDAO.save(commissione);
     }
 
+    /**
+     * Ritorna un gruppo @{@link Gruppo} in base ad una commissione @{@link Commissione}
+     * @param idCommissione la commissione in relazione al gruppo
+     * @return il gruppo restituito dalla chiamata al DAO
+     */
     @Override
     public Gruppo findGruppoByCommissione(int idCommissione) {
         return gruppoDAO.findByCommissioni_id(idCommissione);

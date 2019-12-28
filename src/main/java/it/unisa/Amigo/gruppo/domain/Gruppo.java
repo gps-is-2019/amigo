@@ -10,6 +10,9 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * La classe rappresenta l'oggetto di dominio "Gruppo"
+ */
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data

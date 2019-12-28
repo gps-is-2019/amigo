@@ -65,12 +65,24 @@ public class GruppoController
         return "gruppo/aggiunta-membro";
     }
 
+    /***
+     * Ritorna ad una pagina i membri @{@link Persona} di una gruppo @{@link Gruppo} che non sono ancora stati assegnati ad una commissione@{@link Commissione}
+     * @param idSupergruppo id della commissione
+     * @param model per salvare informazioni da recuperare nell'html
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppi/commissioni/{idSupergruppo}/candidati")
     public String findAllMembriInGruppoNoCommissione(@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
         prepareCandidateList(idSupergruppo, model, gruppoService.findAllMembriInGruppoNoCommissione(idSupergruppo));
         return "gruppo/aggiunta-membro-commissione";
     }
 
+    /**
+     * Recupera le informazioni sui membri componenti un supergruppo, la persona loggata e li inserisce nel model
+     * @param idSupergruppo da cui recuperare la lista dei membri
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param allMembri la lista di persone che verrà inserita nel model
+     */
     private void prepareCandidateList(int idSupergruppo, Model model, List<Persona> allMembri) {
         model.addAttribute("persone", allMembri);
         model.addAttribute("supergruppo", gruppoService.findSupergruppo(idSupergruppo));
@@ -96,6 +108,13 @@ public class GruppoController
         return "gruppo/aggiunta-membro";
     }
 
+    /**
+     * Aggiunge un nuovo membro  @{@link Persona} ad una commissione @{@link Commissione
+     * @param idPersona id della persona da aggiungere
+     * @param idSupergruppo id della commissione in cui aggiungere la persona
+     * @param model per salvare informazioni da recuperare nell'html
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppi/commissioni/{idSupergruppo}/add/{idPersona}")
     public String addMembroCommissione(@PathVariable(name = "idPersona") int idPersona,@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
         Persona persona = gruppoService.findPersona(idPersona);
@@ -129,6 +148,13 @@ public class GruppoController
         return "gruppo/gruppo_detail";
     }
 
+    /***
+     * Rimuove un membro @{@link Persona} da una commissione @{@link Commissione}
+     * @param idPersona id della persona da rimuovere
+     * @param idSupergruppo id della commissione da cui rimuovere la persona
+     * @param model per salvare informazioni da recuperare nell'html
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppi/commissioni/{idSupergruppo}/remove/{idPersona}")
     public String removeMembroCommissione(@PathVariable(name = "idPersona") int idPersona,@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
         Persona persona = gruppoService.findPersona(idPersona);
@@ -144,6 +170,12 @@ public class GruppoController
         return "gruppo/commissione_detail";
     }
 
+    /***
+     * Ritorna ad una pagina i membri @{@link Persona} di una commissione @{@link Commissione}
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idSupergruppo id della commissione di cui si vogliono visualizzare i membri
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppi/{id}/commissione_detail/{id_commissione}")
     public String findAllMembriInCommissione(Model model, @PathVariable(name = "id")int idSupergruppo, @PathVariable(name = "id_commissione")int idCommissione){
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
@@ -153,6 +185,12 @@ public class GruppoController
         return "gruppo/commissione_detail";
     }
 
+    /**
+     * Esegue la chiusura di una commissione @{@link Commissione}
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idCommissione l'id della commissione della quale si vuole effettuare la chiusura
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppi/commissioni/{id2}/chiusura")
     public String closeCommissione(Model model, @PathVariable(name = "id2")int idCommissione){
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
@@ -164,6 +202,12 @@ public class GruppoController
         return "gruppo/commissione_detail";
     }
 
+    /**
+     * Gestisce il form necessario alla creazione di una nuova commissione @{@link Commissione}
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idSupergruppo l'id del gruppo al quale verrà assegnata la nuova commissione
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppi/{id}/commissioni/create")
     public String createCommissioneForm(Model model, @PathVariable(name = "id")int idSupergruppo){
         model.addAttribute("idGruppo", idSupergruppo);
@@ -171,6 +215,13 @@ public class GruppoController
         return "gruppo/crea_commissione";
     }
 
+    /**
+     * Gestisce la creazione di una commissione @{@link Commissione}
+     * @param gruppoFormCommand il gestore del form
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idGruppo l'id del gruppo al quale verrà assegnata la nuova commissione
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @PostMapping("/gruppi/{idGruppo}/commissioni/createCommissione")
     public String createCommissione(@ModelAttribute("command") GruppoFormCommand gruppoFormCommand, Model model,@PathVariable(name = "idGruppo")int idGruppo ){
         Commissione commissione = new Commissione(gruppoFormCommand.getName(), "Commissione", true, gruppoFormCommand.getDescrizione());
@@ -185,6 +236,13 @@ public class GruppoController
         return "gruppo/nomina_responsabile";
     }
 
+    /**
+     * Nomina ed assegna un nuovo responsabile @{@link Persona}  ad una commissione @{@link Commissione}
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idCommissione la commissione che riceverà un nuovo responsabile
+     * @param idPersona id della persona che diventerà il nuovo responsabile
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppi/commissioni/{idCommissione}/nominaResponsabile/{idPersona}")
     public String nominaResponsabile(Model model, @PathVariable("idCommissione") int idCommissione, @PathVariable("idPersona") int idPersona){
 
