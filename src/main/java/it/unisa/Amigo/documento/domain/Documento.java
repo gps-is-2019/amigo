@@ -1,6 +1,5 @@
 package it.unisa.Amigo.documento.domain;
 
-import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.task.domain.Task;
 import lombok.*;
 
@@ -27,9 +26,6 @@ public class Documento implements Serializable {
     private LocalDate dataInvio;
 
     @NonNull
-    private String descrizione;
-
-    @NonNull
     private String nome;
 
     @NonNull
@@ -46,7 +42,7 @@ public class Documento implements Serializable {
     @EqualsAndHashCode.Exclude
     private Consegna consegna;*/
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Task task;

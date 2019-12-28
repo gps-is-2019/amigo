@@ -5,11 +5,10 @@ import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.task.domain.Task;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface DocumentoService {
-    boolean addDocToTask(Documento documento, Task task);
+    boolean addDocToTask(MultipartFile file, Task task);
     boolean addDocToConsegna(Documento documento, Consegna consegna);
     void addDocToRepository(MultipartFile documento);
     Documento downloadDocumentoFromRepository(int idDocumento);

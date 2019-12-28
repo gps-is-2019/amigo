@@ -1,5 +1,6 @@
 package it.unisa.Amigo.documento.service;
 
+import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -25,13 +27,27 @@ public class DocumentoServiceImpl implements DocumentoService{
     private final GruppoService gruppoService;
 
     @Override
-    public boolean addDocToTask(Documento documento, Task task) {
-        documento.setTask(task);
-        task.setDocumento(documento);
-        documentoDAO.save(documento);
-        //salvare il cambiamento di task
-        return true;
-        //da vedere
+    public boolean addDocToTask(MultipartFile file, Task task) {
+
+        if(gruppoService.visualizzaPersonaLoggata().getId() == task.getPersona().getId()){
+            Documento documento = new Documento();
+            try {
+                documento.setFile(file.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            documento.setDataInvio(LocalDate.now());
+            documento.setNome(file.getOriginalFilename());
+            documento.setInRepository(true);
+            documento.setFormat(file.getContentType());
+
+            documento.setTask(task);
+            task.setDocumento(documento);
+            documentoDAO.save(documento);
+            //salvare il cambiamento di task
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -46,20 +62,28 @@ public class DocumentoServiceImpl implements DocumentoService{
 
     @Override
     public void addDocToRepository(MultipartFile file) {
-        Documento documento = new Documento();
-        try {
-            documento.setFile(file.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
+        int flag = 0;
+        Set<Role> roles = gruppoService.visualizzaPersonaLoggata().getUser().getRoles();
+        for(Role role: roles )
+            if(role.getName().equals(Role.PQA_ROLE))
+                flag = 1;
+
+        if(flag==1){
+
+            Documento documento = new Documento();
+            try {
+                documento.setFile(file.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            documento.setDataInvio(LocalDate.now());
+            documento.setNome(file.getOriginalFilename());
+            documento.setInRepository(true);
+            documento.setFormat(file.getContentType());
+            documentoDAO.save(documento);
         }
-        documento.setDataInvio(LocalDate.now());
-        documento.setNome(file.getOriginalFilename());
-        documento.setDescrizione("descrizione");
-        documento.setInRepository(true);
-        documento.setFormat(file.getContentType());
-        System.out.println(documento.getFormat());
-        System.out.println(documento);
-        documentoDAO.save(documento);
+
+        //eccezzione
     }
 
     @Override
