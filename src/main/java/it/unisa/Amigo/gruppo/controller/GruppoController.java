@@ -161,4 +161,16 @@ public class GruppoController
         gruppoService.closeCommissione(idCommissione);
         return "gruppo/commissione_detail";
     }
+
+    @GetMapping("/gruppi/{id}/commissioni_detail/{id_commissione}/create")
+    public String createCommissione(Model model, @PathVariable(name = "id")int idSupergruppo, @PathVariable(name = "id_commissione")int idCommissione){
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        prepareCandidateList(idCommissione,model,gruppoService.findAllMembriInSupergruppo(idCommissione));
+        model.addAttribute("isCapogruppo", gruppoService.isCapogruppo(personaLoggata.getId()));
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idCommissione));
+        model.addAttribute("flagChiusura",1);
+        //Commissione commissione = new Commissione();
+        //gruppoService.createCommissione(commissione, idSupergruppo);
+        return "gruppo/commissione_detail";
+    }
 }

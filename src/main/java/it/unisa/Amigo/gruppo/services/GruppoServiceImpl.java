@@ -218,6 +218,14 @@ public class GruppoServiceImpl implements GruppoService {
         supergruppoDAO.save(supergruppo);
     }
 
+    @Override
+    public void createCommissione(Commissione commissione, int idSupergruppo) {
+        Gruppo gruppo = gruppoDAO.findById(idSupergruppo);
+        gruppo.addCommissione(commissione);
+        gruppoDAO.save(gruppo);
+        commissioneDAO.save(commissione);
+    }
+
     /***
      * Ritorna il consiglio didattico @{@link ConsiglioDidattico} in base ad un superguppo @{@link Supergruppo}
      * @param idSupergruppo id del supergruppo di cui si vuole il consiglio didattico

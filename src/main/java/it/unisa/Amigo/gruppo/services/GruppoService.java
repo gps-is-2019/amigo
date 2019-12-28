@@ -26,4 +26,5 @@ public interface GruppoService {
     List<Commissione> findAllCommissioniByGruppo(int idGruppo);
     List<Persona> findAllMembriInGruppoNoCommissione(int idSupergruppo);
     void closeCommissione(int idSupergruppo);
+    void createCommissione(Commissione commissione, int idSupergruppo);
 }
