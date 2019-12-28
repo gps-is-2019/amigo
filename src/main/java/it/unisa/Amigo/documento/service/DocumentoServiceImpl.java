@@ -9,7 +9,10 @@ import it.unisa.Amigo.task.domain.Task;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +24,6 @@ public class DocumentoServiceImpl implements DocumentoService{
     private final DocumentoDAO documentoDAO;
     private final GruppoService gruppoService;
 
-
     @Override
     public boolean addDocToTask(Documento documento, Task task) {
         documento.setTask(task);
@@ -31,9 +33,10 @@ public class DocumentoServiceImpl implements DocumentoService{
         return true;
         //da vedere
     }
+
     @Override
     public boolean addDocToConsegna(Documento documento, Consegna consegna) {
-        documento.setConsegna(consegna);
+        //documento.setConsegna(consegna);
         //consegna.setDocumento(documento);
         documentoDAO.save(documento);
         //salvare il cambiamento di consegna
@@ -42,10 +45,21 @@ public class DocumentoServiceImpl implements DocumentoService{
     }
 
     @Override
-    public void addDocToRepository(Documento documento) {
+    public void addDocToRepository(MultipartFile file) {
+        Documento documento = new Documento();
+        try {
+            documento.setFile(file.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        documento.setDataInvio(LocalDate.now());
+        documento.setNome(file.getOriginalFilename());
+        documento.setDescrizione("descrizione");
         documento.setInRepository(true);
+        documento.setFormat(file.getContentType());
+        System.out.println(documento.getFormat());
+        System.out.println(documento);
         documentoDAO.save(documento);
-
     }
 
     @Override
@@ -56,11 +70,12 @@ public class DocumentoServiceImpl implements DocumentoService{
     @Override
     public Documento downloadDocumentoFromConsegna(int idDocumento) {
         Optional<Documento> documento = documentoDAO.findById(idDocumento);
-        Consegna consegna = documento.get().getConsegna();
+        // consegna = documento.get().getConsegna();
         Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
         //serve la classe consegna
-        /*if(consegna.getMittente().getId()== personaLoggata.getId() ||consegna.getDestinatario().getId()== personaLoggata.getId() )
-            //ritorna documento
+        /*if((consegna.getMittente().getId() == personaLoggata.getId()) ||
+             (consegna.getDestinatario().getId() == personaLoggata.getId()))
+                //ritorna documento
         //altrimenti eccezione*/
         return null;
     }
@@ -74,12 +89,11 @@ public class DocumentoServiceImpl implements DocumentoService{
         if(personaLoggata.getId()==responsabile.getId())
             return documento.get();
         return null;
-
-        //vedere come fare con l'eccezzione
+        //vedere come fare con l'eccezione
     }
 
     @Override
     public List<Documento> searchDocumentoFromRepository(String nameDocumento) {
-       return  documentoDAO.findAllByInRepositoryAndNomeContains(true,nameDocumento);
+       return documentoDAO.findAllByInRepositoryAndNomeContains(true, nameDocumento);
     }
 }

@@ -9,27 +9,43 @@
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
 
-    <h1 class="ui header" align="center">Carica documento </h1>
+    <h1 class="ui header" align="center">Carica documento</h1>
 
-    <form action="/home/uploadfiles" method="post" enctype="multipart/form-data" >
+    <form th:action="@{/repository/uploadDocumento}" method="post" enctype="multipart/form-data" >
             <label for="file">Filename:</label>
             <input type="file" name="file" id="file" multiple/>
             <input type="submit" name="submit" value="Submit" />
     </form>
 
+    <div class="ui message success" th:if="${flagAggiunta==1}">
+        <i class="close icon"></i>
+        <p>Documento <span th:text="${documentoNome}"></span> caricato con successo!</span></p>
+    </div>
 
-
-    <h1 class="ui header" align="center">Documenti </h1>
-    <th:block th:each="documento : ${documenti}">
+<table class="ui celled table striped">
+    <thead>
+    <tr class="center aligned">
+        <th>Nome documento</th>
+    </tr>
+    </thead>
+    <tbody>
+        <h1 class="ui header" align="center">Documenti</h1>
         <tr class="center aligned">
-            <td>
-                <a th:href="@{'/repository/{idDocumento}' ( idDocumento=${documento.id})}">
-                    <span th:text="${documento.nome}"></span>
-                </a>
+            <td th:if="${#lists.isEmpty(documenti)}">
+                <span>Non sono presenti documenti in repository.</span>
             </td>
         </tr>
-    </th:block>
-
+        <th:block th:each="documento : ${documenti}">
+            <tr class="center aligned">
+                <td>
+                    <a target=”_blank” th:href="@{'/repository/{idDocumento}' ( idDocumento=${documento.id})}">
+                        <span th:text="${documento.nome}"></span>
+                    </a>
+                </td>
+            </tr>
+        </th:block>
+    </tbody>
+</table>
 
 </body>
 </html>

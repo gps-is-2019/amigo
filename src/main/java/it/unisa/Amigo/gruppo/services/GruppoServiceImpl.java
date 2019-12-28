@@ -31,7 +31,7 @@ public class GruppoServiceImpl implements GruppoService {
     private final PersonaDAO personaDAO;
 
     @Autowired
-    private  final SupergruppoDAO supergruppoDAO;
+    private final SupergruppoDAO supergruppoDAO;
 
     @Autowired
     private final ConsiglioDidatticoDAO consiglioDidatticoDAO;

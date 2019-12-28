@@ -6,7 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -20,11 +20,11 @@ public class Documento implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
-    @NonNull
-    private Date dataInvio;
+    @Lob
+    private byte[] file;
 
     @NonNull
-    private Date dataRicezione;
+    private LocalDate dataInvio;
 
     @NonNull
     private String descrizione;
@@ -38,17 +38,16 @@ public class Documento implements Serializable {
     @NonNull
     private boolean inRepository;
 
-    @Lob
-    private byte[] file;
+    @NonNull
+    private String format;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    /*@ManyToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Consegna consegna;
+    private Consegna consegna;*/
 
     @ManyToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Task task;
-
 }
