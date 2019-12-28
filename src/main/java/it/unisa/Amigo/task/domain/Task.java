@@ -1,7 +1,7 @@
 package it.unisa.Amigo.task.domain;
 
-import it.unisa.Amigo.consegna.domain.Documento;
-import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
+
+import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import lombok.*;
@@ -10,8 +10,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Questa classe rappresenta l'oggetto di dominio "Dipartimento"
@@ -52,10 +50,10 @@ public class Task implements Serializable {
     @EqualsAndHashCode.Exclude
     private Persona persona;
 
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @ToString.Exclude
-//    @EqualsAndHashCode.Exclude
-//    private Documento documento;
+   @OneToOne(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Documento documento;
 
 
 }

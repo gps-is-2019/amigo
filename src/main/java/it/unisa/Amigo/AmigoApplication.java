@@ -39,6 +39,7 @@ public class AmigoApplication {
 			return args -> {
 
 				Role userRole = new Role(Role.USER_ROLE);
+				Role pqaRole = new Role(Role.PQA_ROLE);
 
 				User userFerrucci = new User("ferrucci@unisa.it",encoder.encode("ferrucci"));
 				userFerrucci.addRole(userRole);
@@ -51,6 +52,7 @@ public class AmigoApplication {
 
 				User userDePrisco= new User("robdep@unisa.it",encoder.encode("dePrisco"));
 				userDePrisco.addRole(userRole);
+				userDePrisco.addRole(pqaRole);
 
 				User userPolese = new User("gpolese@unisa.it",encoder.encode("polese"));
 				userPolese.addRole(userRole);
