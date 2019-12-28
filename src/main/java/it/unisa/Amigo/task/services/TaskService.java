@@ -25,7 +25,7 @@ public interface TaskService {
     Boolean addDocumentoTask(Documento documento, int idTask);
 
 
-    Boolean definizioneTaskSupergruppo(String descrizione, Date data, String nome, String stato, Supergruppo supergruppo, String email);
+    Boolean definizioneTaskSupergruppo(String descrizione, Date data, String nome, String stato, Supergruppo supergruppo, Persona persona);
     //TODO anche qui dovremmo passare Persona o nessun parametro
     //List<Task> visualizzaTaskUser(User user);
     List<Task> visualizzaTaskUser(int idPersona);
@@ -36,7 +36,7 @@ public interface TaskService {
 
     //List<Documenti> visualizzaDocumentiApprovati(Supergruppo supergruppo);
     //TODO da vedere se va cambiato così -> anche in serviceImpl
-    List<Task> searchTaskById(int id);
+    //List<Task> searchTaskById(int id);
     Task getTaskById(int id);
 
     void accettazioneTask(int idTask);

@@ -13,17 +13,12 @@ import java.util.List;
 
 @Repository
 public interface TaskDAO extends CrudRepository<Task, Integer> {
-    Task findById (int idTask);
-//    List<Task> findAllByDataDataScadenza(Date dataScadenza);
+    //    List<Task> findAllByDataDataScadenza(Date dataScadenza);
 //    List<Task> findAllByNome(String nome);
 
     //List<Task> findAllBySupergruppo_id(int idSupergruppo);
     List<Task> findAllBySupergruppo_Id(int idSupergruppo);
     List<Task> findAllByPersona_Id(int id);
-
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE Task t SET t.stato = :stato WHERE t.id = :id")
-    int updateStato(@Param("id") int id, @Param("stato") String stato);
-
+    Task findById(int idTask);
 
 }

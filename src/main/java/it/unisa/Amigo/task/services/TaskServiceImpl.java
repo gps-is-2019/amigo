@@ -38,8 +38,9 @@ public class TaskServiceImpl implements TaskService
      */
     @Override
     public Persona getAssegnatarioTask(int id) {
-
-        return null;
+        Task task= taskDAO.findById(id);
+        Persona result = task.getPersona();
+        return result;
     }
 
     /***
@@ -63,6 +64,7 @@ public class TaskServiceImpl implements TaskService
         return null;
     }
 
+    //da cambiare nell'odd
     /***
      * Definisce un nuovo Task @{@link Task}
      * @param descrizione del nuovo task
@@ -70,12 +72,20 @@ public class TaskServiceImpl implements TaskService
      * @param nome del nuovo task
      * @param stato del nuovo task
      * @param supergruppo di appartenenza del task da definire
-     * @param email del responsabile del task che si sta definendo
+     * @param persona responsabile del task che si sta definendo
      * @return Boolean indicante il successo o il fallimento dell'azione
      */
     @Override
-    public Boolean definizioneTaskSupergruppo(String descrizione, Date data, String nome, String stato, Supergruppo supergruppo, String email) {
-        return null;
+    public Boolean definizioneTaskSupergruppo(String descrizione, Date data, String nome, String stato, Supergruppo supergruppo, Persona persona){
+        Task task = new Task(descrizione, data, nome, stato);
+        task.setSupergruppo(supergruppo);
+        task.setPersona(persona);
+        try {
+            taskDAO.save(task);
+        } catch (Exception ex){
+           return false;
+        };
+        return true;
     }
 
     //TODO va cambiato
@@ -117,16 +127,16 @@ public class TaskServiceImpl implements TaskService
         return ris;
     }
 
-    //TODO
+    //TODO cambiato in getById
     /***
      * Ritorna la lista di task @{@link Task} cercati tramite un id
      * @param id del task
      * @return lista di task
      */
-    @Override
-    public List<Task> searchTaskById(int id) { //Da cambiare
-        return null;
-    }
+  //  @Override
+  //  public List<Task> searchTaskById(int id) { //Da cambiare
+  //      return null;
+  //  }
 
 
     /***
@@ -143,13 +153,16 @@ public class TaskServiceImpl implements TaskService
 
     @Override
     public void accettazioneTask(int idTask) {
-        taskDAO.updateStato(idTask, "approvato");
+        Task task = taskDAO.findById(idTask);
+        task.setStato("approvato");
+        taskDAO.save(task);
     }
 
     @Override
     public void rifiutoTask(int idTask) {
-        taskDAO.updateStato(idTask, "respinto");
-
+        Task task = taskDAO.findById(idTask);
+        task.setStato("respinto");
+        taskDAO.save(task);
     }
 
     @Override

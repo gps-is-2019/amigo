@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Questa classe rappresenta l'oggetto di dominio "Dipartimento"
+ * Questa classe rappresenta l'oggetto di dominio "Task"
  */
 @Entity
 @Data
