@@ -13,7 +13,7 @@
                 <th>Nome</th>
                 <th>Cognome</th>
                 <th>Email</th>
-                <th th:if="${isResponsabile==true}"></th>
+                <th th:if="${isCapogruppo==true}"></th>
             </tr>
             </thead>
             <tbody>
@@ -22,14 +22,14 @@
                     <td th:text="${persona.nome}"></td>
                     <td th:text="${persona.cognome}"></td>
                     <td th:text="${persona.user.getEmail()}"></td>
-                    <td th:if="${isResponsabile==true}"><a th:if="${isResponsabile==true and supergruppo.responsabile.getId()!=persona.id}"  th:href="@{'/gruppi/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
+                    <td th:if="${isCapogruppo==true}"><a th:if="${isCapogruppo==true and supergruppo.responsabile.getId()!=persona.id}"  th:href="@{'/gruppi/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
                         Rimuovi
                     </a></td>
                 </tr>
             </th:block>
             </tbody>
         </table>
-        <a th:if="${isResponsabile==true}"th:href="@{'/gruppi/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
+        <a th:if="${isCapogruppo==true}"th:href="@{'/gruppi/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
             Aggiungi
         </a>
         <div class="ui message success" th:if="${flagRimozione==1}">

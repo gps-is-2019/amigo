@@ -90,6 +90,7 @@ public class GruppoController
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
         gruppoService.addMembro(persona,supergruppo);
         prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(idSupergruppo));
+        model.addAttribute("isCapogruppo", gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), idSupergruppo));
         model.addAttribute("flagAggiunta",1);
         model.addAttribute("personaAggiunta",persona);
         return "gruppo/aggiunta-membro";
@@ -121,6 +122,7 @@ public class GruppoController
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInSupergruppo(idSupergruppo));
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
+        model.addAttribute("isCapogruppo", gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), idSupergruppo));
         model.addAttribute("flagRimozione",1);
         model.addAttribute("personaRimossa",persona);
         model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
