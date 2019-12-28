@@ -3,6 +3,7 @@ package it.unisa.Amigo.repository.controller;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.service.DocumentoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,12 +42,15 @@ public class RepositoryController {
     }
 
     @GetMapping("/repository/{idDocument}")
-    public ResponseEntity<byte []> downloadDocumento(Model model, @PathVariable("idDocument") int idDocument) {
+    public ResponseEntity<Resource> downloadDocumento(Model model, @PathVariable("idDocument") int idDocument) {
         Documento documento = documentoService.downloadDocumentoFromRepository(idDocument);
+        Resource resource = documentoService.loadAsResource(documento);
+
+        System.out.println(resource);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(documento.getFormat()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
-                .body(documento.getFile());
+                .body(resource);
     }
 }

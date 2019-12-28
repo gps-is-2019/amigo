@@ -20,8 +20,8 @@ public class Documento implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
-    @Lob
-    private byte[] file;
+    @NonNull
+    private String path;
 
     @NonNull
     private LocalDate dataInvio;

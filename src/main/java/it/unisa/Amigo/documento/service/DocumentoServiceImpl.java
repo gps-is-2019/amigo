@@ -4,15 +4,25 @@ import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
+import it.unisa.Amigo.documento.exceptions.StorageException;
+import it.unisa.Amigo.documento.exceptions.StorageFileNotFoundException;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.task.domain.Task;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -26,13 +36,30 @@ public class DocumentoServiceImpl implements DocumentoService{
     private final DocumentoDAO documentoDAO;
     private final GruppoService gruppoService;
 
-    private Documento createDocumento(MultipartFile file) {
+    private Documento storeDocumento(MultipartFile file) {
         Documento documento = new Documento();
+
+        String filename = StringUtils.cleanPath(file.getOriginalFilename());
         try {
-            documento.setFile(file.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
+            if (file.isEmpty()) {
+                throw new StorageException("Failed to store empty file " + filename);
+            }
+            if (filename.contains("..")) {
+                throw new StorageException(
+                        "Cannot store file with relative path outside current directory "
+                                + filename);
+            }
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, Paths.get("src/main/resources/documents").resolve(filename),
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
         }
+        catch (IOException e) {
+            throw new StorageException("Failed to store file " + filename, e);
+        }
+
+        documento.setPath("src/main/resources/documents/" + filename);
+
         documento.setDataInvio(LocalDate.now());
         documento.setNome(file.getOriginalFilename());
         documento.setInRepository(true);
@@ -42,9 +69,8 @@ public class DocumentoServiceImpl implements DocumentoService{
 
     @Override
     public boolean addDocToTask(MultipartFile file, Task task) {
-
         if(gruppoService.visualizzaPersonaLoggata().getId() == task.getPersona().getId()){
-            Documento documento = createDocumento(file);
+            Documento documento = storeDocumento(file);
             documento.setTask(task);
             task.setDocumento(documento);
             documentoDAO.save(documento);
@@ -57,7 +83,7 @@ public class DocumentoServiceImpl implements DocumentoService{
     @Override
     public boolean addDocToConsegna(MultipartFile file, Consegna consegna) {
         if(gruppoService.visualizzaPersonaLoggata().getId() == consegna.getMittente().getId()){
-            Documento documento = createDocumento(file);
+            Documento documento = storeDocumento(file);
             documento.setConsegna(consegna);
             consegna.setDocumento(documento);
             documentoDAO.save(documento);
@@ -71,22 +97,42 @@ public class DocumentoServiceImpl implements DocumentoService{
     public void addDocToRepository(MultipartFile file) {
         int flag = 0;
         Set<Role> roles = gruppoService.visualizzaPersonaLoggata().getUser().getRoles();
-        for(Role role: roles )
+        for(Role role: roles)
             if(role.getName().equals(Role.PQA_ROLE))
                 flag = 1;
 
         if(flag==1){
 
-            Documento documento = createDocumento(file);
+            Documento documento = storeDocumento(file);
             documentoDAO.save(documento);
         }
 
-        //eccezzione
+        //eccezione
+    }
+
+    public Resource loadAsResource(Documento documento) {
+        try {
+            Resource resource = new UrlResource(Paths.get(documento.getPath()).toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            }
+            else {
+                throw new StorageFileNotFoundException(
+                        "Could not read file: " + documento.getNome());
+            }
+        }
+        catch (MalformedURLException e) {
+            throw new StorageFileNotFoundException("Could not read file: " + documento.getNome(), e);
+        }
     }
 
     @Override
     public Documento downloadDocumentoFromRepository(int idDocumento) {
-        return documentoDAO.findByIdAndInRepository(idDocumento,true);
+        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
+        if (personaLoggata != null)
+            return documentoDAO.findByIdAndInRepository(idDocumento,true);
+        else
+            return null;
     }
 
     @Override
@@ -97,7 +143,7 @@ public class DocumentoServiceImpl implements DocumentoService{
         if(personaLoggata.getId()==consegna.getMittente().getId() || personaLoggata.getId() == consegna.getDestinatario().getId())
             return documento.get();
         return null;
-        //eccezzione
+        //eccezione
     }
 
     @Override
