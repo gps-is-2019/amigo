@@ -41,5 +41,6 @@ public interface TaskService {
 
     void accettazioneTask(int idTask);
     void rifiutoTask(int idTask);
+    void addTask(Task newTask);
 
 }

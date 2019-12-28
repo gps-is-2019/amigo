@@ -3,6 +3,7 @@ package it.unisa.Amigo.task.controller;
 
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.domain.Persona;
+import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.task.TaskForm;
 import it.unisa.Amigo.task.domain.Task;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -49,8 +51,12 @@ public class TaskController {
 
 //        model.addAttribute("idSupergruppo" , Integer.toString(idSupergruppo) );
         model.addAttribute("idSupergruppo" , idSupergruppo );
-
         model.addAttribute("taskForm", taskForm);
+
+        List<Persona> persone = gruppoService.visualizzaListaMembriSupergruppo(idSupergruppo);
+        model.addAttribute("persone" , persone);
+        System.out.println(persone.toString());
+
 
         return "task/paginaDefinizioneTaskSupergruppo";//pagina che usa il form (pagina corrente)
 
@@ -69,14 +75,33 @@ public class TaskController {
 
 
     @RequestMapping(value="/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/creazioneTaskSupergruppo", method=RequestMethod.GET)
-    public String savePerson(@ModelAttribute Task taskForm, Model model , @PathVariable(name = "idSupergruppo") int idSupergruppo) {
+    public String savePerson(@ModelAttribute TaskForm taskForm, Model model , @PathVariable(name = "idSupergruppo") int idSupergruppo) {
         model.addAttribute("taskForm", taskForm);
         System.out.println(" sono dentro 1");
         return "task/paginaDefinizioneTaskSupergruppo";
     }
     @RequestMapping(value="/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/creazioneTaskSupergruppo", method=RequestMethod.POST)
-    public String savePersonPost(@ModelAttribute Task taskForm , @PathVariable(name = "idSupergruppo") int idSupergruppo) {
-        System.out.println(taskForm.getNome() + " " + taskForm.getStringData()+" "+taskForm.getDescrizione());
+    public String savePersonPost(@ModelAttribute TaskForm taskForm , @PathVariable(name = "idSupergruppo") int idSupergruppo) {
+
+        //TODO da aggiungere a task persona e supergruppo
+
+        System.out.println(
+                "dati presi da taskForm: "
+                +taskForm.getNome() + " "
+                + taskForm.getDataScadenza()+" "
+                +taskForm.getDescrizione()+" "
+                +taskForm.getIdPersona()
+        );
+        System.out.println(taskForm.toString());
+        Date tmpData = new Date();
+        Task newTask = new Task( taskForm.getDescrizione() , tmpData , taskForm.getNome() , "incompleto");
+        Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
+        newTask.setSupergruppo(supergruppo);
+        Persona persona = gruppoService.findPersona( Integer.parseInt( taskForm.getIdPersona() ) );
+        newTask.setPersona(persona);
+
+        taskService.addTask(newTask);
+
         System.out.println(" sono dentro 2");
         //return "redirect:task/paginaVisualizzaListaTaskSupergruppo";
         return "task/paginaVisualizzaListaTaskSupergruppo";

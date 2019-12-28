@@ -151,4 +151,11 @@ public class TaskServiceImpl implements TaskService
         taskDAO.updateStato(idTask, "respinto");
 
     }
+
+    @Override
+    public void addTask(Task newTask) {
+        taskDAO.save(newTask);
+
+
+    }
 }

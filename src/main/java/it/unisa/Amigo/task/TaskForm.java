@@ -17,12 +17,16 @@ public class TaskForm {
     private String descrizione;
 
     @NonNull
-    private Date dataScadenza;
+    private String dataScadenza;
 
     @NonNull
     private String nome;
 
     @NonNull
     private String stato;
+
+    @NonNull
+    private String idPersona;
+
 
 }

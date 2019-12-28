@@ -41,8 +41,6 @@ public class Task implements Serializable {
     @NonNull
     private String stato;
 
-    private String stringData;
-
 
     @ManyToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
