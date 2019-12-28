@@ -137,6 +137,7 @@ public class GruppoController
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInSupergruppo(idSupergruppo));
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
+        model.addAttribute("isCapogruppo", gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), gruppoService.findGruppoByCommissione(idSupergruppo).getId()));
         model.addAttribute("flagRimozione",1);
         model.addAttribute("personaRimossa",persona);
         model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
