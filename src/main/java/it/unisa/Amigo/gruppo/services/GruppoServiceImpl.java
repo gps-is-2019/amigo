@@ -195,9 +195,8 @@ public class GruppoServiceImpl implements GruppoService {
     @Override
     public List<Persona> findAllMembriInGruppoNoCommissione(int idSupergruppo) {
         Commissione commissione = commissioneDAO.findById(idSupergruppo);
-        Set<Persona> inSupergruppo = commissione.getPersone();/*personaDAO.findBySupergruppi_id(idSupergruppo);*/
-        Set<Persona> inGruppo = commissione.getGruppo().getPersone();//personaDAO.findByConsigli_id(idConsiglioDidattico);
-        //inConsiglio.removeAll(inSupergruppo);
+        Set<Persona> inSupergruppo = commissione.getPersone();
+        Set<Persona> inGruppo = commissione.getGruppo().getPersone();
         List<Persona> persone = new ArrayList<>();
         for (Persona p: inGruppo){
             if(!inSupergruppo.contains(p))
@@ -208,9 +207,9 @@ public class GruppoServiceImpl implements GruppoService {
 
     @Override
     public void closeCommissione(int idSupergruppo) {
-        Supergruppo supergruppo = supergruppoDAO.findById(idSupergruppo);
-        supergruppo.setState(false);
-        supergruppoDAO.save(supergruppo);
+        Commissione commissione = commissioneDAO.findById(idSupergruppo);
+        commissione.setState(false);
+        commissioneDAO.save(commissione);
     }
 
     @Override

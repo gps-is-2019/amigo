@@ -149,7 +149,6 @@ public class GruppoController
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         prepareCandidateList(idCommissione,model,gruppoService.findAllMembriInSupergruppo(idCommissione));
         model.addAttribute("isCapogruppo", gruppoService.isResponsabile(personaLoggata.getId(), gruppoService.findGruppoByCommissione(idCommissione).getId()));
-        //model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idCommissione));
         return "gruppo/commissione_detail";
     }

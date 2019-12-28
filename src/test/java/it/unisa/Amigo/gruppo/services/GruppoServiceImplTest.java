@@ -1,13 +1,7 @@
 package it.unisa.Amigo.gruppo.services;
 
-import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
-import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
-import it.unisa.Amigo.gruppo.dao.PersonaDAO;
-import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
-import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
-import it.unisa.Amigo.gruppo.domain.Dipartimento;
-import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.domain.Supergruppo;
+import it.unisa.Amigo.gruppo.dao.*;
+import it.unisa.Amigo.gruppo.domain.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,6 +31,13 @@ class GruppoServiceImplTest {
 
     @Mock
     private  DipartimentoDAO dipartimentoDAO;
+
+    @Mock
+    private CommissioneDAO commissioneDAO;
+
+    @Mock
+    private GruppoDAO gruppoDAO;
+
 
     @Test
     void findAllMembriInSupergruppo() {
@@ -223,6 +224,98 @@ class GruppoServiceImplTest {
         when(supergruppoDAO.findById(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
         boolean expectedValue = gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId());
         assertEquals(true, expectedValue);
+    }
+
+    @Test
+    void findAllCommissioniByGruppo() {
+         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
+         Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione2", true,  "Commissione2");
+         List<Commissione> expectedCommissioni = new ArrayList<>();
+         expectedCommissioni.add(expectedCommissione);
+         expectedCommissioni.add(expectedCommissione2);
+         expectedGruppo.addCommissione(expectedCommissione);
+         expectedGruppo.addCommissione(expectedCommissione2);
+
+         when(commissioneDAO.findAllByGruppo_id(expectedGruppo.getId())).thenReturn(expectedCommissioni);
+
+         List<Commissione> actualCommissioni = gruppoService.findAllCommissioniByGruppo(expectedGruppo.getId());
+
+         assertEquals(actualCommissioni, expectedCommissioni);
+    }
+
+    @Test
+    void findAllMembriInGruppoNoCommissione() {
+
+        Persona persona1 = new Persona("Persona1","Persona1","Persona");
+        Persona persona2 = new Persona("Persona2","Persona2","Persona");
+
+        List<Persona> persone = new ArrayList<>();
+        persone.add(persona1);
+        persone.add(persona2);
+
+        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
+        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+        expectedGruppo.addPersona(persona1);
+        expectedGruppo.addPersona(persona2);
+        expectedCommissione.addPersona(persona1);
+        expectedGruppo.addCommissione(expectedCommissione);
+
+        List<Persona> expectedPersone = new ArrayList<>();
+        expectedPersone.add(persona2);
+
+        when(commissioneDAO.findById(expectedCommissione.getId())).thenReturn(expectedCommissione);
+
+        List<Persona> acutalPersone = gruppoService.findAllMembriInGruppoNoCommissione(expectedCommissione.getId());
+        assertEquals(expectedPersone, acutalPersone);
+    }
+
+    @Test
+    void closeCommissione() {
+        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
+        when(commissioneDAO.findById(expectedCommissione.getId())).thenReturn(expectedCommissione);
+        gruppoService.closeCommissione(expectedCommissione.getId());
+        assertEquals(false, expectedCommissione.getState());
+    }
+
+    @Test
+    void createCommissione() {
+        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
+        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+
+
+        when(gruppoDAO.findById(expectedGruppo.getId())).thenReturn(expectedGruppo);
+
+        gruppoService.createCommissione(expectedCommissione, expectedGruppo.getId());
+
+        Commissione actualCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
+        actualCommissione.setGruppo(expectedGruppo);
+        assertEquals(actualCommissione, expectedCommissione);
+    }
+
+
+    @Test
+    void nominaResponsabile() {
+
+        Persona persona1 = new Persona("Persona1","Persona1","Persona");
+        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
+
+        when(personaDAO.findById(persona1.getId())).thenReturn(persona1);
+        when(commissioneDAO.findById(expectedCommissione.getId())).thenReturn(expectedCommissione);
+
+        Commissione actualCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
+        actualCommissione.addPersona(persona1);
+        actualCommissione.setResponsabile(persona1);
+
+        assertEquals(actualCommissione,expectedCommissione);
+    }
+
+    @Test
+    void findGruppoByCommissione() {
+        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+        when(gruppoDAO.findById(expectedGruppo.getId())).thenReturn(expectedGruppo);
+        Gruppo actualGruppo = new Gruppo("Gruppo", "Gruppo", true);
+        assertEquals(expectedGruppo, actualGruppo);
     }
 
 }
