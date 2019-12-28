@@ -26,21 +26,25 @@ public class DocumentoServiceImpl implements DocumentoService{
     private final DocumentoDAO documentoDAO;
     private final GruppoService gruppoService;
 
+    private Documento createDocumento(MultipartFile file) {
+        Documento documento = new Documento();
+        try {
+            documento.setFile(file.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        documento.setDataInvio(LocalDate.now());
+        documento.setNome(file.getOriginalFilename());
+        documento.setInRepository(true);
+        documento.setFormat(file.getContentType());
+        return documento;
+    }
+
     @Override
     public boolean addDocToTask(MultipartFile file, Task task) {
 
         if(gruppoService.visualizzaPersonaLoggata().getId() == task.getPersona().getId()){
-            Documento documento = new Documento();
-            try {
-                documento.setFile(file.getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            documento.setDataInvio(LocalDate.now());
-            documento.setNome(file.getOriginalFilename());
-            documento.setInRepository(true);
-            documento.setFormat(file.getContentType());
-
+            Documento documento = createDocumento(file);
             documento.setTask(task);
             task.setDocumento(documento);
             documentoDAO.save(documento);
@@ -51,13 +55,16 @@ public class DocumentoServiceImpl implements DocumentoService{
     }
 
     @Override
-    public boolean addDocToConsegna(Documento documento, Consegna consegna) {
-        //documento.setConsegna(consegna);
-        //consegna.setDocumento(documento);
-        documentoDAO.save(documento);
-        //salvare il cambiamento di consegna
-        return true;
-        //da vedere
+    public boolean addDocToConsegna(MultipartFile file, Consegna consegna) {
+        if(gruppoService.visualizzaPersonaLoggata().getId() == consegna.getMittente().getId()){
+            Documento documento = createDocumento(file);
+            documento.setConsegna(consegna);
+            consegna.setDocumento(documento);
+            documentoDAO.save(documento);
+            //salvare il cambiamento di consegna
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -70,16 +77,7 @@ public class DocumentoServiceImpl implements DocumentoService{
 
         if(flag==1){
 
-            Documento documento = new Documento();
-            try {
-                documento.setFile(file.getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            documento.setDataInvio(LocalDate.now());
-            documento.setNome(file.getOriginalFilename());
-            documento.setInRepository(true);
-            documento.setFormat(file.getContentType());
+            Documento documento = createDocumento(file);
             documentoDAO.save(documento);
         }
 
@@ -94,14 +92,12 @@ public class DocumentoServiceImpl implements DocumentoService{
     @Override
     public Documento downloadDocumentoFromConsegna(int idDocumento) {
         Optional<Documento> documento = documentoDAO.findById(idDocumento);
-        // consegna = documento.get().getConsegna();
+        Consegna consegna = documento.get().getConsegna();
         Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
-        //serve la classe consegna
-        /*if((consegna.getMittente().getId() == personaLoggata.getId()) ||
-             (consegna.getDestinatario().getId() == personaLoggata.getId()))
-                //ritorna documento
-        //altrimenti eccezione*/
+        if(personaLoggata.getId()==consegna.getMittente().getId() || personaLoggata.getId() == consegna.getDestinatario().getId())
+            return documento.get();
         return null;
+        //eccezzione
     }
 
     @Override
@@ -113,7 +109,6 @@ public class DocumentoServiceImpl implements DocumentoService{
         if(personaLoggata.getId()==responsabile.getId())
             return documento.get();
         return null;
-        //vedere come fare con l'eccezione
     }
 
     @Override

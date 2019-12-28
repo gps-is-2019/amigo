@@ -33,7 +33,7 @@ public class RepositoryController {
     @PostMapping("/repository/uploadDocumento")
     public String uploadDocumento(Model model, @RequestParam("file") MultipartFile file) {
         documentoService.addDocToRepository(file);
-        model.addAttribute("flagAggiunta", 1);
+        model.addAttribute("flagAggiunta", 1); //cambiare
         model.addAttribute("documentoNome", file.getOriginalFilename());
         List<Documento> documenti = documentoService.searchDocumentoFromRepository("");
         model.addAttribute("documenti", documenti);

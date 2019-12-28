@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface DocumentoService {
     boolean addDocToTask(MultipartFile file, Task task);
-    boolean addDocToConsegna(Documento documento, Consegna consegna);
+    boolean addDocToConsegna(MultipartFile file, Consegna consegna);
     void addDocToRepository(MultipartFile documento);
     Documento downloadDocumentoFromRepository(int idDocumento);
     Documento downloadDocumentoFromConsegna(int idDocumento);
