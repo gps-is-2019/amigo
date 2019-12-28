@@ -62,7 +62,7 @@ public class GruppoController
     @GetMapping("/gruppi/{idSupergruppo}/candidati")
     public String findAllMembriInConsiglioDidatticoNoSupergruppo(@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
         prepareCandidateList(idSupergruppo, model, gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(idSupergruppo));
-        return "gruppo/aggiunta-membro";
+        return "gruppo/aggiunta_membro";
     }
 
     /***
@@ -74,7 +74,7 @@ public class GruppoController
     @GetMapping("/gruppi/commissioni/{idSupergruppo}/candidati")
     public String findAllMembriInGruppoNoCommissione(@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
         prepareCandidateList(idSupergruppo, model, gruppoService.findAllMembriInGruppoNoCommissione(idSupergruppo));
-        return "gruppo/aggiunta-membro-commissione";
+        return "gruppo/aggiunta_membro_commissione";
     }
 
     /**
@@ -105,7 +105,7 @@ public class GruppoController
         model.addAttribute("isCapogruppo", gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), idSupergruppo));
         model.addAttribute("flagAggiunta",1);
         model.addAttribute("personaAggiunta",persona);
-        return "gruppo/aggiunta-membro";
+        return "gruppo/aggiunta_membro";
     }
 
     /**
@@ -123,7 +123,7 @@ public class GruppoController
         prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInGruppoNoCommissione(idSupergruppo));
         model.addAttribute("flagAggiunta",1);
         model.addAttribute("personaAggiunta",persona);
-        return "gruppo/aggiunta-membro-commissione";
+        return "gruppo/aggiunta_membro_commissione";
     }
 
     /***
