@@ -5,4 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface GruppoDAO extends CrudRepository<Gruppo, Integer> {
     Gruppo findById(int idGruppo);
+    Gruppo findByCommissioni_id(int idCommissione);
 }

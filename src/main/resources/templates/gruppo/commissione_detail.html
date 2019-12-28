@@ -14,7 +14,8 @@
             <th>Nome</th>
             <th>Cognome</th>
             <th>Email</th>
-            <th th:if="${isResponsabile==true}"></th>
+            <th th:if="${isResponsabile==true && supergruppo.state == true}"></th>
+            <th th:if="${isCapogruppo==true && supergruppo.state == true}"></th>
         </tr>
         </thead>
         <tbody>
@@ -23,20 +24,23 @@
                 <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.cognome}"></td>
                 <td th:text="${persona.user.getEmail()}"></td>
-                <td th:if="${isResponsabile==true}"><a th:if="${isResponsabile==true and supergruppo.responsabile.getId()!=persona.id}"  th:href="@{'/gruppi/commissioni/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
+                <td th:if="${isResponsabile==true && supergruppo.state == true}"><a th:if="${isResponsabile==true and supergruppo.responsabile.getId()!=persona.id}"  th:href="@{'/gruppi/commissioni/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
                     Rimuovi
                 </a></td>
+                <td th:if="${supergruppo.state == true}">
+                    <a th:if="${isCapogruppo==true && supergruppo.state == true} " th:href="@{'/gruppi/commissioni/{idCommissione}/nominaResponsabile/{idPersona}'(idCommissione=${supergruppo.id},idPersona=${persona.id})}"class="ui primary button">
+                        Nomina responsabile
+                    </a>
+                </td>
             </tr>
         </th:block>
         </tbody>
     </table>
-    <a th:if="${isResponsabile==true}" th:href="@{'/gruppi/commissioni/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
+    <a th:if="${isResponsabile==true && supergruppo.state == true}" th:href="@{'/gruppi/commissioni/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
         Aggiungi
     </a>
-    <a th:if="${isCapogruppo==true}" class="ui primary button">
-        Nomina responsabile
-    </a>
-    <a th:if="${isCapogruppo==true}" th:href="@{'/gruppi/commissioni/{id2}/chiusura'( id2=${supergruppo.id})}" class="ui primary button">
+
+    <a th:if="${isCapogruppo==true && supergruppo.state == true}" th:href="@{'/gruppi/commissioni/{id2}/chiusura'( id2=${supergruppo.id})}" class="ui primary button">
         Chiudi commissione
     </a>
     <div class="ui message success" th:if="${flagRimozione==1}">
@@ -46,6 +50,10 @@
     <div class="ui message success" th:if="${flagChiusura==1}">
         <i class="close icon"></i>
         <p>Hai chiuso correttamente la commissione <span th:text="${supergruppo.name}"></span> </p>
+    </div>
+    <div class="ui message success" th:if="${flagNomina==1}">
+        <i class="close icon"></i>
+        <p>Hai nominato correttamente <span th:text="${responsabile.nome}"></span> <span th:text="${responsabile.cognome}"></span></p>
     </div>
 </div>
 </body>

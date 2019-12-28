@@ -177,11 +177,6 @@ public class GruppoServiceImpl implements GruppoService {
         return false;
     }
 
-    @Override
-    public boolean isCapogruppo(int idPersona) {
-        return findPersona(idPersona).getRuolo().equalsIgnoreCase("Capogruppo");
-    }
-
     /***
      * Ritorna la persona @{@link Persona} loggata nel sistema
      * @return persona
@@ -222,7 +217,6 @@ public class GruppoServiceImpl implements GruppoService {
     public void createCommissione(Commissione commissione, int idSupergruppo) {
         Gruppo gruppo = gruppoDAO.findById(idSupergruppo);
         gruppo.addCommissione(commissione);
-        gruppoDAO.save(gruppo);
         commissioneDAO.save(commissione);
     }
 
@@ -236,6 +230,20 @@ public class GruppoServiceImpl implements GruppoService {
         return consiglioDidatticoDAO.findBySupergruppo_id(idSupergruppo);
     }
 
+    @Override
+    public void nominaResponsabile(int idPersona, int idCommissione){
+        Persona responsabile = personaDAO.findById(idPersona);
+        Commissione commissione = commissioneDAO.findById(idCommissione);
+        commissione.addPersona(responsabile);
+        commissione.setResponsabile(responsabile);
+        personaDAO.save(responsabile);
+        commissioneDAO.save(commissione);
+    }
+
+    @Override
+    public Gruppo findGruppoByCommissione(int idCommissione) {
+        return gruppoDAO.findByCommissioni_id(idCommissione);
+    }
 
 
 }

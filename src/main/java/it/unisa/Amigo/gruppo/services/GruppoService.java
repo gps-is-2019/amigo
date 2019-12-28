@@ -21,10 +21,11 @@ public interface GruppoService {
     void addMembro(Persona persona, Supergruppo supergruppo);
     void removeMembro(Persona persona, Supergruppo supergruppo);
     boolean isResponsabile(int idPersona, int idSupergruppo);
-    boolean isCapogruppo(int idPersona);
     Persona getAuthenticatedUser();
     List<Commissione> findAllCommissioniByGruppo(int idGruppo);
     List<Persona> findAllMembriInGruppoNoCommissione(int idSupergruppo);
     void closeCommissione(int idSupergruppo);
     void createCommissione(Commissione commissione, int idSupergruppo);
+    void nominaResponsabile(int idPersona, int idCommissione);
+    Gruppo findGruppoByCommissione(int idCommissione);
 }

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:include="/fragments/fragments.html :: head">
     <title id="pageTitle">Amigo|Dettagli gruppo</title>
 </head>
@@ -63,7 +62,7 @@
                 </tbody>
             </table>
             <!--TODO Cambiare con capogruppo-->
-            <a th:if="${isCapogruppo==true}"th:href="@{'/gruppi/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
+            <a th:if="${isCapogruppo==true}"th:href="@{'/gruppi/{id}/commissioni/create'( id=${supergruppo.id})}" class="ui primary button">
                 Crea Commissione
             </a>
         </div>

@@ -15,10 +15,11 @@ import java.io.Serializable;
 public class Commissione extends Supergruppo implements Serializable {
 
     private final long serialVersionUID = 17L;
+    private String descrizione;
 
-
-    public Commissione(String name, String type, boolean state){
+    public Commissione(String name, String type, boolean state, String descrizione){
         super(name, type, state);
+        this.descrizione = descrizione;
     }
 
     @ManyToOne
