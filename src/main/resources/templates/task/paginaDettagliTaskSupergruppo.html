@@ -3,7 +3,7 @@
 <head>
 
     <head th:include="/fragments/fragments.html :: head">
-        <title id="pageTitle">Amigo|I miei gruppi</title>
+        <title id="pageTitle">Amigo|Dettagli Task</title>
     </head>
 </head>
 <body>
@@ -47,7 +47,9 @@
                 > Accetta </a>
             </td>
             <td>
-                <a class="ui primary button"> Modifica</a>
+                <a class="ui primary button"
+                   th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modifica' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
+                > Modifica</a>
             </td>
             <td colspan="1">
                 <a class="ui red button"
@@ -66,6 +68,21 @@
     </tbody>
 </table>
 </div>
-
+<div class="ui message success" th:if="${flagAzione==1}">
+    <i class="close icon"></i>
+    <p>Hai Approvato il Task </p>
+</div>
+<div class="ui message warning" th:if="${flagAzione==2}">
+    <i class="close icon"></i>
+    <p>Hai Respinto il Task </p>
+</div>
+<script>$('.message .close')
+    .on('click', function() {
+        $(this)
+            .closest('.message')
+            .transition('fade')
+        ;
+    })
+;</script>
 </body>
 </html>

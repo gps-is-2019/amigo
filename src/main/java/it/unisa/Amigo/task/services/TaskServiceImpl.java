@@ -25,12 +25,6 @@ public class TaskServiceImpl implements TaskService
 
 
 
-    //TODO va cambiato
-//    @Override
-//    public User getAssegnatarioTask(int id) {
-//        return null;
-//    }
-
     /***
      * Ritorna l'user @{@link Persona} incaricato del Task @{@link Task}
      * @param id del task assegnato
@@ -51,7 +45,7 @@ public class TaskServiceImpl implements TaskService
     @Override
     public Documento getDocumentoTask(int id) {
         return null;
-    }
+    } //TODO
 
     /***
      * Aggiunge un documento @{@link Documento} al Task @{@link Task}
@@ -64,7 +58,7 @@ public class TaskServiceImpl implements TaskService
         return null;
     }
 
-    //da cambiare nell'odd
+
     /***
      * Definisce un nuovo Task @{@link Task}
      * @param descrizione del nuovo task
@@ -108,13 +102,6 @@ public class TaskServiceImpl implements TaskService
     }
 
     //TODO da aggiornare su odd da Supergruppo supergruppo ad int idSupergruppo
-//    @Override
-//    public List<Task> visualizzaTaskSuperGruppo(Supergruppo supergruppo) {
-//
-//        List<Task> ris = taskDAO.findAllBysupergruppo_id(1);
-//        return ris;
-//    }
-
     /***
      * Ritorna la lista di task @{@link Task} del supergruppo @{@link Supergruppo} del supergruppo passato
      * @param idSupergruppo di cui si vogliono visualizzare i task
@@ -127,18 +114,6 @@ public class TaskServiceImpl implements TaskService
         return ris;
     }
 
-    //TODO cambiato in getById
-    /***
-     * Ritorna la lista di task @{@link Task} cercati tramite un id
-     * @param id del task
-     * @return lista di task
-     */
-  //  @Override
-  //  public List<Task> searchTaskById(int id) { //Da cambiare
-  //      return null;
-  //  }
-
-
     /***
      * Ritorna il task @{@link Task} corrispondente dall'id cercato
      * @param id del task
@@ -150,7 +125,10 @@ public class TaskServiceImpl implements TaskService
         return ris;
     }
 
-
+    /***
+     * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in approvato
+     * @param idTask
+     */
     @Override
     public void accettazioneTask(int idTask) {
         Task task = taskDAO.findById(idTask);
@@ -158,17 +136,14 @@ public class TaskServiceImpl implements TaskService
         taskDAO.save(task);
     }
 
+    /***
+     * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in respinto
+     * @param idTask
+     */
     @Override
     public void rifiutoTask(int idTask) {
         Task task = taskDAO.findById(idTask);
         task.setStato("respinto");
         taskDAO.save(task);
-    }
-
-    @Override
-    public void addTask(Task newTask) {
-        taskDAO.save(newTask);
-
-
     }
 }
