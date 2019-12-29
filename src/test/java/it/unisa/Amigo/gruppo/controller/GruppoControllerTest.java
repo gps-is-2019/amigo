@@ -130,7 +130,7 @@ class GruppoControllerTest {
                 .andExpect(model().attribute("personaLoggata",expectedPersona1.getId()))
                 .andExpect(model().attribute("supergruppo", expectedSupergruppo))
                 .andExpect(model().attribute("persone", expectedPersone))
-                .andExpect(view().name("gruppo/aggiunta-membro"));
+                .andExpect(view().name("gruppo/aggiunta_membro"));
     }
 
     @Test
@@ -150,7 +150,7 @@ class GruppoControllerTest {
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}",expectedSupergruppo.getId(), expectedPersona.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(view().name("gruppo/aggiunta-membro"));
+                .andExpect(view().name("gruppo/aggiunta_membro"));
 
     }
 
@@ -345,7 +345,7 @@ class GruppoControllerTest {
                 .andExpect(model().attribute("persone", persone))
                 .andExpect(model().attribute("supergruppo", expectedCommissione))
                 .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
-                .andExpect(view().name("gruppo/aggiunta-membro-commissione"));
+                .andExpect(view().name("gruppo/aggiunta_membro_commissione"));
 
     }
 
