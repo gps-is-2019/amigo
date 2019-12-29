@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Questa classe rappresenta l'oggetto di dominio "Dipartimento"
+ * Questa classe rappresenta l'oggetto di dominio "Task"
  */
 @Entity
 @Data

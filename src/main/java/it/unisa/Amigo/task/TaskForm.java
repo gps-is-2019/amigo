@@ -14,6 +14,9 @@ import java.util.Date;
 public class TaskForm {
 
     @NonNull
+    private int id;
+
+    @NonNull
     private String descrizione;
 
     @NonNull
@@ -26,7 +29,6 @@ public class TaskForm {
     private String stato;
 
     @NonNull
-    private String idPersona;
-
+    private int idPersona;
 
 }

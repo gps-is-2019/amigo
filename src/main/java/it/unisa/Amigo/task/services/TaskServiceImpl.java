@@ -1,7 +1,7 @@
 package it.unisa.Amigo.task.services;
 
-
-import it.unisa.Amigo.documento.domain.Documento;
+import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.consegna.domain.Documento;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.task.dao.TaskDAO;
@@ -25,12 +25,6 @@ public class TaskServiceImpl implements TaskService
 
 
 
-    //TODO va cambiato
-//    @Override
-//    public User getAssegnatarioTask(int id) {
-//        return null;
-//    }
-
     /***
      * Ritorna l'user @{@link Persona} incaricato del Task @{@link Task}
      * @param id del task assegnato
@@ -38,8 +32,9 @@ public class TaskServiceImpl implements TaskService
      */
     @Override
     public Persona getAssegnatarioTask(int id) {
-
-        return null;
+        Task task= taskDAO.findById(id);
+        Persona result = task.getPersona();
+        return result;
     }
 
     /***
@@ -50,7 +45,7 @@ public class TaskServiceImpl implements TaskService
     @Override
     public Documento getDocumentoTask(int id) {
         return null;
-    }
+    } //TODO
 
     /***
      * Aggiunge un documento @{@link Documento} al Task @{@link Task}
@@ -60,10 +55,9 @@ public class TaskServiceImpl implements TaskService
      */
     @Override
     public Boolean addDocumentoTask(Documento documento, int idTask) {
-
         return null;
-
     }
+
 
     /***
      * Definisce un nuovo Task @{@link Task}
@@ -72,12 +66,20 @@ public class TaskServiceImpl implements TaskService
      * @param nome del nuovo task
      * @param stato del nuovo task
      * @param supergruppo di appartenenza del task da definire
-     * @param email del responsabile del task che si sta definendo
+     * @param persona responsabile del task che si sta definendo
      * @return Boolean indicante il successo o il fallimento dell'azione
      */
     @Override
-    public Boolean definizioneTaskSupergruppo(String descrizione, Date data, String nome, String stato, Supergruppo supergruppo, String email) {
-        return null;
+    public Boolean definizioneTaskSupergruppo(String descrizione, Date data, String nome, String stato, Supergruppo supergruppo, Persona persona){
+        Task task = new Task(descrizione, data, nome, stato);
+        task.setSupergruppo(supergruppo);
+        task.setPersona(persona);
+        try {
+            taskDAO.save(task);
+        } catch (Exception ex){
+           return false;
+        };
+        return true;
     }
 
     //TODO va cambiato
@@ -100,13 +102,6 @@ public class TaskServiceImpl implements TaskService
     }
 
     //TODO da aggiornare su odd da Supergruppo supergruppo ad int idSupergruppo
-//    @Override
-//    public List<Task> visualizzaTaskSuperGruppo(Supergruppo supergruppo) {
-//
-//        List<Task> ris = taskDAO.findAllBysupergruppo_id(1);
-//        return ris;
-//    }
-
     /***
      * Ritorna la lista di task @{@link Task} del supergruppo @{@link Supergruppo} del supergruppo passato
      * @param idSupergruppo di cui si vogliono visualizzare i task
@@ -119,19 +114,6 @@ public class TaskServiceImpl implements TaskService
         return ris;
     }
 
-    //TODO
-    /***
-     * Ritorna la lista di task @{@link Task} cercati tramite un id
-     * @param id del task
-     * @return lista di task
-     */
-    //TODO delete
-//    @Override
-//    public List<Task> searchTaskById(int id) { //Da cambiare
-//        return null;
-//    }
-//
-
     /***
      * Ritorna il task @{@link Task} corrispondente dall'id cercato
      * @param id del task
@@ -143,22 +125,25 @@ public class TaskServiceImpl implements TaskService
         return ris;
     }
 
-
+    /***
+     * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in approvato
+     * @param idTask
+     */
     @Override
     public void accettazioneTask(int idTask) {
-        taskDAO.updateStato(idTask, "approvato");
+        Task task = taskDAO.findById(idTask);
+        task.setStato("approvato");
+        taskDAO.save(task);
     }
 
+    /***
+     * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in respinto
+     * @param idTask
+     */
     @Override
     public void rifiutoTask(int idTask) {
-        taskDAO.updateStato(idTask, "respinto");
-
-    }
-
-    @Override
-    public void addTask(Task newTask) {
-        taskDAO.save(newTask);
-
-
+        Task task = taskDAO.findById(idTask);
+        task.setStato("respinto");
+        taskDAO.save(task);
     }
 }

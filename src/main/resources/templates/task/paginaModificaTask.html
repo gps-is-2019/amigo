@@ -3,34 +3,36 @@
 <head>
 
     <head th:include="/fragments/fragments.html :: head">
-        <title id="pageTitle">Amigo|Definizione Task</title>
+        <title id="pageTitle">Amigo|Modifica Task</title>
     </head>
 </head>
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
-<h1 class="ui header" align="center">I task del gruppo : </h1>
+<h1 class="ui header" align="center">Modifica <span th:text="${taskForm.nome}"></span>: </h1>
 
-<!--da allineare al centro -->
+<!--TODO -->
 <form
         class="ui form text container"
         method="post"
         th:action="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/creazioneTaskSupergruppo'( idSupergruppo=${idSupergruppo})}"
-        th:object="${taskForm}"
->
+        th:object="${taskForm}">
 
     <div class="field">
+        <input type="hidden" placeholder="${taskForm.id}" path="id" th:field="*{id}">
+    </div>
+    <div class="field">
         <label>Nome task</label>
-<!--        <input type="text" name="first-name" placeholder="First Name" path="nome">-->
-        <input type="text" placeholder="Nome" path="nome" th:field="*{nome}">
+        <!--        <input type="text" name="first-name" placeholder="First Name" path="nome">-->
+        <input type="text" th:value="${taskForm.nome}" path="nome" th:field="*{nome}">
     </div>
     <div class="field">
         <label>Data scadenza</label>
-        <input type="date" name="Date" placeholder="" path="dataScadenza" th:field="*{dataScadenza}">
+        <input type="date" name="${taskForm.dataScadenza}" th:value="${taskForm.descrizione}" path="dataScadenza" th:field="*{dataScadenza}">
     </div>
     <div class="field">
         <div class="field">
             <label>Descrizione</label>
-            <textarea placeholder="descrizione task" path="descrizione" th:field="*{descrizione}"></textarea>
+            <textarea placeholder="${taskForm.descrizione}" path="descrizione" th:field="*{descrizione}"></textarea>
         </div>
     </div>
 
@@ -46,15 +48,10 @@
         </thead>
         <tbody>
         <th:block th:each="persona : ${persone}">
-           <tr class="center aligned">
-               <td>
-
-<!--                   <form:radiobuttons path="p" th:value="persona.nome" items="${persone}">-->
-<!--                       <form:radiobutton path="pp" th:value="persona.nome"></form:radiobutton>-->
-<!--                   </form:radiobuttons>-->
-<!--                   <form:radiobutton path="pp" th:value="persona.nome"></form:radiobutton>-->
-                   <input type="radio" th:name="idPersona" path="idPersona" th:value="${persona.id}">
-               </td>
+            <tr class="center aligned">
+                <td>
+                    <input type="radio" th:name="idPersona" path="idPersona" id="${persona.id}" th:value="${persona.id}"  th:checked="${persona.id==taskForm.idPersona}">
+                </td>
                 <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.cognome}"></td>
                 <td th:text="${persona.user.getEmail()}"></td>
@@ -62,13 +59,13 @@
         </th:block>
         </tbody>
     </table>
-    <button class="ui primary button" type="submit">Crea Task</button>
+    <button class="ui primary button" type="submit">Modifica Task</button>
 </form>
 
 </table>
 <div class="ui message success" th:if="${flagCreazione==true}">
     <i class="close icon"></i>
-    <p>Hai creato correttamente il Task </p>
+    <p>Hai modificato correttamente il Task </p>
 </div>
 <script>$('.message .close')
     .on('click', function() {
@@ -80,9 +77,5 @@
 ;</script>
 
 </div>
-
-
-
-
 </body>
 </html>
