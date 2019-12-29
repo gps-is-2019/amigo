@@ -46,8 +46,6 @@ public class RepositoryController {
         Documento documento = documentoService.downloadDocumentoFromRepository(idDocument);
         Resource resource = documentoService.loadAsResource(documento);
 
-        System.out.println(resource);
-
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(documento.getFormat()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")

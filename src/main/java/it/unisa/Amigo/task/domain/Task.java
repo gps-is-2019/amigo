@@ -8,7 +8,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Questa classe rappresenta l'oggetto di dominio "Dipartimento"
@@ -29,7 +29,7 @@ public class Task implements Serializable {
     private String descrizione;
 
     @NonNull
-    private Date dataScadenza;
+    private LocalDate dataScadenza;
 
     @NonNull
     private String nome;

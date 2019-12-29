@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -94,7 +95,7 @@ public class AmigoApplication {
 
 				//TODO add task
 
-				Task taskprova = new Task("t1" , new Date(), "task1" , "incompleto");
+				Task taskprova = new Task("t1" , LocalDate.now(), "task1" , "incompleto");
 
 				taskprova.setPersona(ferrucci);
 				ferrucci.addTask(taskprova);
@@ -103,7 +104,7 @@ public class AmigoApplication {
 				GAQD.addTask(taskprova);
 
 
-				Task taskprova2 = new Task("t2" , new Date() , "task2" , "");
+				Task taskprova2 = new Task("t2" , LocalDate.now() , "task2" , "");
 				taskprova2.setPersona(scarano);
 				scarano.addTask(taskprova2);
 

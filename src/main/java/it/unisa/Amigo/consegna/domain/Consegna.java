@@ -7,7 +7,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -22,7 +22,7 @@ public class Consegna implements Serializable {
     private int id;
 
     @NonNull
-    private Date dataConsegna;
+    private LocalDate dataConsegna;
 
     @NonNull
     private String stato;

@@ -62,10 +62,9 @@ public class DocumentoServiceImpl implements DocumentoService{
         }
 
         documento.setPath("src/main/resources/documents/" + filename);
-
         documento.setDataInvio(LocalDate.now());
         documento.setNome(file.getOriginalFilename());
-        documento.setInRepository(true);
+        documento.setInRepository(false);
         documento.setFormat(file.getContentType());
         return documento;
     }
@@ -77,16 +76,16 @@ public class DocumentoServiceImpl implements DocumentoService{
      * @return true se la persona è l'assegnatario del task, false altrimenti
      */
     @Override
-    public boolean addDocToTask(MultipartFile file, Task task) {
+    public Documento addDocToTask(MultipartFile file, Task task) {
         if(gruppoService.visualizzaPersonaLoggata().getId() == task.getPersona().getId()){
             Documento documento = storeDocumento(file);
             documento.setTask(task);
             task.setDocumento(documento);
             documentoDAO.save(documento);
             //salvare il cambiamento di task
-            return true;
+            return documento;
         }
-        return false;
+        return null;
     }
 
     /**
@@ -96,16 +95,16 @@ public class DocumentoServiceImpl implements DocumentoService{
      * @return true se la persona è il mittente della consegna, false altrimenti
      */
     @Override
-    public boolean addDocToConsegna(MultipartFile file, Consegna consegna) {
+    public Documento addDocToConsegna(MultipartFile file, Consegna consegna) {
         if(gruppoService.visualizzaPersonaLoggata().getId() == consegna.getMittente().getId()){
             Documento documento = storeDocumento(file);
             documento.setConsegna(consegna);
             consegna.setDocumento(documento);
             documentoDAO.save(documento);
             //salvare il cambiamento di consegna
-            return true;
+            return documento;
         }
-        return false;
+        return null;
     }
 
     /**
@@ -113,20 +112,21 @@ public class DocumentoServiceImpl implements DocumentoService{
      * @param file per creare il documento
      */
     @Override
-    public void addDocToRepository(MultipartFile file) {
-        int flag = 0;
+    public Documento addDocToRepository(MultipartFile file) {
+        boolean isPqa = false;
         Set<Role> roles = gruppoService.visualizzaPersonaLoggata().getUser().getRoles();
+
         for(Role role: roles)
             if(role.getName().equals(Role.PQA_ROLE))
-                flag = 1;
+                isPqa = true;
 
-        if(flag==1){
-
+        if(isPqa) {
             Documento documento = storeDocumento(file);
+            documento.setInRepository(true);
             documentoDAO.save(documento);
+            return documento;
         }
-
-        //eccezione
+        return null;
     }
 
     /**
@@ -158,8 +158,9 @@ public class DocumentoServiceImpl implements DocumentoService{
     @Override
     public Documento downloadDocumentoFromRepository(int idDocumento) {
         Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
-        if (personaLoggata != null)
-            return documentoDAO.findByIdAndInRepository(idDocumento,true);
+        if (personaLoggata != null) {
+            return documentoDAO.findByIdAndInRepository(idDocumento, true);
+        }
         else
             return null;
     }
@@ -174,7 +175,7 @@ public class DocumentoServiceImpl implements DocumentoService{
         Optional<Documento> documento = documentoDAO.findById(idDocumento);
         Consegna consegna = documento.get().getConsegna();
         Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
-        if(personaLoggata.getId()==consegna.getMittente().getId() || personaLoggata.getId() == consegna.getDestinatario().getId())
+        if((personaLoggata.getId()==consegna.getMittente().getId()) || (personaLoggata.getId() == consegna.getDestinatario().getId()))
             return documento.get();
         return null;
         //eccezione
