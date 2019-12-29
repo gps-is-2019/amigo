@@ -50,7 +50,7 @@ public class Task implements Serializable {
     @EqualsAndHashCode.Exclude
     private Persona persona;
 
-   @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Documento documento;

@@ -125,11 +125,12 @@ public class TaskServiceImpl implements TaskService
      * @param id del task
      * @return lista di task
      */
-    @Override
-    public List<Task> searchTaskById(int id) { //Da cambiare
-        return null;
-    }
-
+    //TODO delete
+//    @Override
+//    public List<Task> searchTaskById(int id) { //Da cambiare
+//        return null;
+//    }
+//
 
     /***
      * Ritorna il task @{@link Task} corrispondente dall'id cercato

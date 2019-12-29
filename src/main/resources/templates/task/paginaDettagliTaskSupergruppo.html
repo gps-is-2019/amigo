@@ -47,7 +47,9 @@
                 > Accetta </a>
             </td>
             <td>
-                <a class="ui primary button"> Modifica</a>
+                <a class="ui primary button"
+                   th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modifica' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
+                > Modifica</a>
             </td>
             <td colspan="1">
                 <a class="ui red button"

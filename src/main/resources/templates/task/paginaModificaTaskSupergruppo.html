@@ -29,8 +29,8 @@
 
     <div class="field">
         <label>Nome task</label>
-<!--        <input type="text" name="first-name" placeholder="First Name" path="nome">-->
-        <input type="text" placeholder="First Name" path="nome" th:field="*{nome}">
+        <!--        <input type="text" name="first-name" placeholder="First Name" path="nome">-->
+        <input type="text" placeholder="First Name" path="nome" th:field="*{nome}" th:value="${taskDaModificare.nome}">
     </div>
     <div class="field">
         <label>Data scadenza</label>
@@ -50,9 +50,9 @@
             <input type="text" placeholder="Date/Time">
         </div>
     </div>
-<!--    <script>-->
-<!--        $('#example1').calendar();-->
-<!--    </script>-->
+    <!--    <script>-->
+    <!--        $('#example1').calendar();-->
+    <!--    </script>-->
 
 
 
@@ -72,15 +72,15 @@
         </thead>
         <tbody>
         <th:block th:each="persona : ${persone}">
-           <tr class="center aligned">
-               <td>
+            <tr class="center aligned">
+                <td>
 
-<!--                   <form:radiobuttons path="p" th:value="persona.nome" items="${persone}">-->
-<!--                       <form:radiobutton path="pp" th:value="persona.nome"></form:radiobutton>-->
-<!--                   </form:radiobuttons>-->
-<!--                   <form:radiobutton path="pp" th:value="persona.nome"></form:radiobutton>-->
-                   <input type="radio" th:name="idPersona" path="idPersona" th:value="${persona.id}">
-               </td>
+                    <!--                   <form:radiobuttons path="p" th:value="persona.nome" items="${persone}">-->
+                    <!--                       <form:radiobutton path="pp" th:value="persona.nome"></form:radiobutton>-->
+                    <!--                   </form:radiobuttons>-->
+                    <!--                   <form:radiobutton path="pp" th:value="persona.nome"></form:radiobutton>-->
+                    <input type="radio" th:name="idPersona" path="idPersona" th:value="${persona.id}">
+                </td>
                 <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.cognome}"></td>
                 <td th:text="${persona.user.getEmail()}"></td>

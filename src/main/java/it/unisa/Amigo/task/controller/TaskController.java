@@ -177,6 +177,17 @@ public class TaskController {
         return "dashboard";
     }
 
+    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modifica")
+    String modificaTaks(Model model
+            , @PathVariable(name = "idSupergruppo") int idSupergruppo
+            , @PathVariable(name = "idTask") int idTask)
+    {
+        Task taskDaModificare = taskService.getTaskById(idTask);
+        model.addAttribute("taskDaModificare" , taskDaModificare);
+
+        return "task/paginaModificaTaskSupergruppo";
+    }
+
 
 
 }

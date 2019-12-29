@@ -36,7 +36,7 @@ public interface TaskService {
 
     //List<Documenti> visualizzaDocumentiApprovati(Supergruppo supergruppo);
     //TODO da vedere se va cambiato così -> anche in serviceImpl
-    List<Task> searchTaskById(int id);
+    //List<Task> searchTaskById(int id);
     Task getTaskById(int id);
 
     void accettazioneTask(int idTask);
