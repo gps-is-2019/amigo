@@ -27,7 +27,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
+/**
+ * Questa classe implementa i metodi  per la logica di Business del sottositema "Documento"
+ */
 @Service
 @RequiredArgsConstructor
 public class DocumentoServiceImpl implements DocumentoService{
@@ -35,6 +37,7 @@ public class DocumentoServiceImpl implements DocumentoService{
     @Autowired
     private final DocumentoDAO documentoDAO;
     private final GruppoService gruppoService;
+
 
     private Documento storeDocumento(MultipartFile file) {
         Documento documento = new Documento();
@@ -67,6 +70,12 @@ public class DocumentoServiceImpl implements DocumentoService{
         return documento;
     }
 
+    /**
+     *Consente di creare un documento @{@link Documento}e aggiungerlo a un task @{@link Task}
+     * @param file per creare il documento
+     * @param task in cui aggiungere il documento
+     * @return true se la persona è l'assegnatario del task, false altrimenti
+     */
     @Override
     public boolean addDocToTask(MultipartFile file, Task task) {
         if(gruppoService.visualizzaPersonaLoggata().getId() == task.getPersona().getId()){
@@ -80,6 +89,12 @@ public class DocumentoServiceImpl implements DocumentoService{
         return false;
     }
 
+    /**
+     **Consente di creare un documento @{@link Documento}e aggiungerlo a una consegna @{@link Consegna}
+     * @param file per creare il documento
+     * @param consegna in cui aggiungere il documento
+     * @return true se la persona è il mittente della consegna, false altrimenti
+     */
     @Override
     public boolean addDocToConsegna(MultipartFile file, Consegna consegna) {
         if(gruppoService.visualizzaPersonaLoggata().getId() == consegna.getMittente().getId()){
@@ -93,6 +108,10 @@ public class DocumentoServiceImpl implements DocumentoService{
         return false;
     }
 
+    /**
+     * Crea un documento @{@link Documento} e lo aggiunge alla repository d'ateneo
+     * @param file per creare il documento
+     */
     @Override
     public void addDocToRepository(MultipartFile file) {
         int flag = 0;
@@ -110,6 +129,11 @@ public class DocumentoServiceImpl implements DocumentoService{
         //eccezione
     }
 
+    /**
+     *
+     * @param documento
+     * @return
+     */
     public Resource loadAsResource(Documento documento) {
         try {
             Resource resource = new UrlResource(Paths.get(documento.getPath()).toUri());
@@ -126,6 +150,11 @@ public class DocumentoServiceImpl implements DocumentoService{
         }
     }
 
+    /**
+     * Ritorna un documento @{@link Documento} presente nella repository in base al suo id
+     * @param idDocumento documento che si vuole scaricare
+     * @return documento
+     */
     @Override
     public Documento downloadDocumentoFromRepository(int idDocumento) {
         Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
@@ -135,6 +164,11 @@ public class DocumentoServiceImpl implements DocumentoService{
             return null;
     }
 
+    /**
+     * Ritorna un documento @{@link Documento} di una consegna a patto che la persona loggata sia il mittente o il destinatario
+     * @param idDocumento documento che si vuole scaricare
+     * @return documento
+     */
     @Override
     public Documento downloadDocumentoFromConsegna(int idDocumento) {
         Optional<Documento> documento = documentoDAO.findById(idDocumento);
@@ -146,6 +180,11 @@ public class DocumentoServiceImpl implements DocumentoService{
         //eccezione
     }
 
+    /**
+     * Ritorna un documento @{@link Documento} di un task a patto che la persona loggata sia colui che abbia assegnato il task
+     * @param idDocumento documento che si vuole scaricare
+     * @return documento
+     */
     @Override
     public Documento downloadDocumentoFromTask(int idDocumento) {
         Optional<Documento> documento = documentoDAO.findById(idDocumento);
@@ -157,6 +196,11 @@ public class DocumentoServiceImpl implements DocumentoService{
         return null;
     }
 
+    /**
+     * Ritorna una lista di documenti @{@link Documento} presenti nella repository dove il nome di ciascun documento contine la stringa passata come parametro
+     * @param nameDocumento stringa da ricercare nel nome dei documenti
+     * @return lista di documenti
+     */
     @Override
     public List<Documento> searchDocumentoFromRepository(String nameDocumento) {
        return documentoDAO.findAllByInRepositoryAndNomeContains(true, nameDocumento);
