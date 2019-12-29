@@ -29,7 +29,9 @@
                 <td th:text="${task.stato}"></td>
                 <td>
 <!--                    <a class="ui primary button" th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}'( idSupergruppo=${idSupergruppo} , idTask=${task.id} ) }">Dettagli</a>-->
-                    <a class="ui primary button">Dettagli</a>
+                    <a class="ui primary button"
+                    th:href="@{'/taskPersonali/dettagliTask{idTask}'(idTask=${task.id}) }"
+                    >Dettagli</a>
                 </td>
             </tr>
         </th:block>

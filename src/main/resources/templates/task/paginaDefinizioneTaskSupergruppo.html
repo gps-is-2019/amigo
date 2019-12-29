@@ -70,6 +70,10 @@
     <i class="close icon"></i>
     <p>Hai creato correttamente il Task </p>
 </div>
+<div class="ui message negative" th:if="${flagCreazione==false}">
+    <i class="close icon"></i>
+    <p>Non hai creato correttamente il Task </p>
+</div>
 <script>$('.message .close')
     .on('click', function() {
         $(this)

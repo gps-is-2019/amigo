@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -94,7 +95,11 @@ public class AmigoApplication {
 
 				//TODO add task
 
-				Task taskprova = new Task("t1" , new Date(), "task1" , "in valutazione");
+				Date tmpDate = new Date();
+				SimpleDateFormat formatter=new SimpleDateFormat("dd-MM-yyyy");
+				tmpDate = formatter.parse("1-1-2019");
+
+				Task taskprova = new Task("t1" , tmpDate, "task1" , "in valutazione");
 
 				taskprova.setPersona(ferrucci);
 				ferrucci.addTask(taskprova);
@@ -103,7 +108,7 @@ public class AmigoApplication {
 				GAQD.addTask(taskprova);
 
 
-				Task taskprova2 = new Task("t2" , new Date() , "task2" , "approvato");
+				Task taskprova2 = new Task("t2" , tmpDate , "task2" , "approvato");
 				taskprova2.setPersona(scarano);
 				scarano.addTask(taskprova2);
 

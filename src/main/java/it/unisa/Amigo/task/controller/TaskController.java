@@ -31,6 +31,9 @@ public class TaskController {
     private PersonaDAO personaDAO;
 
 
+
+
+
     @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}")
     public String visualizzaListaTaskSupergruppo(Model model, @PathVariable(name = "idSupergruppo") int idSupergruppo) {
         model.addAttribute("idSupergruppo" , Integer.toString(idSupergruppo) );
@@ -72,15 +75,49 @@ public class TaskController {
 
         System.out.println(taskForm.toString());
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
-        Date tmpData = formatter.parse(taskForm.getDataScadenza());
+
+        Date tmpData = null;
+
+        System.out.println("-------------"+ taskForm.getDataScadenza());
+        if(taskForm.getDataScadenza().equals(""))
+        {
+            tmpData = formatter.parse("1-1-2020");
+        }
+        else
+        {
+            tmpData= formatter.parse(taskForm.getDataScadenza());
+        }
+
+
+
+        //Date tmpData = formatter.parse(taskForm.getDataScadenza());
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
         Persona persona = gruppoService.findPersona( taskForm.getIdPersona() );
+        if
+        (
+                ( (taskForm.getNome()==null) || (taskForm.getNome().equals("")) )
+                || ( (taskForm.getDataScadenza()==null) || (taskForm.getDataScadenza().equals("")) )
+                || ( (taskForm.getDescrizione()==null) || (taskForm.getDescrizione().equals("")) )
+                || ( (taskForm.getIdPersona() < 0 ) )
+
+
+        )
+        {
+            List<Persona> persone = gruppoService.visualizzaListaMembriSupergruppo(idSupergruppo);
+            model.addAttribute("persone", persone);
+            model.addAttribute("flagCreazione" , false);
+            return "task/paginaDefinizioneTaskSupergruppo";
+
+        }
+
         Boolean flagCreazione = taskService.definizioneTaskSupergruppo(taskForm.getDescrizione(), tmpData, taskForm.getNome(), "incompleto", supergruppo, persona);
+
         List<Persona> persone = gruppoService.visualizzaListaMembriSupergruppo(idSupergruppo);
-        model.addAttribute("persone" , persone);
-        model.addAttribute("flagCreazione",flagCreazione);
+        model.addAttribute("persone", persone);
+        model.addAttribute("flagCreazione", flagCreazione);
         //return "redirect:task/paginaVisualizzaListaTaskSupergruppo";
         return "task/paginaDefinizioneTaskSupergruppo";
+
     }
 
     //TODO  da vedere come prendere correttamente l'utente corrente lo sto prendendo tramite grupposervice
@@ -105,23 +142,6 @@ public class TaskController {
 
         return "task/paginaDettagliTaskSupergruppo";
     }
-
-
-    @GetMapping("/taskPersonali")
-    public String visualizzaListaTaskPersonali(Model model) {
-
-        //Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
-        //model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
-        //TODO da vedere come prendere l'utente corrente
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Persona personaLoggata = personaDAO.findByUser_email(auth.getName());
-        List<Task> ris = taskService.visualizzaTaskUser(personaLoggata.getId());
-        System.out.println(ris);
-        model.addAttribute("listaTask" , ris);
-
-        return "task/paginaVisualizzaListaTaskPersonali";
-    }
-
 
 
     @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/approvazione")
@@ -164,6 +184,9 @@ public class TaskController {
     String modificaTask(@ModelAttribute TaskForm taskForm, Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
             , @PathVariable(name = "idTask") int idTask) {
+
+        model.addAttribute("idTask" , idTask);
+
         Task task = taskService.getTaskById(idTask);
         taskForm.setId(task.getId());
         taskForm.setNome(task.getNome());
@@ -181,8 +204,91 @@ public class TaskController {
         model.addAttribute("persone" , persone);
         System.out.println(persone.toString());
 
+        model.addAttribute("date", taskForm.getDataScadenza());
+
 
         return "task/paginaModificaTask";
     }
+
+
+    //@RequestMapping(value="/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/modificaTaskSupergruppo", method=RequestMethod.POST)
+    @RequestMapping(value = "/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modificaTaskSupergruppo")
+    public String saveModifyTask(@ModelAttribute TaskForm taskForm , Model model, @PathVariable(name = "idSupergruppo") int idSupergruppo) throws ParseException {
+
+
+        System.out.println(taskForm.toString());
+
+        Task taskToUpdate = taskService.getTaskById(taskForm.getId());
+
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
+        Date tmpData = null;
+
+        System.out.println("-------------"+ taskForm.getDataScadenza());
+        if(taskForm.getDataScadenza().equals(""))
+        {
+            tmpData = formatter.parse(taskToUpdate.getDataScadenza().toString());
+        }
+        else
+        {
+            tmpData= formatter.parse(taskForm.getDataScadenza());
+        }
+
+
+        taskToUpdate.setDataScadenza(tmpData);
+
+        Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
+
+        taskToUpdate.setSupergruppo(supergruppo);
+
+        Persona persona = gruppoService.findPersona( taskForm.getIdPersona() );
+        taskToUpdate.setPersona(persona);
+
+        //Boolean flagCreazione = taskService.definizioneTaskSupergruppo(taskForm.getDescrizione(), tmpData, taskForm.getNome(), "incompleto", supergruppo, persona);
+
+        //List<Persona> persone = gruppoService.visualizzaListaMembriSupergruppo(idSupergruppo);
+        //model.addAttribute("persone" , persone);
+
+        taskToUpdate.setNome(taskForm.getNome());
+        taskToUpdate.setDescrizione(taskForm.getDescrizione());
+
+        taskService.updateTask(taskToUpdate);
+        //model.addAttribute("flagCreazione",flagCreazione);
+
+        model.addAttribute("task" , taskToUpdate);
+
+        //return "redirect:task/paginaVisualizzaListaTaskSupergruppo";
+        return "task/paginaDettagliTaskSupergruppo";
+    }
+
+
+
+
+    @GetMapping("/taskPersonali")
+    public String visualizzaListaTaskPersonali(Model model) {
+
+        //Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
+        //model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
+        //TODO da vedere come prendere l'utente corrente
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Persona personaLoggata = personaDAO.findByUser_email(auth.getName());
+        List<Task> ris = taskService.visualizzaTaskUser(personaLoggata.getId());
+        System.out.println(ris);
+        model.addAttribute("listaTask" , ris);
+
+        return "task/paginaVisualizzaListaTaskPersonali";
+    }
+
+
+    @GetMapping("/taskPersonali/dettagliTask{idTask}")
+    public String visualizzaDettagliTaskPersonali(Model model , @PathVariable(name = "idTask") int idTask) {
+        Task task = taskService.getTaskById(idTask);
+        model.addAttribute("task" , task);
+        return "task/paginaDettagliTaskPersonali";
+    }
+
+
+
+
+
 
 }

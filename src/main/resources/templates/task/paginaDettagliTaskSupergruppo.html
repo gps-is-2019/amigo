@@ -14,7 +14,7 @@
 <table class="ui celled table striped">
     <thead>
     <tr class="center aligned">
-        <th>Nome</th>
+        <th>Nome task</th>
         <th>Data scadenza</th>
         <th>Stato</th>
     </tr>
@@ -28,6 +28,14 @@
 <!--            <td th:if="isResponsabile == true">-->
 <!--                <a class="ui primary button" th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}'( idSupergruppo=${idSupergruppo} , idTask=${task.id} ) }">Dettagli</a>-->
 <!--            </td>-->
+        </tr>
+
+        <tr class="center aligned">
+            <th colspan="4" th:text="'Assegnatario'+' '+'task'"></th>
+        </tr>
+
+        <tr class="center aligned">
+            <td colspan="4" th:text="${task.persona.getNome()} +' '+ ${task.persona.getCognome()}"></td>
         </tr>
         <tr class="center aligned">
             <th colspan="4" th:text="Descrizione"></th>

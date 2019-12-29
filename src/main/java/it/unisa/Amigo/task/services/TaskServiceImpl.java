@@ -1,7 +1,7 @@
 package it.unisa.Amigo.task.services;
 
 import it.unisa.Amigo.autenticazione.domanin.User;
-import it.unisa.Amigo.consegna.domain.Documento;
+import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.task.dao.TaskDAO;
@@ -145,5 +145,11 @@ public class TaskServiceImpl implements TaskService
         Task task = taskDAO.findById(idTask);
         task.setStato("respinto");
         taskDAO.save(task);
+    }
+
+    @Override
+    public void updateTask(Task taskToUpdate) {
+        taskDAO.save(taskToUpdate);
+
     }
 }

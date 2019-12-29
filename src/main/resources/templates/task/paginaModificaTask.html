@@ -14,7 +14,7 @@
 <form
         class="ui form text container"
         method="post"
-        th:action="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/creazioneTaskSupergruppo'( idSupergruppo=${idSupergruppo})}"
+        th:action="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modificaTaskSupergruppo'( idSupergruppo=${idSupergruppo} , idTask=${idTask} )}"
         th:object="${taskForm}">
 
     <div class="field">
@@ -27,7 +27,7 @@
     </div>
     <div class="field">
         <label>Data scadenza</label>
-        <input type="date" name="${taskForm.dataScadenza}" th:value="${taskForm.descrizione}" path="dataScadenza" th:field="*{dataScadenza}">
+        <input type="date" name="${taskForm.dataScadenza}" th:value="${#dates.format(date, 'yyyy-MM-dd') }" path="dataScadenza" th:field="*{dataScadenza}">
     </div>
     <div class="field">
         <div class="field">
