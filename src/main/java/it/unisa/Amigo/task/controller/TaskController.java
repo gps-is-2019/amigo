@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Questa classe si occupa della logica di controllo del sottosistema task
+ * Questa classe si occupa della logica di controllo del sottosistema Task
  */
 @Controller
 public class TaskController {
@@ -46,7 +46,7 @@ public class TaskController {
     }
 
     /**
-     * permette di definire un task @{@link Task}
+     * Permette di definire un task @{@link Task}
      * @param taskForm contiene le informazioni da inserire nel task
      * @param model per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da definire appartine
@@ -65,7 +65,7 @@ public class TaskController {
     }
 
     /**
-     * permette di salvare il task @{@link Task}
+     * Permette di salvare il task @{@link Task}
      * @param taskForm contiene le informazioni da inserire nel task
      * @param model per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da salvare appartine
@@ -126,7 +126,7 @@ public class TaskController {
 
 
     /**
-     * permette di approvare un task @{@link Task}
+     * Permette di approvare un task @{@link Task}
      * @param model per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da approvare appartine
      * @param idTask identifica univocamente un task che si vuole approvare
@@ -150,7 +150,7 @@ public class TaskController {
 
 
     /**
-     * permette di rifiutare un task @{@link Task}
+     * Permette di rifiutare un task @{@link Task}
      * @param model per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da rifiutare appartine
      * @param idTask identifica univocamente un task che si vuole rifiutare
@@ -162,7 +162,6 @@ public class TaskController {
             , @PathVariable(name = "idTask") int idTask) {
         Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
-        System.out.println(personaLoggata.getNome() + "is responsabile = " + gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
 
         //TODO da vedere come prendere l'utente corrente
         model.addAttribute("idSupergruppo" , idSupergruppo );
@@ -174,7 +173,7 @@ public class TaskController {
     }
 
     /**
-     * permette di completare un task @{@link Task}
+     * Permette di completare un task @{@link Task}
      * @param model per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da completare  appartine
      * @param idTask identifica univocamente un task che si vuole completare
@@ -186,7 +185,6 @@ public class TaskController {
             , @PathVariable(name = "idTask") int idTask) {
         Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
-        System.out.println(personaLoggata.getNome() + "is responsabile = " + gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
 
         //TODO da vedere come prendere l'utente corrente
         model.addAttribute("idSupergruppo" , idSupergruppo );
@@ -198,7 +196,7 @@ public class TaskController {
 
 
     /**
-     * permette di modificare un task @{@link Task}
+     * Permette di modificare un task @{@link Task}
      * @param taskForm contiene le informazioni per modificare il task
      * @param model  per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da modificare  appartine
@@ -228,7 +226,7 @@ public class TaskController {
     }
 
     /**
-     * permette di salvare le modifiche apportante ad  un task @{@link Task}
+     * Permette di salvare le modifiche apportante ad  un task @{@link Task}
      * @param taskForm contiene le informazioni da salvare
      * @param model per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task modificato appartine  appartine
@@ -284,6 +282,22 @@ public class TaskController {
     public String visualizzaDettagliTaskPersonali(Model model , @PathVariable(name = "idTask") int idTask) {
         Task task = taskService.getTaskById(idTask);
         model.addAttribute("task" , task);
+        return "task/paginaDettagliTaskPersonali";
+    }
+
+    /**
+     * Permette di completare un task @{@link Task} personale
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idTask identifica univocamente un task che si vuole completare
+     * @return il path della pagina su cui eseguire il redirect
+     */
+    @GetMapping("/taskPersonali/dettagliTask{idTask}/completa")
+    String completaTaskPersonale(Model model
+            , @PathVariable(name = "idTask") int idTask) {
+        model.addAttribute("task" , taskService.getTaskById(idTask));
+        taskService.completaTask(idTask);
+        model.addAttribute("flagAzione",1);
+
         return "task/paginaDettagliTaskPersonali";
     }
 

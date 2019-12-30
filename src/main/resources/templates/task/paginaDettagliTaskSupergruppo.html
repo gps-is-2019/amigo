@@ -58,7 +58,7 @@
                 > Respingi</a>
             </td>
         </tr>
-        <tr th:if="${(isResponsabile==false) and ( task.stato.equals('incompleto'))}" class="center aligned">
+        <tr th:if="${(isResponsabile==false) and ( ( task.stato.equals('approvato') )==false ) and ( ( task.stato.equals('in valutazione') )==false )}" class="center aligned">
             <td colspan="3">
                 <a class="ui primary button"
                    th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/completa' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"

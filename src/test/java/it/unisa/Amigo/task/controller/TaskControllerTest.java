@@ -54,8 +54,7 @@ class TaskControllerTest {
         when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(true);
         when(taskService.visualizzaTaskSuperGruppo(expectedSupergruppo.getId())).thenReturn(expectedTask);
 
-        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}", expectedSupergruppo.getId())
-                )
+        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}", expectedSupergruppo.getId()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", "" + expectedSupergruppo.getId()))
@@ -76,8 +75,7 @@ class TaskControllerTest {
 
         when(gruppoService.visualizzaListaMembriSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
 
-        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/definizioneTaskSupergruppo", expectedSupergruppo.getId())
-                )
+        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/definizioneTaskSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("taskForm", task))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
@@ -124,8 +122,7 @@ class TaskControllerTest {
         when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(true);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
-        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}", expectedSupergruppo.getId(), expectedTask.getId())
-        )
+        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}", expectedSupergruppo.getId(), expectedTask.getId()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
@@ -149,8 +146,7 @@ class TaskControllerTest {
         when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(true);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
-        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/approvazione", expectedSupergruppo.getId(), expectedTask.getId())
-        )
+        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/approvazione", expectedSupergruppo.getId(), expectedTask.getId()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
@@ -175,8 +171,7 @@ class TaskControllerTest {
         when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(true);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
-        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/rifiuta", expectedSupergruppo.getId(), expectedTask.getId())
-        )
+        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/rifiuta", expectedSupergruppo.getId(), expectedTask.getId()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
@@ -200,8 +195,7 @@ class TaskControllerTest {
         when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(true);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
-        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/completa", expectedSupergruppo.getId(), expectedTask.getId())
-        )
+        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/completa", expectedSupergruppo.getId(), expectedTask.getId()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
@@ -232,8 +226,7 @@ class TaskControllerTest {
         when(taskService.getTaskById(task.getId())).thenReturn(task);
         when(gruppoService.visualizzaListaMembriSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
 
-        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modifica", expectedSupergruppo.getId(), task.getId())
-        )
+        this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modifica", expectedSupergruppo.getId(), task.getId()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("taskForm", taskForm))
                 .andExpect(model().attribute("idTask", task.getId()))
@@ -265,8 +258,7 @@ class TaskControllerTest {
         when(gruppoService.visualizzaPersonaLoggata()).thenReturn(expectedPersona);
         when(taskService.visualizzaTaskUser(expectedPersona.getId())).thenReturn(expectedTasks);
 
-        this.mockMvc.perform(get("/taskPersonali")
-        )
+        this.mockMvc.perform(get("/taskPersonali"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("listaTask", expectedTasks))
                 .andExpect(view().name("task/paginaVisualizzaListaTaskPersonali"));
@@ -282,12 +274,27 @@ class TaskControllerTest {
 
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
-        this.mockMvc.perform(get("/taskPersonali/dettagliTask{idTask}", expectedTask.getId())
-        )
+        this.mockMvc.perform(get("/taskPersonali/dettagliTask{idTask}", expectedTask.getId()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(view().name("task/paginaDettagliTaskPersonali"));
 
+    }
+
+    @Test
+    void completaTaskPersonale() throws Exception{
+        Task expectedTask = new Task("t1" , new Date(), "task1" , "incompleto");
+        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        expectedTask.setPersona(expectedPersona);
+        int expectedFlag = 1;
+
+        when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
+
+        this.mockMvc.perform(get("/taskPersonali/dettagliTask{idTask}/completa", expectedTask.getId()))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("flagAzione", expectedFlag))
+                .andExpect(model().attribute("task", expectedTask))
+                .andExpect(view().name("task/paginaDettagliTaskPersonali"));
     }
 
 }
