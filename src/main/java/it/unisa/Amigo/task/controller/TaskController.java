@@ -16,6 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Questa classe si occupa della logica di controllo del sottosistema task
+ */
 @Controller
 public class TaskController {
     @Autowired
@@ -24,6 +27,12 @@ public class TaskController {
     @Autowired
     private GruppoService gruppoService;
 
+    /**
+     * Ritorna ad una pagina i task @{@link Task} di un supergruppo @{@link Supergruppo}
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idSupergruppo id del supergruppo a cui i task da visualizzare appartengono
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}")
     public String visualizzaListaTaskSupergruppo(Model model, @PathVariable(name = "idSupergruppo") int idSupergruppo) {
         //TODO da vedere come prendere l'utente corrente
@@ -36,6 +45,13 @@ public class TaskController {
         return "task/paginaVisualizzaListaTaskSupergruppo";
     }
 
+    /**
+     * permette di definire un task @{@link Task}
+     * @param taskForm contiene le informazioni da inserire nel task
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idSupergruppo id del supergruppo a cui il task da definire appartine
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/definizioneTaskSupergruppo")
     public String definizioneTaskSupergruppo( @ModelAttribute Task taskForm, Model model ,  @PathVariable(name = "idSupergruppo") int idSupergruppo){
 
@@ -48,6 +64,14 @@ public class TaskController {
         return "task/paginaDefinizioneTaskSupergruppo";//pagina che usa il form (pagina corrente)
     }
 
+    /**
+     * permette di salvare il task @{@link Task}
+     * @param taskForm contiene le informazioni da inserire nel task
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idSupergruppo id del supergruppo a cui il task da salvare appartine
+     * @return il path della pagina su cui eseguire il redirect
+     * @throws ParseException
+     */
     @RequestMapping(value="/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/creazioneTaskSupergruppo", method=RequestMethod.POST)
     public String saveTaskPost(@ModelAttribute TaskForm taskForm , Model model, @PathVariable(name = "idSupergruppo") int idSupergruppo) throws ParseException {
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
@@ -78,6 +102,14 @@ public class TaskController {
     }
 
     //TODO  da vedere come prendere correttamente l'utente corrente lo sto prendendo tramite grupposervice
+
+    /**
+     * Ritorna ad una pagina i dettagli di uno specifico  task @{@link Task} di un supergruppo @{@link Supergruppo}
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idSupergruppo id del supergruppo a cui il task di cui si vogliono visualizzare i dettagli appartine
+     * @param idTask identifica univocamente un task di cui si vogliono visualizzare i dettagli
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}")
     public String visualizzaDettagliTaskSupergruppo(Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
@@ -93,6 +125,13 @@ public class TaskController {
     }
 
 
+    /**
+     * permette di approvare un task @{@link Task}
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idSupergruppo id del supergruppo a cui il task da approvare appartine
+     * @param idTask identifica univocamente un task che si vuole approvare
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/approvazione")
     String approvazioneTask(Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
@@ -110,6 +149,13 @@ public class TaskController {
     }
 
 
+    /**
+     * permette di rifiutare un task @{@link Task}
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idSupergruppo id del supergruppo a cui il task da rifiutare appartine
+     * @param idTask identifica univocamente un task che si vuole rifiutare
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/rifiuta")
     String rifiutoTask(Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
@@ -127,6 +173,13 @@ public class TaskController {
         return "task/paginaDettagliTaskSupergruppo";
     }
 
+    /**
+     * permette di completare un task @{@link Task}
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idSupergruppo id del supergruppo a cui il task da completare  appartine
+     * @param idTask identifica univocamente un task che si vuole completare
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/completa")
     String completaTask(Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
@@ -144,6 +197,14 @@ public class TaskController {
     }
 
 
+    /**
+     * permette di modificare un task @{@link Task}
+     * @param taskForm contiene le informazioni per modificare il task
+     * @param model  per salvare informazioni da recuperare nell'html
+     * @param idSupergruppo id del supergruppo a cui il task da modificare  appartine
+     * @param idTask identifica univocamente un task che si vuole modificare
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modifica")
     String modificaTask(@ModelAttribute TaskForm taskForm, Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
@@ -166,7 +227,14 @@ public class TaskController {
         return "task/paginaModificaTask";
     }
 
-
+    /**
+     * permette di salvare le modifiche apportante ad  un task @{@link Task}
+     * @param taskForm contiene le informazioni da salvare
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idSupergruppo id del supergruppo a cui il task modificato appartine  appartine
+     * @return il path della pagina su cui eseguire il redirect
+     * @throws ParseException
+     */
     @RequestMapping(value = "/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modificaTaskSupergruppo")
     public String saveModifyTask(@ModelAttribute TaskForm taskForm , Model model, @PathVariable(name = "idSupergruppo") int idSupergruppo) throws ParseException {
         Task taskToUpdate = taskService.getTaskById(taskForm.getId());
@@ -191,6 +259,11 @@ public class TaskController {
         return "task/paginaDettagliTaskSupergruppo";
     }
 
+    /**
+     * Ritorna ad una pagina i task @{@link Task} di una persona @{@link Persona}
+     * @param model per salvare informazioni da recuperare nell'html
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/taskPersonali")
     public String visualizzaListaTaskPersonali(Model model) {
         //TODO da vedere come prendere l'utente corrente
@@ -201,6 +274,12 @@ public class TaskController {
         return "task/paginaVisualizzaListaTaskPersonali";
     }
 
+    /**
+     * Ritorna ad una pagina i dettagli di un  task @{@link Task} di una persona @{@link Persona}
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idTask identifica univocamente un task di cui si vogliono visualizzare i dettagli
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/taskPersonali/dettagliTask{idTask}")
     public String visualizzaDettagliTaskPersonali(Model model , @PathVariable(name = "idTask") int idTask) {
         Task task = taskService.getTaskById(idTask);

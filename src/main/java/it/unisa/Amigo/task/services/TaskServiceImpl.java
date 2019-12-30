@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
-
+/**
+ * Questa classe implementa i metodi  per la logica di Business del sottositema "Gruppo"
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -25,8 +27,8 @@ public class TaskServiceImpl implements TaskService
 
     /***
      * Ritorna l'user @{@link Persona} incaricato del Task @{@link Task}
-     * @param id del task assegnato
-     * @return persona
+     * @param id identifica univocamente un task
+     * @return la persona a cui quel task è assegnato
      */
     @Override
     public Persona getAssegnatarioTask(int id) {
@@ -37,8 +39,8 @@ public class TaskServiceImpl implements TaskService
 
     /***
      * Ritorna il documento @{@link Documento} del Task @{@link Task}
-     * @param id del task di cui si vuole l'id
-     * @return documento
+     * @param id identifica univocamente un task
+     * @return il documento associato al task
      */
     @Override
     public Documento getDocumentoTask(int id) {
@@ -105,7 +107,7 @@ public class TaskServiceImpl implements TaskService
 
     /***
      * Ritorna il task @{@link Task} corrispondente dall'id cercato
-     * @param id del task
+     * @param id identifica univocamente un task
      * @return task
      */
     @Override
@@ -116,7 +118,7 @@ public class TaskServiceImpl implements TaskService
 
     /***
      * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in approvato
-     * @param idTask
+     * @param idTask identifica univocamente un task
      */
     @Override
     public void accettazioneTask(int idTask) {
@@ -127,7 +129,7 @@ public class TaskServiceImpl implements TaskService
 
     /***
      * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in respinto
-     * @param idTask
+     * @param idTask identifica univocamente un task
      */
     @Override
     public void rifiutoTask(int idTask) {
@@ -136,6 +138,10 @@ public class TaskServiceImpl implements TaskService
         taskDAO.save(task);
     }
 
+    /**
+     * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in completo
+     * @param idTask identifica univocamente un task
+     */
     @Override
     public void completaTask(int idTask) {
         Task task = taskDAO.findById(idTask);
@@ -143,6 +149,10 @@ public class TaskServiceImpl implements TaskService
         taskDAO.save(task);
     }
 
+    /**
+     * Metodo che permette di camiare le informazioni di un task@{@link Task}
+     * @param taskToUpdate task aggiornato
+     */
     @Override
     public void updateTask(Task taskToUpdate) {
         taskDAO.save(taskToUpdate);

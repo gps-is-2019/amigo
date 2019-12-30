@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 /**
- * Questa classe si occupa della logoca di controllo del sottosistema gruppo
+ * Questa classe si occupa della logica di controllo del sottosistema gruppo
  */
 @Controller
 public class GruppoController

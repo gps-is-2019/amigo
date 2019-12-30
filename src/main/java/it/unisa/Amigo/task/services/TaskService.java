@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 
-
+/**
+ * Questa interfaccia definisce i metodi  per la logica di Business del sottositema "Task"
+ */
 public interface TaskService {
     Persona getAssegnatarioTask(int id);
 
