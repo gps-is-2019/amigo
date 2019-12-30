@@ -1,12 +1,9 @@
 package it.unisa.Amigo.documento.service;
 
-import it.unisa.Amigo.autenticazione.domanin.Role;
-import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.exceptions.StorageException;
 import it.unisa.Amigo.documento.exceptions.StorageFileNotFoundException;
-import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.task.domain.Task;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +22,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 /**
  * Questa classe implementa i metodi  per la logica di Business del sottositema "Documento"
  */
@@ -76,58 +71,18 @@ public class DocumentoServiceImpl implements DocumentoService{
      * @return true se la persona è l'assegnatario del task, false altrimenti
      */
     @Override
-    public Documento addDocToTask(MultipartFile file, Task task) {
-        if(gruppoService.visualizzaPersonaLoggata().getId() == task.getPersona().getId()){
+    public Documento addDocumento(MultipartFile file) {
             Documento documento = storeDocumento(file);
-            documento.setTask(task);
-            task.setDocumento(documento);
             documentoDAO.save(documento);
-            //salvare il cambiamento di task
             return documento;
-        }
-        return null;
     }
 
-    /**
-     **Consente di creare un documento @{@link Documento}e aggiungerlo a una consegna @{@link Consegna}
-     * @param file per creare il documento
-     * @param consegna in cui aggiungere il documento
-     * @return true se la persona è il mittente della consegna, false altrimenti
-     */
     @Override
-    public Documento addDocToConsegna(MultipartFile file, Consegna consegna) {
-        if(gruppoService.visualizzaPersonaLoggata().getId() == consegna.getMittente().getId()){
-            Documento documento = storeDocumento(file);
-            documento.setConsegna(consegna);
-            consegna.setDocumento(documento);
-            documentoDAO.save(documento);
-            //salvare il cambiamento di consegna
-            return documento;
-        }
-        return null;
+    public Documento updateDocumento(Documento documento) {
+         return documentoDAO.save(documento);
     }
 
-    /**
-     * Crea un documento @{@link Documento} e lo aggiunge alla repository d'ateneo
-     * @param file per creare il documento
-     */
-    @Override
-    public Documento addDocToRepository(MultipartFile file) {
-        boolean isPqa = false;
-        Set<Role> roles = gruppoService.visualizzaPersonaLoggata().getUser().getRoles();
 
-        for(Role role: roles)
-            if(role.getName().equals(Role.PQA_ROLE))
-                isPqa = true;
-
-        if(isPqa) {
-            Documento documento = storeDocumento(file);
-            documento.setInRepository(true);
-            documentoDAO.save(documento);
-            return documento;
-        }
-        return null;
-    }
 
     /**
      *
@@ -150,20 +105,6 @@ public class DocumentoServiceImpl implements DocumentoService{
         }
     }
 
-    /**
-     * Ritorna un documento @{@link Documento} presente nella repository in base al suo id
-     * @param idDocumento documento che si vuole scaricare
-     * @return documento
-     */
-    @Override
-    public Documento downloadDocumentoFromRepository(int idDocumento) {
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
-        if (personaLoggata != null) {
-            return documentoDAO.findByIdAndInRepository(idDocumento, true);
-        }
-        else
-            return null;
-    }
 
     /**
      * Ritorna un documento @{@link Documento} di una consegna a patto che la persona loggata sia il mittente o il destinatario
@@ -171,31 +112,11 @@ public class DocumentoServiceImpl implements DocumentoService{
      * @return documento
      */
     @Override
-    public Documento downloadDocumentoFromConsegna(int idDocumento) {
-        Optional<Documento> documento = documentoDAO.findById(idDocumento);
-        Consegna consegna = documento.get().getConsegna();
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
-        if((personaLoggata.getId()==consegna.getMittente().getId()) || (personaLoggata.getId() == consegna.getDestinatario().getId()))
-            return documento.get();
-        return null;
-        //eccezione
+    public Documento findDocumento(int idDocumento) {
+        return documentoDAO.findById(idDocumento).get();
     }
 
-    /**
-     * Ritorna un documento @{@link Documento} di un task a patto che la persona loggata sia colui che abbia assegnato il task
-     * @param idDocumento documento che si vuole scaricare
-     * @return documento
-     */
-    @Override
-    public Documento downloadDocumentoFromTask(int idDocumento) {
-        Optional<Documento> documento = documentoDAO.findById(idDocumento);
-        Task task = documento.get().getTask();
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
-        Persona responsabile = task.getSupergruppo().getResponsabile();
-        if(personaLoggata.getId()==responsabile.getId())
-            return documento.get();
-        return null;
-    }
+
 
     /**
      * Ritorna una lista di documenti @{@link Documento} presenti nella repository dove il nome di ciascun documento contine la stringa passata come parametro
@@ -203,7 +124,7 @@ public class DocumentoServiceImpl implements DocumentoService{
      * @return lista di documenti
      */
     @Override
-    public List<Documento> searchDocumentoFromRepository(String nameDocumento) {
-       return documentoDAO.findAllByInRepositoryAndNomeContains(true, nameDocumento);
+    public List<Documento> searchDocumento(String nameDocumento) {
+       return documentoDAO.findAllByNomeContains(nameDocumento);
     }
 }

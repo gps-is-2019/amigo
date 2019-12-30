@@ -1,27 +1,19 @@
 package it.unisa.Amigo.documento.services;
 
-import it.unisa.Amigo.autenticazione.domanin.Role;
-import it.unisa.Amigo.autenticazione.domanin.User;
-import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.service.DocumentoServiceImpl;
-import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
-import it.unisa.Amigo.task.domain.Task;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class DocumentoServiceImplTest {
@@ -37,42 +29,22 @@ class DocumentoServiceImplTest {
 
 
     @Test
-    void addDocToTaskAndLoadAsResource(){
-        Persona persona = new Persona("Roberto", "De Prisco", "Responsabile PQA");
-        when(gruppoService.visualizzaPersonaLoggata()).thenReturn(persona);
-        Task task = new Task();
-        task.setPersona(persona);
-        documentoService.addDocToTask(new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE,
-                "Hello World".getBytes()), task);
+    void addDocumento(){
+        documentoService.addDocumento(new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE,
+                "Hello World".getBytes()));
         Documento documento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(), "test.txt", false, "text/plain");
         assertThat((documentoService.loadAsResource(documento)).exists());
     }
 
     @Test
-    void addDocToConsegnaAndLoadAsResource(){
-        Persona persona = new Persona("Roberto", "De Prisco", "Responsabile PQA");
-        when(gruppoService.visualizzaPersonaLoggata()).thenReturn(persona);
-        Consegna consegna = new Consegna();
-        consegna.setMittente(persona);
-        documentoService.addDocToConsegna(new MockMultipartFile("test1", "test1.txt",
-                MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes()), consegna);
-        Documento documento = new Documento("src/main/resources/documents/test1.txt", LocalDate.now(), "test1.txt", false, "text/plain");
-        assertThat((documentoService.loadAsResource(documento)).exists());
-    }
-
-    @Test
-    void addDocToRepositoryAndLoadAsResource(){
-        Persona persona = new Persona("Roberto", "De Prisco", "Responsabile PQA");
-        User user = new User();
-        user.addRole(new Role(Role.PQA_ROLE));
-        persona.setUser(user);
-        when(gruppoService.visualizzaPersonaLoggata()).thenReturn(persona);
-        documentoService.addDocToRepository(new MockMultipartFile("test2", "test2.txt", MediaType.TEXT_PLAIN_VALUE,
+    void updateDocumento(){
+        documentoService.addDocumento(new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE,
                 "Hello World".getBytes()));
-        Documento documento = new Documento("src/main/resources/documents/test2.txt", LocalDate.now(), "test2.txt", true, "text/plain");
+        Documento documento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(), "test.txt", false, "text/plain");
         assertThat((documentoService.loadAsResource(documento)).exists());
     }
 
+/*
     @Test
     void downloadDocumentoFromRepository(){
         Persona persona = new Persona("Roberto", "De Prisco", "Responsabile PQA");
@@ -80,8 +52,8 @@ class DocumentoServiceImplTest {
         Documento documentoExpected = new Documento("src/main/resources/documents/test3.txt", LocalDate.now(),
                 "test3.txt", true, "text/plain");
         when(documentoDAO.findByIdAndInRepository(documentoExpected.getId(), true)).thenReturn(documentoExpected);
-        Documento documentoScaricato = documentoService.downloadDocumentoFromRepository(documentoExpected.getId());
-        assertEquals(documentoExpected, documentoScaricato);
+        Documento actualDocumento = documentoService.downloadDocumentoFromRepository(documentoExpected.getId());
+        assertEquals(documentoExpected, actualDocumento);
     }
 
     @Test
@@ -96,8 +68,8 @@ class DocumentoServiceImplTest {
         consegna.setMittente(persona);
 
         when(documentoDAO.findById(documentoExpected.getId())).thenReturn(Optional.of(documentoExpected));
-        Documento documentoScaricato = documentoService.downloadDocumentoFromConsegna(documentoExpected.getId());
-        assertEquals(documentoExpected, documentoScaricato);
+        Documento actualDocumento = documentoService.downloadDocumentoFromConsegna(documentoExpected.getId());
+        assertEquals(documentoExpected, actualDocumento);
     }
 
     @Test
@@ -116,13 +88,23 @@ class DocumentoServiceImplTest {
         documentoExpected.setTask(task);
 
         when(documentoDAO.findById(documentoExpected.getId())).thenReturn(Optional.of(documentoExpected));
-        Documento documentoScaricato = documentoService.downloadDocumentoFromTask(documentoExpected.getId());
-        assertEquals(documentoExpected, documentoScaricato);
+        Documento actualDocumento = documentoService.downloadDocumentoFromTask(documentoExpected.getId());
+        assertEquals(documentoExpected, actualDocumento);
     }
 
     @Test
     void searchDocumentoFromRepository(){
+        Persona persona = new Persona("Roberto", "De Prisco", "Responsabile PQA");
+        when(gruppoService.visualizzaPersonaLoggata()).thenReturn(persona);
+        Documento documento1 = new Documento("src/main/resources/documents/test6.txt", LocalDate.now(), "test6.txt", true, "text/plain");
+        List<Documento> documentiExpected = new ArrayList<>();
+        documentiExpected.add(documento1);
+        when(documentoDAO.findAllByInRepositoryAndNomeContains(true, documento1.getNome())).thenReturn(documentiExpected);
+        List<Documento> actualDocumenti = documentoService.searchDocumentoFromRepository(documento1.getNome());
+        assertEquals(documentiExpected,actualDocumenti);
 
     }
+    */
+
 }
 
