@@ -17,10 +17,7 @@ public class DocumentoServiceImplIT {
     private DocumentoDAO documentoDAO;
 
    //non so il grupposervice se metterlo o meno
-   @Test
-   void storeDocumento(){
 
-   }
 
     @Test
     void addDocToTask(){
@@ -51,9 +48,17 @@ public class DocumentoServiceImplIT {
     void downloadDocumentoFromTask(){
 
     }
-
+/*
     @Test
     void searchDocumentoFromRepository(){
-
-    }
+        Documento documento1 = new Documento("src/main/resources/documents/test.txt", LocalDate.now(), "test.txt", true, "text/plain");
+        Documento documento2 = new Documento("src/main/resources/documents/test1.txt", LocalDate.now(), "test1.txt", true, "text/plain");
+        documentoDAO.save(documento1);
+        documentoDAO.save(documento2);
+        List<Documento> documentiExpected = new ArrayList<>();
+        documentiExpected.add(documento1);
+        documentiExpected.add(documento2);
+        List<Documento> actualDocumenti = documentoService.searchDocumentoFromRepository("test");
+        assertEquals(documentiExpected,actualDocumenti);
+    }*/
 }
