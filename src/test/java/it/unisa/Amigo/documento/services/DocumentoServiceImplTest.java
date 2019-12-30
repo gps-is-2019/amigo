@@ -24,10 +24,6 @@ class DocumentoServiceImplTest {
     @Mock
     private DocumentoDAO documentoDAO;
 
-    @Mock
-    private GruppoService gruppoService;
-
-
     @Test
     void addDocumento(){
         documentoService.addDocumento(new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE,

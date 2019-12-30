@@ -29,14 +29,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DocumentoServiceImpl implements DocumentoService{
 
+    public static final String BASE_PATH = "src/main/resources/documents";
+
     @Autowired
     private final DocumentoDAO documentoDAO;
     private final GruppoService gruppoService;
 
 
-    private Documento storeDocumento(MultipartFile file) {
-        Documento documento = new Documento();
-
+    private String storeFile(MultipartFile file) {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         try {
             if (file.isEmpty()) {
@@ -48,41 +48,37 @@ public class DocumentoServiceImpl implements DocumentoService{
                                 + filename);
             }
             try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, Paths.get("src/main/resources/documents").resolve(filename),
+                Files.copy(inputStream, Paths.get(BASE_PATH).resolve(filename),
                         StandardCopyOption.REPLACE_EXISTING);
             }
         }
         catch (IOException e) {
             throw new StorageException("Failed to store file " + filename, e);
         }
-
-        documento.setPath("src/main/resources/documents/" + filename);
-        documento.setDataInvio(LocalDate.now());
-        documento.setNome(file.getOriginalFilename());
-        documento.setInRepository(false);
-        documento.setFormat(file.getContentType());
-        return documento;
+        return BASE_PATH + filename;
     }
 
     /**
      *Consente di creare un documento @{@link Documento}e aggiungerlo a un task @{@link Task}
      * @param file per creare il documento
-     * @param task in cui aggiungere il documento
      * @return true se la persona è l'assegnatario del task, false altrimenti
      */
     @Override
     public Documento addDocumento(MultipartFile file) {
-            Documento documento = storeDocumento(file);
-            documentoDAO.save(documento);
-            return documento;
+        String path = storeFile(file);
+        Documento documento = new Documento();
+        documento.setPath(path);
+        documento.setDataInvio(LocalDate.now());
+        documento.setNome(file.getOriginalFilename());
+        documento.setInRepository(false);
+        documento.setFormat(file.getContentType());
+        return documentoDAO.save(documento);
     }
 
     @Override
     public Documento updateDocumento(Documento documento) {
          return documentoDAO.save(documento);
     }
-
-
 
     /**
      *
@@ -96,15 +92,13 @@ public class DocumentoServiceImpl implements DocumentoService{
                 return resource;
             }
             else {
-                throw new StorageFileNotFoundException(
-                        "Could not read file: " + documento.getNome());
+                throw new StorageFileNotFoundException("Could not read file: " + documento.getNome());
             }
         }
         catch (MalformedURLException e) {
             throw new StorageFileNotFoundException("Could not read file: " + documento.getNome(), e);
         }
     }
-
 
     /**
      * Ritorna un documento @{@link Documento} di una consegna a patto che la persona loggata sia il mittente o il destinatario
@@ -116,15 +110,13 @@ public class DocumentoServiceImpl implements DocumentoService{
         return documentoDAO.findById(idDocumento).get();
     }
 
-
-
     /**
      * Ritorna una lista di documenti @{@link Documento} presenti nella repository dove il nome di ciascun documento contine la stringa passata come parametro
      * @param nameDocumento stringa da ricercare nel nome dei documenti
      * @return lista di documenti
      */
     @Override
-    public List<Documento> searchDocumento(String nameDocumento) {
+    public List<Documento> searchDocumenti(String nameDocumento) {
        return documentoDAO.findAllByNomeContains(nameDocumento);
     }
 }
