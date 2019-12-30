@@ -104,4 +104,14 @@ public class TaskServiceImplTest {
         String actualStato = task1.getStato();
         assertEquals(expectedStato, actualStato);
     }
+
+    @Test
+    void completaTask(){
+        Task task1 = new Task("t1" , new Date(), "task1" , "incompleto");
+        String expectedStato = "in valutazione";
+        when(taskDAO.findById(task1.getId())).thenReturn(task1);
+        taskService.completaTask(task1.getId());
+        String actualStato = task1.getStato();
+        assertEquals(expectedStato, actualStato);
+    }
 }

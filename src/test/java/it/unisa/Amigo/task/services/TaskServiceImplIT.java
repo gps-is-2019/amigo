@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -115,4 +116,30 @@ public class TaskServiceImplIT {
         String actualStato = taskDAO.findById(task.getId()).getStato();
         assertEquals(expectedstato, actualStato);
     }
+
+    @Test
+    void completaTask(){
+        Task task = new Task("t1" , new Date(), "task1" , "incompleto");
+        taskDAO.save(task);
+        String expectedstato = "in valutazione";
+        taskService.completaTask(task.getId());
+        String actualStato = taskDAO.findById(task.getId()).getStato();
+        assertEquals(expectedstato, actualStato);
+    }
+
+    @Test
+    void updateTask(){
+        Date tmpDate= new Date();
+        Task task = new Task("t1" , tmpDate, "task1" , "incompleto");
+        taskDAO.save(task);
+        task.setDescrizione("t2");
+        task.setNome("task2");
+        task.setStato("in valutazione");
+        taskService.updateTask(task);
+        Task expectedTask = new Task("t2" , tmpDate, "task2" , "in valutazione");
+        expectedTask.setId(task.getId());
+        Task actualTask= taskDAO.findById(task.getId());
+        assertEquals(expectedTask, actualTask);
+    }
+
 }

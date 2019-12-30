@@ -25,9 +25,6 @@
             <td th:text="${task.nome}"></td>
             <td th:text="${task.dataScadenza}"></td>
             <td th:text="${task.stato}"></td>
-<!--            <td th:if="isResponsabile == true">-->
-<!--                <a class="ui primary button" th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}'( idSupergruppo=${idSupergruppo} , idTask=${task.id} ) }">Dettagli</a>-->
-<!--            </td>-->
         </tr>
 
         <tr class="center aligned">
@@ -46,10 +43,6 @@
 
         <tr th:if="${isResponsabile==true}" class="center aligned">
             <td colspan="1">
-<!--   come consideriamo il caso in cui il task è accettato dal responsabile?
-        può essere cambiato nuovamente lo stato?
-
--->
                 <a class="ui green button"
                 th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/approvazione' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
                 > Accetta </a>
@@ -65,9 +58,11 @@
                 > Respingi</a>
             </td>
         </tr>
-        <tr th:if="${(isResponsabile==false) and ( ( task.stato.equals('approvato') )==false )}" class="center aligned">
+        <tr th:if="${(isResponsabile==false) and ( task.stato.equals('incompleto'))}" class="center aligned">
             <td colspan="3">
-                <a class="ui primary button"> Completa</a>
+                <a class="ui primary button"
+                   th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/completa' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
+                   > Completa</a>
             </td>
 
         </tr>
@@ -76,13 +71,17 @@
     </tbody>
 </table>
 </div>
-<div class="ui message success" th:if="${flagAzione==1}">
+<div class="ui message success text container" th:if="${flagAzione==1}">
     <i class="close icon"></i>
     <p>Hai Approvato il Task </p>
 </div>
-<div class="ui message warning" th:if="${flagAzione==2}">
+<div class="ui message warning text container" th:if="${flagAzione==2}">
     <i class="close icon"></i>
     <p>Hai Respinto il Task </p>
+</div>
+<div class="ui message blue text container" th:if="${flagAzione==3}">
+    <i class="close icon"></i>
+    <p>Hai modificato il Task </p>
 </div>
 <script>$('.message .close')
     .on('click', function() {

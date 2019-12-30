@@ -1,4 +1,4 @@
-package it.unisa.Amigo.task;
+package it.unisa.Amigo.task.controller;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

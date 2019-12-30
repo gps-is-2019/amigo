@@ -9,7 +9,6 @@
 <body>
     <div th:insert="fragments/fragments.html :: header"></div>
     <h1 class="ui header" align="center">I task del gruppo : </h1>
-<!--    <form th:action="@{/gruppo/visualizzaListaTaskSupergruppo/} + ${idSupergruppo} +{/definizioneTaskSupergruppo}" method="post">-->
 
     <div class="ui main text container">
         <a th:if="${isResponsabile==true}" class="ui primary button" th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/definizioneTaskSupergruppo'( idSupergruppo=${idSupergruppo} ) }">Assegna nuovo task</a>
@@ -36,9 +35,6 @@
             </tbody>
         </table>
     </div>
-
-
-
 
 </body>
 </html>

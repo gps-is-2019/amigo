@@ -23,8 +23,6 @@ public class TaskServiceImpl implements TaskService
     @Autowired
     private TaskDAO taskDAO;
 
-
-
     /***
      * Ritorna l'user @{@link Persona} incaricato del Task @{@link Task}
      * @param id del task assegnato
@@ -82,14 +80,6 @@ public class TaskServiceImpl implements TaskService
         return true;
     }
 
-    //TODO va cambiato
-
-//    @Override
-//    public List<Task> visualizzaTaskUser(User user) {
-//
-//
-//        return null;
-//    }
 
     /***
      * Ritorna una lista di task @{@link Task} dell'utente passato
@@ -109,7 +99,6 @@ public class TaskServiceImpl implements TaskService
      */
     @Override
     public List<Task> visualizzaTaskSuperGruppo(int idSupergruppo) {
-
         List<Task> ris = taskDAO.findAllBySupergruppo_Id(idSupergruppo);
         return ris;
     }
@@ -148,8 +137,14 @@ public class TaskServiceImpl implements TaskService
     }
 
     @Override
+    public void completaTask(int idTask) {
+        Task task = taskDAO.findById(idTask);
+        task.setStato("in valutazione");
+        taskDAO.save(task);
+    }
+
+    @Override
     public void updateTask(Task taskToUpdate) {
         taskDAO.save(taskToUpdate);
-
     }
 }

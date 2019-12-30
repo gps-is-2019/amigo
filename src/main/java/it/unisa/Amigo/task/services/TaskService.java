@@ -29,5 +29,6 @@ public interface TaskService {
     Task getTaskById(int id);
     void accettazioneTask(int idTask);
     void rifiutoTask(int idTask);
+    void completaTask(int idTask);
     void updateTask(Task taskToUpdate);
 }
