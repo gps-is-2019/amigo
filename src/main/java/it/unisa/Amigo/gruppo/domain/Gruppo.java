@@ -3,9 +3,7 @@ package it.unisa.Amigo.gruppo.domain;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +15,7 @@ import java.util.Set;
 @Entity
 @Data
 @NoArgsConstructor
+@DiscriminatorValue("Gruppo")
 public class Gruppo extends Supergruppo implements Serializable {
 
     private final long serialVersionUID = 45L;

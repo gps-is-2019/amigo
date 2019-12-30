@@ -3,8 +3,7 @@ package it.unisa.Amigo.gruppo.domain;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
 
@@ -15,6 +14,7 @@ import java.io.Serializable;
 @Entity
 @Data
 @NoArgsConstructor
+@DiscriminatorValue("Commissione")
 public class Commissione extends Supergruppo implements Serializable {
 
     private final long serialVersionUID = 17L;

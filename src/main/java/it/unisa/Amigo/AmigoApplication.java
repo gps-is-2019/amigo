@@ -20,7 +20,7 @@ public class AmigoApplication {
 	}
 
 		@Bean
-		public CommandLineRunner demo(GruppoDAO gruppoDAO, CommissioneDAO commissioneDAO, UserDAO userDAO , PersonaDAO personaDAO, ConsiglioDidatticoDAO consiglioDidatticoDAO, SupergruppoDAO supergruppoDAO, PasswordEncoder encoder){
+		public CommandLineRunner demo( UserDAO userDAO , PersonaDAO personaDAO, ConsiglioDidatticoDAO consiglioDidatticoDAO, SupergruppoDAO supergruppoDAO, PasswordEncoder encoder){
 			return args -> {
 
 				Role userRole = new Role(Role.USER_ROLE);
@@ -89,9 +89,9 @@ public class AmigoApplication {
 				cd.addPersona(polese);
 				cd.addPersona(gravino);
 
-				gruppoDAO.save(GAQD);
-				commissioneDAO.save(commissioneAAL);
-				commissioneDAO.save(commissioneEL);
+				supergruppoDAO.save(GAQD);
+				supergruppoDAO.save(commissioneAAL);
+				supergruppoDAO.save(commissioneEL);
 				consiglioDidatticoDAO.save(cd);
 				personaDAO.saveAll(Arrays.asList(ferrucci,scarano,malandrino,dePrisco,polese,gravino));
 				userDAO.saveAll(Arrays.asList(userFerrucci,userScarano,userMalandrino,userDePrisco,userPolese,userGravino));

@@ -16,7 +16,8 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type")
 public class Supergruppo implements Serializable {
 
     private final static long serialVersionUID = 42L;
@@ -29,6 +30,7 @@ public class Supergruppo implements Serializable {
     String name;
 
     @NonNull
+    @Column(name = "type", updatable = false, insertable = false)
     String type;
 
     @NonNull

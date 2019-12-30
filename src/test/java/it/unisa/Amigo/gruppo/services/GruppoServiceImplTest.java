@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 
 import java.util.ArrayList;
@@ -32,11 +33,6 @@ class GruppoServiceImplTest {
     @Mock
     private  DipartimentoDAO dipartimentoDAO;
 
-    @Mock
-    private CommissioneDAO commissioneDAO;
-
-    @Mock
-    private GruppoDAO gruppoDAO;
 
 
     @Test
@@ -237,7 +233,7 @@ class GruppoServiceImplTest {
          expectedGruppo.addCommissione(expectedCommissione);
          expectedGruppo.addCommissione(expectedCommissione2);
 
-         when(commissioneDAO.findAllByGruppo_id(expectedGruppo.getId())).thenReturn(expectedCommissioni);
+         when(supergruppoDAO.findById(expectedGruppo.getId())).thenReturn(expectedGruppo);
 
          List<Commissione> actualCommissioni = gruppoService.findAllCommissioniByGruppo(expectedGruppo.getId());
 
@@ -264,7 +260,7 @@ class GruppoServiceImplTest {
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(persona2);
 
-        when(commissioneDAO.findById(expectedCommissione.getId())).thenReturn(expectedCommissione);
+        when(supergruppoDAO.findById(expectedCommissione.getId())).thenReturn(expectedCommissione);
 
         List<Persona> acutalPersone = gruppoService.findAllMembriInGruppoNoCommissione(expectedCommissione.getId());
         assertEquals(expectedPersone, acutalPersone);
@@ -273,7 +269,7 @@ class GruppoServiceImplTest {
     @Test
     void closeCommissione() {
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
-        when(commissioneDAO.findById(expectedCommissione.getId())).thenReturn(expectedCommissione);
+        when(supergruppoDAO.findById(expectedCommissione.getId())).thenReturn(expectedCommissione);
         gruppoService.closeCommissione(expectedCommissione.getId());
         assertEquals(false, expectedCommissione.getState());
     }
@@ -284,7 +280,7 @@ class GruppoServiceImplTest {
         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
 
 
-        when(gruppoDAO.findById(expectedGruppo.getId())).thenReturn(expectedGruppo);
+        when(supergruppoDAO.findById(expectedGruppo.getId())).thenReturn(expectedGruppo);
 
         gruppoService.createCommissione(expectedCommissione, expectedGruppo.getId());
 
@@ -301,7 +297,7 @@ class GruppoServiceImplTest {
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
 
         when(personaDAO.findById(persona1.getId())).thenReturn(persona1);
-        when(commissioneDAO.findById(expectedCommissione.getId())).thenReturn(expectedCommissione);
+        when(supergruppoDAO.findById(expectedCommissione.getId())).thenReturn(expectedCommissione);
 
         Commissione actualCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
         actualCommissione.addPersona(persona1);
@@ -313,7 +309,7 @@ class GruppoServiceImplTest {
     @Test
     void findGruppoByCommissione() {
         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
-        when(gruppoDAO.findById(expectedGruppo.getId())).thenReturn(expectedGruppo);
+        when(supergruppoDAO.findById(expectedGruppo.getId())).thenReturn(expectedGruppo);
         Gruppo actualGruppo = new Gruppo("Gruppo", "Gruppo", true);
         assertEquals(expectedGruppo, actualGruppo);
     }

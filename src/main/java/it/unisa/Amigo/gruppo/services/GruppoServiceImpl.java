@@ -29,18 +29,14 @@ public class GruppoServiceImpl implements GruppoService {
 
     private DipartimentoDAO dipartimentoDAO;
 
-    private CommissioneDAO commissioneDAO;
 
-    private GruppoDAO gruppoDAO;
 
     @Autowired
-    public GruppoServiceImpl(PersonaDAO personaDAO, SupergruppoDAO supergruppoDAO, ConsiglioDidatticoDAO consiglioDidatticoDAO, DipartimentoDAO dipartimentoDAO, CommissioneDAO commissioneDAO, GruppoDAO gruppoDAO){
+    public GruppoServiceImpl(PersonaDAO personaDAO, SupergruppoDAO supergruppoDAO, ConsiglioDidatticoDAO consiglioDidatticoDAO, DipartimentoDAO dipartimentoDAO){
         this.personaDAO = personaDAO;
         this.supergruppoDAO = supergruppoDAO;
         this.consiglioDidatticoDAO = consiglioDidatticoDAO;
         this.dipartimentoDAO = dipartimentoDAO;
-        this.commissioneDAO = commissioneDAO;
-        this.gruppoDAO = gruppoDAO;
     }
 
     /***
@@ -198,7 +194,10 @@ public class GruppoServiceImpl implements GruppoService {
      */
     @Override
     public List<Commissione> findAllCommissioniByGruppo(int idGruppo) {
-        return commissioneDAO.findAllByGruppo_id(idGruppo);
+        Gruppo gruppo = (Gruppo)supergruppoDAO.findById(idGruppo);
+        List<Commissione> result = new ArrayList<>();
+        result.addAll(gruppo.getCommissioni());
+        return result;
     }
 
     /**
@@ -209,7 +208,7 @@ public class GruppoServiceImpl implements GruppoService {
      */
     @Override
     public List<Persona> findAllMembriInGruppoNoCommissione(int idSupergruppo) {
-        Commissione commissione = commissioneDAO.findById(idSupergruppo);
+        Commissione commissione = (Commissione) supergruppoDAO.findById(idSupergruppo);
         Set<Persona> inSupergruppo = commissione.getPersone();
         Set<Persona> inGruppo = commissione.getGruppo().getPersone();
         List<Persona> persone = new ArrayList<>();
@@ -226,9 +225,9 @@ public class GruppoServiceImpl implements GruppoService {
      */
     @Override
     public void closeCommissione(int idSupergruppo) {
-        Commissione commissione = commissioneDAO.findById(idSupergruppo);
+        Commissione commissione = (Commissione) supergruppoDAO.findById(idSupergruppo);
         commissione.setState(false);
-        commissioneDAO.save(commissione);
+        supergruppoDAO.save(commissione);
     }
 
     /**
@@ -238,9 +237,9 @@ public class GruppoServiceImpl implements GruppoService {
      */
     @Override
     public void createCommissione(Commissione commissione, int idSupergruppo) {
-        Gruppo gruppo = gruppoDAO.findById(idSupergruppo);
+        Gruppo gruppo = (Gruppo) supergruppoDAO.findById(idSupergruppo);
         gruppo.addCommissione(commissione);
-        commissioneDAO.save(commissione);
+        supergruppoDAO.save(commissione);
     }
 
     /***
@@ -261,11 +260,11 @@ public class GruppoServiceImpl implements GruppoService {
     @Override
     public void nominaResponsabile(int idPersona, int idCommissione){
         Persona responsabile = personaDAO.findById(idPersona);
-        Commissione commissione = commissioneDAO.findById(idCommissione);
+        Commissione commissione = (Commissione) supergruppoDAO.findById(idCommissione);
         commissione.addPersona(responsabile);
         commissione.setResponsabile(responsabile);
         personaDAO.save(responsabile);
-        commissioneDAO.save(commissione);
+        supergruppoDAO.save(commissione);
     }
 
     /**
@@ -275,7 +274,9 @@ public class GruppoServiceImpl implements GruppoService {
      */
     @Override
     public Gruppo findGruppoByCommissione(int idCommissione) {
-        return gruppoDAO.findByCommissioni_id(idCommissione);
+        Commissione commissione = (Commissione)  supergruppoDAO.findById(idCommissione);
+        Gruppo result = commissione.getGruppo();
+        return result;
     }
 
 

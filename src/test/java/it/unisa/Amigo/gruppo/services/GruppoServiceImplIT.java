@@ -30,11 +30,7 @@ public class GruppoServiceImplIT {
     @Autowired
     private DipartimentoDAO dipartimentoDAO;
 
-    @Autowired
-    private GruppoDAO gruppoDAO;
 
-    @Autowired
-    private CommissioneDAO commissioneDAO;
 
 
     @Test
@@ -74,8 +70,8 @@ public class GruppoServiceImplIT {
     @Test
     void findAllSupergruppiOfPersona() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
-        Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
-        Supergruppo supergruppo1 = new Supergruppo("GAQR Informatica" , "gruppo", true);
+        Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "Supergruppo", true);
+        Supergruppo supergruppo1 = new Supergruppo("GAQR Informatica" , "Supergruppo", true);
         supergruppo.addPersona(persona1);
         supergruppo1.addPersona(persona1);
         personaDAO.save(persona1);
@@ -132,7 +128,7 @@ public class GruppoServiceImplIT {
         consiglioDidattico.addPersona(persona1);
         consiglioDidattico.addPersona(persona2);
 
-        Supergruppo supergruppo = new Supergruppo("GAQR Informatica" , "gruppo", true);
+        Supergruppo supergruppo = new Supergruppo("GAQR Informatica" , "Supergruppo", true);
         supergruppo.setConsiglio(consiglioDidattico);
         consiglioDidattico.setSupergruppo(supergruppo);
         supergruppo.addPersona(persona1);
@@ -168,7 +164,7 @@ public class GruppoServiceImplIT {
 
     @Test
     void findSupergruppo() {
-        Supergruppo expectedSupergruppo = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        Supergruppo expectedSupergruppo = new Supergruppo("GAQR- Informatica", "Supergruppo", true);
         supergruppoDAO.save(expectedSupergruppo);
         Supergruppo actualSupergruppo = gruppoService.findSupergruppo(expectedSupergruppo.getId());
         assertEquals(expectedSupergruppo, actualSupergruppo);
@@ -206,16 +202,16 @@ public class GruppoServiceImplIT {
     void findAllCommissioniByGruppo() {
         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
-        Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione2", true,  "Commissione2");
+        Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione", true,  "Commissione");
         List<Commissione> expectedCommissioni = new ArrayList<>();
-        expectedCommissioni.add(expectedCommissione);
         expectedCommissioni.add(expectedCommissione2);
-        expectedGruppo.addCommissione(expectedCommissione);
+        expectedCommissioni.add(expectedCommissione);
         expectedGruppo.addCommissione(expectedCommissione2);
+        expectedGruppo.addCommissione(expectedCommissione);
 
-        gruppoDAO.save(expectedGruppo);
-        commissioneDAO.save(expectedCommissione);
-        commissioneDAO.save(expectedCommissione2);
+        supergruppoDAO.save(expectedGruppo);
+        supergruppoDAO.save(expectedCommissione2);
+        supergruppoDAO.save(expectedCommissione);
 
         List<Commissione> actualCommissioni = gruppoService.findAllCommissioniByGruppo(expectedGruppo.getId());
 
@@ -244,8 +240,8 @@ public class GruppoServiceImplIT {
 
         personaDAO.save(persona1);
         personaDAO.save(persona2);
-        gruppoDAO.save(expectedGruppo);
-        commissioneDAO.save(expectedCommissione);
+        supergruppoDAO.save(expectedGruppo);
+        supergruppoDAO.save(expectedCommissione);
 
         List<Persona> acutalPersone = gruppoService.findAllMembriInGruppoNoCommissione(expectedCommissione.getId());
         assertEquals(expectedPersone, acutalPersone);
@@ -254,9 +250,9 @@ public class GruppoServiceImplIT {
     @Test
     void closeCommissione() {
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
-        commissioneDAO.save(expectedCommissione);
+        supergruppoDAO.save(expectedCommissione);
         gruppoService.closeCommissione(expectedCommissione.getId());
-        Commissione actualCommissione = commissioneDAO.findById(expectedCommissione.getId());
+        Commissione actualCommissione = (Commissione) supergruppoDAO.findById(expectedCommissione.getId());
         assertEquals(actualCommissione.getState(), false);
     }
 
@@ -266,7 +262,7 @@ public class GruppoServiceImplIT {
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
 
-        gruppoDAO.save(expectedGruppo);
+        supergruppoDAO.save(expectedGruppo);
 
         gruppoService.createCommissione(expectedCommissione, expectedGruppo.getId());
 
@@ -281,7 +277,7 @@ public class GruppoServiceImplIT {
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
 
         personaDAO.save(persona1);
-        commissioneDAO.save(expectedCommissione);
+        supergruppoDAO.save(expectedCommissione);
 
         gruppoService.nominaResponsabile(persona1.getId(), expectedCommissione.getId());
 
@@ -297,8 +293,8 @@ public class GruppoServiceImplIT {
         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
         expectedGruppo.addCommissione(expectedCommissione);
-        gruppoDAO.save(expectedGruppo);
-        commissioneDAO.save(expectedCommissione);
+        supergruppoDAO.save(expectedGruppo);
+        supergruppoDAO.save(expectedCommissione);
         Gruppo actualGruppo = gruppoService.findGruppoByCommissione(expectedCommissione.getId());
         assertEquals(expectedGruppo, actualGruppo);
     }
