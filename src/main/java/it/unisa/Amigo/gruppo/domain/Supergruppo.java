@@ -1,8 +1,7 @@
 package it.unisa.Amigo.gruppo.domain;
 
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-import org.springframework.lang.Nullable;
+
 
 import javax.persistence.*;
 import java.io.Serializable;
