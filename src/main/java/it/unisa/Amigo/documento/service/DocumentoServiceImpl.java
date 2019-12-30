@@ -4,8 +4,6 @@ import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.exceptions.StorageException;
 import it.unisa.Amigo.documento.exceptions.StorageFileNotFoundException;
-import it.unisa.Amigo.gruppo.services.GruppoService;
-import it.unisa.Amigo.task.domain.Task;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -22,18 +20,18 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
+
 /**
- * Questa classe implementa i metodi  per la logica di Business del sottositema "Documento"
+ * Questa classe implementa i metodi  per la logica di Business del sottosistema "Documento"
  */
 @Service
 @RequiredArgsConstructor
 public class DocumentoServiceImpl implements DocumentoService{
 
-    public static final String BASE_PATH = "src/main/resources/documents";
+    private static final String BASE_PATH = "src/main/resources/documents/";
 
     @Autowired
     private final DocumentoDAO documentoDAO;
-    private final GruppoService gruppoService;
 
 
     private String storeFile(MultipartFile file) {
@@ -59,9 +57,9 @@ public class DocumentoServiceImpl implements DocumentoService{
     }
 
     /**
-     *Consente di creare un documento @{@link Documento}e aggiungerlo a un task @{@link Task}
-     * @param file per creare il documento
-     * @return true se la persona è l'assegnatario del task, false altrimenti
+     * Esegue il salvataggio di un file su file system, crea un documento @{@link Documento} e lo salva all'interno del database.
+     * @param file da salvare su file system.
+     * @return il documento salvato nel database contenente la path del file salvato.
      */
     @Override
     public Documento addDocumento(MultipartFile file) {
@@ -75,15 +73,20 @@ public class DocumentoServiceImpl implements DocumentoService{
         return documentoDAO.save(documento);
     }
 
+    /**
+     * Esegue il salvataggio di un documento @{@link Documento} all'interno del database.
+     * @param documento da salvare su database.
+     * @return il documento salvato nel database.
+     */
     @Override
     public Documento updateDocumento(Documento documento) {
          return documentoDAO.save(documento);
     }
 
     /**
-     *
-     * @param documento
-     * @return
+     * Esegue il prelievo del file in base alla path presente nel documento @{@link Documento} passato come parametro.
+     * @param documento in cui è presente la path del file da scaricare.
+     * @return resource contenente il file prelevato dal file system.
      */
     public Resource loadAsResource(Documento documento) {
         try {
@@ -101,9 +104,9 @@ public class DocumentoServiceImpl implements DocumentoService{
     }
 
     /**
-     * Ritorna un documento @{@link Documento} di una consegna a patto che la persona loggata sia il mittente o il destinatario
-     * @param idDocumento documento che si vuole scaricare
-     * @return documento
+     * Ritorna il documento @{@link Documento} con id passato come parametro ricercandolo all'interno del database.
+     * @param idDocumento documento che si vuole ottenere.
+     * @return documento con id uguale a idDocumento.
      */
     @Override
     public Documento findDocumento(int idDocumento) {
@@ -111,9 +114,9 @@ public class DocumentoServiceImpl implements DocumentoService{
     }
 
     /**
-     * Ritorna una lista di documenti @{@link Documento} presenti nella repository dove il nome di ciascun documento contine la stringa passata come parametro
-     * @param nameDocumento stringa da ricercare nel nome dei documenti
-     * @return lista di documenti
+     * Ritorna una lista di documenti il cui nome contiene la stringa passata come parametro.
+     * @param nameDocumento stringa da ricercare nel nome dei documenti.
+     * @return lista di documenti contenenti la stringa ricercata.
      */
     @Override
     public List<Documento> searchDocumenti(String nameDocumento) {

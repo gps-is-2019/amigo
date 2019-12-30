@@ -1,6 +1,5 @@
 package it.unisa.Amigo.consegna.domain;
 
-
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import lombok.*;

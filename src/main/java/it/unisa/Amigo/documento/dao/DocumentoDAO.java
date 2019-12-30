@@ -11,6 +11,4 @@ import java.util.List;
 @Repository
 public interface DocumentoDAO extends CrudRepository<Documento, Integer> {
     List<Documento> findAllByNomeContains(String nameDocumento);
-    Documento findByIdAndInRepository(int idDocumento, boolean inRepository);
-
 }

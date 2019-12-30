@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,6 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class DocumentoServiceImplTest {
-
     @InjectMocks
     private DocumentoServiceImpl documentoService;
 
@@ -29,7 +29,7 @@ class DocumentoServiceImplTest {
     private DocumentoDAO documentoDAO;
 
     @Test
-    void addDocumentoStoreAndLoad(){
+    void addDocumentoStoreAndLoad() {
         documentoService.addDocumento(new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE,
                 "Hello World".getBytes()));
         Documento documento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(), "test.txt", false, "text/plain");
@@ -37,23 +37,25 @@ class DocumentoServiceImplTest {
     }
 
     @Test
-    void updateDocumento(){
+    void updateDocumento() {
         Documento expectedDocumento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
                 "test.txt", false, "text/plain");
         when(documentoDAO.save(expectedDocumento)).thenReturn(expectedDocumento);
         Documento actualDocumento = documentoService.updateDocumento(expectedDocumento);
         assertEquals(expectedDocumento,actualDocumento);
     }
+
     @Test
-   void findDocumento(){
+    void findDocumento() {
         Documento expectedDocumento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
                 "test.txt", false, "text/plain");
         when(documentoDAO.findById(expectedDocumento.getId())).thenReturn(Optional.of(expectedDocumento));
         Documento actualDocumento = documentoService.findDocumento(expectedDocumento.getId());
         assertEquals(expectedDocumento,actualDocumento);
     }
+
     @Test
-    void searchDocumenti(){
+    void searchDocumenti() {
         Documento documento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
                 "test.txt", false, "text/plain");
         Documento documento1 = new Documento("src/main/resources/documents/test1.txt", LocalDate.now(),
@@ -66,6 +68,4 @@ class DocumentoServiceImplTest {
         List<Documento> actualDocumenti = documentoService.searchDocumenti(documento.getNome());
         assertEquals(expectedDocumenti, actualDocumenti);
     }
-
 }
-
