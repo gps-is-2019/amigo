@@ -85,7 +85,7 @@ class GruppoServiceImplTest {
     }
 
     @Test
-    void findAllSupergruppi() {
+    void findAllSupergruppiOfPersona() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
         Supergruppo supergruppo1 = new Supergruppo("GAQR Informatica" , "gruppo", true);
@@ -95,12 +95,12 @@ class GruppoServiceImplTest {
         expectedSupergruppi.add(supergruppo1);
         expectedSupergruppi.add(supergruppo);
         when(supergruppoDAO.findAllByPersone_id(persona1.getId())).thenReturn(expectedSupergruppi);
-        List<Supergruppo> actualSupergruppi = gruppoService.findAllSupergruppi(persona1.getId());
+        List<Supergruppo> actualSupergruppi = gruppoService.findAllSupergruppiOfPersona(persona1.getId());
         assertEquals(expectedSupergruppi, actualSupergruppi);
     }
 
     @Test
-    void findAllConsigliDidattici() {
+    void findAllConsigliDidatticiOfPersona() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         ConsiglioDidattico consiglioDidattico = new ConsiglioDidattico("Informatica");
         ConsiglioDidattico consiglioDidattico1 = new ConsiglioDidattico("Ingegneria");
@@ -110,12 +110,12 @@ class GruppoServiceImplTest {
         expectedConsigli.add(consiglioDidattico);
         expectedConsigli.add(consiglioDidattico1);
         when(consiglioDidatticoDAO.findAllByPersone_id(persona1.getId())).thenReturn(expectedConsigli);
-        List<ConsiglioDidattico> actualConsigli = gruppoService.findAllConsigliDidattici(persona1.getId());
+        List<ConsiglioDidattico> actualConsigli = gruppoService.findAllConsigliDidatticiOfPersona(persona1.getId());
         assertEquals(expectedConsigli, actualConsigli);
     }
 
     @Test
-    void findAllDipartimenti() {
+    void findAllDipartimentiOfPersona() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Dipartimento dipartimento = new Dipartimento("Informatica");
         Dipartimento dipartimento1 = new Dipartimento("Ingegneria");
@@ -125,7 +125,7 @@ class GruppoServiceImplTest {
         expectedDipartimenti.add(dipartimento);
         expectedDipartimenti.add(dipartimento1);
         when(dipartimentoDAO.findAllByPersone_id(persona1.getId())).thenReturn(expectedDipartimenti);
-        List<Dipartimento> actualDipartimenti = gruppoService.findAllDipartimenti(persona1.getId());
+        List<Dipartimento> actualDipartimenti = gruppoService.findAllDipartimentiOfPersona(persona1.getId());
         assertEquals(expectedDipartimenti, actualDipartimenti);
     }
 

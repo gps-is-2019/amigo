@@ -48,7 +48,7 @@ public class GruppoController
     public String findAllSupergruppi(Model model){
 
         int idPersona = gruppoService.getAuthenticatedUser().getId();
-        model.addAttribute("supergruppi", gruppoService.findAllSupergruppi(idPersona));
+        model.addAttribute("supergruppi", gruppoService.findAllSupergruppiOfPersona(idPersona));
         model.addAttribute("personaLoggata",idPersona);
         return "gruppo/miei_gruppi";
     }
@@ -72,7 +72,7 @@ public class GruppoController
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/commissioni/{idSupergruppo}/candidati")
-    public String findAllMembriInGruppoNoCommissione(@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
+    public String groupCandidatesList(@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
         prepareCandidateList(idSupergruppo, model, gruppoService.findAllMembriInGruppoNoCommissione(idSupergruppo));
         return "gruppo/aggiunta_membro_commissione";
     }
@@ -222,7 +222,7 @@ public class GruppoController
      * @param idGruppo l'id del gruppo al quale verrà assegnata la nuova commissione
      * @return il path della pagina su cui eseguire il redirect
      */
-    @PostMapping("/gruppi/{idGruppo}/commissioni/createCommissione")
+    @PostMapping("/gruppi/{idGruppo}/commissioni/create")
     public String createCommissione(@ModelAttribute("command") GruppoFormCommand gruppoFormCommand, Model model,@PathVariable(name = "idGruppo")int idGruppo ){
         Commissione commissione = new Commissione(gruppoFormCommand.getName(), "Commissione", true, gruppoFormCommand.getDescrizione());
         gruppoService.createCommissione(commissione, idGruppo);

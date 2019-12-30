@@ -21,23 +21,27 @@ import java.util.Set;
 @Transactional
 public class GruppoServiceImpl implements GruppoService {
 
-    @Autowired
-    private final PersonaDAO personaDAO;
+    private PersonaDAO personaDAO;
+
+    private SupergruppoDAO supergruppoDAO;
+
+    private ConsiglioDidatticoDAO consiglioDidatticoDAO;
+
+    private DipartimentoDAO dipartimentoDAO;
+
+    private CommissioneDAO commissioneDAO;
+
+    private GruppoDAO gruppoDAO;
 
     @Autowired
-    private  final SupergruppoDAO supergruppoDAO;
-
-    @Autowired
-    private final ConsiglioDidatticoDAO consiglioDidatticoDAO;
-
-    @Autowired
-    private final DipartimentoDAO dipartimentoDAO;
-
-    @Autowired
-    private final CommissioneDAO commissioneDAO;
-
-    @Autowired
-    private final GruppoDAO gruppoDAO;
+    public GruppoServiceImpl(PersonaDAO personaDAO, SupergruppoDAO supergruppoDAO, ConsiglioDidatticoDAO consiglioDidatticoDAO, DipartimentoDAO dipartimentoDAO, CommissioneDAO commissioneDAO, GruppoDAO gruppoDAO){
+        this.personaDAO = personaDAO;
+        this.supergruppoDAO = supergruppoDAO;
+        this.consiglioDidatticoDAO = consiglioDidatticoDAO;
+        this.dipartimentoDAO = dipartimentoDAO;
+        this.commissioneDAO = commissioneDAO;
+        this.gruppoDAO = gruppoDAO;
+    }
 
     /***
      * Ritorna la lista di persone @{@link Persona} presenti nel supergruppo @{@link Supergruppo}
@@ -76,7 +80,7 @@ public class GruppoServiceImpl implements GruppoService {
      * @return lista di supergruppi
      */
     @Override
-    public List<Supergruppo> findAllSupergruppi(int idPersona) {
+    public List<Supergruppo> findAllSupergruppiOfPersona(int idPersona) {
         return supergruppoDAO.findAllByPersone_id(idPersona);
     }
 
@@ -86,7 +90,7 @@ public class GruppoServiceImpl implements GruppoService {
      * @return lista di consigli didattici
      */
     @Override
-    public List<ConsiglioDidattico> findAllConsigliDidattici(int idPersona) {
+    public List<ConsiglioDidattico> findAllConsigliDidatticiOfPersona(int idPersona) {
         return consiglioDidatticoDAO.findAllByPersone_id(idPersona);
     }
 
@@ -96,7 +100,7 @@ public class GruppoServiceImpl implements GruppoService {
      * @return lista di dipartimenti
      */
     @Override
-    public List<Dipartimento> findAllDipartimenti(int idPersona) {
+    public List<Dipartimento> findAllDipartimentiOfPersona(int idPersona) {
         return dipartimentoDAO.findAllByPersone_id(idPersona);
     }
 

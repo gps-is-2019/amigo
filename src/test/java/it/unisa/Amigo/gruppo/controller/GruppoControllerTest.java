@@ -85,7 +85,7 @@ class GruppoControllerTest {
         expectedPersona.addSupergruppo(expectedSupergruppo1);
         expectedPersona.addSupergruppo(expectedSupergruppo2);
 
-        when(gruppoService.findAllSupergruppi(expectedPersona.getId())).thenReturn(expectedSupergruppi);
+        when(gruppoService.findAllSupergruppiOfPersona(expectedPersona.getId())).thenReturn(expectedSupergruppi);
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
 
         this.mockMvc.perform(get("/gruppi")

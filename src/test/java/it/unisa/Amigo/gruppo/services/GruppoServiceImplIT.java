@@ -11,7 +11,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class GruppoServiceImplIT {
@@ -73,7 +72,7 @@ public class GruppoServiceImplIT {
     }
 
     @Test
-    void findAllSupergruppi() {
+    void findAllSupergruppiOfPersona() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
         Supergruppo supergruppo1 = new Supergruppo("GAQR Informatica" , "gruppo", true);
@@ -85,12 +84,12 @@ public class GruppoServiceImplIT {
         List<Supergruppo> expectedSupergruppi = new ArrayList<>();
         expectedSupergruppi.add(supergruppo1);
         expectedSupergruppi.add(supergruppo);
-        List<Supergruppo> actualSupergruppi = gruppoService.findAllSupergruppi(persona1.getId());
+        List<Supergruppo> actualSupergruppi = gruppoService.findAllSupergruppiOfPersona(persona1.getId());
         assertEquals(expectedSupergruppi, actualSupergruppi);
     }
 
     @Test
-    void findAllConsigliDidattici() {
+    void findAllConsigliDidatticiOfPersona() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         ConsiglioDidattico consiglioDidattico = new ConsiglioDidattico("Informatica");
         ConsiglioDidattico consiglioDidattico1 = new ConsiglioDidattico("Ingegneria");
@@ -102,12 +101,12 @@ public class GruppoServiceImplIT {
         List<ConsiglioDidattico> expectedConsigli = new ArrayList<>();
         expectedConsigli.add(consiglioDidattico1);
         expectedConsigli.add(consiglioDidattico);
-        List<ConsiglioDidattico> actualConsigli = gruppoService.findAllConsigliDidattici(persona1.getId());
+        List<ConsiglioDidattico> actualConsigli = gruppoService.findAllConsigliDidatticiOfPersona(persona1.getId());
         assertEquals(expectedConsigli, actualConsigli);
     }
 
     @Test
-    void findAllDipartimenti() {
+    void findAllDipartimentiOfPersona() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Dipartimento dipartimento = new Dipartimento("Informatica");
         Dipartimento dipartimento1 = new Dipartimento("Ingegneria");
@@ -119,7 +118,7 @@ public class GruppoServiceImplIT {
         List<Dipartimento> expectedDipartimenti = new ArrayList<>();
         expectedDipartimenti.add(dipartimento1);
         expectedDipartimenti.add(dipartimento);
-        List<Dipartimento> actualDipartimenti = gruppoService.findAllDipartimenti(persona1.getId());
+        List<Dipartimento> actualDipartimenti = gruppoService.findAllDipartimentiOfPersona(persona1.getId());
         assertEquals(expectedDipartimenti, actualDipartimenti);
     }
 

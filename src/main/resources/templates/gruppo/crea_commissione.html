@@ -7,7 +7,7 @@
             <h1 class="ui header"  align="center">Creazione Commissione</h1>
             <div class = "ui main text container">
                 <div class = "ui form">
-                    <form action="#" th:action="@{'/gruppi/{idGruppo}/commissioni/createCommissione'( idGruppo=${idGruppo})}" th:object="${command}" method="post">
+                    <form action="#" th:action="@{'/gruppi/{idGruppo}/commissioni/create'( idGruppo=${idGruppo})}" th:object="${command}" method="post">
                         <p>Nome commissione: <input type="text" th:field="*{name}" /></p>
                         <p>Descrizione: <textarea th:field="*{descrizione}" ></textarea></p>
                         <input type = "submit" class = "ui button" name = "Invia">

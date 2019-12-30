@@ -18,11 +18,11 @@ public interface GruppoService {
     void addMembro(Persona persona, Supergruppo supergruppo);
     void removeMembro(Persona persona, Supergruppo supergruppo);
     boolean isResponsabile(int idPersona, int idSupergruppo);
-    List<Supergruppo> findAllSupergruppi(int idPersona);
+    List<Supergruppo> findAllSupergruppiOfPersona(int idPersona);
     Supergruppo findSupergruppo(int id);
-    List<ConsiglioDidattico> findAllConsigliDidattici(int idPersona);
+    List<ConsiglioDidattico> findAllConsigliDidatticiOfPersona(int idPersona);
     ConsiglioDidattico findConsiglioBySupergruppo(int idSupergruppo);
-    List<Dipartimento> findAllDipartimenti(int idPersona);
+    List<Dipartimento> findAllDipartimentiOfPersona(int idPersona);
     List<Commissione> findAllCommissioniByGruppo(int idGruppo);
     void closeCommissione(int idSupergruppo);
     void createCommissione(Commissione commissione, int idSupergruppo);
