@@ -202,7 +202,7 @@ public class GruppoServiceImplIT {
     void findAllCommissioniByGruppo() {
         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
-        Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione", true,  "Commissione");
+        Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione", true,  "Commissione2");
         List<Commissione> expectedCommissioni = new ArrayList<>();
         expectedCommissioni.add(expectedCommissione2);
         expectedCommissioni.add(expectedCommissione);

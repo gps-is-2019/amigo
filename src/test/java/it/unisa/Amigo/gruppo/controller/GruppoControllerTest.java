@@ -4,7 +4,7 @@ import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
 import it.unisa.Amigo.autenticazione.domanin.User;
 import it.unisa.Amigo.gruppo.domain.*;
 import it.unisa.Amigo.gruppo.services.GruppoService;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //@WebMvcTest(GruppoController.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-class GruppoControllerTest {
+public class GruppoControllerTest {
 
     @MockBean
     private GruppoService gruppoService;
@@ -38,7 +38,7 @@ class GruppoControllerTest {
 
 
     @Test
-    void findAllMembriInSupergruppo() throws Exception {
+    public void findAllMembriInSupergruppo() throws Exception {
 
 
         User user = new User("admin", "admin");
@@ -71,7 +71,7 @@ class GruppoControllerTest {
 
 
     @Test
-    void findAllSupergruppi() throws Exception {
+    public void findAllSupergruppi() throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -97,7 +97,7 @@ class GruppoControllerTest {
     }
 
     @Test
-    void findAllMembriInConsiglioDidatticoNoSupergruppo() throws Exception {
+    public void groupCandidatesList() throws Exception {
 
         User user1 = new User("admin", "admin");
         UserDetailImpl userDetails1 = new UserDetailImpl(user1);
@@ -134,7 +134,7 @@ class GruppoControllerTest {
     }
 
     @Test
-    void addMembro() throws Exception {
+    public void addMembro() throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -143,9 +143,6 @@ class GruppoControllerTest {
         Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
         expectedPersona.addSupergruppo(expectedSupergruppo);
 
-        when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
-        when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}",expectedSupergruppo.getId(), expectedPersona.getId())
                 .with(user(userDetails)))
@@ -156,7 +153,7 @@ class GruppoControllerTest {
 
 
     @Test
-    void removeMembro() throws Exception {
+    public void removeMembro() throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -177,7 +174,7 @@ class GruppoControllerTest {
     }
 
     @Test
-    void findAllMembriInCommissione() throws Exception {
+    public void findAllMembriInCommissione() throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -211,7 +208,7 @@ class GruppoControllerTest {
     }
 
     @Test
-    void closeCommissione() throws Exception {
+    public  void closeCommissione() throws Exception {
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
@@ -246,7 +243,7 @@ class GruppoControllerTest {
     }
 
     @Test
-    void createCommissioneForm() throws Exception {
+    public void createCommissioneForm() throws Exception {
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
@@ -267,11 +264,11 @@ class GruppoControllerTest {
     }
 
     @Test
-    void createCommissione(){
+    public void createCommissione(){
     }
 
     @Test
-    void nominaResponsabile() throws Exception {
+    public  void nominaResponsabile() throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -312,7 +309,7 @@ class GruppoControllerTest {
     }
 
     @Test
-    void addMembroCommissione() throws Exception {
+    public void addMembroCommissione() throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -337,7 +334,7 @@ class GruppoControllerTest {
         when(gruppoService.findGruppoByCommissione(expectedCommissione.getId())).thenReturn(expectedGruppo);
         when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
 
-        this.mockMvc.perform(get("/gruppi/commissioni/{idSupergruppo}/add/{idPersona}", expectedCommissione.getId(), expectedPersona.getId())
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", expectedCommissione.getId(), expectedPersona.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("flagAggiunta", 1))
@@ -350,7 +347,7 @@ class GruppoControllerTest {
     }
 
     @Test
-    void removeMembroCommissione() throws Exception {
+    public void removeMembroCommissione() throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -389,8 +386,7 @@ class GruppoControllerTest {
                 .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("flagRimozione", 1))
                 .andExpect(model().attribute("personaRimossa", expectedPersona))
-                .andExpect(model().attribute("commissioni", commissioni))
-                .andExpect(view().name("gruppo/gruppo_detail"));
+                .andExpect(view().name("gruppo/commissione_detail"));
 
     }
 }
