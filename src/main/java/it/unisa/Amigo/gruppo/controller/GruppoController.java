@@ -19,8 +19,7 @@ import java.util.List;
  * Questa classe si occupa della logoca di controllo del sottosistema gruppo
  */
 @Controller
-public class GruppoController
-{
+public class GruppoController {
     @Autowired
     private GruppoService gruppoService;
 
@@ -31,10 +30,10 @@ public class GruppoController
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/{id}")
-    public String findAllMembriInSupergruppo(Model model, @PathVariable(name = "id")int idSupergruppo){
+    public String findAllMembriInSupergruppo(Model model, @PathVariable(name = "id") int idSupergruppo) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         model.addAttribute("isCapogruppo", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
-        prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInSupergruppo(idSupergruppo));
+        prepareCandidateList(idSupergruppo, model, gruppoService.findAllMembriInSupergruppo(idSupergruppo));
         model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
         return "gruppo/gruppo_detail";
     }
@@ -45,11 +44,11 @@ public class GruppoController
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi")
-    public String findAllSupergruppi(Model model){
+    public String findAllSupergruppi(Model model) {
 
         int idPersona = gruppoService.getAuthenticatedUser().getId();
         model.addAttribute("supergruppi", gruppoService.findAllSupergruppiOfPersona(idPersona));
-        model.addAttribute("personaLoggata",idPersona);
+        model.addAttribute("personaLoggata", idPersona);
         return "gruppo/miei_gruppi";
     }
 
@@ -60,7 +59,7 @@ public class GruppoController
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/{idSupergruppo}/candidati")
-    public String findAllMembriInConsiglioDidatticoNoSupergruppo(@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
+    public String findAllMembriInConsiglioDidatticoNoSupergruppo(@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model) {
         prepareCandidateList(idSupergruppo, model, gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(idSupergruppo));
         return "gruppo/aggiunta_membro";
     }
@@ -72,16 +71,17 @@ public class GruppoController
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/commissioni/{idSupergruppo}/candidati")
-    public String groupCandidatesList(@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
+    public String groupCandidatesList(@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model) {
         prepareCandidateList(idSupergruppo, model, gruppoService.findAllMembriInGruppoNoCommissione(idSupergruppo));
         return "gruppo/aggiunta_membro_commissione";
     }
 
     /**
      * Recupera le informazioni sui membri componenti un supergruppo, la persona loggata e li inserisce nel model
+     *
      * @param idSupergruppo da cui recuperare la lista dei membri
-     * @param model per salvare informazioni da recuperare nell'html
-     * @param allMembri la lista di persone che verrà inserita nel model
+     * @param model         per salvare informazioni da recuperare nell'html
+     * @param allMembri     la lista di persone che verrà inserita nel model
      */
     private void prepareCandidateList(int idSupergruppo, Model model, List<Persona> allMembri) {
         model.addAttribute("persone", allMembri);
@@ -97,18 +97,18 @@ public class GruppoController
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/{idSupergruppo}/add/{idPersona}")
-    public String addMembro(@PathVariable(name = "idPersona") int idPersona,@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
+    public String addMembro(@PathVariable(name = "idPersona") int idPersona, @PathVariable(name = "idSupergruppo") int idSupergruppo, Model model) {
         Persona persona = gruppoService.findPersona(idPersona);
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
-        gruppoService.addMembro(persona,supergruppo);
-        model.addAttribute("flagAggiunta",1);
-        model.addAttribute("personaAggiunta",persona);
-        if(supergruppo.getType().equalsIgnoreCase("Gruppo")){
-            prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(idSupergruppo));
+        gruppoService.addMembro(persona, supergruppo);
+        model.addAttribute("flagAggiunta", 1);
+        model.addAttribute("personaAggiunta", persona);
+        if (supergruppo.getType().equalsIgnoreCase("Gruppo")) {
+            prepareCandidateList(idSupergruppo, model, gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(idSupergruppo));
             model.addAttribute("isCapogruppo", gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), idSupergruppo));
             return "gruppo/aggiunta_membro";
         } else {
-            prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInGruppoNoCommissione(idSupergruppo));
+            prepareCandidateList(idSupergruppo, model, gruppoService.findAllMembriInGruppoNoCommissione(idSupergruppo));
             return "gruppo/aggiunta_membro_commissione";
         }
     }
@@ -122,16 +122,16 @@ public class GruppoController
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/{idSupergruppo}/remove/{idPersona}")
-    public String removeMembro(@PathVariable(name = "idPersona") int idPersona,@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
+    public String removeMembro(@PathVariable(name = "idPersona") int idPersona, @PathVariable(name = "idSupergruppo") int idSupergruppo, Model model) {
         Persona persona = gruppoService.findPersona(idPersona);
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
-        gruppoService.removeMembro(persona,supergruppo);
+        gruppoService.removeMembro(persona, supergruppo);
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInSupergruppo(idSupergruppo));
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
-        model.addAttribute("flagRimozione",1);
-        model.addAttribute("personaRimossa",persona);
-        if(supergruppo.getType().equalsIgnoreCase("Gruppo")){
+        prepareCandidateList(idSupergruppo, model, gruppoService.findAllMembriInSupergruppo(idSupergruppo));
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+        model.addAttribute("flagRimozione", 1);
+        model.addAttribute("personaRimossa", persona);
+        if (supergruppo.getType().equalsIgnoreCase("Gruppo")) {
             model.addAttribute("isCapogruppo", gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), idSupergruppo));
             model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
             return "gruppo/gruppo_detail";
@@ -149,39 +149,41 @@ public class GruppoController
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/{id}/commissione_detail/{id_commissione}")
-    public String findAllMembriInCommissione(Model model, @PathVariable(name = "id")int idSupergruppo, @PathVariable(name = "id_commissione")int idCommissione){
+    public String findAllMembriInCommissione(Model model, @PathVariable(name = "id") int idSupergruppo, @PathVariable(name = "id_commissione") int idCommissione) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        prepareCandidateList(idCommissione,model,gruppoService.findAllMembriInSupergruppo(idCommissione));
+        prepareCandidateList(idCommissione, model, gruppoService.findAllMembriInSupergruppo(idCommissione));
         model.addAttribute("isCapogruppo", gruppoService.isResponsabile(personaLoggata.getId(), gruppoService.findGruppoByCommissione(idCommissione).getId()));
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idCommissione));
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idCommissione));
         return "gruppo/commissione_detail";
     }
 
     /**
      * Esegue la chiusura di una commissione @{@link Commissione}
-     * @param model per salvare informazioni da recuperare nell'html
+     *
+     * @param model         per salvare informazioni da recuperare nell'html
      * @param idCommissione l'id della commissione della quale si vuole effettuare la chiusura
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/commissioni/{id2}/chiusura")
-    public String closeCommissione(Model model, @PathVariable(name = "id2")int idCommissione){
+    public String closeCommissione(Model model, @PathVariable(name = "id2") int idCommissione) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        prepareCandidateList(idCommissione,model,gruppoService.findAllMembriInSupergruppo(idCommissione));
+        prepareCandidateList(idCommissione, model, gruppoService.findAllMembriInSupergruppo(idCommissione));
         model.addAttribute("isCapogruppo", gruppoService.isResponsabile(personaLoggata.getId(), gruppoService.findGruppoByCommissione(idCommissione).getId()));
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idCommissione));
-        model.addAttribute("flagChiusura",1);
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idCommissione));
+        model.addAttribute("flagChiusura", 1);
         gruppoService.closeCommissione(idCommissione);
         return "gruppo/commissione_detail";
     }
 
     /**
      * Gestisce il form necessario alla creazione di una nuova commissione @{@link Commissione}
-     * @param model per salvare informazioni da recuperare nell'html
+     *
+     * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo l'id del gruppo al quale verrà assegnata la nuova commissione
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/{id}/commissioni/create")
-    public String createCommissioneForm(Model model, @PathVariable(name = "id")int idSupergruppo){
+    public String createCommissioneForm(Model model, @PathVariable(name = "id") int idSupergruppo) {
         model.addAttribute("idGruppo", idSupergruppo);
         model.addAttribute("command", new GruppoFormCommand());
         return "gruppo/crea_commissione";
@@ -189,43 +191,45 @@ public class GruppoController
 
     /**
      * Gestisce la creazione di una commissione @{@link Commissione}
+     *
      * @param gruppoFormCommand il gestore del form
-     * @param model per salvare informazioni da recuperare nell'html
-     * @param idGruppo l'id del gruppo al quale verrà assegnata la nuova commissione
+     * @param model             per salvare informazioni da recuperare nell'html
+     * @param idGruppo          l'id del gruppo al quale verrà assegnata la nuova commissione
      * @return il path della pagina su cui eseguire il redirect
      */
     @PostMapping("/gruppi/{idGruppo}/commissioni/create")
-    public String createCommissione(@ModelAttribute("command") GruppoFormCommand gruppoFormCommand, Model model,@PathVariable(name = "idGruppo")int idGruppo ){
+    public String createCommissione(@ModelAttribute("command") GruppoFormCommand gruppoFormCommand, Model model, @PathVariable(name = "idGruppo") int idGruppo) {
         Commissione commissione = new Commissione(gruppoFormCommand.getName(), "Commissione", true, gruppoFormCommand.getDescrizione());
         gruppoService.createCommissione(commissione, idGruppo);
 
-        model.addAttribute("idCommissione",commissione.getId());
+        model.addAttribute("idCommissione", commissione.getId());
         model.addAttribute("idGruppo", idGruppo);
 
         List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idGruppo);
-        model.addAttribute("persone",persone);
+        model.addAttribute("persone", persone);
 
         return "gruppo/nomina_responsabile";
     }
 
     /**
      * Nomina ed assegna un nuovo responsabile @{@link Persona}  ad una commissione @{@link Commissione}
-     * @param model per salvare informazioni da recuperare nell'html
+     *
+     * @param model         per salvare informazioni da recuperare nell'html
      * @param idCommissione la commissione che riceverà un nuovo responsabile
-     * @param idPersona id della persona che diventerà il nuovo responsabile
+     * @param idPersona     id della persona che diventerà il nuovo responsabile
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/commissioni/{idCommissione}/nominaResponsabile/{idPersona}")
-    public String nominaResponsabile(Model model, @PathVariable("idCommissione") int idCommissione, @PathVariable("idPersona") int idPersona){
+    public String nominaResponsabile(Model model, @PathVariable("idCommissione") int idCommissione, @PathVariable("idPersona") int idPersona) {
 
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         gruppoService.nominaResponsabile(idPersona, idCommissione);
         Commissione commissione = (Commissione) gruppoService.findSupergruppo(idCommissione);
         List<Persona> persone = gruppoService.findAllMembriInSupergruppo(commissione.getId());
-        model.addAttribute("idCommissione",idCommissione);
+        model.addAttribute("idCommissione", idCommissione);
         model.addAttribute("isCapogruppo", gruppoService.isResponsabile(personaLoggata.getId(), gruppoService.findGruppoByCommissione(idCommissione).getId()));
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idCommissione));
-        model.addAttribute("persone",persone);
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idCommissione));
+        model.addAttribute("persone", persone);
         model.addAttribute("personaLoggata", gruppoService.getAuthenticatedUser().getId());
         model.addAttribute("supergruppo", commissione);
         model.addAttribute("flagNomina", 1);

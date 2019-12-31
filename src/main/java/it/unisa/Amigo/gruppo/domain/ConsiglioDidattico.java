@@ -15,8 +15,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class ConsiglioDidattico implements Serializable
-{
+public class ConsiglioDidattico implements Serializable {
     private final static long serialVersionUID = 40L;
 
     @Id
@@ -26,7 +25,7 @@ public class ConsiglioDidattico implements Serializable
     @NonNull
     private String name;
 
-    @ManyToOne(cascade =CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Dipartimento dipartimento;
@@ -41,8 +40,8 @@ public class ConsiglioDidattico implements Serializable
     @EqualsAndHashCode.Exclude
     private Set<Persona> persone = new HashSet<>();
 
-    public void addPersona(Persona persona){
-        if(!persone.contains(persona)) {
+    public void addPersona(Persona persona) {
+        if (!persone.contains(persona)) {
             persone.add(persona);
             persona.addConsiglioDidatttico(this);
         }

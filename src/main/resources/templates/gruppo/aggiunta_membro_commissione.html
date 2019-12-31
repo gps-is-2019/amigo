@@ -4,50 +4,52 @@
     <title id="pageTitle">Amigo|Aggiunta membro commissione</title>
 </head>
 <body>
-    <div th:insert="fragments/fragments.html :: header"></div>
+<div th:insert="fragments/fragments.html :: header"></div>
 
-    <h1 class="ui header"  align="center">Aggiungi membro alla commissione: <span th:text="${supergruppo.name}"></span> </h1>
+<h1 align="center" class="ui header">Aggiungi membro alla commissione: <span th:text="${supergruppo.name}"></span></h1>
 
-    <div class="ui main text container">
-        <table class="ui celled table striped">
-            <thead>
+<div class="ui main text container">
+    <table class="ui celled table striped">
+        <thead>
+        <tr class="center aligned">
+            <th>Cognome</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="persona : ${persone}">
             <tr class="center aligned">
-                <th>Cognome</th>
-                <th>Nome</th>
-                <th>Email</th>
-                <th></th>
-
+                <td th:text="${persona.cognome}"></td>
+                <td th:text="${persona.nome}"></td>
+                <td th:text="${persona.user.getEmail()}"></td>
+                <td>
+                    <a class="ui primary button"
+                       th:href="@{'/gruppi/{idSupergruppo}/add/{idPersona}'( idPersona=${persona.id},idSupergruppo=${supergruppo.id})}">
+                        Aggiungi
+                    </a>
+                </td>
             </tr>
-            </thead>
-            <tbody>
-            <th:block th:each="persona : ${persone}">
-                <tr class="center aligned">
-                    <td th:text="${persona.cognome}"></td>
-                    <td th:text="${persona.nome}"></td>
-                    <td th:text="${persona.user.getEmail()}"></td>
-                    <td>
-                        <a th:href="@{'/gruppi/{idSupergruppo}/add/{idPersona}'( idPersona=${persona.id},idSupergruppo=${supergruppo.id})}" class="ui primary button">
-                            Aggiungi
-                        </a>
-                    </td>
-                </tr>
-            </th:block>
-            </tbody>
-        </table>
-        <div class="ui message success" th:if="${flagAggiunta==1}">
-            <i class="close icon"></i>
-            <p>Hai aggiunto corettamente <span th:text="${personaAggiunta.nome}"></span> <span th:text="${personaAggiunta.cognome}"></span></p>
-        </div>
-        <script>$('.message .close')
-            .on('click', function() {
-                $(this)
-                    .closest('.message')
-                    .transition('fade')
-                ;
-            })
-        ;</script>
-
+        </th:block>
+        </tbody>
+    </table>
+    <div class="ui message success" th:if="${flagAggiunta==1}">
+        <i class="close icon"></i>
+        <p>Hai aggiunto corettamente <span th:text="${personaAggiunta.nome}"></span> <span
+                th:text="${personaAggiunta.cognome}"></span></p>
     </div>
+    <script>$('.message .close')
+        .on('click', function () {
+            $(this)
+                .closest('.message')
+                .transition('fade')
+            ;
+        })
+    ;</script>
+
+</div>
 
 </body>
 </html>

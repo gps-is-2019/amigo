@@ -21,7 +21,7 @@ public class Persona implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private  int id;
+    private int id;
 
     @NonNull
     private String nome;
@@ -59,35 +59,36 @@ public class Persona implements Serializable {
     @EqualsAndHashCode.Exclude
     private Set<Supergruppo> supergruppiResponsabile = new HashSet<>();
 
-    public void addConsiglioDidatttico(ConsiglioDidattico consiglioDidattico){
-        if(!consigli.contains(consiglioDidattico)) {
+    public void addConsiglioDidatttico(ConsiglioDidattico consiglioDidattico) {
+        if (!consigli.contains(consiglioDidattico)) {
             consigli.add(consiglioDidattico);
             consiglioDidattico.addPersona(this);
         }
     }
-    public void addSupergruppo(Supergruppo supergruppo){
-        if(!supergruppi.contains(supergruppo)) {
+
+    public void addSupergruppo(Supergruppo supergruppo) {
+        if (!supergruppi.contains(supergruppo)) {
             supergruppi.add(supergruppo);
             supergruppo.addPersona(this);
         }
     }
 
-    public void addDipartimento(Dipartimento dipartimento){
-        if(!dipartimenti.contains(dipartimento)) {
+    public void addDipartimento(Dipartimento dipartimento) {
+        if (!dipartimenti.contains(dipartimento)) {
             dipartimenti.add(dipartimento);
             dipartimento.addPersona(this);
         }
     }
 
-    public void removeSupergruppo(Supergruppo supergruppo){
-        if(supergruppi.contains(supergruppo)) {
+    public void removeSupergruppo(Supergruppo supergruppo) {
+        if (supergruppi.contains(supergruppo)) {
             supergruppi.remove(supergruppo);
             supergruppo.removePersona(this);
         }
     }
 
-    public void addSupergruppoResponsabile(Supergruppo supergruppo){
-        if(supergruppi.contains(supergruppo)) {
+    public void addSupergruppoResponsabile(Supergruppo supergruppo) {
+        if (supergruppi.contains(supergruppo)) {
             supergruppi.add(supergruppo);
             supergruppo.setResponsabile(this);
         }

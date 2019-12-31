@@ -11,18 +11,15 @@ import it.unisa.Amigo.gruppo.domain.*;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -80,10 +77,10 @@ public class GruppoControllerIT {
         this.mockMvc.perform(get("/gruppi/{id}", expectedGruppo.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("personaLoggata",expectedPersona.getId()))
-                .andExpect(model().attribute("persone" ,expectedPersone))
+                .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
+                .andExpect(model().attribute("persone", expectedPersone))
                 .andExpect(model().attribute("supergruppo", expectedGruppo))
-                .andExpect(model().attribute("isCapogruppo", gruppoService.isResponsabile(expectedPersona.getId(),expectedGruppo.getId())))
+                .andExpect(model().attribute("isCapogruppo", gruppoService.isResponsabile(expectedPersona.getId(), expectedGruppo.getId())))
                 .andExpect(view().name("gruppo/gruppo_detail"));
     }
 
@@ -111,7 +108,7 @@ public class GruppoControllerIT {
         this.mockMvc.perform(get("/gruppi")
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("personaLoggata",expectedPersona.getId()))
+                .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
                 .andExpect(model().attribute("supergruppi", expectedSupergruppi))
                 .andExpect(view().name("gruppo/miei_gruppi"));
     }
@@ -134,11 +131,9 @@ public class GruppoControllerIT {
         expectedPersone.add(expectedPersona1);
 
 
-
         ConsiglioDidattico expectedConsiglioDidattico = new ConsiglioDidattico("Informatica");
         expectedConsiglioDidattico.addPersona(expectedPersona1);
         expectedConsiglioDidattico.addPersona(expectedPersona2);
-
 
 
         Supergruppo expectedSupergruppo = new Supergruppo("GAQR - Informatica", "Supergruppo", true);
@@ -155,7 +150,7 @@ public class GruppoControllerIT {
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/candidati", expectedSupergruppo.getId())
                 .with(user(userDetails1)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("personaLoggata",expectedPersona1.getId()))
+                .andExpect(model().attribute("personaLoggata", expectedPersona1.getId()))
                 .andExpect(model().attribute("supergruppo", expectedSupergruppo))
                 .andExpect(model().attribute("persone", expectedPersone))
                 .andExpect(view().name("gruppo/aggiunta_membro"));
@@ -170,7 +165,7 @@ public class GruppoControllerIT {
         expectedPersona.setUser(user);
 
 
-        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
+        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
         expectedGruppo.addPersona(expectedPersona);
         expectedCommissione.addPersona(expectedPersona);
@@ -182,8 +177,7 @@ public class GruppoControllerIT {
         supergruppoDAO.save(expectedCommissione);
 
 
-
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}",expectedCommissione.getId(), expectedPersona.getId())
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", expectedCommissione.getId(), expectedPersona.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("gruppo/aggiunta_membro_commissione"));
@@ -201,7 +195,7 @@ public class GruppoControllerIT {
         ConsiglioDidattico expectedConsiglioDidattico = new ConsiglioDidattico("Informatica");
         expectedConsiglioDidattico.addPersona(expectedPersona);
 
-        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
+        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
         expectedGruppo.setConsiglio(expectedConsiglioDidattico);
         expectedGruppo.addPersona(expectedPersona);
@@ -215,8 +209,7 @@ public class GruppoControllerIT {
         supergruppoDAO.save(expectedCommissione);
 
 
-
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}",expectedGruppo.getId(), expectedPersona.getId())
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", expectedGruppo.getId(), expectedPersona.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("gruppo/aggiunta_membro"));
@@ -281,6 +274,7 @@ public class GruppoControllerIT {
                 .andDo(print())
                 .andExpect(view().name("gruppo/gruppo_detail"));
     }
+
     @Test
     public void findAllMembriInCommissione() throws Exception {
 
@@ -322,7 +316,7 @@ public class GruppoControllerIT {
     }
 
     @Test
-    public  void closeCommissione() throws Exception {
+    public void closeCommissione() throws Exception {
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
@@ -369,7 +363,7 @@ public class GruppoControllerIT {
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
         expectedPersona.setUser(user);
 
-        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true,  "Commissione");
+        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
         expectedCommissione.addPersona(expectedPersona);
         expectedCommissione.setResponsabile(expectedPersona);
 
@@ -384,7 +378,7 @@ public class GruppoControllerIT {
     }
 
     @Test
-    public  void nominaResponsabile() throws Exception {
+    public void nominaResponsabile() throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);

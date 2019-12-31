@@ -12,5 +12,6 @@ import java.util.List;
 @Repository
 public interface ConsiglioDidatticoDAO extends CrudRepository<ConsiglioDidattico, Integer> {
     List<ConsiglioDidattico> findAllByPersone_id(int idPersona);
+
     ConsiglioDidattico findBySupergruppo_id(int idSupergruppo);
 }
