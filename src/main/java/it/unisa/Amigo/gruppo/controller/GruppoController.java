@@ -101,30 +101,18 @@ public class GruppoController
         Persona persona = gruppoService.findPersona(idPersona);
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
         gruppoService.addMembro(persona,supergruppo);
-        prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(idSupergruppo));
-        model.addAttribute("isCapogruppo", gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), idSupergruppo));
         model.addAttribute("flagAggiunta",1);
         model.addAttribute("personaAggiunta",persona);
-        return "gruppo/aggiunta_membro";
+        if(supergruppo.getType().equalsIgnoreCase("Gruppo")){
+            prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(idSupergruppo));
+            model.addAttribute("isCapogruppo", gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), idSupergruppo));
+            return "gruppo/aggiunta_membro";
+        } else {
+            prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInGruppoNoCommissione(idSupergruppo));
+            return "gruppo/aggiunta_membro_commissione";
+        }
     }
 
-    /**
-     * Aggiunge un nuovo membro  @{@link Persona} ad una commissione @{@link Commissione
-     * @param idPersona id della persona da aggiungere
-     * @param idSupergruppo id della commissione in cui aggiungere la persona
-     * @param model per salvare informazioni da recuperare nell'html
-     * @return il path della pagina su cui eseguire il redirect
-     */
-    @GetMapping("/gruppi/commissioni/{idSupergruppo}/add/{idPersona}")
-    public String addMembroCommissione(@PathVariable(name = "idPersona") int idPersona,@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
-        Persona persona = gruppoService.findPersona(idPersona);
-        Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
-        gruppoService.addMembro(persona,supergruppo);
-        prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInGruppoNoCommissione(idSupergruppo));
-        model.addAttribute("flagAggiunta",1);
-        model.addAttribute("personaAggiunta",persona);
-        return "gruppo/aggiunta_membro_commissione";
-    }
 
     /***
      * Rimuove un membro @{@link Persona} dal supergruppo @{@link Supergruppo}
@@ -141,33 +129,17 @@ public class GruppoController
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInSupergruppo(idSupergruppo));
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
-        model.addAttribute("isCapogruppo", gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), idSupergruppo));
         model.addAttribute("flagRimozione",1);
         model.addAttribute("personaRimossa",persona);
-        model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
-        return "gruppo/gruppo_detail";
-    }
-
-    /***
-     * Rimuove un membro @{@link Persona} da una commissione @{@link Commissione}
-     * @param idPersona id della persona da rimuovere
-     * @param idSupergruppo id della commissione da cui rimuovere la persona
-     * @param model per salvare informazioni da recuperare nell'html
-     * @return il path della pagina su cui eseguire il redirect
-     */
-    @GetMapping("/gruppi/commissioni/{idSupergruppo}/remove/{idPersona}")
-    public String removeMembroCommissione(@PathVariable(name = "idPersona") int idPersona,@PathVariable(name = "idSupergruppo") int idSupergruppo, Model model){
-        Persona persona = gruppoService.findPersona(idPersona);
-        Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
-        gruppoService.removeMembro(persona,supergruppo);
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        prepareCandidateList(idSupergruppo,model,gruppoService.findAllMembriInSupergruppo(idSupergruppo));
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
-        model.addAttribute("isCapogruppo", gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), gruppoService.findGruppoByCommissione(idSupergruppo).getId()));
-        model.addAttribute("flagRimozione",1);
-        model.addAttribute("personaRimossa",persona);
-        model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
-        return "gruppo/commissione_detail";
+        if(supergruppo.getType().equalsIgnoreCase("Gruppo")){
+            model.addAttribute("isCapogruppo", gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), idSupergruppo));
+            model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
+            return "gruppo/gruppo_detail";
+        } else {
+            model.addAttribute("isCapogruppo", gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), gruppoService.findGruppoByCommissione(idSupergruppo).getId()));
+            //model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));
+            return "gruppo/commissione_detail";
+        }
     }
 
     /***

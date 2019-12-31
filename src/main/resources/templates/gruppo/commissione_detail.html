@@ -10,8 +10,8 @@
     <table class="ui celled table">
         <thead>
         <tr class="center aligned">
-            <th>Nome</th>
             <th>Cognome</th>
+            <th>Nome</th>
             <th>Email</th>
             <th th:if="${isResponsabile==true && supergruppo.state == true}"></th>
             <th th:if="${isCapogruppo==true && supergruppo.state == true}"></th>
@@ -20,14 +20,14 @@
         <tbody>
         <th:block th:each="persona : ${persone}">
             <tr class="center aligned">
-                <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.cognome}"></td>
+                <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.user.getEmail()}"></td>
-                <td th:if="${isResponsabile==true && supergruppo.state == true}"><a th:if="${isResponsabile==true and supergruppo.responsabile.getId()!=persona.id}"  th:href="@{'/gruppi/commissioni/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
+                <td th:if="${isResponsabile==true && supergruppo.state == true}"><a th:if="${isResponsabile==true and supergruppo.responsabile.getId()!=persona.id}"  th:href="@{'/gruppi/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
                     Rimuovi
                 </a></td>
                 <td th:if="${supergruppo.state == true}">
-                    <a th:if="${isCapogruppo==true && supergruppo.state == true} " th:href="@{'/gruppi/commissioni/{idCommissione}/nominaResponsabile/{idPersona}'(idCommissione=${supergruppo.id},idPersona=${persona.id})}"class="ui primary button">
+                    <a th:if="${isCapogruppo==true && supergruppo.state == true && supergruppo.responsabile.getId()!=persona.id}" th:href="@{'/gruppi/commissioni/{idCommissione}/nominaResponsabile/{idPersona}'(idCommissione=${supergruppo.id},idPersona=${persona.id})}"class="ui primary button">
                         Nomina responsabile
                     </a>
                 </td>

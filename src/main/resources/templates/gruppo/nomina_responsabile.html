@@ -5,12 +5,14 @@
 </head>
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
+<h1 class="ui header"  align="center">Nomina un responsabile </h1>
+
 <div class="ui main text container">
     <table class="ui celled table">
         <thead>
         <tr class="center aligned">
-            <th>Nome</th>
             <th>Cognome</th>
+            <th>Nome</th>
             <th>Email</th>
             <th></th>
         </tr>
@@ -18,8 +20,8 @@
         <tbody>
         <th:block th:each="persona : ${persone}">
             <tr class="center aligned">
-                <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.cognome}"></td>
+                <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.user.getEmail()}"></td>
                 <td>
                     <a th:href="@{'/gruppi/commissioni/{idCommissione}/nominaResponsabile/{idPersona}'(idCommissione=${idCommissione},idPersona=${persona.id})}" class="ui primary button">

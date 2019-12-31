@@ -13,8 +13,8 @@
     <table class="ui celled table striped">
         <thead>
         <tr class="center aligned">
-            <th>Nome</th>
             <th>Cognome</th>
+            <th>Nome</th>
             <th>Email</th>
             <th></th>
 
@@ -23,8 +23,8 @@
         <tbody>
         <th:block th:each="persona : ${persone}">
             <tr class="center aligned">
-                <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.cognome}"></td>
+                <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.user.getEmail()}"></td>
                 <td>
                     <a th:href="@{'/gruppi/{idSupergruppo}/add/{idPersona}'( idPersona=${persona.id},idSupergruppo=${supergruppo.id})}" class="ui primary button">
