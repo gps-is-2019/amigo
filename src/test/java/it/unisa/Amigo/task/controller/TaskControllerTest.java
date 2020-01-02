@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,11 +41,13 @@ class TaskControllerTest {
 
     @Test
     void visualizzaListaTaskSupergruppo() throws Exception {
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
         Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
-        Task task = new Task("t1" , new Date(), "task1" , "incompleto");
+        Task task = new Task("t1" , tmpDate, "task1" , "incompleto");
         task.setSupergruppo(expectedSupergruppo);
         expectedSupergruppo.addTask(task);
         List<Task> expectedTask= new ArrayList<>();
@@ -109,11 +112,13 @@ class TaskControllerTest {
 
     @Test
     void visualizzaDettagliTaskSupergruppo() throws Exception{
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
         Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
-        Task expectedTask = new Task("t1" , new Date(), "task1" , "incompleto");
+        Task expectedTask = new Task("t1" , tmpDate, "task1" , "incompleto");
         expectedTask.setSupergruppo(expectedSupergruppo);
         expectedSupergruppo.addTask(expectedTask);
         expectedTask.setPersona(expectedPersona);
@@ -136,7 +141,9 @@ class TaskControllerTest {
         Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
-        Task expectedTask = new Task("t1" , new Date(), "task1" , "incompleto");
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task expectedTask = new Task("t1" , tmpDate, "task1" , "incompleto");
         expectedTask.setSupergruppo(expectedSupergruppo);
         expectedSupergruppo.addTask(expectedTask);
         expectedTask.setPersona(expectedPersona);
@@ -161,7 +168,9 @@ class TaskControllerTest {
         Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
-        Task expectedTask = new Task("t1" , new Date(), "task1" , "incompleto");
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task expectedTask = new Task("t1" , tmpDate, "task1" , "incompleto");
         expectedTask.setSupergruppo(expectedSupergruppo);
         expectedSupergruppo.addTask(expectedTask);
         expectedTask.setPersona(expectedPersona);
@@ -186,7 +195,9 @@ class TaskControllerTest {
         Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
-        Task expectedTask = new Task("t1" , new Date(), "task1" , "incompleto");
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task expectedTask = new Task("t1" , tmpDate, "task1" , "incompleto");
         expectedTask.setSupergruppo(expectedSupergruppo);
         expectedSupergruppo.addTask(expectedTask);
         expectedTask.setPersona(expectedPersona);
@@ -210,9 +221,12 @@ class TaskControllerTest {
         expectedPersona.setUser(user);
         Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
         expectedSupergruppo.addPersona(expectedPersona);
+        expectedSupergruppo.setResponsabile(expectedPersona);
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(expectedPersona);
-        Task task = new Task("t1" , new Date(), "task1" , "incompleto");
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task task = new Task("t1" , tmpDate, "task1" , "incompleto");
         task.setPersona(expectedPersona);
         task.setSupergruppo(expectedSupergruppo);
         TaskForm taskForm = new TaskForm();
@@ -223,14 +237,17 @@ class TaskControllerTest {
         taskForm.setStato(task.getStato());
         taskForm.setIdPersona(expectedPersona.getId());
 
+        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
         when(taskService.getTaskById(task.getId())).thenReturn(task);
         when(gruppoService.findAllMembriInSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
+        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(true);
 
         this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modifica", expectedSupergruppo.getId(), task.getId()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("taskForm", taskForm))
                 .andExpect(model().attribute("idTask", task.getId()))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
+                .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("persone", expectedPersone))
                 .andExpect(view().name("task/paginaModificaTask"));
     }
@@ -247,7 +264,9 @@ class TaskControllerTest {
         expectedPersona.setUser(user);
         Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
         expectedSupergruppo.addPersona(expectedPersona);
-        Task task = new Task("t1" , new Date(), "task1" , "incompleto");
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task task = new Task("t1" , tmpDate, "task1" , "incompleto");
         task.setSupergruppo(expectedSupergruppo);
         expectedSupergruppo.addTask(task);
         task.setPersona(expectedPersona);
@@ -269,7 +288,9 @@ class TaskControllerTest {
         User user = new User("admin", "admin");
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
         expectedPersona.setUser(user);
-        Task expectedTask = new Task("t1" , new Date(), "task1" , "incompleto");
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task expectedTask = new Task("t1" , tmpDate, "task1" , "incompleto");
         expectedTask.setPersona(expectedPersona);
 
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
@@ -283,7 +304,9 @@ class TaskControllerTest {
 
     @Test
     void completaTaskPersonale() throws Exception{
-        Task expectedTask = new Task("t1" , new Date(), "task1" , "incompleto");
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task expectedTask = new Task("t1" , tmpDate, "task1" , "incompleto");
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
         expectedTask.setPersona(expectedPersona);
         int expectedFlag = 1;

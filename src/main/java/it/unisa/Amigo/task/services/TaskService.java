@@ -10,6 +10,7 @@ import it.unisa.Amigo.task.domain.Task;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public interface TaskService {
     Boolean addDocumentoTask(Documento documento, int idTask);
     //List<Documenti> visualizzaDocumentiApprovati(Supergruppo supergruppo);
 
-    Boolean definizioneTaskSupergruppo(String descrizione, Date data, String nome, String stato, Supergruppo supergruppo, Persona persona);
+    Boolean definizioneTaskSupergruppo(String descrizione, LocalDate data, String nome, String stato, Supergruppo supergruppo, Persona persona);
     List<Task> visualizzaTaskUser(int idPersona);
     List<Task> visualizzaTaskSuperGruppo(int  idSupergruppo);
 

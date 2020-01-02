@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 /**
@@ -70,7 +71,7 @@ public class TaskServiceImpl implements TaskService
      * @return Boolean indicante il successo o il fallimento dell'azione
      */
     @Override
-    public Boolean definizioneTaskSupergruppo(String descrizione, Date data, String nome, String stato, Supergruppo supergruppo, Persona persona){
+    public Boolean definizioneTaskSupergruppo(String descrizione, LocalDate data, String nome, String stato, Supergruppo supergruppo, Persona persona){
         Task task = new Task(descrizione, data, nome, stato);
         task.setSupergruppo(supergruppo);
         task.setPersona(persona);

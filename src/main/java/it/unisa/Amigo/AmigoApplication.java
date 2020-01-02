@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -108,9 +109,11 @@ public class AmigoApplication {
 
 
 				//TODO add task
-				Date tmpDate;
-				SimpleDateFormat formatter=new SimpleDateFormat("dd-MM-yyyy");
-				tmpDate = formatter.parse("1-1-2019");
+//				Date tmpDate;
+//				SimpleDateFormat formatter=new SimpleDateFormat("dd-MM-yyyy");
+//				tmpDate = formatter.parse("1-1-2019");
+				LocalDate tmpDate;
+				tmpDate = LocalDate.of(2020, 4, 20);
 
 				Task taskprova = new Task("t1" , tmpDate, "task1" , "in valutazione");
 

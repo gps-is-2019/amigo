@@ -8,6 +8,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -30,7 +31,7 @@ public class Task implements Serializable {
 
     @NonNull
     //@DateTimeFormat(pattern = "dd/MM/yyyy")
-    private Date dataScadenza;
+    private LocalDate dataScadenza; // cambiato in local date
 
     @NonNull
     private String nome;

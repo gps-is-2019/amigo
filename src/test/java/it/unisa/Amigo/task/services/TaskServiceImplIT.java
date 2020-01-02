@@ -10,14 +10,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class TaskServiceImplIT {
+class TaskServiceImplIT {
 
     @Autowired
     private TaskServiceImpl taskService;
@@ -32,9 +33,11 @@ public class TaskServiceImplIT {
     private SupergruppoDAO supergruppoDAO;
 
     @Test
-    void getAssegnatarioTask(){
-        Persona persona1 = new Persona("Persona1","Persona1","Persona");
-        Task task = new Task("t1" , new Date(), "task1" , "in valutazione");
+    void getAssegnatarioTask() {
+        Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task task = new Task("t1", tmpDate, "task1", "in valutazione");
         task.setPersona(persona1);
         persona1.addTask(task);
         taskDAO.save(task);
@@ -44,18 +47,21 @@ public class TaskServiceImplIT {
 
     @Test
     void definizioneTaskSupergruppo() {
-        Persona persona1 = new Persona("Persona1","Persona1","Persona");
+        Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
         Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
-        Boolean expected = true;
-        Boolean actual = taskService.definizioneTaskSupergruppo("t1" , new Date(), "task1" , "in valutazione", supergruppo, persona1);
-        assertEquals(expected, actual);
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Boolean actual = taskService.definizioneTaskSupergruppo("t1", tmpDate, "task1", "in valutazione", supergruppo, persona1);
+        assertTrue(actual);
     }
 
     @Test
     void visualizzaTaskUser() {
-        Persona persona = new Persona("Persona1","Persona1","Persona");
-        Task task1 = new Task("t1" , new Date(), "task1" , "in valutazione");
-        Task task2 = new Task("t2" , new Date(), "task2" , "in valutazione");
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Persona persona = new Persona("Persona1", "Persona1", "Persona");
+        Task task1 = new Task("t1", tmpDate, "task1", "in valutazione");
+        Task task2 = new Task("t2", tmpDate, "task2", "in valutazione");
         task1.setPersona(persona);
         task2.setPersona(persona);
         persona.addTask(task1);
@@ -72,9 +78,11 @@ public class TaskServiceImplIT {
 
     @Test
     void visualizzaTaskSuperGruppo() {
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
         Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
-        Task task1 = new Task("t1" , new Date(), "task1" , "in valutazione");
-        Task task2 = new Task("t2" , new Date(), "task2" , "in valutazione");
+        Task task1 = new Task("t1", tmpDate, "task1", "in valutazione");
+        Task task2 = new Task("t2", tmpDate, "task2", "in valutazione");
         task1.setSupergruppo(supergruppo);
         task2.setSupergruppo(supergruppo);
         supergruppo.addTask(task1);
@@ -90,16 +98,20 @@ public class TaskServiceImplIT {
     }
 
     @Test
-    void getTaskById(){
-        Task task = new Task("t1" , new Date(), "task1" , "in valutazione");
+    void getTaskById() {
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task task = new Task("t1", tmpDate, "task1", "in valutazione");
         taskDAO.save(task);
         Task actualTask = taskService.getTaskById(task.getId());
         assertEquals(task, actualTask);
     }
 
     @Test
-    void accettazioneTask(){
-        Task task = new Task("t1" , new Date(), "task1" , "in valutazione");
+    void accettazioneTask() {
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task task = new Task("t1", tmpDate, "task1", "in valutazione");
         taskDAO.save(task);
         String expectedstato = "approvato";
         taskService.accettazioneTask(task.getId());
@@ -108,8 +120,10 @@ public class TaskServiceImplIT {
     }
 
     @Test
-    void rifiutoTask(){
-        Task task = new Task("t1" , new Date(), "task1" , "in valutazione");
+    void rifiutoTask() {
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task task = new Task("t1", tmpDate, "task1", "in valutazione");
         taskDAO.save(task);
         String expectedstato = "respinto";
         taskService.rifiutoTask(task.getId());
@@ -118,8 +132,10 @@ public class TaskServiceImplIT {
     }
 
     @Test
-    void completaTask(){
-        Task task = new Task("t1" , new Date(), "task1" , "incompleto");
+    void completaTask() {
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task task = new Task("t1", tmpDate, "task1", "incompleto");
         taskDAO.save(task);
         String expectedstato = "in valutazione";
         taskService.completaTask(task.getId());
@@ -128,17 +144,18 @@ public class TaskServiceImplIT {
     }
 
     @Test
-    void updateTask(){
-        Date tmpDate= new Date();
-        Task task = new Task("t1" , tmpDate, "task1" , "incompleto");
+    void updateTask() {
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task task = new Task("t1", tmpDate, "task1", "incompleto");
         taskDAO.save(task);
         task.setDescrizione("t2");
         task.setNome("task2");
         task.setStato("in valutazione");
         taskService.updateTask(task);
-        Task expectedTask = new Task("t2" , tmpDate, "task2" , "in valutazione");
+        Task expectedTask = new Task("t2", tmpDate, "task2", "in valutazione");
         expectedTask.setId(task.getId());
-        Task actualTask= taskDAO.findById(task.getId());
+        Task actualTask = taskDAO.findById(task.getId());
         assertEquals(expectedTask, actualTask);
     }
 

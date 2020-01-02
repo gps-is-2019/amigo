@@ -11,65 +11,68 @@
 
 <h1 class="ui header" align="center"> Dettagli task : </h1>
 <div class="ui main text container">
-<table class="ui celled table striped">
-    <thead>
-    <tr class="center aligned">
-        <th>Nome task</th>
-        <th>Data scadenza</th>
-        <th>Stato</th>
-    </tr>
-    </thead>
-    <tbody>
-    <th:block>
+    <table class="ui celled table striped">
+        <thead>
         <tr class="center aligned">
-            <td th:text="${task.nome}"></td>
-            <td th:text="${task.dataScadenza}"></td>
-            <td th:text="${task.stato}"></td>
+            <th>Nome task</th>
+            <th>Data scadenza</th>
+            <th>Stato</th>
         </tr>
+        </thead>
+        <tbody>
+        <th:block>
+            <tr class="center aligned">
+                <td th:text="${task.nome}"></td>
+                <td th:text="${task.dataScadenza}"></td>
+                <td th:text="${task.stato}"></td>
+            </tr>
 
-        <tr class="center aligned">
-            <th colspan="4" th:text="'Assegnatario'+' '+'task'"></th>
-        </tr>
+            <tr class="center aligned">
+                <th colspan="4" th:text="'Assegnatario'+' '+'task'"></th>
+            </tr>
 
-        <tr class="center aligned">
-            <td colspan="4" th:text="${task.persona.getNome()} +' '+ ${task.persona.getCognome()}"></td>
-        </tr>
-        <tr class="center aligned">
-            <th colspan="4" th:text="Descrizione"></th>
-        </tr>
-        <tr class="center aligned">
-            <td colspan="4" th:text="${task.descrizione}"></td>
-        </tr>
+            <tr class="center aligned">
+                <td colspan="4" th:text="${task.persona.getNome()} +' '+ ${task.persona.getCognome()}"></td>
+            </tr>
+            <tr class="center aligned">
+                <th colspan="4" th:text="Descrizione"></th>
+            </tr>
+            <tr class="center aligned">
+                <td colspan="4" th:text="${task.descrizione}"></td>
+            </tr>
 
-        <tr th:if="${isResponsabile==true}" class="center aligned">
-            <td colspan="1">
-                <a class="ui green button"
-                th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/approvazione' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
-                > Accetta </a>
-            </td>
-            <td>
-                <a class="ui primary button"
-                   th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modifica' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
-                > Modifica</a>
-            </td>
-            <td colspan="1">
-                <a class="ui red button"
-                   th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/rifiuta' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
-                > Respingi</a>
-            </td>
-        </tr>
-        <tr th:if="${(isResponsabile==false) and ( ( task.stato.equals('approvato') )==false ) and ( ( task.stato.equals('in valutazione') )==false )}" class="center aligned">
-            <td colspan="3">
-                <a class="ui primary button"
-                   th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/completa' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
-                   > Completa</a>
-            </td>
+            <tr th:if="${isResponsabile==true}" class="center aligned">
+                <td colspan="1">
+                    <a class="ui green button"
+                       th:if="${( ( task.stato.equals('approvato') )==false )}"
+                       th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/approvazione' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
+                    > Accetta </a>
+                </td>
+                <td>
+                    <a class="ui primary button"
+                       th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modifica' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
+                    > Modifica</a>
+                </td>
+                <td colspan="1">
+                    <a class="ui red button"
+                       th:if="${( ( task.stato.equals('respinto') )==false )}"
+                       th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/rifiuta' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
+                    > Respingi</a>
+                </td>
+            </tr>
+            <tr th:if="${(isResponsabile==false) and ( ( task.stato.equals('approvato') )==false ) and ( ( task.stato.equals('in valutazione') )==false )}"
+                class="center aligned">
+                <td colspan="3">
+                    <a class="ui primary button"
+                       th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/completa' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
+                    > Completa</a>
+                </td>
 
-        </tr>
+            </tr>
 
-    </th:block>
-    </tbody>
-</table>
+        </th:block>
+        </tbody>
+    </table>
 </div>
 <div class="ui message success text container" th:if="${flagAzione==1}">
     <i class="close icon"></i>
@@ -84,7 +87,7 @@
     <p>Hai modificato il Task </p>
 </div>
 <script>$('.message .close')
-    .on('click', function() {
+    .on('click', function () {
         $(this)
             .closest('.message')
             .transition('fade')
