@@ -45,18 +45,18 @@
                 <td colspan="1">
                     <a class="ui green button"
                        th:if="${( ( task.stato.equals('approvato') )==false )}"
-                       th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/approvazione' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
+                       th:href="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/approva' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
                     > Accetta </a>
                 </td>
                 <td>
                     <a class="ui primary button"
-                       th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modifica' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
+                       th:href="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modifica' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
                     > Modifica</a>
                 </td>
                 <td colspan="1">
                     <a class="ui red button"
                        th:if="${( ( task.stato.equals('respinto') )==false )}"
-                       th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/rifiuta' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
+                       th:href="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/rifiuta' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
                     > Respingi</a>
                 </td>
             </tr>
@@ -64,7 +64,7 @@
                 class="center aligned">
                 <td colspan="3">
                     <a class="ui primary button"
-                       th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/completa' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
+                       th:href="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/completa' ( idSupergruppo=${idSupergruppo} , idTask=${task.id}) }"
                     > Completa</a>
                 </td>
 

@@ -45,7 +45,7 @@
             <tr th:if="${( ( task.stato.equals('approvato') )==false ) and ( ( task.stato.equals('in valutazione') )==false )}" class="center aligned">
                 <td colspan="3">
                     <a class="ui primary button"
-                       th:href="@{'/taskPersonali/dettagliTask{idTask}/completa' (idTask=${task.id}) }"
+                       th:href="@{'/taskPersonali/task_detail/{idTask}/completa' (idTask=${task.id}) }"
                     > Completa</a>
                 </td>
 

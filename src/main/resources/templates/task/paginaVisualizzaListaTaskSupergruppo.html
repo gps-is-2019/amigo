@@ -11,7 +11,9 @@
     <h1 class="ui header" align="center">I task del gruppo : </h1>
 
     <div class="ui main text container">
-        <a th:if="${isResponsabile==true}" class="ui primary button" th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/definizioneTaskSupergruppo'( idSupergruppo=${idSupergruppo} ) }">Assegna nuovo task</a>
+        <a th:if="${isResponsabile==true}" class="ui primary button"
+           th:href="@{'/gruppi/{idSupergruppo}/tasks/creaTask'( idSupergruppo=${idSupergruppo} ) }">Assegna nuovo
+            task</a>
         <table class="ui celled table striped">
             <thead>
             <tr class="center aligned">
@@ -28,7 +30,8 @@
                     <td th:text="${task.dataScadenza}"></td>
                     <td th:text="${task.stato}"></td>
                     <td>
-                        <a class="ui primary button" th:href="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}'( idSupergruppo=${idSupergruppo} , idTask=${task.id} ) }">Dettagli</a>
+                        <a class="ui primary button"
+                           th:href="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}'( idSupergruppo=${idSupergruppo} , idTask=${task.id} ) }">Dettagli</a>
                     </td>
                 </tr>
             </th:block>
