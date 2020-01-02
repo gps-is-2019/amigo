@@ -5,13 +5,13 @@ import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.exceptions.StorageException;
 import it.unisa.Amigo.documento.exceptions.StorageFileNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -30,9 +30,7 @@ public class DocumentoServiceImpl implements DocumentoService{
 
     private static final String BASE_PATH = "src/main/resources/documents/";
 
-    @Autowired
     private final DocumentoDAO documentoDAO;
-
 
     private String storeFile(MultipartFile file) {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
@@ -62,6 +60,7 @@ public class DocumentoServiceImpl implements DocumentoService{
      * @return il documento salvato nel database contenente la path del file salvato.
      */
     @Override
+    @Transactional
     public Documento addDocumento(MultipartFile file) {
         String path = storeFile(file);
         Documento documento = new Documento();
