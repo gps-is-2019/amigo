@@ -188,6 +188,8 @@ public class GruppoController {
     public String createCommissioneForm(Model model, @PathVariable(name = "id") int idSupergruppo) {
         model.addAttribute("idGruppo", idSupergruppo);
         model.addAttribute("command", new GruppoFormCommand());
+        List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
+        model.addAttribute("persone", persone);
         return "gruppo/crea_commissione";
     }
 
@@ -203,14 +205,14 @@ public class GruppoController {
     public String createCommissione(@ModelAttribute("command") GruppoFormCommand gruppoFormCommand, Model model, @PathVariable(name = "idGruppo") int idGruppo) {
         Commissione commissione = new Commissione(gruppoFormCommand.getName(), "Commissione", true, gruppoFormCommand.getDescrizione());
         gruppoService.createCommissione(commissione, idGruppo);
+        gruppoService.nominaResponsabile(gruppoFormCommand.getIdPersona(), commissione.getId());
 
-        model.addAttribute("idCommissione", commissione.getId());
-        model.addAttribute("idGruppo", idGruppo);
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        model.addAttribute("isCapogruppo", gruppoService.isResponsabile(personaLoggata.getId(), idGruppo));
+        prepareCandidateList(idGruppo, model, gruppoService.findAllMembriInSupergruppo(idGruppo));
+        model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idGruppo));
 
-        List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idGruppo);
-        model.addAttribute("persone", persone);
-
-        return "gruppo/nomina_responsabile";
+        return "gruppo/gruppo_detail";
     }
 
     /**
