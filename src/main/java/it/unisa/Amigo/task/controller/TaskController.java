@@ -35,7 +35,7 @@ public class TaskController {
      * @param idSupergruppo id del supergruppo a cui i task da visualizzare appartengono
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}")
+    @GetMapping("/gruppi/{idSupergruppo}/tasks")
     public String visualizzaListaTaskSupergruppo(Model model, @PathVariable(name = "idSupergruppo") int idSupergruppo) {
         //TODO da vedere come prendere l'utente corrente
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
@@ -55,7 +55,7 @@ public class TaskController {
      * @param idSupergruppo id del supergruppo a cui il task da definire appartine
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/definizioneTaskSupergruppo")
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/creaTask")
     public String definizioneTaskSupergruppo(@ModelAttribute Task taskForm, Model model, @PathVariable(name = "idSupergruppo") int idSupergruppo) {
 
         model.addAttribute("idSupergruppo", idSupergruppo);
@@ -76,17 +76,10 @@ public class TaskController {
      * @return il path della pagina su cui eseguire il redirect
      * @throws ParseException
      */
-    @RequestMapping(value = "/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/creazioneTaskSupergruppo", method = RequestMethod.POST)
+    @RequestMapping(value = "/gruppi/{idSupergruppo}/tasks/creazioneTask", method = RequestMethod.POST)
     public String saveTaskPost(@ModelAttribute TaskForm taskForm, Model model, @PathVariable(name = "idSupergruppo") int idSupergruppo) throws ParseException {
-//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-//        Date tmpData;
         LocalDate tmpData;
 
-//        if (taskForm.getDataScadenza().equals("")) {
-//            tmpData = formatter.parse("1-1-2021");
-//        } else {
-//            tmpData = formatter.parse(taskForm.getDataScadenza());
-//        }
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
         Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
         if (((taskForm.getNome() == null) || (taskForm.getNome().equals("")))
@@ -116,7 +109,7 @@ public class TaskController {
      * @param idTask        identifica univocamente un task di cui si vogliono visualizzare i dettagli
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}")
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}")
     public String visualizzaDettagliTaskSupergruppo(Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
             , @PathVariable(name = "idTask") int idTask) {
@@ -139,7 +132,7 @@ public class TaskController {
      * @param idTask        identifica univocamente un task che si vuole approvare
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/approvazione")
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/approva")
     String approvazioneTask(Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
             , @PathVariable(name = "idTask") int idTask) {
@@ -164,7 +157,7 @@ public class TaskController {
      * @param idTask        identifica univocamente un task che si vuole rifiutare
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/rifiuta")
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/rifiuta")
     String rifiutoTask(Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
             , @PathVariable(name = "idTask") int idTask) {
@@ -188,7 +181,7 @@ public class TaskController {
      * @param idTask        identifica univocamente un task che si vuole completare
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/completa")
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/completa")
     String completaTask(Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
             , @PathVariable(name = "idTask") int idTask) {
@@ -213,7 +206,7 @@ public class TaskController {
      * @param idTask        identifica univocamente un task che si vuole modificare
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modifica")
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modifica")
     String modificaTask(@ModelAttribute TaskForm taskForm, Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
             , @PathVariable(name = "idTask") int idTask) {
@@ -246,19 +239,13 @@ public class TaskController {
      * @return il path della pagina su cui eseguire il redirect
      * @throws ParseException
      */
-    @RequestMapping(value = "/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modificaTaskSupergruppo")
+    @RequestMapping(value = "/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modificaTask")
     public String saveModifyTask(@ModelAttribute TaskForm taskForm, Model model, @PathVariable(name = "idSupergruppo") int idSupergruppo) throws ParseException {
         Task taskToUpdate = taskService.getTaskById(taskForm.getId());
-//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         LocalDate tmpData;
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        //TODO
-        if (taskForm.getDataScadenza().equals("")) {
-//            tmpData = formatter.parse(taskToUpdate.getDataScadenza().toString());
-            tmpData = LocalDate.of(Integer.parseInt(taskForm.getDataScadenza().substring(0,4)), Integer.parseInt(taskForm.getDataScadenza().substring(5,7)) , Integer.parseInt(taskForm.getDataScadenza().substring(8,10)));
-        } else {
-            tmpData = LocalDate.of(Integer.parseInt(taskForm.getDataScadenza().substring(0,4)), Integer.parseInt(taskForm.getDataScadenza().substring(5,7)) , Integer.parseInt(taskForm.getDataScadenza().substring(8,10)));
-        }
+        tmpData = LocalDate.of(Integer.parseInt(taskForm.getDataScadenza().substring(0, 4)), Integer.parseInt(taskForm.getDataScadenza().substring(5, 7)), Integer.parseInt(taskForm.getDataScadenza().substring(8, 10)));
+
         taskToUpdate.setDataScadenza(tmpData);
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
         taskToUpdate.setSupergruppo(supergruppo);
@@ -296,7 +283,7 @@ public class TaskController {
      * @param idTask identifica univocamente un task di cui si vogliono visualizzare i dettagli
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/taskPersonali/dettagliTask{idTask}")
+    @GetMapping("/taskPersonali/task_detail/{idTask}")
     public String visualizzaDettagliTaskPersonali(Model model, @PathVariable(name = "idTask") int idTask) {
         Task task = taskService.getTaskById(idTask);
         model.addAttribute("task", task);
@@ -310,7 +297,7 @@ public class TaskController {
      * @param idTask identifica univocamente un task che si vuole completare
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/taskPersonali/dettagliTask{idTask}/completa")
+    @GetMapping("/taskPersonali/task_detail/{idTask}/completa")
     String completaTaskPersonale(Model model
             , @PathVariable(name = "idTask") int idTask) {
         model.addAttribute("task", taskService.getTaskById(idTask));

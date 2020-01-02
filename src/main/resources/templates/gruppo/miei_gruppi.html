@@ -37,7 +37,8 @@
                 </td>
               <td>
 
-                  <a th:href="@{/gruppo/visualizzaListaTaskSupergruppo/} + ${gruppo.id}" class="ui primary button">
+                  <a th:href="@{'/gruppi/{idSupergruppo}/tasks'  ( idSupergruppo=${gruppo.id} )}"
+                     class="ui primary button">
                         Lista task
                   </a>
               </td>

@@ -13,7 +13,7 @@
 <form
         class="ui form text container"
         method="post"
-        th:action="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modificaTaskSupergruppo'( idSupergruppo=${idSupergruppo} , idTask=${idTask} )}"
+        th:action="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modificaTask'( idSupergruppo=${idSupergruppo} , idTask=${idTask} )}"
         th:object="${taskForm}">
 
     <div class="field">

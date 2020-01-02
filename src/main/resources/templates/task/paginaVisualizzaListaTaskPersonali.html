@@ -28,7 +28,7 @@
                 <td th:text="${task.stato}"></td>
                 <td>
                     <a class="ui primary button"
-                    th:href="@{'/taskPersonali/dettagliTask{idTask}'(idTask=${task.id}) }"
+                       th:href="@{'/taskPersonali/task_detail/{idTask}'(idTask=${task.id}) }"
                     >Dettagli</a>
                 </td>
             </tr>

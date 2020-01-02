@@ -8,12 +8,19 @@
 </head>
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
+<div class="ui message green text container" th:if="${flagCreazione==true}">
+    <i class="close icon"></i>
+    <p>Hai creato correttamente il Task </p>
+</div>
+<div class="ui message negative text container" th:if="${flagCreazione==false}">
+    <i class="close icon"></i>
+    <p>Non hai creato correttamente il Task </p>
+</div>
 <h1 class="ui header" align="center">I task del gruppo : </h1>
-
 <form
         class="ui form text container"
         method="post"
-        th:action="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/creazioneTaskSupergruppo'( idSupergruppo=${idSupergruppo})}"
+        th:action="@{'/gruppi/{idSupergruppo}/tasks/creazioneTask'( idSupergruppo=${idSupergruppo})}"
         th:object="${taskForm}"
 >
 
@@ -59,14 +66,6 @@
 </form>
 
 </table>
-<div class="ui message success text container" th:if="${flagCreazione==true}">
-    <i class="close icon"></i>
-    <p>Hai creato correttamente il Task </p>
-</div>
-<div class="ui message negative text container" th:if="${flagCreazione==false}">
-    <i class="close icon"></i>
-    <p>Non hai creato correttamente il Task </p>
-</div>
 <script>$('.message .close')
     .on('click', function() {
         $(this)
