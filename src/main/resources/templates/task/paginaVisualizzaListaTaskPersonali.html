@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/html">
+<head>
+
+    <head th:include="/fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo|Lista Task personali</title>
+    </head>
+</head>
+<body>
+<div th:insert="fragments/fragments.html :: header"></div>
+<h1 class="ui header" align="center">I miei task : </h1>
+
+<div class="ui main text container">
+    <table class="ui celled table striped">
+        <thead>
+        <tr class="center aligned">
+            <th>Nome</th>
+            <th>Data scadenza</th>
+            <th>Stato</th>
+            <th>Descrizione</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="task : ${listaTask}">
+            <tr class="center aligned">
+                <td th:text="${task.nome}"></td>
+                <td th:text="${task.dataScadenza}"></td>
+                <td th:text="${task.stato}"></td>
+                <td>
+                    <a class="ui primary button"
+                    th:href="@{'/taskPersonali/dettagliTask{idTask}'(idTask=${task.id}) }"
+                    >Dettagli</a>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>
+
+
+</body>
+</html>

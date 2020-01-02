@@ -1,5 +1,6 @@
 package it.unisa.Amigo.gruppo.domain;
 
+import it.unisa.Amigo.task.domain.Task;
 import lombok.*;
 
 import javax.persistence.*;
@@ -60,5 +61,15 @@ public class Supergruppo implements Serializable {
         }
     }
 
+    //TODO da vedere relazione con task
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Task> tasks = new HashSet<>();
+
+    public void addTask(Task task){
+        tasks.add(task);
+    }
 
 }

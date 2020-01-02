@@ -24,22 +24,13 @@ import java.util.Set;
 @Transactional
 public class GruppoServiceImpl implements GruppoService {
 
-    private PersonaDAO personaDAO;
+    private final PersonaDAO personaDAO;
 
-    private SupergruppoDAO supergruppoDAO;
+    private final SupergruppoDAO supergruppoDAO;
 
-    private ConsiglioDidatticoDAO consiglioDidatticoDAO;
+    private final ConsiglioDidatticoDAO consiglioDidatticoDAO;
 
-    private DipartimentoDAO dipartimentoDAO;
-
-
-    @Autowired
-    public GruppoServiceImpl(PersonaDAO personaDAO, SupergruppoDAO supergruppoDAO, ConsiglioDidatticoDAO consiglioDidatticoDAO, DipartimentoDAO dipartimentoDAO) {
-        this.personaDAO = personaDAO;
-        this.supergruppoDAO = supergruppoDAO;
-        this.consiglioDidatticoDAO = consiglioDidatticoDAO;
-        this.dipartimentoDAO = dipartimentoDAO;
-    }
+    private final DipartimentoDAO dipartimentoDAO;
 
     /***
      * Ritorna la lista di persone @{@link Persona} presenti nel supergruppo @{@link Supergruppo}

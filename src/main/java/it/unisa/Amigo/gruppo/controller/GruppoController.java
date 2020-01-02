@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.List;
 
 /**
- * Questa classe si occupa della logoca di controllo del sottosistema gruppo
+ * Questa classe si occupa della logica di controllo del sottosistema gruppo
  */
 @Controller
 public class GruppoController {
@@ -45,10 +45,13 @@ public class GruppoController {
      */
     @GetMapping("/gruppi")
     public String findAllSupergruppi(Model model) {
-
+      
         int idPersona = gruppoService.getAuthenticatedUser().getId();
         model.addAttribute("supergruppi", gruppoService.findAllSupergruppiOfPersona(idPersona));
-        model.addAttribute("personaLoggata", idPersona);
+        model.addAttribute("personaLoggata",idPersona);
+
+        //TODO aggiungere al model il ruolo della persona loggata
+        model.addAttribute("ruolo" , gruppoService.getAuthenticatedUser().getRuolo());
         return "gruppo/miei_gruppi";
     }
 

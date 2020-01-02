@@ -8,6 +8,7 @@
 </head>
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
+
 <h1 align="center" class="ui header">I miei gruppi</h1>
 <div class="ui main text container">
     <table class="ui celled table striped">
@@ -16,6 +17,7 @@
             <th>Nome</th>
             <th>Tipo</th>
             <th>Stato</th>
+            <th></th>
             <th></th>
         </tr>
         </thead>
@@ -33,6 +35,12 @@
                         Visualizza Dettagli
                     </a>
                 </td>
+              <td>
+
+                  <a th:href="@{/gruppo/visualizzaListaTaskSupergruppo/} + ${gruppo.id}" class="ui primary button">
+                        Lista task
+                  </a>
+              </td>
             </tr>
         </th:block>
         </tbody>
