@@ -3,15 +3,22 @@
 <head>
 
     <head th:include="/fragments/fragments.html :: head">
-        <title id="pageTitle">Amigo|Definizione Task</title>
+        <title id="pageTitle">Amigo|I miei gruppi</title>
     </head>
 </head>
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
 <h1 class="ui header" align="center">I task del gruppo : </h1>
+<div class="center aligned">
+    <form  th:action="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/creazioneTaskSupergruppo'( idSupergruppo=${idSupergruppo})}" method="post">
+
+        <input type="text" path="testo" placeholder="descrizione">
+        <input type="submit">
+    </form>
+</div>
 
 <form
-        class="ui form text container"
+        class="ui form"
         method="post"
         th:action="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/creazioneTaskSupergruppo'( idSupergruppo=${idSupergruppo})}"
         th:object="${taskForm}"
@@ -19,11 +26,11 @@
 
     <div class="field">
         <label>Nome task</label>
-        <input type="text" placeholder="Nome" path="nome" th:field="*{nome}">
+        <input type="text" placeholder="First Name" path="nome" th:field="*{nome}" th:value="${taskDaModificare.nome}">
     </div>
     <div class="field">
         <label>Data scadenza</label>
-        <input type="date" name="Date" placeholder="" path="dataScadenza" th:field="*{dataScadenza}">
+        <input type="date" name="last-name" placeholder="" path="dataScadenza" th:field="*{dataScadenza}" th:value="1/1/2019">
     </div>
     <div class="field">
         <div class="field">
@@ -32,11 +39,18 @@
         </div>
     </div>
 
-    <h3>Seleziona Delegato Task</h3>
+    <h3>Input</h3>
+    <div class="ui calendar" id="example1">
+        <div class="ui input left icon">
+            <i class="calendar icon"></i>
+            <input type="text" placeholder="Date/Time">
+        </div>
+    </div>
+
     <table class="ui celled table">
         <thead>
         <tr class="center aligned">
-            <th>Scelta</th>
+            <th></th>
             <th>Nome</th>
             <th>Cognome</th>
             <th>Email</th>
@@ -44,10 +58,10 @@
         </thead>
         <tbody>
         <th:block th:each="persona : ${persone}">
-           <tr class="center aligned">
-               <td>
-                   <input type="radio" th:name="idPersona" path="idPersona" th:value="${persona.id}">
-               </td>
+            <tr class="center aligned">
+                <td>
+                    <input type="radio" th:name="idPersona" path="idPersona" th:value="${persona.id}">
+                </td>
                 <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.cognome}"></td>
                 <td th:text="${persona.user.getEmail()}"></td>
@@ -55,27 +69,12 @@
         </th:block>
         </tbody>
     </table>
-    <button class="ui primary button" type="submit">Crea Task</button>
+
+
+
+
+    <button class="ui button" type="submit">Submit</button>
 </form>
 
-</table>
-<div class="ui message success text container" th:if="${flagCreazione==true}">
-    <i class="close icon"></i>
-    <p>Hai creato correttamente il Task </p>
-</div>
-<div class="ui message negative text container" th:if="${flagCreazione==false}">
-    <i class="close icon"></i>
-    <p>Non hai creato correttamente il Task </p>
-</div>
-<script>$('.message .close')
-    .on('click', function() {
-        $(this)
-            .closest('.message')
-            .transition('fade')
-        ;
-    })
-;</script>
-
-</div>
 </body>
 </html>

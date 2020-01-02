@@ -5,13 +5,14 @@ import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
- * Questa classe rappresenta l'oggetto di dominio "Dipartimento"
+ * Questa classe rappresenta l'oggetto di dominio "Task"
  */
 @Entity
 @Data
@@ -29,7 +30,8 @@ public class Task implements Serializable {
     private String descrizione;
 
     @NonNull
-    private LocalDate dataScadenza;
+    //@DateTimeFormat(pattern = "dd/MM/yyyy")
+    private Date dataScadenza;
 
     @NonNull
     private String nome;
@@ -48,7 +50,7 @@ public class Task implements Serializable {
     @EqualsAndHashCode.Exclude
     private Persona persona;
 
-   @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Documento documento;
