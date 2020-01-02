@@ -51,6 +51,29 @@
 
             </tr>
 
+            <tr th:if="${( ( task.stato.equals('incompleto') )==true ) or ( ( task.stato.equals('respinto') )==true )}" class="center aligned">
+                <td colspan="3">
+
+
+
+                    <form th:action="@{/repository/uploadDocumento}" method="post" enctype="multipart/form-data" >
+                        <label for="file">Filename:</label>
+                        <input type="file" name="file" id="file"/>
+                        <input type="submit" name="submit" value="Submit" />
+                    </form>
+
+                    <div class="ui message success" th:if="${flagAggiunta==1}">
+                        <i class="close icon"></i>
+                        <p>Documento <span th:text="${documentoNome}"></span> caricato con successo!</span></p>
+                    </div>
+
+
+
+
+                </td>
+
+            </tr>
+
         </th:block>
         </tbody>
     </table>

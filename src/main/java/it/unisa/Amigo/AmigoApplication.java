@@ -131,6 +131,13 @@ public class AmigoApplication {
 				taskprova2.setSupergruppo(GAQD);
 				GAQD.addTask(taskprova2);
 
+				Task taskprova3 = new Task("t2" , tmpDate , "task2" , "incompleto");
+				taskprova3.setPersona(ferrucci);
+				ferrucci.addTask(taskprova3);
+
+				taskprova3.setSupergruppo(GAQD);
+				GAQD.addTask(taskprova3);
+
 				supergruppoDAO.save(GAQD);
 				supergruppoDAO.save(commissioneAAL);
 				supergruppoDAO.save(commissioneEL);
