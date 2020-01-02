@@ -61,8 +61,7 @@ public class AmigoApplication {
 				User userGravino = new User("gravino@unisa.it",encoder.encode("gravino"));
 				userGravino.addRole(userRole);
 
-				//TODO ho cambiato il ruolo per testare la pagina : ruolo ferrucci da Professore Ordinario a capogruppo
-				Persona ferrucci = new Persona("Filomena","Ferrucci","capogruppo");
+				Persona ferrucci = new Persona("Filomena","Ferrucci","Capogruppo");
 				Persona scarano = new Persona("Vittorio","Scarano","Professore Ordinario");
 				Persona malandrino = new Persona("Delfina","Malandrino","Professore Associato");
 				Persona dePrisco = new Persona("Roberto","De Prisco","Professore Ordinario");
@@ -76,10 +75,27 @@ public class AmigoApplication {
 				polese.setUser(userPolese);
 				gravino.setUser(userGravino);
 
-				Supergruppo GAQD = new Supergruppo( "GAQD-Informatica","Gruppo",true );
+				Commissione commissioneAAL = new Commissione("Accompagnamento al lavoro", "Commissione", true, "");
+				Commissione commissioneEL = new Commissione("Piattaforme EL", "Commissione", true, "");
+
+
+
+				Gruppo GAQD = new Gruppo( "GAQD-Informatica","Gruppo",true );
 				GAQD.addPersona(scarano);
 				GAQD.addPersona(ferrucci);
+				GAQD.addPersona(dePrisco);
+				GAQD.addPersona(malandrino);
+				GAQD.addPersona(gravino);
 				GAQD.setResponsabile(ferrucci);
+				GAQD.addCommissione(commissioneAAL);
+				GAQD.addCommissione(commissioneEL);
+
+				commissioneAAL.addPersona(scarano);
+				commissioneAAL.addPersona(malandrino);
+				commissioneAAL.setResponsabile(scarano);
+				commissioneAAL.addPersona(dePrisco);
+				commissioneEL.addPersona(dePrisco);
+				commissioneEL.setResponsabile(dePrisco);
 
 				ConsiglioDidattico cd = new ConsiglioDidattico("Informatica");
 				cd.setSupergruppo(GAQD);
@@ -115,23 +131,13 @@ public class AmigoApplication {
 				taskprova2.setSupergruppo(GAQD);
 				GAQD.addTask(taskprova2);
 
-				//
-
 				supergruppoDAO.save(GAQD);
+				supergruppoDAO.save(commissioneAAL);
+				supergruppoDAO.save(commissioneEL);
 				consiglioDidatticoDAO.save(cd);
 				personaDAO.saveAll(Arrays.asList(ferrucci,scarano,malandrino,dePrisco,polese,gravino));
 				userDAO.saveAll(Arrays.asList(userFerrucci,userScarano,userMalandrino,userDePrisco,userPolese,userGravino));
-
-				///////// TODO add taskDAO
-
 				taskDAO.saveAll(Arrays.asList(taskprova,taskprova2));
-
-
-
-
-
-
-
 			};
 		}
 	}

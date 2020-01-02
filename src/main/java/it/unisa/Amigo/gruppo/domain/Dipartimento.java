@@ -29,7 +29,7 @@ public class Dipartimento implements Serializable {
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set <ConsiglioDidattico> consiglioDidattico = new HashSet<>();;
+    private Set<ConsiglioDidattico> consiglioDidattico = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
@@ -41,8 +41,8 @@ public class Dipartimento implements Serializable {
     @EqualsAndHashCode.Exclude
     private Set<Persona> persone = new HashSet<>();
 
-    public void addPersona(Persona persona){
-        if(!persone.contains(persona)) {
+    public void addPersona(Persona persona) {
+        if (!persone.contains(persona)) {
             persone.add(persona);
             persona.addDipartimento(this);
         }

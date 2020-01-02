@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/fragments/fragments.html :: head">
+    <title id="pageTitle">Amigo|Crea Commissione</title>
+</head>
+<body>
+<div th:insert="fragments/fragments.html :: header"></div>
+
+<h1 align="center" class="ui header">Creazione Commissione</h1>
+<div class="ui main text container">
+    <div class="ui form">
+        <form action="#" method="post"
+              th:action="@{'/gruppi/{idGruppo}/commissioni/create'( idGruppo=${idGruppo})}" th:object="${command}">
+            <p>Nome commissione: <input th:field="*{name}" type="text"/></p>
+            <p>Descrizione: <textarea th:field="*{descrizione}"></textarea></p>
+            <input class="ui button" name="Invia" type="submit">
+        </form>
+    </div>
+</div>
+</body>
+</html>

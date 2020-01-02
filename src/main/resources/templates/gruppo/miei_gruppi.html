@@ -8,62 +8,43 @@
 </head>
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
-<h1 class="ui header" align="center">I miei gruppi</h1>
-    <div class="ui main text container">
-        <table class="ui celled table striped">
-            <thead>
-            <tr class="center aligned">
-                <th>Nome</th>
-                <th>Tipo</th>
-                <th>Stato</th>
-                <th></th>
 
+<h1 align="center" class="ui header">I miei gruppi</h1>
+<div class="ui main text container">
+    <table class="ui celled table striped">
+        <thead>
+        <tr class="center aligned">
+            <th>Nome</th>
+            <th>Tipo</th>
+            <th>Stato</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="gruppo : ${supergruppi}">
+            <tr class="center aligned" th:if="${gruppo.type=='Gruppo'}">
+                <td th:text="${gruppo.name}"></td>
+                <td th:text="${gruppo.type}"></td>
+                <td>
+                    <span th:if="${gruppo.state==true}"> Attivo</span>
+                    <span th:if="${gruppo.state==false}"> Chiuso</span>
+                </td>
+                <td>
+                    <a class="ui primary button" th:href="@{/gruppi/} + ${gruppo.id}">
+                        Visualizza Dettagli
+                    </a>
+                </td>
+              <td>
 
-<!--                -->
-<!--                -->
-<!--                <th th:if="${ruolo.equals('capogruppo')}"></th>-->
-<!--                -->
-<!--                -->
-                <th></th>
-
-
-
+                  <a th:href="@{/gruppo/visualizzaListaTaskSupergruppo/} + ${gruppo.id}" class="ui primary button">
+                        Lista task
+                  </a>
+              </td>
             </tr>
-            </thead>
-            <tbody>
-            <th:block th:each="supergruppo : ${supergruppi}">
-                <tr class="center aligned">
-                    <td th:text="${supergruppo.name}"></td>
-                    <td th:text="${supergruppo.type}"></td>
-                    <td>
-                        <span th:if="${supergruppo.state==true}"> Attivo</span>
-                        <span th:if="${supergruppo.state==false}"> Chiuso</span>
-                    </td>
-                    <td>
-                        <a th:href="@{/gruppi/} + ${supergruppo.id}" class="ui primary button">
-                            Visualizza Dettagli
-                        </a>
-                    </td>
+        </th:block>
+        </tbody>
+    </table>
 
-
-<!--                    -->
-<!--                    -->
-                    <td>
-
-                        <a th:href="@{/gruppo/visualizzaListaTaskSupergruppo/} + ${supergruppo.id}" class="ui primary button">
-                            Lista task
-                        </a>
-                    </td>
-
-<!--                    -->
-<!--                    -->
-
-
-                </tr>
-            </th:block>
-            </tbody>
-        </table>
-
-    </div>
+</div>
 </body>
 </html>
