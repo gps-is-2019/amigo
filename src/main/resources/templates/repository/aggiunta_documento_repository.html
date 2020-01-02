@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+
+    <head th:include="/fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo|I miei gruppi</title>
+    </head>
+</head>
+<body>
+    <div th:insert="fragments/fragments.html :: header"></div>
+
+    <h1 align="center" class="ui header">Carica documento</h1>
+    <div class="ui main text container">
+
+        <form th:action="@{/repository/uploadDocumento}" method="post" enctype="multipart/form-data" >
+            <label for="file">Filename:</label>
+            <input type="file" name="file" id="file"/>
+            <input type="submit" name="submit" value="Submit" />
+        </form>
+
+        <div class="ui message success" th:if="${flagAggiunta==true}">
+            <i class="close icon"></i>
+            <p>Documento <span th:text="${documentoNome}"></span> caricato con successo!</span></p>
+        </div>
+
+        <div class="ui error message" th:if="${flagAggiunta==false}">
+            <i class="close icon"></i>
+            <p>Documento <span th:text="${documentoNome}"></span> non caricato!</span></p>
+        </div>
+    </div>
+    <script>$('.message .close')
+        .on('click', function () {
+            $(this)
+                .closest('.message')
+                .transition('fade')
+            ;
+        })
+    ;</script>
+</body>
+</html>
