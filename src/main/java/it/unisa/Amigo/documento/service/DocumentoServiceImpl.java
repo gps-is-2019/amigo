@@ -69,7 +69,7 @@ public class DocumentoServiceImpl implements DocumentoService{
 
     @Override
     public boolean addDocToTask(MultipartFile file, Task task) {
-        if(gruppoService.visualizzaPersonaLoggata().getId() == task.getPersona().getId()){
+        if(gruppoService.getAuthenticatedUser().getId() == task.getPersona().getId()){
             Documento documento = storeDocumento(file);
             documento.setTask(task);
             task.setDocumento(documento);
@@ -82,7 +82,7 @@ public class DocumentoServiceImpl implements DocumentoService{
 
     @Override
     public boolean addDocToConsegna(MultipartFile file, Consegna consegna) {
-        if(gruppoService.visualizzaPersonaLoggata().getId() == consegna.getMittente().getId()){
+        if(gruppoService.getAuthenticatedUser().getId() == consegna.getMittente().getId()){
             Documento documento = storeDocumento(file);
             documento.setConsegna(consegna);
             consegna.setDocumento(documento);
@@ -96,7 +96,7 @@ public class DocumentoServiceImpl implements DocumentoService{
     @Override
     public void addDocToRepository(MultipartFile file) {
         int flag = 0;
-        Set<Role> roles = gruppoService.visualizzaPersonaLoggata().getUser().getRoles();
+        Set<Role> roles = gruppoService.getAuthenticatedUser().getUser().getRoles();
         for(Role role: roles)
             if(role.getName().equals(Role.PQA_ROLE))
                 flag = 1;
@@ -128,7 +128,7 @@ public class DocumentoServiceImpl implements DocumentoService{
 
     @Override
     public Documento downloadDocumentoFromRepository(int idDocumento) {
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
         if (personaLoggata != null)
             return documentoDAO.findByIdAndInRepository(idDocumento,true);
         else
@@ -139,7 +139,7 @@ public class DocumentoServiceImpl implements DocumentoService{
     public Documento downloadDocumentoFromConsegna(int idDocumento) {
         Optional<Documento> documento = documentoDAO.findById(idDocumento);
         Consegna consegna = documento.get().getConsegna();
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
         if(personaLoggata.getId()==consegna.getMittente().getId() || personaLoggata.getId() == consegna.getDestinatario().getId())
             return documento.get();
         return null;
@@ -150,7 +150,7 @@ public class DocumentoServiceImpl implements DocumentoService{
     public Documento downloadDocumentoFromTask(int idDocumento) {
         Optional<Documento> documento = documentoDAO.findById(idDocumento);
         Task task = documento.get().getTask();
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
         Persona responsabile = task.getSupergruppo().getResponsabile();
         if(personaLoggata.getId()==responsabile.getId())
             return documento.get();

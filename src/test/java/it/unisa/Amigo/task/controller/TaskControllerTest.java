@@ -50,7 +50,7 @@ class TaskControllerTest {
         List<Task> expectedTask= new ArrayList<>();
         expectedTask.add(task);
 
-        when(gruppoService.visualizzaPersonaLoggata()).thenReturn(expectedPersona);
+        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(true);
         when(taskService.visualizzaTaskSuperGruppo(expectedSupergruppo.getId())).thenReturn(expectedTask);
 
@@ -73,7 +73,7 @@ class TaskControllerTest {
         expectedPersone.add(expectedPersona);
         Task task = new Task();
 
-        when(gruppoService.visualizzaListaMembriSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
+        when(gruppoService.findAllMembriInSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
 
         this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/definizioneTaskSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(status().isOk())
@@ -118,7 +118,7 @@ class TaskControllerTest {
         expectedSupergruppo.addTask(expectedTask);
         expectedTask.setPersona(expectedPersona);
 
-        when(gruppoService.visualizzaPersonaLoggata()).thenReturn(expectedPersona);
+        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(true);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
@@ -142,7 +142,7 @@ class TaskControllerTest {
         expectedTask.setPersona(expectedPersona);
         int flagAzione = 1;
 
-        when(gruppoService.visualizzaPersonaLoggata()).thenReturn(expectedPersona);
+        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(true);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
@@ -167,7 +167,7 @@ class TaskControllerTest {
         expectedTask.setPersona(expectedPersona);
         int flagAzione = 2;
 
-        when(gruppoService.visualizzaPersonaLoggata()).thenReturn(expectedPersona);
+        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(true);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
@@ -191,7 +191,7 @@ class TaskControllerTest {
         expectedSupergruppo.addTask(expectedTask);
         expectedTask.setPersona(expectedPersona);
 
-        when(gruppoService.visualizzaPersonaLoggata()).thenReturn(expectedPersona);
+        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(true);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
@@ -224,7 +224,7 @@ class TaskControllerTest {
         taskForm.setIdPersona(expectedPersona.getId());
 
         when(taskService.getTaskById(task.getId())).thenReturn(task);
-        when(gruppoService.visualizzaListaMembriSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
+        when(gruppoService.findAllMembriInSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
 
         this.mockMvc.perform(get("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modifica", expectedSupergruppo.getId(), task.getId()))
                 .andExpect(status().isOk())
@@ -255,7 +255,7 @@ class TaskControllerTest {
         List<Task> expectedTasks= new ArrayList<>();
         expectedTasks.add(task);
 
-        when(gruppoService.visualizzaPersonaLoggata()).thenReturn(expectedPersona);
+        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
         when(taskService.visualizzaTaskUser(expectedPersona.getId())).thenReturn(expectedTasks);
 
         this.mockMvc.perform(get("/taskPersonali"))

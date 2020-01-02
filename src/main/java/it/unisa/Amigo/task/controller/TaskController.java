@@ -36,7 +36,7 @@ public class TaskController {
     @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}")
     public String visualizzaListaTaskSupergruppo(Model model, @PathVariable(name = "idSupergruppo") int idSupergruppo) {
         //TODO da vedere come prendere l'utente corrente
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
 
         model.addAttribute("idSupergruppo" , Integer.toString(idSupergruppo) );
@@ -58,7 +58,7 @@ public class TaskController {
         model.addAttribute("idSupergruppo" , idSupergruppo );
         model.addAttribute("taskForm", taskForm);
 
-        List<Persona> persone = gruppoService.visualizzaListaMembriSupergruppo(idSupergruppo);
+        List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
         model.addAttribute("persone" , persone);
 
         return "task/paginaDefinizioneTaskSupergruppo";//pagina che usa il form (pagina corrente)
@@ -89,13 +89,13 @@ public class TaskController {
                 || ( (taskForm.getDataScadenza()==null) || (taskForm.getDataScadenza().equals("")) )
                 || ( (taskForm.getDescrizione()==null) || (taskForm.getDescrizione().equals("")) )
                 || ( (taskForm.getIdPersona() < 0 ) )){
-            List<Persona> persone = gruppoService.visualizzaListaMembriSupergruppo(idSupergruppo);
+            List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
             model.addAttribute("persone", persone);
             model.addAttribute("flagCreazione" , false);
             return "task/paginaDefinizioneTaskSupergruppo";
         }
         Boolean flagCreazione = taskService.definizioneTaskSupergruppo(taskForm.getDescrizione(), tmpData, taskForm.getNome(), "incompleto", supergruppo, persona);
-        List<Persona> persone = gruppoService.visualizzaListaMembriSupergruppo(idSupergruppo);
+        List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
         model.addAttribute("persone", persone);
         model.addAttribute("flagCreazione", flagCreazione);
         return "task/paginaDefinizioneTaskSupergruppo";
@@ -115,7 +115,7 @@ public class TaskController {
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
             , @PathVariable(name = "idTask") int idTask ) {
         //TODO da vedere come prendere l'utente corrente
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
 
         model.addAttribute("idSupergruppo" , idSupergruppo );
@@ -136,7 +136,7 @@ public class TaskController {
     String approvazioneTask(Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
             , @PathVariable(name = "idTask") int idTask) {
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
 
         //TODO da vedere come prendere l'utente corrente
@@ -160,7 +160,7 @@ public class TaskController {
     String rifiutoTask(Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
             , @PathVariable(name = "idTask") int idTask) {
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
 
         //TODO da vedere come prendere l'utente corrente
@@ -183,7 +183,7 @@ public class TaskController {
     String completaTask(Model model
             , @PathVariable(name = "idSupergruppo") int idSupergruppo
             , @PathVariable(name = "idTask") int idTask) {
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
 
         //TODO da vedere come prendere l'utente corrente
@@ -220,7 +220,7 @@ public class TaskController {
         model.addAttribute("idSupergruppo" , idSupergruppo );
         model.addAttribute("taskForm", taskForm);
 
-        List<Persona> persone = gruppoService.visualizzaListaMembriSupergruppo(idSupergruppo);
+        List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
         model.addAttribute("persone" , persone);
         return "task/paginaModificaTask";
     }
@@ -265,7 +265,7 @@ public class TaskController {
     @GetMapping("/taskPersonali")
     public String visualizzaListaTaskPersonali(Model model) {
         //TODO da vedere come prendere l'utente corrente
-        Persona personaLoggata = gruppoService.visualizzaPersonaLoggata();
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
         List<Task> ris = taskService.visualizzaTaskUser(personaLoggata.getId());
         model.addAttribute("listaTask" , ris);
 

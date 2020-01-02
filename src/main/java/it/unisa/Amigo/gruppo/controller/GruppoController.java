@@ -46,12 +46,12 @@ public class GruppoController {
     @GetMapping("/gruppi")
     public String findAllSupergruppi(Model model) {
       
-        int idPersona = gruppoService.visualizzaPersonaLoggata().getId();
-        model.addAttribute("supergruppi", gruppoService.visualizzaSupergruppi(idPersona));
+        int idPersona = gruppoService.getAuthenticatedUser().getId();
+        model.addAttribute("supergruppi", gruppoService.findAllSupergruppiOfPersona(idPersona));
         model.addAttribute("personaLoggata",idPersona);
 
         //TODO aggiungere al model il ruolo della persona loggata
-        model.addAttribute("ruolo" , gruppoService.visualizzaPersonaLoggata().getRuolo());
+        model.addAttribute("ruolo" , gruppoService.getAuthenticatedUser().getRuolo());
         return "gruppo/miei_gruppi";
     }
 
