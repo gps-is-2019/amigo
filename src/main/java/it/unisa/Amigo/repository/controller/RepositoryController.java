@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+
 @Controller
 public class RepositoryController {
     @Autowired
@@ -25,28 +26,26 @@ public class RepositoryController {
     //show form
     @GetMapping("/repository")
     public String repository(Model model) {
-        List<Documento> documenti = documentoService.searchDocumentoFromRepository("");
+        List<Documento> documenti = documentoService.searchDocumenti("");
         model.addAttribute("documenti", documenti);
-        return "repository/updownrep";
+        return "repository/repository";
     }
 
     //submit form
     @PostMapping("/repository/uploadDocumento")
     public String uploadDocumento(Model model, @RequestParam("file") MultipartFile file) {
-        documentoService.addDocToRepository(file);
+        documentoService.addDocumento(file);
         model.addAttribute("flagAggiunta", 1); //cambiare
         model.addAttribute("documentoNome", file.getOriginalFilename());
-        List<Documento> documenti = documentoService.searchDocumentoFromRepository("");
+        List<Documento> documenti = documentoService.searchDocumenti("");
         model.addAttribute("documenti", documenti);
-        return "repository/updownrep";
+        return "repository/repository";
     }
 
     @GetMapping("/repository/{idDocument}")
     public ResponseEntity<Resource> downloadDocumento(Model model, @PathVariable("idDocument") int idDocument) {
-        Documento documento = documentoService.downloadDocumentoFromRepository(idDocument);
+        Documento documento = documentoService.findDocumento(idDocument);
         Resource resource = documentoService.loadAsResource(documento);
-
-        System.out.println(resource);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(documento.getFormat()))

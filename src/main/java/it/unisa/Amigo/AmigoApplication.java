@@ -108,7 +108,6 @@ public class AmigoApplication {
 
 
 				//TODO add task
-
 				Date tmpDate;
 				SimpleDateFormat formatter=new SimpleDateFormat("dd-MM-yyyy");
 				tmpDate = formatter.parse("1-1-2019");

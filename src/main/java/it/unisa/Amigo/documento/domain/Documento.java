@@ -7,7 +7,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-
+/**
+ * Questa classe rappresenta l'oggetto di dominio "Documento"
+ */
 @Entity
 @Data
 @NoArgsConstructor

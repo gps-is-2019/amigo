@@ -1,22 +1,17 @@
 package it.unisa.Amigo.documento.service;
 
-import it.unisa.Amigo.autenticazione.domanin.Role;
-import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.exceptions.StorageException;
 import it.unisa.Amigo.documento.exceptions.StorageFileNotFoundException;
-import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.services.GruppoService;
-import it.unisa.Amigo.task.domain.Task;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -25,20 +20,19 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
+/**
+ * Questa classe implementa i metodi  per la logica di Business del sottosistema "Documento"
+ */
 @Service
 @RequiredArgsConstructor
 public class DocumentoServiceImpl implements DocumentoService{
 
-    @Autowired
+    private static final String BASE_PATH = "src/main/resources/documents/";
+
     private final DocumentoDAO documentoDAO;
-    private final GruppoService gruppoService;
 
-    private Documento storeDocumento(MultipartFile file) {
-        Documento documento = new Documento();
-
+    private String storeFile(MultipartFile file) {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         try {
             if (file.isEmpty()) {
@@ -50,66 +44,49 @@ public class DocumentoServiceImpl implements DocumentoService{
                                 + filename);
             }
             try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, Paths.get("src/main/resources/documents").resolve(filename),
+                Files.copy(inputStream, Paths.get(BASE_PATH).resolve(filename),
                         StandardCopyOption.REPLACE_EXISTING);
             }
         }
         catch (IOException e) {
             throw new StorageException("Failed to store file " + filename, e);
         }
+        return BASE_PATH + filename;
+    }
 
-        documento.setPath("src/main/resources/documents/" + filename);
-
+    /**
+     * Esegue il salvataggio di un file su file system, crea un documento @{@link Documento} e lo salva all'interno del database.
+     * @param file da salvare su file system.
+     * @return il documento salvato nel database contenente la path del file salvato.
+     */
+    @Override
+    @Transactional
+    public Documento addDocumento(MultipartFile file) {
+        String path = storeFile(file);
+        Documento documento = new Documento();
+        documento.setPath(path);
         documento.setDataInvio(LocalDate.now());
         documento.setNome(file.getOriginalFilename());
-        documento.setInRepository(true);
+        documento.setInRepository(false);
         documento.setFormat(file.getContentType());
-        return documento;
+        return documentoDAO.save(documento);
     }
 
+    /**
+     * Esegue il salvataggio di un documento @{@link Documento} all'interno del database.
+     * @param documento da salvare su database.
+     * @return il documento salvato nel database.
+     */
     @Override
-    public boolean addDocToTask(MultipartFile file, Task task) {
-        if(gruppoService.getAuthenticatedUser().getId() == task.getPersona().getId()){
-            Documento documento = storeDocumento(file);
-            documento.setTask(task);
-            task.setDocumento(documento);
-            documentoDAO.save(documento);
-            //salvare il cambiamento di task
-            return true;
-        }
-        return false;
+    public Documento updateDocumento(Documento documento) {
+         return documentoDAO.save(documento);
     }
 
-    @Override
-    public boolean addDocToConsegna(MultipartFile file, Consegna consegna) {
-        if(gruppoService.getAuthenticatedUser().getId() == consegna.getMittente().getId()){
-            Documento documento = storeDocumento(file);
-            documento.setConsegna(consegna);
-            consegna.setDocumento(documento);
-            documentoDAO.save(documento);
-            //salvare il cambiamento di consegna
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void addDocToRepository(MultipartFile file) {
-        int flag = 0;
-        Set<Role> roles = gruppoService.getAuthenticatedUser().getUser().getRoles();
-        for(Role role: roles)
-            if(role.getName().equals(Role.PQA_ROLE))
-                flag = 1;
-
-        if(flag==1){
-
-            Documento documento = storeDocumento(file);
-            documentoDAO.save(documento);
-        }
-
-        //eccezione
-    }
-
+    /**
+     * Esegue il prelievo del file in base alla path presente nel documento @{@link Documento} passato come parametro.
+     * @param documento in cui è presente la path del file da scaricare.
+     * @return resource contenente il file prelevato dal file system.
+     */
     public Resource loadAsResource(Documento documento) {
         try {
             Resource resource = new UrlResource(Paths.get(documento.getPath()).toUri());
@@ -117,8 +94,7 @@ public class DocumentoServiceImpl implements DocumentoService{
                 return resource;
             }
             else {
-                throw new StorageFileNotFoundException(
-                        "Could not read file: " + documento.getNome());
+                throw new StorageFileNotFoundException("Could not read file: " + documento.getNome());
             }
         }
         catch (MalformedURLException e) {
@@ -126,39 +102,23 @@ public class DocumentoServiceImpl implements DocumentoService{
         }
     }
 
+    /**
+     * Ritorna il documento @{@link Documento} con id passato come parametro ricercandolo all'interno del database.
+     * @param idDocumento documento che si vuole ottenere.
+     * @return documento con id uguale a idDocumento.
+     */
     @Override
-    public Documento downloadDocumentoFromRepository(int idDocumento) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        if (personaLoggata != null)
-            return documentoDAO.findByIdAndInRepository(idDocumento,true);
-        else
-            return null;
+    public Documento findDocumento(int idDocumento) {
+        return documentoDAO.findById(idDocumento).get();
     }
 
+    /**
+     * Ritorna una lista di documenti il cui nome contiene la stringa passata come parametro.
+     * @param nameDocumento stringa da ricercare nel nome dei documenti.
+     * @return lista di documenti contenenti la stringa ricercata.
+     */
     @Override
-    public Documento downloadDocumentoFromConsegna(int idDocumento) {
-        Optional<Documento> documento = documentoDAO.findById(idDocumento);
-        Consegna consegna = documento.get().getConsegna();
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        if(personaLoggata.getId()==consegna.getMittente().getId() || personaLoggata.getId() == consegna.getDestinatario().getId())
-            return documento.get();
-        return null;
-        //eccezione
-    }
-
-    @Override
-    public Documento downloadDocumentoFromTask(int idDocumento) {
-        Optional<Documento> documento = documentoDAO.findById(idDocumento);
-        Task task = documento.get().getTask();
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        Persona responsabile = task.getSupergruppo().getResponsabile();
-        if(personaLoggata.getId()==responsabile.getId())
-            return documento.get();
-        return null;
-    }
-
-    @Override
-    public List<Documento> searchDocumentoFromRepository(String nameDocumento) {
-       return documentoDAO.findAllByInRepositoryAndNomeContains(true, nameDocumento);
+    public List<Documento> searchDocumenti(String nameDocumento) {
+       return documentoDAO.findAllByNomeContains(nameDocumento);
     }
 }
