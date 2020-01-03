@@ -5,15 +5,12 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Date;
-
 
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class TaskForm {
 
-    @NonNull
     private int id;
 
     @NonNull

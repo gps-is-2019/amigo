@@ -38,18 +38,28 @@ If you want to add another feature:
 
 If you and another *amigo* are working on the same feature branch but you want to get the changes he pushed yesterday:
 
-1. Make sure you are in YOUR (already existing) feature branch. If not: `git chechout feature/nameOfYourFeature`
+1. Make sure you are in YOUR (already existing) feature branch. If not: `git checkout feature/nameOfYourFeature`
 2. `git pull`
-3. Resolve possible conflicts. Ask if you are in trouble.
+3. Resolve possible conflicts. Ask if you are in trouble. A common solution is:
+  - `git stash` to save your local changes in a local secure stack
+  - `git pull`
+  - `git stash pop` to reapply your local changes again
 
 ### Get new data from another branch
 
-If you are working with your feature branch but you want to get something new from develop:
+If you are working with your feature branch but you want to get something new from *develop* branch:
 
-1. Make sure you are in YOUR (already existing) feature branch. If not: `git chechout feature/nameOfYourFeature`
+1. Make sure you are in YOUR (already existing) feature branch. If not: `git checkout feature/nameOfYourFeature`
 2. `git merge origin/develop`
 3. Resolve possible conflicts. Ask if you are in trouble.
 
 ### How to write a good commit message
 
 Follow this: `https://chris.beams.io/posts/git-commit/`, especially points 2, 3, 4, 5.
+
+### How to run checkstyle
+
+Checkstyle is enabled as a Maven plugin, so in order to launch it there are two ways:
+
+- Run directly its Maven goal: `mvn checkstyle:check`
+- Run during the *validate* lifecycle: `mvn validate`. Remember that validate is executed BEFORE `mvn compile`, so the check is done before compiling the source code with *javac*; however, violations will not stop the build

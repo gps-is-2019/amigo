@@ -17,13 +17,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -88,7 +85,7 @@ class TaskControllerTest {
 
     //TODO
     @Test
-    void saveTaskPost() throws Exception{
+    void saveTaskPost() {
 //        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
 //        Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
 //        expectedSupergruppo.addPersona(expectedPersona);
@@ -253,7 +250,7 @@ class TaskControllerTest {
     }
 
     @Test
-    void saveModifyTask() throws Exception{
+    void saveModifyTask() {
 
     }
 

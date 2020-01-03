@@ -1,30 +1,27 @@
 package it.unisa.Amigo.task.services;
 
-import it.unisa.Amigo.autenticazione.domanin.User;
+
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.task.dao.TaskDAO;
 import it.unisa.Amigo.task.domain.Task;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
+
 /**
  * Questa classe implementa i metodi  per la logica di Business del sottositema "Gruppo"
  */
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class TaskServiceImpl implements TaskService
-{
+public class TaskServiceImpl implements TaskService {
 
-    @Autowired
-    private TaskDAO taskDAO;
+    private final TaskDAO taskDAO;
 
     /***
      * Ritorna l'user @{@link Persona} incaricato del Task @{@link Task}
@@ -33,9 +30,8 @@ public class TaskServiceImpl implements TaskService
      */
     @Override
     public Persona getAssegnatarioTask(int id) {
-        Task task= taskDAO.findById(id);
-        Persona result = task.getPersona();
-        return result;
+        Task task = taskDAO.findById(id);
+        return task.getPersona();
     }
 
     /***
@@ -68,19 +64,16 @@ public class TaskServiceImpl implements TaskService
      * @param stato del nuovo task
      * @param supergruppo di appartenenza del task da definire
      * @param persona responsabile del task che si sta definendo
-     * @return Boolean indicante il successo o il fallimento dell'azione
+     * @return Task appena creato
      */
     @Override
-    public Boolean definizioneTaskSupergruppo(String descrizione, LocalDate data, String nome, String stato, Supergruppo supergruppo, Persona persona){
+    public Task definizioneTaskSupergruppo(String descrizione, LocalDate data, String nome, String stato,
+                                           Supergruppo supergruppo, Persona persona) {
         Task task = new Task(descrizione, data, nome, stato);
         task.setSupergruppo(supergruppo);
         task.setPersona(persona);
-        try {
-            taskDAO.save(task);
-        } catch (Exception ex){
-           return false;
-        };
-        return true;
+        taskDAO.save(task);
+        return task;
     }
 
 
@@ -94,7 +87,6 @@ public class TaskServiceImpl implements TaskService
         return taskDAO.findAllByPersona_Id(idPersona);
     }
 
-    //TODO da aggiornare su odd da Supergruppo supergruppo ad int idSupergruppo
     /***
      * Ritorna la lista di task @{@link Task} del supergruppo @{@link Supergruppo} del supergruppo passato
      * @param idSupergruppo di cui si vogliono visualizzare i task
@@ -102,8 +94,7 @@ public class TaskServiceImpl implements TaskService
      */
     @Override
     public List<Task> visualizzaTaskSuperGruppo(int idSupergruppo) {
-        List<Task> ris = taskDAO.findAllBySupergruppo_Id(idSupergruppo);
-        return ris;
+        return taskDAO.findAllBySupergruppo_Id(idSupergruppo);
     }
 
     /***
@@ -113,8 +104,7 @@ public class TaskServiceImpl implements TaskService
      */
     @Override
     public Task getTaskById(int id) {
-        Task ris = taskDAO.findById(id);
-        return ris;
+        return taskDAO.findById(id);
     }
 
     /***
@@ -141,6 +131,7 @@ public class TaskServiceImpl implements TaskService
 
     /**
      * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in completo
+     *
      * @param idTask identifica univocamente un task
      */
     @Override
@@ -152,6 +143,7 @@ public class TaskServiceImpl implements TaskService
 
     /**
      * Metodo che permette di camiare le informazioni di un task@{@link Task}
+     *
      * @param taskToUpdate task aggiornato
      */
     @Override

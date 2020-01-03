@@ -44,10 +44,12 @@ class TaskServiceImplTest {
     void definizioneTaskSupergruppo() {
         Persona persona1 = new Persona("Persona1","Persona1","Persona");
         Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
-        Boolean expected = true;
         LocalDate tmpDate;
         tmpDate = LocalDate.of(2020, 4, 20);
-        Boolean actual = taskService.definizioneTaskSupergruppo("t1" , tmpDate, "task1" , "in valutazione", supergruppo, persona1);
+        Task expected = new Task("t1", tmpDate, "task1", "in valutazione");
+        expected.setSupergruppo(supergruppo);
+        expected.setPersona(persona1);
+        Task actual = taskService.definizioneTaskSupergruppo("t1", tmpDate, "task1", "in valutazione", supergruppo, persona1);
         assertEquals(expected, actual);
     }
 
