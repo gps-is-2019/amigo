@@ -37,6 +37,36 @@
             </th:block>
             </tbody>
         </table>
+
+
+        <h1 class="ui header" align="center"> Documenti approvati : </h1>
+
+        <table class="ui celled table striped">
+            <thead>
+            <tr class="center aligned">
+                <th>Nome</th>
+                <th>Data invio</th>
+                <th>Task relativo</th>
+                <th>Descrizione</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="documento : ${documenti}">
+                <tr class="center aligned">
+                    <td th:text="${documento.nome}"></td>
+                    <td th:text="${documento.dataInvio}"></td>
+                    <td th:text="${documento.getTask().getNome()}"></td>
+                    <td>
+                        <a class="ui primary button"
+                           th:href="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}'( idSupergruppo=${idSupergruppo} , idTask=${documento.getTask().getId()} ) }">Dettagli</a>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+
+
+
     </div>
 
 </body>

@@ -3,6 +3,8 @@ package it.unisa.Amigo;
 import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.documento.dao.DocumentoDAO;
+import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
@@ -35,6 +37,7 @@ public class AmigoApplication {
 				, SupergruppoDAO supergruppoDAO
 				, PasswordEncoder encoder
 				, TaskDAO taskDAO
+				, DocumentoDAO documentoDAO
 		){
 			return args -> {
 
@@ -131,12 +134,36 @@ public class AmigoApplication {
 				taskprova2.setSupergruppo(GAQD);
 				GAQD.addTask(taskprova2);
 
-				Task taskprova3 = new Task("t2" , tmpDate , "task2" , "incompleto");
+				Task taskprova3 = new Task("t3" , tmpDate , "task3" , "incompleto");
 				taskprova3.setPersona(ferrucci);
 				ferrucci.addTask(taskprova3);
 
 				taskprova3.setSupergruppo(GAQD);
 				GAQD.addTask(taskprova3);
+
+				Task taskprova4 = new Task("task approvato 1" , tmpDate , "task approvato1" , "approvato");
+				taskprova4.setPersona(ferrucci);
+				ferrucci.addTask(taskprova4);
+
+				taskprova4.setSupergruppo(GAQD);
+				GAQD.addTask(taskprova4);
+
+
+				Documento documento = new Documento("src/main/resources/documents/test.txt" , tmpDate , "test",  false , ""  );
+				taskprova4.setDocumento(documento);
+				documento.setTask(taskprova4);
+
+				Task taskprova5 = new Task("task approvato 2" , tmpDate , "taskapprovato2" , "approvato");
+				taskprova5.setPersona(ferrucci);
+				ferrucci.addTask(taskprova5);
+
+				taskprova5.setSupergruppo(GAQD);
+				GAQD.addTask(taskprova5);
+
+				Documento documento2 = new Documento("src/main/resources/documents/gestioneaccount.png" , tmpDate , "gestioneaccount.png",  false , ".png"  );
+				taskprova5.setDocumento(documento2);
+				documento2.setTask(taskprova5);
+
 
 				supergruppoDAO.save(GAQD);
 				supergruppoDAO.save(commissioneAAL);
@@ -144,7 +171,8 @@ public class AmigoApplication {
 				consiglioDidatticoDAO.save(cd);
 				personaDAO.saveAll(Arrays.asList(ferrucci,scarano,malandrino,dePrisco,polese,gravino));
 				userDAO.saveAll(Arrays.asList(userFerrucci,userScarano,userMalandrino,userDePrisco,userPolese,userGravino));
-				taskDAO.saveAll(Arrays.asList(taskprova,taskprova2));
+				taskDAO.saveAll(Arrays.asList(taskprova,taskprova2,taskprova3,taskprova4,taskprova5));
+				documentoDAO.saveAll(Arrays.asList(documento,documento2));
 			};
 		}
 	}

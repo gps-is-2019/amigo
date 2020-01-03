@@ -40,6 +40,19 @@
             <tr class="center aligned">
                 <td colspan="4" th:text="${task.descrizione}"></td>
             </tr>
+            <tr class="center aligned" >
+                <td colspan="4" th:if="${task.getDocumento()}!=null">
+                    <a target="_blank" th:text="${task.documento.getNome()}" th:href="@{'/repository/{idDocumento}' ( idDocumento=${task.documento.getId()})}"></a>
+                </td>
+                <td colspan="4" th:if="${task.getDocumento()}==null">
+                    <span>Nessun documento presente</span>
+
+                </td>
+            </tr>
+
+
+
+
 
             <tr th:if="${isResponsabile==true}" class="center aligned">
                 <td colspan="1">

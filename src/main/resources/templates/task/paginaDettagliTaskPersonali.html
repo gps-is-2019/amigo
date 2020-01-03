@@ -41,24 +41,15 @@
                 <td colspan="4" th:text="${task.descrizione}"></td>
             </tr>
 
-
-            <tr th:if="${( ( task.stato.equals('approvato') )==false ) and ( ( task.stato.equals('in valutazione') )==false )}" class="center aligned">
-                <td colspan="3">
-                    <a class="ui primary button"
-                       th:href="@{'/taskPersonali/task_detail/{idTask}/completa' (idTask=${task.id}) }"
-                    > Completa</a>
-                </td>
-
-            </tr>
-
             <tr th:if="${( ( task.stato.equals('incompleto') )==true ) or ( ( task.stato.equals('respinto') )==true )}" class="center aligned">
                 <td colspan="3">
 
 
 
                     <form th:action="@{'/taskPersonali/task_detail/{idTask}/uploadDocumento'(idTask=${task.id})}" method="post" enctype="multipart/form-data" >
-                        <label for="file">Filename:</label>
-                        <input type="file" name="file" id="file"/>
+                        <label >Filename:</label>
+<!--                        <input th:if="${file}==null"type="file" name="file" />-->
+                        <input type="file" name="file"/>
                         <input type="submit" name="submit" value="Submit" />
                     </form>
 
@@ -67,13 +58,31 @@
                         <p>Documento <span th:text="${documentoNome}"></span> caricato con successo!</span></p>
                     </div>
 
+                    <div class="ui message negative" th:if="${flagAggiunta==2}">
+                        <i class="close icon"></i>
+                        <p><span>Errore caricamento documento</span></p>
+                    </div>
+
                 </td>
 
             </tr>
             <tr>
-                <td colspan="3" th:if="${documento}!=null" th:text="${documento.getNome()}">
+                <td class="center aligned" colspan="3" th:if="${task.getDocumento()}!=null">
+                    <a target="_blank" th:text="${task.documento.getNome()}" th:href="@{'/repository/{idDocumento}' ( idDocumento=${task.documento.getId()})}"></a>
                 </td>
 <!--                <td colspan="3" th:if="${task.getDocumento()}!=null" th:text="${documento.getNome()}"></td>-->
+                </td>
+                <td class="center aligned" colspan="3" th:if="${task.getDocumento()}==null">
+                    <span>Nessun documento presente</span>
+                </td>
+
+            </tr>
+
+            <tr th:if="${( ( task.stato.equals('approvato') )==false ) and ( ( task.stato.equals('in valutazione') )==false )}" class="center aligned">
+                <td colspan="3">
+                    <a class="ui primary button"
+                       th:href="@{'/taskPersonali/task_detail/{idTask}/completa' (idTask=${task.id}) }"
+                    > Completa</a>
                 </td>
 
             </tr>
