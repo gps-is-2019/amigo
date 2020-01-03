@@ -1,7 +1,7 @@
 package it.unisa.Amigo.consegna.controller;
 
 import it.unisa.Amigo.consegna.services.ConsegnaService;
-import it.unisa.Amigo.documento.domain.Documento;
+import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,17 +23,30 @@ public class ConsegnaController {
     private GruppoService gruppoService;
 
     @GetMapping("/consegna/{ruolo}")
-    public String repository(Model model, @PathVariable("ruolo") String ruolo) {
-        model.addAttribute("destinatari", gruppoService.findAllByRuolo(ruolo));
-        return "consegna/consegna-invio";
+    public String sendDocumento(Model model, @PathVariable("ruolo") String ruolo) {
+        List<Persona> destinatari = gruppoService.findAllByRuolo(ruolo);
+        Persona p = new Persona("a", "b", "CPDS");
+        destinatari.add(p);
+        model.addAttribute("destinatari", destinatari);
+        return "consegna/invio-consegna";
     }
 
-    @PostMapping("/consegna/{idDestinatario}")
-    public String sendDocumento(Model model, @RequestParam("file") MultipartFile file, @PathVariable("idDestinatario") int idDestinatario) {
-        consegnaService.sendDocumento(idDestinatario, file);
+    @PostMapping("/consegna")
+    public String sendDocumento(Model model, @RequestParam MultipartFile file, @RequestParam String destinatariPost) {
+        String[] destinatariString = destinatariPost.split(",");
+        int[] destinatariInt = new int[destinatariString.length];
+        int i = 0;
+
+        for (String p : destinatariString)
+            destinatariInt[i++] = Integer.parseInt(p);
+
+        consegnaService.sendDocumento(destinatariInt, file);
+
         model.addAttribute("flagInviato", 1);
         model.addAttribute("documentoNome", file.getOriginalFilename());
-        return "consegna/consegna-invio";
+        model.addAttribute("destinatari", destinatariPost);
+        return "consegna/invio-consegna";
     }
 
+    //TODO Aggiungere gente al NdV, PQA. Più ruoli a una persona. Controllo permessi di invio. Aggiornare navbar. Documenti ricevuti/inviati.
 }
