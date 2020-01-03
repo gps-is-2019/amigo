@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface DocumentoDAO extends CrudRepository<Documento, Integer> {
     List<Documento> findAllByNomeContains(String nameDocumento);
+    List<Documento> findAllByTask_Supergruppo_IdAndTask_Stato(int idSupergruppo , String stato);
 }

@@ -1,6 +1,8 @@
 package it.unisa.Amigo.task.controller;
 
 
+import it.unisa.Amigo.documento.domain.Documento;
+import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
@@ -10,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.Doc;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -27,6 +31,9 @@ public class TaskController {
 
     @Autowired
     private GruppoService gruppoService;
+
+    @Autowired
+    private DocumentoService documentoService;
 
     /**
      * Ritorna ad una pagina i task @{@link Task} di un supergruppo @{@link Supergruppo}
@@ -287,6 +294,7 @@ public class TaskController {
     public String visualizzaDettagliTaskPersonali(Model model, @PathVariable(name = "idTask") int idTask) {
         Task task = taskService.getTaskById(idTask);
         model.addAttribute("task", task);
+        model.addAttribute("documento" , task.getDocumento());
         return "task/paginaDettagliTaskPersonali";
     }
 
@@ -306,5 +314,37 @@ public class TaskController {
 
         return "task/paginaDettagliTaskPersonali";
     }
+
+    @PostMapping("/taskPersonali/task_detail/{idTask}/uploadDocumento")
+    public String uploadDocumentoTask(Model model, @RequestParam("file") MultipartFile file , @PathVariable(name = "idTask") int idTask) {
+
+        Task task = taskService.getTaskById(idTask);
+
+        //TODO fare in modo che se vi è già un documento allora deve essere tolto dal DB e assegnare il nuovo
+        // fare il controllo su task.documento != null
+
+        Documento documento = documentoService.addDocumento(file);
+
+        model.addAttribute("flagAggiunta", 1); //cambiare
+        model.addAttribute("documentoNome", file.getOriginalFilename());
+        //List<Documento> documenti = documentoService.searchDocumenti("");
+
+        model.addAttribute("documento", documento);
+
+
+        task.setDocumento(documento);
+        taskService.updateTask(task);
+
+        System.out.println(documentoService.searchDocumenti(""));
+
+        documento.setTask(task);
+        documentoService.updateDocumento(documento);
+
+        model.addAttribute("task" , task);
+        System.out.println(documentoService.approvedDocuments(1) );
+
+        return "task/paginaDettagliTaskPersonali";
+    }
+
 
 }

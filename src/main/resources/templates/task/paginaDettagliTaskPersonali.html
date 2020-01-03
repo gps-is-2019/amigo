@@ -56,7 +56,7 @@
 
 
 
-                    <form th:action="@{/repository/uploadDocumento}" method="post" enctype="multipart/form-data" >
+                    <form th:action="@{'/taskPersonali/task_detail/{idTask}/uploadDocumento'(idTask=${task.id})}" method="post" enctype="multipart/form-data" >
                         <label for="file">Filename:</label>
                         <input type="file" name="file" id="file"/>
                         <input type="submit" name="submit" value="Submit" />
@@ -67,9 +67,13 @@
                         <p>Documento <span th:text="${documentoNome}"></span> caricato con successo!</span></p>
                     </div>
 
+                </td>
 
-
-
+            </tr>
+            <tr>
+                <td colspan="3" th:if="${documento}!=null" th:text="${documento.getNome()}">
+                </td>
+<!--                <td colspan="3" th:if="${task.getDocumento()}!=null" th:text="${documento.getNome()}"></td>-->
                 </td>
 
             </tr>
