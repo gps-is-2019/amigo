@@ -13,6 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 
+/**
+ * Questa classe implementa i metodi per la logica di Business del sottosistema "Repository"
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -21,7 +24,11 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Autowired
     private DocumentoService documentoService;
 
-
+    /**
+     * Aggiunge un documento @{@link Documento} alla repository.
+     * @param file da aggiungere alla repository.
+     * @return true se il documento è stato aggiunto alla repository.
+     */
     @Override
     public boolean addDocumentoInRepository(MultipartFile file){
         System.out.println(file.getSize());
@@ -33,6 +40,11 @@ public class RepositoryServiceImpl implements RepositoryService {
         }
     }
 
+    /**
+     * MANCANTE
+     * @param idDocument del documento da scaricare.
+     * @return documento scaricato.
+     */
     @Override
     public ResponseEntity<Resource> downloadDocumento(int idDocument) {
         Documento documento = documentoService.findDocumento(idDocument);
