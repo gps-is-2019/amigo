@@ -86,6 +86,14 @@
     <i class="close icon"></i>
     <p>Hai modificato il Task </p>
 </div>
+<div class="ui message green text container" th:if="${flagAzione==4}">
+    <i class="close icon"></i>
+    <p>Hai completato il Task </p>
+</div>
+<div class="ui message green text container" th:if="${flagCreazione==true}">
+    <i class="close icon"></i>
+    <p>Hai creato correttamente il Task </p>
+</div>
 <script>$('.message .close')
     .on('click', function () {
         $(this)

@@ -8,10 +8,6 @@
 </head>
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
-<div class="ui message green text container" th:if="${flagCreazione==true}">
-    <i class="close icon"></i>
-    <p>Hai creato correttamente il Task </p>
-</div>
 <div class="ui message negative text container" th:if="${flagCreazione==false}">
     <i class="close icon"></i>
     <p>Non hai creato correttamente il Task </p>
