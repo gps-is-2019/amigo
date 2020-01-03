@@ -20,5 +20,7 @@ public interface PersonaDAO extends CrudRepository<Persona, Integer> {
     Persona findByUser_email(String email);
 
     Persona findById(int idPersona);
+
+    List<Persona> findAllByRuolo(String ruolo);
 }
 

@@ -276,5 +276,9 @@ public class GruppoServiceImpl implements GruppoService {
         return result;
     }
 
+    @Override
+    public List<Persona> findAllByRuolo(String ruolo){
+        return personaDAO.findAllByRuolo(ruolo);
+    }
 
 }

@@ -19,6 +19,8 @@ public class Role {
     public final static  String ADMIN_ROLE = "ADMIN";
     public final static  String USER_ROLE = "USER";
     public final static  String PQA_ROLE = "PQA";
+    public final static  String CPDS_ROLE = "CPDS";
+    public final static  String NDV_ROLE = "NDV";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
