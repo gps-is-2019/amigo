@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
@@ -33,7 +32,7 @@ public class DocumentoServiceImpl implements DocumentoService {
     private final DocumentoDAO documentoDAO;
 
     private String storeFile(MultipartFile file, int idDoc) {
-        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+        String filename = file.getOriginalFilename();
         try {
             if (file.isEmpty()) {
                 throw new StorageException("Failed to store empty file " + filename);

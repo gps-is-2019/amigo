@@ -43,6 +43,8 @@ public class AmigoApplication {
 				Role userRole = new Role(Role.USER_ROLE);
 				Role pqaRole = new Role(Role.PQA_ROLE);
 				Role capogruppoRole = new Role(Role.CAPOGRUPPO_ROLE);
+				Role ndvRole = new Role(Role.NDV_ROLE);
+				Role cpdsRole = new Role(Role.CPDS_ROLE);
 
 				User userFerrucci = new User("ferrucci@unisa.it",encoder.encode("ferrucci"));
 				userFerrucci.addRole(userRole);
@@ -53,10 +55,13 @@ public class AmigoApplication {
 
 				User userMalandrino = new User("dmalandrino@unisa.it",encoder.encode("malandrino"));
 				userMalandrino.addRole(userRole);
+				userMalandrino.addRole(ndvRole);
 
 				User userDePrisco= new User("robdep@unisa.it",encoder.encode("dePrisco"));
 				userDePrisco.addRole(userRole);
 				userDePrisco.addRole(pqaRole);
+				userDePrisco.addRole(capogruppoRole);
+				userDePrisco.addRole(cpdsRole);
 
 				User userPolese = new User("gpolese@unisa.it",encoder.encode("polese"));
 				userPolese.addRole(userRole);
@@ -64,16 +69,22 @@ public class AmigoApplication {
 				User userGravino = new User("gravino@unisa.it",encoder.encode("gravino"));
 				userGravino.addRole(userRole);
 
+				User userVincenzi = new User("vincenzi@unisa.it",encoder.encode("vincenzi"));
+				userVincenzi.addRole(userRole);
+				userVincenzi.addRole(ndvRole);
+
 				User userRossi = new User("mariorossi@unisa.it",encoder.encode("mario"));
 				userRossi.addRole(userRole);
+				userRossi.addRole(cpdsRole);
 
-				Persona ferrucci = new Persona("Filomena","Ferrucci","Capogruppo");
+				Persona ferrucci = new Persona("Filomena","Ferrucci","Professore Ordinario");
 				Persona scarano = new Persona("Vittorio","Scarano","Professore Ordinario");
 				Persona malandrino = new Persona("Delfina","Malandrino","Professore Associato");
 				Persona dePrisco = new Persona("Roberto","De Prisco","Professore Ordinario");
 				Persona polese = new Persona("Giuseppe","Polese","Professore Associato");
 				Persona gravino = new Persona("Carmine","Gravino","Professore Associato");
-				Persona rossi = new Persona("Mario","Rossi","CPDS");
+				Persona rossi = new Persona("Mario","Rossi", "Professore Associato");
+				Persona vincenzi = new Persona("Giovanni","Vincenzi", "Professore Associato");
 
 				ferrucci.setUser(userFerrucci);
 				scarano.setUser(userScarano);
@@ -82,6 +93,7 @@ public class AmigoApplication {
 				polese.setUser(userPolese);
 				gravino.setUser(userGravino);
 				rossi.setUser(userRossi);
+				vincenzi.setUser(userVincenzi);
 
 				Commissione commissioneAAL = new Commissione("Accompagnamento al lavoro", "Commissione", true, "");
 				Commissione commissioneEL = new Commissione("Piattaforme EL", "Commissione", true, "");
@@ -93,6 +105,7 @@ public class AmigoApplication {
 				GAQD.addPersona(malandrino);
 				GAQD.addPersona(gravino);
 				GAQD.addPersona(rossi);
+				GAQD.addPersona(vincenzi);
 				GAQD.setResponsabile(ferrucci);
 				GAQD.addCommissione(commissioneAAL);
 				GAQD.addCommissione(commissioneEL);
@@ -114,6 +127,7 @@ public class AmigoApplication {
 				cd.addPersona(dePrisco);
 				cd.addPersona(polese);
 				cd.addPersona(gravino);
+				cd.addPersona(vincenzi);
 
 				//TODO add task
 				Date tmpDate;
@@ -139,8 +153,8 @@ public class AmigoApplication {
 				supergruppoDAO.save(commissioneAAL);
 				supergruppoDAO.save(commissioneEL);
 				consiglioDidatticoDAO.save(cd);
-				personaDAO.saveAll(Arrays.asList(ferrucci, scarano, malandrino, dePrisco, polese, gravino, rossi));
-				userDAO.saveAll(Arrays.asList(userFerrucci, userScarano, userMalandrino, userDePrisco, userPolese, userGravino, userRossi));
+				personaDAO.saveAll(Arrays.asList(ferrucci, scarano, malandrino, dePrisco, polese, gravino, rossi, vincenzi));
+				userDAO.saveAll(Arrays.asList(userFerrucci, userScarano, userMalandrino, userDePrisco, userPolese, userGravino, userRossi, userVincenzi));
 				taskDAO.saveAll(Arrays.asList(taskprova, taskprova2));
 			};
 		}

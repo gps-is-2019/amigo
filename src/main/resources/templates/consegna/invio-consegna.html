@@ -22,8 +22,9 @@
     <div th:if="${destinatari.size()>1}">
         Seleziona il destinatario:
         <div>
-            <select multiple name="destinatariPost">
-                <option th:each="persona : ${destinatari}" th:text="${persona.cognome}" th:value="${persona.id}"></option>
+            <select multiple name="destinatariPost" required>
+                <option th:each="persona : ${destinatari}" th:text="${persona.cognome}"
+                        th:value="${persona.id}"></option>
             </select>
         </div>
     </div>

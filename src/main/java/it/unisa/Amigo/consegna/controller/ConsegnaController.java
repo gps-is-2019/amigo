@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +35,7 @@ public class ConsegnaController {
     public String viewConsegna(Model model) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         Set<Role> ruoli = personaLoggata.getUser().getRoles();
-        List<String> ruoliString = new ArrayList<>();
+        Set<String> ruoliString = new HashSet<>();
         for (Role r : ruoli) {
             if (r.getName().equalsIgnoreCase(Role.PQA_ROLE)) {
                 ruoliString.add(Role.CAPOGRUPPO_ROLE);
@@ -77,27 +78,27 @@ public class ConsegnaController {
     @GetMapping("/consegna/inviati")
     public String findConsegneInviate(Model model, @RequestParam("name") String name) {
         List<Consegna> consegne = consegnaService.consegneInviate(gruppoService.getAuthenticatedUser());
-        List<Consegna> consegneReturn = new ArrayList<>();
 
-        for (Consegna c : consegne)
-            if (c.getDocumento().getNome().toLowerCase().contains(name.toLowerCase()) || name.equals(""))
-                consegneReturn.add(c);
-
-        model.addAttribute("consegne", consegneReturn);
+        model.addAttribute("consegne", consegneFilter(consegne, name));
         return "consegna/documenti-inviati";
     }
 
     @GetMapping("/consegna/ricevuti")
     public String findConsegneRicevute(Model model, @RequestParam("name") String name) {
         List<Consegna> consegne = consegnaService.consegneRicevute(gruppoService.getAuthenticatedUser());
+
+        model.addAttribute("consegne", consegneFilter(consegne, name));
+        return "consegna/documenti-ricevuti";
+    }
+
+    private List<Consegna> consegneFilter(List<Consegna> consegne, String name) {
         List<Consegna> consegneReturn = new ArrayList<>();
 
         for (Consegna c : consegne)
             if (c.getDocumento().getNome().toLowerCase().contains(name.toLowerCase()) || name.equals(""))
                 consegneReturn.add(c);
 
-        model.addAttribute("consegne", consegneReturn);
-        return "consegna/documenti-ricevuti";
+        return consegneReturn;
     }
 
     @GetMapping("/consegna/miei-documenti/{idDocumento}")
@@ -111,7 +112,4 @@ public class ConsegnaController {
         }
         return consegnaService.downloadDocumento(idDocumento);
     }
-
-    //TODO Aggiungere gente al NdV, PQA, CPDS. Controllo permessi di invio. Filtro documenti ricevuti/inviati.
-    //TODO Sicurezza sui controller.
 }

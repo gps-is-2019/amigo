@@ -8,12 +8,12 @@
 </head>
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
-<h1 class="ui header" align="center">Documenti inviati</h1>
+<h1 align="center" class="ui header">Documenti inviati</h1>
 <div class="ui main text container">
 
     <form action="/consegna/inviati" method="get">
         <div class="center aligned">
-            <input type="text" name="name" placeholder="Inserisci il nome del documento da ricercare">
+            <input name="name" placeholder="Inserisci il nome del documento da ricercare" type="text">
             <input type="submit" value="Ricerca">
         </div>
     </form>
@@ -35,7 +35,8 @@
         <th:block th:each="consegna : ${consegne}">
             <tr class="center aligned">
                 <td>
-                    <a target=”_blank” th:href="@{'/consegna/miei-documenti/{idDocumento}' (idDocumento=${consegna.getDocumento().getId()})}">
+                    <a target=”_blank”
+                       th:href="@{'/consegna/miei-documenti/{idDocumento}' (idDocumento=${consegna.getDocumento().getId()})}">
                         <span th:text="${consegna.documento.nome}"></span>
                     </a>
                 </td>
