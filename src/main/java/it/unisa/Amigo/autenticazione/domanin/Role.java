@@ -17,6 +17,7 @@ public class Role {
 
     private final static long serialVersionUID = 1L;
     public final static  String ADMIN_ROLE = "ADMIN";
+    public final static  String CAPOGRUPPO_ROLE = "CAPOGRUPPO";
     public final static  String USER_ROLE = "USER";
     public final static  String PQA_ROLE = "PQA";
     public final static  String CPDS_ROLE = "CPDS";

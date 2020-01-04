@@ -1,5 +1,6 @@
 package it.unisa.Amigo.consegna.controller;
 
+import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.consegna.services.ConsegnaService;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class ConsegnaController {
@@ -46,6 +49,26 @@ public class ConsegnaController {
         model.addAttribute("documentoNome", file.getOriginalFilename());
         model.addAttribute("destinatari", destinatariPost);
         return "consegna/invio-consegna";
+    }
+
+    @GetMapping("/consegna")
+    public String viewConsegna(Model model) {
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Set<Role> ruoli = personaLoggata.getUser().getRoles();
+        List<String> ruoliString = new ArrayList<>();
+        for(Role r: ruoli){
+            if(r.getName().equalsIgnoreCase("PQA")){
+                ruoliString.add(Role.CAPOGRUPPO_ROLE);
+                ruoliString.add(Role.NDV_ROLE);
+            }
+            if(r.getName().equalsIgnoreCase("CPDS")){
+                ruoliString.add(Role.NDV_ROLE);
+                ruoliString.add(Role.PQA_ROLE);
+            }
+        }
+        model.addAttribute("personaLoggata", personaLoggata);
+        model.addAttribute("ruoliString", ruoliString);
+        return "consegna/destinatari";
     }
 
     //TODO Aggiungere gente al NdV, PQA. Più ruoli a una persona. Controllo permessi di invio. Aggiornare navbar. Documenti ricevuti/inviati.

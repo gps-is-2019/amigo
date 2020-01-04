@@ -42,9 +42,11 @@ public class AmigoApplication {
 
 				Role userRole = new Role(Role.USER_ROLE);
 				Role pqaRole = new Role(Role.PQA_ROLE);
+				Role capogruppoRole = new Role(Role.CAPOGRUPPO_ROLE);
 
 				User userFerrucci = new User("ferrucci@unisa.it",encoder.encode("ferrucci"));
 				userFerrucci.addRole(userRole);
+				userFerrucci.addRole(capogruppoRole);
 
 				User userScarano = new User("vitsca@unisa.it",encoder.encode("scarano"));
 				userScarano.addRole(userRole);

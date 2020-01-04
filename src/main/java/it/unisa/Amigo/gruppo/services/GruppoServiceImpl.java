@@ -1,5 +1,6 @@
 package it.unisa.Amigo.gruppo.services;
 
+import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
@@ -278,7 +279,7 @@ public class GruppoServiceImpl implements GruppoService {
 
     @Override
     public List<Persona> findAllByRuolo(String ruolo){
-        return personaDAO.findAllByRuolo(ruolo);
+        return personaDAO.findAllByUser_Roles_Name(ruolo.toUpperCase());
     }
 
 }

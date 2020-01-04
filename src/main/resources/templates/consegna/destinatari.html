@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+
+    <head th:include="/fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo | Destinatari</title>
+    </head>
+</head>
+<body>
+<div th:insert="fragments/fragments.html :: header"></div>
+
+    <div th:if="${ruoliString.size()==0}">
+        <h1>Ci dispiace <span th:text="${personaLoggata.getCognome()}"></span> :( ma attualmente non hai i permessi per inviare documenti!</h1>
+    </div>
+
+    <div th:if="${ruoliString.size()>0}">
+        <h1>Invia documento a:</h1>
+        <a th:each="ruolo : ${ruoliString}" class="ui primary button" th:href="@{/consegna/} + ${ruolo}">
+            <span th:text="${ruolo}"></span>
+        </a>
+    </div>
+
+</body>
+</html>
