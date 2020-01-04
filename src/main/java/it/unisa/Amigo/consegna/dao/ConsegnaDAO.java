@@ -13,4 +13,6 @@ public interface ConsegnaDAO extends CrudRepository<Consegna, Integer> {
     List<Consegna> findAllByMittente(Persona mittente);
 
     List<Consegna> findAllByDestinatario(Persona mittente);
+
+    Consegna findByDocumento_Id(int id);
 }

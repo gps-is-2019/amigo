@@ -62,4 +62,9 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     public List<Consegna> consegneRicevute(Persona destinatario) {
         return consegnaDAO.findAllByDestinatario(destinatario);
     }
+
+    @Override
+    public Consegna findConsegnaByDocumento(int idDocumento){
+        return consegnaDAO.findByDocumento_Id(idDocumento);
+    }
 }

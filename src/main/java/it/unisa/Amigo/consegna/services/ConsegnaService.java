@@ -13,4 +13,5 @@ public interface ConsegnaService {
     ResponseEntity<Resource> downloadDocumento(int idDocument);
     List<Consegna> consegneInviate(Persona mittente);
     List<Consegna> consegneRicevute(Persona destinatario);
+    Consegna findConsegnaByDocumento(int idDocumento);
 }

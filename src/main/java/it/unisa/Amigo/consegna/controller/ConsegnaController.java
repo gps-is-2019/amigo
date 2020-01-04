@@ -7,6 +7,8 @@ import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -100,6 +102,13 @@ public class ConsegnaController {
 
     @GetMapping("/consegna/miei-documenti/{idDocumento}")
     public ResponseEntity<Resource> downloadDocumento(Model model, @PathVariable("idDocumento") int idDocumento) {
+        Consegna consegna = consegnaService.findConsegnaByDocumento(idDocumento);
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        if(consegna.getMittente().getId() != personaLoggata.getId() && consegna.getDestinatario().getId()!= personaLoggata.getId()){
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
+            return new ResponseEntity<>(headers,HttpStatus.FOUND);
+        }
         return consegnaService.downloadDocumento(idDocumento);
     }
 
