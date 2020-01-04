@@ -11,9 +11,21 @@
 <h1 class="ui header" align="center">Repository d'Ateneo</h1>
     <div class="ui main text container">
 
+        <div class="ui search">
+            <div class="ui icon input">
+                <form action="/repository">
+                    <input class="prompt" type="text" placeholder="Inserisci nome..." name="name">
+                    <button type="submit" name="submit" class="ui basic button">
+                        <i class="search icon"></i>
+                    </button>
+                </form>
+
+            </div>
+        </div>
+
+
         <table class="ui celled table striped">
-            <thead>
-            <tr class="center aligned">
+            <!--<tr class="center aligned">
                 <th>
                     <form action="/repository">
                         <div >
@@ -23,12 +35,16 @@
                     </form>
                 </th>
             </tr>
-            </thead>
+            -->
             <tbody>
                 <tr class="center aligned">
                     <td th:if="${#lists.isEmpty(documenti)}">
                         <span>Non sono presenti documenti in repository.</span>
                     </td>
+                </tr>
+                <tr class="center aligned" th:if="${#lists.isEmpty(documenti)==false}" >
+                    <th>Nome</th>
+                    <th>Data di caricamento</th>
                 </tr>
                 <th:block th:each="documento : ${documenti}">
                     <tr class="center aligned">
@@ -36,6 +52,9 @@
                             <a target=”_blank” th:href="@{'/repository/{idDocumento}' ( idDocumento=${documento.id})}">
                                 <span th:text="${documento.nome}"></span>
                             </a>
+                        </td>
+                        <td>
+                            <span th:text="${documento.dataInvio}"></span>
                         </td>
                     </tr>
                 </th:block>

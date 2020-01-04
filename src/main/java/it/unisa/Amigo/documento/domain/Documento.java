@@ -20,7 +20,7 @@ public class Documento implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
+    private Integer id;
 
     @NonNull
     private String path;

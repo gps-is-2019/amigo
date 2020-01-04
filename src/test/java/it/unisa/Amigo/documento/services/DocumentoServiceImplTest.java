@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +64,7 @@ class DocumentoServiceImplTest {
         expectedDocumenti.add(documento1);
 
         when(documentoDAO.findAllByNomeContains(documento.getNome())).thenReturn(expectedDocumenti);
-        List<Documento> actualDocumenti = documentoService.searchDocumenti(documento.getNome());
+        List<Documento> actualDocumenti = documentoService.searchDocumenti(documento);
         assertEquals(expectedDocumenti, actualDocumenti);
     }
 }

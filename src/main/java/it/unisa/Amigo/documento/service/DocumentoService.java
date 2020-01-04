@@ -10,6 +10,6 @@ public interface DocumentoService {
     Documento addDocumento(MultipartFile file);
     Documento updateDocumento(Documento documento);
     Documento findDocumento(int idDocumento);
-    List<Documento> searchDocumenti(String nameDocumento);
+    List<Documento> searchDocumenti(Documento example);
     Resource loadAsResource(Documento documento);
 }

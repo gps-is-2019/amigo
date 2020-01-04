@@ -2,16 +2,10 @@ package it.unisa.Amigo.repository.controller;
 
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoService;
-import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.repository.services.RepositoryService;
-import it.unisa.Amigo.task.domain.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,19 +25,17 @@ public class RepositoryController {
     private RepositoryService repositoryService;
 
     @Autowired
-    private DocumentoService documentoService;
-
-    @Autowired
     private GruppoService gruppoService;
 
     /**
      * Permette di verificare se l'utente il Responsabile del PQA.
+     *
      * @return true se l'utente è il Responsabile del PQA.
      */
 
     private boolean isResponsabilePQA() {
         Set<Role> ruoli = gruppoService.getAuthenticatedUser().getUser().getRoles();
-        for (Role ruolo : ruoli){
+        for (Role ruolo : ruoli) {
             if (ruolo.getName().equals(Role.PQA_ROLE))
                 return true;
         }
@@ -52,23 +44,26 @@ public class RepositoryController {
 
     /**
      * Permette la ricerca di un documento @{@Documento} nella repository.
+     *
      * @param model per salvare le informazioni da recuperare nell'html.
-     * @param name nome del documento da cercare.
+     * @param name  nome del documento da cercare.
      * @return il path della pagina su cui eseguire il redirect.
      */
 
     //show form
     @GetMapping("/repository")
-    public String repository(Model model, @RequestParam(defaultValue = "") String name) {
-        if(isResponsabilePQA())
-            model.addAttribute("flagPQA",1);
-        List<Documento> documenti = documentoService.searchDocumenti(name); // da fare
+    public String repository(Model model, @RequestParam(required = false) String name) {
+        if (isResponsabilePQA()) {
+            model.addAttribute("flagPQA", 1);
+        }
+        List<Documento> documenti = repositoryService.serarchDcoumentInRepository(name);
         model.addAttribute("documenti", documenti);
         return "repository/repository";
     }
 
     /**
      * Permette di caricare il documento @{@Documento} nella repository.
+     *
      * @param model per salvare le informazioni da recuperare nell'html.
      * @return il path della pagina su cui eseguire il redirect.
      */
@@ -77,15 +72,16 @@ public class RepositoryController {
     public String uploadDocumento(Model model) {
         if (gruppoService.getAuthenticatedUser() == null)
             return "redirect:/";
-        else if(!isResponsabilePQA())
+        else if (!isResponsabilePQA())
             return "dashboard";
         return "repository/aggiunta_documento_repository";
     }
 
     /**
      * Permette di caricare il documento @{@Documento} nella repository.
+     *
      * @param model per salvare le informazioni da recuperare nell'html.
-     * @param file file da caricare.
+     * @param file  file da caricare.
      * @return il path della pagina su cui eseguire il redirect
      */
 
@@ -99,13 +95,14 @@ public class RepositoryController {
 
     /**
      * Permette di scaricare un documento @{@Documento} dalla repository.
-     * @param model per salvare le informazioni da recuperare nell'html.
+     *
+     * @param model      per salvare le informazioni da recuperare nell'html.
      * @param idDocument id del documento da scaricare.
      * @return documento.
      */
 
     @GetMapping("/repository/{idDocument}")
     public ResponseEntity<Resource> downloadDocumento(Model model, @PathVariable("idDocument") int idDocument) {
-       return  repositoryService.downloadDocumento(idDocument);
+        return repositoryService.downloadDocumento(idDocument);
     }
 }

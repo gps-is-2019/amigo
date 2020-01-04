@@ -68,7 +68,9 @@ public class DocumentoServiceImplIT {
         List<Documento> documentiExpected = new ArrayList<>();
         documentiExpected.add(documento1);
         documentiExpected.add(documento2);
-        List<Documento> actualDocumenti = documentoService.searchDocumenti("test");
+        Documento test = new Documento();
+        test.setNome("test");
+        List<Documento> actualDocumenti = documentoService.searchDocumenti(test);
         assertEquals(documentiExpected,actualDocumenti);
     }
 }
