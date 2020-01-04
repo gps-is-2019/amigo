@@ -3,12 +3,12 @@
 <head>
 
     <head th:include="/fragments/fragments.html :: head">
-        <title id="pageTitle">Amigo|Documenti inviati</title>
+        <title id="pageTitle">Amigo|Documenti ricevuti</title>
     </head>
 </head>
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
-<h1 class="ui header" align="center">Documenti inviati</h1>
+<h1 class="ui header" align="center">Documenti ricevuti</h1>
 <div class="ui main text container">
 
     <form action="/consegna/inviati" method="get">
@@ -22,14 +22,14 @@
         <thead>
         <tr class="center aligned">
             <th>Nome documento</th>
-            <th>Destinatario</th>
+            <th>Mittente</th>
             <th>Data invio</th>
         </tr>
         </thead>
         <tbody>
         <tr class="center aligned">
             <td th:if="${#lists.isEmpty(consegne)}">
-                <span>Non sono presenti documenti inviati.</span>
+                <span>Non sono presenti documenti ricevuti.</span>
             </td>
         </tr>
         <th:block th:each="consegna : ${consegne}">

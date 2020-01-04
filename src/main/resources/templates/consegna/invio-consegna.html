@@ -14,15 +14,18 @@
 <form enctype="multipart/form-data" method="post" th:action="@{/consegna}">
 
     <div th:if="${destinatari.size()==1}">
+        Destinatario:
         <span th:text="${destinatari.get(0).getCognome()}"></span>
         <input name="destinatariPost" th:value="${destinatari.get(0).getId()}" type="hidden"/>
     </div>
 
     <div th:if="${destinatari.size()>1}">
         Seleziona il destinatario:
-        <select multiple name="destinatariPost">
-            <option th:each="persona : ${destinatari}" th:text="${persona.cognome}" th:value="${persona.id}"></option>
-        </select>
+        <div>
+            <select multiple name="destinatariPost">
+                <option th:each="persona : ${destinatari}" th:text="${persona.cognome}" th:value="${persona.id}"></option>
+            </select>
+        </div>
     </div>
 
     <label>Filename:</label>

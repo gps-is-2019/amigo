@@ -4,6 +4,7 @@ import it.unisa.Amigo.consegna.dao.ConsegnaDAO;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.service.DocumentoServiceImpl;
+import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -53,9 +54,12 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     }
 
     @Override
-    public List<Consegna> documentiInviati(int idMittente) {
-        return consegnaDAO.findAllByMittente_Id(idMittente);
+    public List<Consegna> consegneInviate(Persona mittente) {
+        return consegnaDAO.findAllByMittente(mittente);
     }
 
-
+    @Override
+    public List<Consegna> consegneRicevute(Persona destinatario) {
+        return consegnaDAO.findAllByDestinatario(destinatario);
+    }
 }
