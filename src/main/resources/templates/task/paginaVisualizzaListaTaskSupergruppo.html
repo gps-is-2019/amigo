@@ -47,7 +47,8 @@
                 <th>Nome</th>
                 <th>Data invio</th>
                 <th>Task relativo</th>
-                <th>Descrizione</th>
+                <th>Download documento</th>
+                <th>Dettagli Task</th>
             </tr>
             </thead>
             <tbody>
@@ -56,6 +57,10 @@
                     <td th:text="${documento.nome}"></td>
                     <td th:text="${documento.dataInvio}"></td>
                     <td th:text="${documento.getTask().getNome()}"></td>
+                    <td>
+                        <a class="ui primary button"
+                           th:href="@{'/documento/{idDocumento}' ( idDocumento=${documento.getId()})}">Download</a>
+                    </td>
                     <td>
                         <a class="ui primary button"
                            th:href="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}'( idSupergruppo=${idSupergruppo} , idTask=${documento.getTask().getId()} ) }">Dettagli</a>

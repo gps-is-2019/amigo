@@ -1,6 +1,8 @@
 package it.unisa.Amigo.task.controller;
 
 import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.documento.domain.Documento;
+import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
@@ -14,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -32,6 +36,9 @@ class TaskControllerTest {
 
     @MockBean
     private GruppoService gruppoService;
+
+    @MockBean
+    private DocumentoService documentoService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -317,4 +324,25 @@ class TaskControllerTest {
                 .andExpect(view().name("task/paginaDettagliTaskPersonali"));
     }
 
+    @Test
+    void uploadDocumentoTask() throws Exception {
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task expectedTask = new Task("t1", tmpDate, "task1", "incompleto");
+        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        expectedTask.setPersona(expectedPersona);
+        Documento documento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
+                "test.txt", false, "text/plain");
+        expectedTask.setDocumento(documento);
+        documento.setTask(expectedTask);
+        when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
+        when(documentoService.addDocumento(null)).thenReturn(documento);
+
+        this.mockMvc.perform(post("/taskPersonali/task_detail/{idTask}/uploadDocumento", expectedTask.getId()))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("flagAggiunta", 1))
+                .andExpect(model().attribute("task", expectedTask))
+                .andExpect(model().attribute("documento", documento))
+                .andExpect(view().name("task/paginaDettagliTaskPersonali"));
+    }
 }

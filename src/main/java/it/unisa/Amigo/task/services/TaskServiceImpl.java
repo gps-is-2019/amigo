@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Questa classe implementa i metodi  per la logica di Business del sottositema "Gruppo"
+ * Questa classe implementa i metodi  per la logica di Business del sottositema "Gruppo".
  */
 @Service
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class TaskServiceImpl implements TaskService {
     private final TaskDAO taskDAO;
 
     /***
-     * Ritorna l'user @{@link Persona} incaricato del Task @{@link Task}
+     * Ritorna l'user @{@link Persona} incaricato del Task @{@link Task}.
      * @param id identifica univocamente un task
      * @return la persona a cui quel task è assegnato
      */
@@ -35,7 +35,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /***
-     * Ritorna il documento @{@link Documento} del Task @{@link Task}
+     * Ritorna il documento @{@link Documento} del Task @{@link Task}.
      * @param id identifica univocamente un task
      * @return il documento associato al task
      */
@@ -45,19 +45,19 @@ public class TaskServiceImpl implements TaskService {
     } //TODO
 
     /***
-     * Aggiunge un documento @{@link Documento} al Task @{@link Task}
+     * Aggiunge un documento @{@link Documento} al Task @{@link Task}.
      * @param documento da aggiungere al task
      * @param idTask id del task al cui aggiungere il documento
      * @return Boolean
      */
-    @Override
-    public Boolean addDocumentoTask(Documento documento, int idTask) {
-        return null;
-    }
+//    @Override
+//    public Boolean addDocumentoTask(Documento documento, int idTask) {
+//        return null;
+//    }
 
 
     /***
-     * Definisce un nuovo Task @{@link Task}
+     * Definisce un nuovo Task @{@link Task}.
      * @param descrizione del nuovo task
      * @param data di scadenza del nuovo task
      * @param nome del nuovo task
@@ -67,8 +67,8 @@ public class TaskServiceImpl implements TaskService {
      * @return Task appena creato
      */
     @Override
-    public Task definizioneTaskSupergruppo(String descrizione, LocalDate data, String nome, String stato,
-                                           Supergruppo supergruppo, Persona persona) {
+    public Task definizioneTaskSupergruppo(final String descrizione, final LocalDate data, final String nome, final String stato,
+                                           final Supergruppo supergruppo, final Persona persona) {
         Task task = new Task(descrizione, data, nome, stato);
         task.setSupergruppo(supergruppo);
         task.setPersona(persona);
@@ -78,7 +78,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     /***
-     * Ritorna una lista di task @{@link Task} dell'utente passato
+     * Ritorna una lista di task @{@link Task} dell'utente passato.
      * @param idPersona id della persona di cui si vuole conosce la lista di task
      * @return lista di task
      */
@@ -88,7 +88,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /***
-     * Ritorna la lista di task @{@link Task} del supergruppo @{@link Supergruppo} del supergruppo passato
+     * Ritorna la lista di task @{@link Task} del supergruppo @{@link Supergruppo} del supergruppo passato.
      * @param idSupergruppo di cui si vogliono visualizzare i task
      * @return lista di task
      */
@@ -98,7 +98,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /***
-     * Ritorna il task @{@link Task} corrispondente dall'id cercato
+     * Ritorna il task @{@link Task} corrispondente dall'id cercato.
      * @param id identifica univocamente un task
      * @return task
      */
@@ -108,7 +108,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /***
-     * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in approvato
+     * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in approvato.
      * @param idTask identifica univocamente un task
      */
     @Override
@@ -119,7 +119,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /***
-     * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in respinto
+     * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in respinto.
      * @param idTask identifica univocamente un task
      */
     @Override
@@ -130,7 +130,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in completo
+     * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in completo.
      *
      * @param idTask identifica univocamente un task
      */
@@ -142,7 +142,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * Metodo che permette di camiare le informazioni di un task@{@link Task}
+     * Metodo che permette di camiare le informazioni di un task@{@link Task}.
      *
      * @param taskToUpdate task aggiornato
      */
@@ -150,4 +150,5 @@ public class TaskServiceImpl implements TaskService {
     public void updateTask(Task taskToUpdate) {
         taskDAO.save(taskToUpdate);
     }
+
 }

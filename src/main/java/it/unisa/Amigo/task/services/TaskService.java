@@ -11,14 +11,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Questa interfaccia definisce i metodi  per la logica di Business del sottositema "Task"
+ * Questa interfaccia definisce i metodi  per la logica di Business del sottositema "Task".
  */
 public interface TaskService {
     Persona getAssegnatarioTask(int id);
 
     Documento getDocumentoTask(int id);
 
-    Boolean addDocumentoTask(Documento documento, int idTask);
+//    Boolean addDocumentoTask(Documento documento, int idTask);
     //List<Documenti> visualizzaDocumentiApprovati(Supergruppo supergruppo);
 
     Task definizioneTaskSupergruppo(String descrizione, LocalDate data, String nome, String stato,

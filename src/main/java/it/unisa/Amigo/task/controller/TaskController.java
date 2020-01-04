@@ -8,6 +8,10 @@ import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.task.domain.Task;
 import it.unisa.Amigo.task.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +21,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Questa classe si occupa della logica di controllo del sottosistema Task
+ * Questa classe si occupa della logica di controllo del sottosistema Task.
  */
 @Controller
 public class TaskController {
@@ -27,8 +31,11 @@ public class TaskController {
     @Autowired
     private GruppoService gruppoService;
 
+    @Autowired
+    private DocumentoService documentoService;
+
     /**
-     * Ritorna ad una pagina i task @{@link Task} di un supergruppo @{@link Supergruppo}
+     * Ritorna ad una pagina i task @{@link Task} di un supergruppo @{@link Supergruppo}.
      *
      * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui i task da visualizzare appartengono
@@ -43,14 +50,13 @@ public class TaskController {
         model.addAttribute("listaTask", taskService.visualizzaTaskSuperGruppo(idSupergruppo));
 
         List<Documento> listaDocumenti = documentoService.approvedDocuments(idSupergruppo);
-        System.out.println(listaDocumenti);
         model.addAttribute("documenti", listaDocumenti);
 
         return "task/paginaVisualizzaListaTaskSupergruppo";
     }
 
     /**
-     * Permette di definire un task @{@link Task}
+     * Permette di definire un task @{@link Task}.
      *
      * @param taskForm      contiene le informazioni da inserire nel task
      * @param model         per salvare informazioni da recuperare nell'html
@@ -71,7 +77,7 @@ public class TaskController {
     }
 
     /**
-     * Permette di salvare il task @{@link Task}
+     * Permette di salvare il task @{@link Task}.
      *
      * @param taskForm      contiene le informazioni da inserire nel task
      * @param model         per salvare informazioni da recuperare nell'html
@@ -110,7 +116,7 @@ public class TaskController {
     }
 
     /**
-     * Ritorna ad una pagina i dettagli di uno specifico  task @{@link Task} di un supergruppo @{@link Supergruppo}
+     * Ritorna ad una pagina i dettagli di uno specifico  task @{@link Task} di un supergruppo @{@link Supergruppo}.
      *
      * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task di cui si vogliono visualizzare i dettagli appartine
@@ -131,7 +137,7 @@ public class TaskController {
     }
 
     /**
-     * Permette di approvare un task @{@link Task}
+     * Permette di approvare un task @{@link Task}.
      *
      * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da approvare appartine
@@ -155,7 +161,7 @@ public class TaskController {
 
 
     /**
-     * Permette di rifiutare un task @{@link Task}
+     * Permette di rifiutare un task @{@link Task}.
      *
      * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da rifiutare appartine
@@ -178,7 +184,7 @@ public class TaskController {
     }
 
     /**
-     * Permette di completare un task @{@link Task}
+     * Permette di completare un task @{@link Task}.
      *
      * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da completare  appartine
@@ -202,7 +208,7 @@ public class TaskController {
 
 
     /**
-     * Permette di modificare un task @{@link Task}
+     * Permette di modificare un task @{@link Task}.
      *
      * @param taskForm      contiene le informazioni per modificare il task
      * @param model         per salvare informazioni da recuperare nell'html
@@ -235,7 +241,7 @@ public class TaskController {
     }
 
     /**
-     * Permette di salvare le modifiche apportante ad  un task @{@link Task}
+     * Permette di salvare le modifiche apportante ad  un task @{@link Task}.
      *
      * @param taskForm      contiene le informazioni da salvare
      * @param model         per salvare informazioni da recuperare nell'html
@@ -266,7 +272,7 @@ public class TaskController {
     }
 
     /**
-     * Ritorna ad una pagina i task @{@link Task} di una persona @{@link Persona}
+     * Ritorna ad una pagina i task @{@link Task} di una persona @{@link Persona}.
      *
      * @param model per salvare informazioni da recuperare nell'html
      * @return il path della pagina su cui eseguire il redirect
@@ -281,7 +287,7 @@ public class TaskController {
     }
 
     /**
-     * Ritorna ad una pagina i dettagli di un  task @{@link Task} di una persona @{@link Persona}
+     * Ritorna ad una pagina i dettagli di un  task @{@link Task} di una persona @{@link Persona}.
      *
      * @param model  per salvare informazioni da recuperare nell'html
      * @param idTask identifica univocamente un task di cui si vogliono visualizzare i dettagli
@@ -296,7 +302,7 @@ public class TaskController {
     }
 
     /**
-     * Permette di completare un task @{@link Task} personale
+     * Permette di completare un task @{@link Task} personale.
      *
      * @param model  per salvare informazioni da recuperare nell'html
      * @param idTask identifica univocamente un task che si vuole completare
@@ -312,47 +318,52 @@ public class TaskController {
         return "task/paginaDettagliTaskPersonali";
     }
 
-
-    @Autowired
-    private DocumentoService documentoService;
-
-
+    /**
+     * Permette di aggiungere un documento @{@link Documento} ad un task @{@link Task}.
+     *
+     * @param model  per salvare informazioni da recuperare nell'html
+     * @param file   da aggiungere a documento
+     * @param idTask identifica univocamente un task al cui si vuole aggiungere un documento
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @PostMapping("/taskPersonali/task_detail/{idTask}/uploadDocumento")
     public String uploadDocumentoTask(Model model, @RequestParam("file") MultipartFile file, @PathVariable(name = "idTask") int idTask) {
 
         Task task = taskService.getTaskById(idTask);
-
         if (file.isEmpty()) {
             model.addAttribute("task", task);
-            model.addAttribute("flagAggiunta", 2); //cambiare
+            model.addAttribute("flagAggiunta", 0); //cambiare
             return "task/paginaDettagliTaskPersonali";
         }
-        System.out.println("------------------");
-
-        //TODO fare in modo che se vi è già un documento allora deve essere tolto dal DB e assegnare il nuovo
-        // fare il controllo su task.documento != null
 
         Documento documento = documentoService.addDocumento(file);
-
-        model.addAttribute("flagAggiunta", 1); //cambiare
-        model.addAttribute("documentoNome", file.getOriginalFilename());
-        //List<Documento> documenti = documentoService.searchDocumenti("");
-
-
         task.setDocumento(documento);
         taskService.updateTask(task);
-
-        System.out.println(documentoService.searchDocumenti(""));
-
         documento.setTask(task);
         documentoService.updateDocumento(documento);
 
+        model.addAttribute("flagAggiunta", 1); //cambiare
         model.addAttribute("task", task);
-
         model.addAttribute("documento", documento);
 
         return "task/paginaDettagliTaskPersonali";
     }
 
+    /**
+     * Permette il download di un documento @{@link Documento}
+     *
+     * @param model      per salvare informazioni da recuperare nell'html
+     * @param idDocument identifica univocamente il documento da scaricare
+     * @return risorsa neccessaria per il download
+     */
+    @GetMapping("/documento/{idDocument}")
+    public ResponseEntity<Resource> downloadDocumento(Model model, @PathVariable("idDocument") int idDocument) {
+        Documento documento = documentoService.findDocumento(idDocument);
+        Resource resource = documentoService.loadAsResource(documento);
 
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(documento.getFormat()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
+                .body(resource);
+    }
 }

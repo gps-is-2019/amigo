@@ -4,14 +4,25 @@ package it.unisa.Amigo.task.domain;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
-import lombok.*;
+import lombok.NonNull;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.CascadeType;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
- * Questa classe rappresenta l'oggetto di dominio "Task"
+ * Questa classe rappresenta l'oggetto di dominio "Task".
  */
 @Entity
 @Data
@@ -53,6 +64,4 @@ public class Task implements Serializable {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Documento documento;
-
-
 }
