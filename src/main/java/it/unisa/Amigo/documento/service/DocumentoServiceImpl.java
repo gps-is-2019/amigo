@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class DocumentoServiceImpl implements DocumentoService {
                                 + filename);
             }
             try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, Paths.get(BASE_PATH).resolve(idDoc + ""));
+                Files.copy(inputStream, Paths.get(BASE_PATH).resolve(idDoc + ""), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
             throw new StorageException("Failed to store file " + filename, e);

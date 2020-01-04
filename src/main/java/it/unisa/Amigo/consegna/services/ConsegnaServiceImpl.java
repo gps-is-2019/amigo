@@ -6,10 +6,15 @@ import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.service.DocumentoServiceImpl;
 import it.unisa.Amigo.gruppo.services.GruppoServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,4 +40,22 @@ public class ConsegnaServiceImpl implements ConsegnaService {
             consegnaDAO.save(consegna);
         }
     }
+
+    @Override
+    public ResponseEntity<Resource> downloadDocumento(int idDocument) {
+        Documento documento = documentoService.findDocumento(idDocument);
+        Resource resource = documentoService.loadAsResource(documento);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(documento.getFormat()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
+                .body(resource);
+    }
+
+    @Override
+    public List<Consegna> documentiInviati(int idMittente) {
+        return consegnaDAO.findAllByMittente_Id(idMittente);
+    }
+
+
 }
