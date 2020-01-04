@@ -63,7 +63,7 @@ class TaskControllerTest {
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", "" + expectedSupergruppo.getId()))
                 .andExpect(model().attribute("listaTask", expectedTask))
-                .andExpect(view().name("task/paginaVisualizzaListaTaskSupergruppo"));
+                .andExpect(view().name("task/tasks_supergruppo"));
     }
 
     @Test
@@ -84,10 +84,9 @@ class TaskControllerTest {
                 .andExpect(model().attribute("taskForm", task))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("persone", expectedPersone))
-                .andExpect(view().name("task/paginaDefinizioneTaskSupergruppo"));
+                .andExpect(view().name("task/crea_task"));
     }
 
-    //TODO
     @Test
     void saveTaskPost() {
 //        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
@@ -133,7 +132,7 @@ class TaskControllerTest {
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
-                .andExpect(view().name("task/paginaDettagliTaskSupergruppo"));
+                .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
 
     @Test
@@ -160,7 +159,7 @@ class TaskControllerTest {
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(model().attribute("flagAzione", flagAzione))
-                .andExpect(view().name("task/paginaDettagliTaskSupergruppo"));
+                .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
 
     @Test
@@ -187,7 +186,7 @@ class TaskControllerTest {
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(model().attribute("flagAzione", flagAzione))
-                .andExpect(view().name("task/paginaDettagliTaskSupergruppo"));
+                .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
 
     @Test
@@ -212,7 +211,7 @@ class TaskControllerTest {
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
-                .andExpect(view().name("task/paginaDettagliTaskSupergruppo"));
+                .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
 
     @Test
@@ -250,7 +249,7 @@ class TaskControllerTest {
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("persone", expectedPersone))
-                .andExpect(view().name("task/paginaModificaTask"));
+                .andExpect(view().name("task/modifica_task"));
     }
 
     @Test
@@ -281,7 +280,7 @@ class TaskControllerTest {
         this.mockMvc.perform(get("/taskPersonali"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("listaTask", expectedTasks))
-                .andExpect(view().name("task/paginaVisualizzaListaTaskPersonali"));
+                .andExpect(view().name("task/miei_task"));
     }
 
     @Test
@@ -299,7 +298,7 @@ class TaskControllerTest {
         this.mockMvc.perform(get("/taskPersonali/task_detail/{idTask}", expectedTask.getId()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("task", expectedTask))
-                .andExpect(view().name("task/paginaDettagliTaskPersonali"));
+                .andExpect(view().name("task/dettagli_task_personali"));
 
     }
 
@@ -318,7 +317,7 @@ class TaskControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("flagAzione", expectedFlag))
                 .andExpect(model().attribute("task", expectedTask))
-                .andExpect(view().name("task/paginaDettagliTaskPersonali"));
+                .andExpect(view().name("task/dettagli_task_personali"));
     }
 /*
     @Test

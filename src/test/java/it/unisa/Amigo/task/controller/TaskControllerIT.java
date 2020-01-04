@@ -23,9 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -87,7 +85,7 @@ class TaskControllerIT {
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", "" + expectedSupergruppo.getId()))
                 .andExpect(model().attribute("listaTask", expectedTask))
-                .andExpect(view().name("task/paginaVisualizzaListaTaskSupergruppo"));
+                .andExpect(view().name("task/tasks_supergruppo"));
     }
 
     @Test
@@ -112,7 +110,7 @@ class TaskControllerIT {
                 .andExpect(model().attribute("taskForm", task))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("persone", expectedPersone))
-                .andExpect(view().name("task/paginaDefinizioneTaskSupergruppo"));
+                .andExpect(view().name("task/crea_task"));
     }
 
     //TODO
@@ -162,7 +160,7 @@ class TaskControllerIT {
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
-                .andExpect(view().name("task/paginaDettagliTaskSupergruppo"));
+                .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
 
     @Test
@@ -194,7 +192,7 @@ class TaskControllerIT {
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(model().attribute("flagAzione", flagAzione))
-                .andExpect(view().name("task/paginaDettagliTaskSupergruppo"));
+                .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
 
     @Test
@@ -226,7 +224,7 @@ class TaskControllerIT {
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(model().attribute("flagAzione", flagAzione))
-                .andExpect(view().name("task/paginaDettagliTaskSupergruppo"));
+                .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
 
     @Test
@@ -256,7 +254,7 @@ class TaskControllerIT {
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
-                .andExpect(view().name("task/paginaDettagliTaskSupergruppo"));
+                .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
 
     @Test
@@ -298,7 +296,7 @@ class TaskControllerIT {
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("persone", expectedPersone))
-                .andExpect(view().name("task/paginaModificaTask"));
+                .andExpect(view().name("task/modifica_task"));
     }
 
     @Test
@@ -333,7 +331,7 @@ class TaskControllerIT {
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("listaTask", expectedTasks))
-                .andExpect(view().name("task/paginaVisualizzaListaTaskPersonali"));
+                .andExpect(view().name("task/miei_task"));
     }
 
     @Test
@@ -359,7 +357,7 @@ class TaskControllerIT {
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("task", expectedTask))
-                .andExpect(view().name("task/paginaDettagliTaskPersonali"));
+                .andExpect(view().name("task/dettagli_task_personali"));
 
     }
 
@@ -388,7 +386,7 @@ class TaskControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("flagAzione", expectedFlag))
                 .andExpect(model().attribute("task", expectedTask))
-                .andExpect(view().name("task/paginaDettagliTaskPersonali"));
+                .andExpect(view().name("task/dettagli_task_personali"));
     }
 /*
     @Test

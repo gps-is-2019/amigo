@@ -52,7 +52,7 @@ public class TaskController {
         List<Documento> listaDocumenti = documentoService.approvedDocuments(idSupergruppo);
         model.addAttribute("documenti", listaDocumenti);
 
-        return "task/paginaVisualizzaListaTaskSupergruppo";
+        return "task/tasks_supergruppo";
     }
 
     /**
@@ -73,7 +73,7 @@ public class TaskController {
         List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
         model.addAttribute("persone", persone);
 
-        return "task/paginaDefinizioneTaskSupergruppo"; //pagina che usa il form (pagina corrente)
+        return "task/crea_task"; //pagina che usa il form (pagina corrente)
     }
 
     /**
@@ -87,9 +87,7 @@ public class TaskController {
     @RequestMapping(value = "/gruppi/{idSupergruppo}/tasks/creazioneTask", method = RequestMethod.POST)
     public String saveTaskPost(@ModelAttribute TaskForm taskForm, Model model,
                                @PathVariable(name = "idSupergruppo") int idSupergruppo) {
-
         LocalDate tmpData;
-
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
         Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
         if (((taskForm.getNome() == null) || (taskForm.getNome().equals("")))
@@ -99,7 +97,7 @@ public class TaskController {
             List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
             model.addAttribute("persone", persone);
             model.addAttribute("flagCreazione", false);
-            return "task/paginaDefinizioneTaskSupergruppo";
+            return "task/crea_task";
         }
         tmpData = LocalDate.of(Integer.parseInt(taskForm.getDataScadenza().substring(0, 4)),
                 Integer.parseInt(taskForm.getDataScadenza().substring(5, 7)),
@@ -112,7 +110,7 @@ public class TaskController {
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("task", task);
         model.addAttribute("flagCreazione", true);
-        return "task/paginaDettagliTaskSupergruppo";
+        return "task/dettagli_task_supergruppo";
     }
 
     /**
@@ -133,7 +131,7 @@ public class TaskController {
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("task", taskService.getTaskById(idTask));
 
-        return "task/paginaDettagliTaskSupergruppo";
+        return "task/dettagli_task_supergruppo";
     }
 
     /**
@@ -156,7 +154,7 @@ public class TaskController {
 
         taskService.accettazioneTask(idTask);
         model.addAttribute("flagAzione", 1);
-        return "task/paginaDettagliTaskSupergruppo";
+        return "task/dettagli_task_supergruppo";
     }
 
 
@@ -180,7 +178,7 @@ public class TaskController {
 
         taskService.rifiutoTask(idTask);
         model.addAttribute("flagAzione", 2);
-        return "task/paginaDettagliTaskSupergruppo";
+        return "task/dettagli_task_supergruppo";
     }
 
     /**
@@ -203,7 +201,7 @@ public class TaskController {
         model.addAttribute("flagAzione", 4);
 
         taskService.completaTask(idTask);
-        return "task/paginaDettagliTaskSupergruppo";
+        return "task/dettagli_task_supergruppo";
     }
 
 
@@ -237,7 +235,7 @@ public class TaskController {
 
         List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
         model.addAttribute("persone", persone);
-        return "task/paginaModificaTask";
+        return "task/modifica_task";
     }
 
     /**
@@ -268,7 +266,7 @@ public class TaskController {
         taskService.updateTask(taskToUpdate);
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
         model.addAttribute("task", taskToUpdate);
-        return "task/paginaDettagliTaskSupergruppo";
+        return "task/dettagli_task_supergruppo";
     }
 
     /**
@@ -283,7 +281,7 @@ public class TaskController {
         List<Task> ris = taskService.visualizzaTaskUser(personaLoggata.getId());
         model.addAttribute("listaTask", ris);
 
-        return "task/paginaVisualizzaListaTaskPersonali";
+        return "task/miei_task";
     }
 
     /**
@@ -298,7 +296,7 @@ public class TaskController {
         Task task = taskService.getTaskById(idTask);
         model.addAttribute("task", task);
         model.addAttribute("documento", task.getDocumento());
-        return "task/paginaDettagliTaskPersonali";
+        return "task/dettagli_task_personali";
     }
 
     /**
@@ -315,7 +313,7 @@ public class TaskController {
         taskService.completaTask(idTask);
         model.addAttribute("flagAzione", 4);
 
-        return "task/paginaDettagliTaskPersonali";
+        return "task/dettagli_task_personali";
     }
 
     /**
@@ -333,7 +331,7 @@ public class TaskController {
         if (file.isEmpty()) {
             model.addAttribute("task", task);
             model.addAttribute("flagAggiunta", 0); //cambiare
-            return "task/paginaDettagliTaskPersonali";
+            return "task/dettagli_task_personali";
         }
 
         Documento documento = documentoService.addDocumento(file);
@@ -346,7 +344,7 @@ public class TaskController {
         model.addAttribute("task", task);
         model.addAttribute("documento", documento);
 
-        return "task/paginaDettagliTaskPersonali";
+        return "task/dettagli_task_personali";
     }
 
     /**
