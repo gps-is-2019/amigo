@@ -67,7 +67,7 @@ public class RepositoryController {
      * @param model per salvare le informazioni da recuperare nell'html.
      * @return il path della pagina su cui eseguire il redirect.
      */
-\
+
     @GetMapping("/repository/uploadDocumento")
     public String uploadDocumento(Model model) {
         if (gruppoService.getAuthenticatedUser() == null)
