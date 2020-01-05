@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+/**
+ * Questa classe si occupa della logica di controllo del sottosistema "Consegna"
+ */
 @Controller
 public class ConsegnaController {
     @Autowired

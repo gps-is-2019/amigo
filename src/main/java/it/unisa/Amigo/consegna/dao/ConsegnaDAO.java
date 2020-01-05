@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-
+/**
+ * Questa interfaccia si occupa di fornire un accesso astratto  all'oggetto di dominio "Consegna"
+ */
 @Repository
 public interface ConsegnaDAO extends CrudRepository<Consegna, Integer> {
     List<Consegna> findAllByMittente(Persona mittente);

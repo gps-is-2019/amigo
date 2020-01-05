@@ -17,6 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Questa classe implementa i metodi  per la logica di Business del sottositema "Consegna"
+ */
 @Service
 @RequiredArgsConstructor
 public class ConsegnaServiceImpl implements ConsegnaService {

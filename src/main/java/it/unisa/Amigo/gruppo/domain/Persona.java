@@ -105,6 +105,4 @@ public class Persona implements Serializable {
     public void addTask(Task task){
         tasks.add(task);
     }
-
-
 }

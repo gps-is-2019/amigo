@@ -8,6 +8,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/**
+ * La classe rappresenta l'oggetto di dominio "Consegna"
+ */
 @Entity
 @Data
 @NoArgsConstructor
