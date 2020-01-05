@@ -31,6 +31,12 @@ public class ConsegnaController {
     @Autowired
     private GruppoService gruppoService;
 
+    /**
+     * Mostra una pagina contenente tutti i possibili destinatari della consegna
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param ruoloDest il ruolo a cui effettuare la consegna
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping({"/consegna/{ruolo}", "/consegna"})
     public String viewConsegna(Model model, @PathVariable(name = "ruolo", required = false) String ruoloDest) {
         Set<String> possibiliDestinatari = consegnaService.possibiliDestinatari();
@@ -53,6 +59,13 @@ public class ConsegnaController {
         return "consegna/destinatari";
     }
 
+    /**
+     * Effettua delle consegne ai destinatari presi in input
+     * @param model  per salvare informazioni da recuperare nell'html
+     * @param file il documento da allegare alla consegna
+     * @param destinatariPost i destinatari
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @PostMapping("/consegna")
     public String sendDocumento(Model model, @RequestParam MultipartFile file, @RequestParam String destinatariPost) {
         String[] destinatariString = destinatariPost.split(",");
@@ -67,6 +80,12 @@ public class ConsegnaController {
         return "redirect:/consegna/inviati?name=";
     }
 
+    /**
+     * Recupera le consegne inviate dall'utente autenticato
+     * @param model  per salvare informazioni da recuperare nell'html
+     * @param name il nome su cui filtrare la ricerca
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/consegna/inviati")
     public String findConsegneInviate(Model model, @RequestParam("name") String name) {
         List<Consegna> consegne = consegnaService.consegneInviate(gruppoService.getAuthenticatedUser());
@@ -75,6 +94,12 @@ public class ConsegnaController {
         return "consegna/documenti-inviati";
     }
 
+    /**
+     * Recupera le consegne ricevute dall'utente autenticato
+     * @param model  per salvare informazioni da recuperare nell'html
+     * @param name il nome su cui filtrare la ricerca
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/consegna/ricevuti")
     public String findConsegneRicevute(Model model, @RequestParam("name") String name) {
         List<Consegna> consegne = consegnaService.consegneRicevute(gruppoService.getAuthenticatedUser());
@@ -83,6 +108,12 @@ public class ConsegnaController {
         return "consegna/documenti-ricevuti";
     }
 
+    /**
+     * Filtra la ricerca in base al nome della consegna
+     * @param consegne le consegne da filtrare
+     * @param name utilizzato dal filtro
+     * @return la lista delle consegne filtrate
+     */
     private List<Consegna> consegneFilter(List<Consegna> consegne, String name) {
         List<Consegna> consegneReturn = new ArrayList<>();
 
@@ -93,6 +124,12 @@ public class ConsegnaController {
         return consegneReturn;
     }
 
+    /**
+     * Esegue il downlaod del file allegato ad un documento
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param idDocumento l'id del documento
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/consegna/miei-documenti/{idDocumento}")
     public ResponseEntity<Resource> downloadDocumento(Model model, @PathVariable("idDocumento") int idDocumento) {
         Consegna consegna = consegnaService.findConsegnaByDocumento(idDocumento);
