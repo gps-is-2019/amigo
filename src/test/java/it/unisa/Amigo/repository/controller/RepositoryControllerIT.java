@@ -6,11 +6,7 @@ import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.autenticazione.domanin.User;
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.gruppo.controller.GruppoFormCommand;
-import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
-import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
-import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.*;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.repository.services.RepositoryService;
@@ -71,7 +67,7 @@ public class RepositoryControllerIT {
 
         repositoryService.addDocumentoInRepository(new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes()));
         List<Documento> expectedDocumenti = new ArrayList<>();
-        expectedDocumenti = repositoryService.serarchDcoumentInRepository("");
+        expectedDocumenti = repositoryService.searchDocumentInRepository("");
 
         this.mockMvc.perform(get("/repository")
                 .with(user(userDetails)))

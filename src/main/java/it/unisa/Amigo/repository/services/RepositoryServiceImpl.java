@@ -42,7 +42,7 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
     /**
-     * MANCANTE
+     * Permette il download di un documento @{@Link Documento}.
      *
      * @param idDocument del documento da scaricare.
      * @return documento scaricato.
@@ -58,12 +58,19 @@ public class RepositoryServiceImpl implements RepositoryService {
                 .body(resource);
     }
 
+    /**
+     * Permette la ricerca di un documento @{@Link Documento} nella repository.
+     *
+     * @param nameDocumento nome del documento da ricercare.
+     * @return lista di documenti il cui nome contiene il nome passato come parametro.
+     */
+
     @Override
-    public List<Documento> serarchDcoumentInRepository(String nameDocuemnto) {
+    public List<Documento> searchDocumentInRepository(String nameDocumento) {
         Documento documentoExample = new Documento();
         documentoExample.setInRepository(true);
-        if (nameDocuemnto != null) {
-            documentoExample.setNome(nameDocuemnto);
+        if (nameDocumento != null) {
+            documentoExample.setNome(nameDocumento);
         }
         List<Documento> documenti = documentoService.searchDocumenti(documentoExample);
         return documenti;

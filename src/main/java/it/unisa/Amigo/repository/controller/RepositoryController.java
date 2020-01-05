@@ -43,7 +43,7 @@ public class RepositoryController {
     }
 
     /**
-     * Permette la ricerca di un documento @{@Documento} nella repository.
+     * Permette la ricerca di un documento @{@Link Documento} nella repository.
      *
      * @param model per salvare le informazioni da recuperare nell'html.
      * @param name  nome del documento da cercare.
@@ -56,18 +56,18 @@ public class RepositoryController {
         if (isResponsabilePQA()) {
             model.addAttribute("flagPQA", 1);
         }
-        List<Documento> documenti = repositoryService.serarchDcoumentInRepository(name);
+        List<Documento> documenti = repositoryService.searchDocumentInRepository(name);
         model.addAttribute("documenti", documenti);
         return "repository/repository";
     }
 
     /**
-     * Permette di caricare il documento @{@Documento} nella repository.
+     * Permette di caricare il documento @{@Link Documento} nella repository.
      *
      * @param model per salvare le informazioni da recuperare nell'html.
      * @return il path della pagina su cui eseguire il redirect.
      */
-
+\
     @GetMapping("/repository/uploadDocumento")
     public String uploadDocumento(Model model) {
         if (gruppoService.getAuthenticatedUser() == null)
@@ -78,7 +78,7 @@ public class RepositoryController {
     }
 
     /**
-     * Permette di caricare il documento @{@Documento} nella repository.
+     * Permette di caricare il documento @{@Link Documento} nella repository.
      *
      * @param model per salvare le informazioni da recuperare nell'html.
      * @param file  file da caricare.
@@ -94,7 +94,7 @@ public class RepositoryController {
     }
 
     /**
-     * Permette di scaricare un documento @{@Documento} dalla repository.
+     * Permette di scaricare un documento @{@Link Documento} dalla repository.
      *
      * @param model      per salvare le informazioni da recuperare nell'html.
      * @param idDocument id del documento da scaricare.

@@ -12,12 +12,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
@@ -62,7 +60,7 @@ public class RepositoryServiceImplIT {
         documentoExample.setInRepository(true);
         documentoExample.setNome("test");
         List<Documento> expectedDocumenti = documentoService.searchDocumenti(documentoExample);
-        List<Documento> actualDocumenti = repositoryService.serarchDcoumentInRepository("test");
+        List<Documento> actualDocumenti = repositoryService.searchDocumentInRepository("test");
         assertEquals(actualDocumenti,expectedDocumenti);
     }
 }

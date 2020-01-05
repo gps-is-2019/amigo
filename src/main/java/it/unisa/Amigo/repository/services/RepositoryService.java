@@ -10,6 +10,6 @@ import java.util.List;
 public interface RepositoryService {
     boolean addDocumentoInRepository(MultipartFile file);
     ResponseEntity <Resource> downloadDocumento(int idDocumento);
-    List<Documento> serarchDcoumentInRepository(String nameDocuemnto);
+    List<Documento> searchDocumentInRepository(String nameDocumento);
 
 }

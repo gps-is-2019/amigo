@@ -2,7 +2,6 @@ package it.unisa.Amigo.repository.services;
 
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.service.DocumentoService;
-import it.unisa.Amigo.gruppo.domain.*;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,11 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.text.Document;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,7 +73,7 @@ class RepositoryServiceImplTest {
         documentoExample.setNome("test");
         List<Documento> expectedDocumenti = new ArrayList<>();
         when(documentoService.searchDocumenti(documentoExample)).thenReturn(expectedDocumenti);
-        List<Documento> actualDocumenti = repositoryService.serarchDcoumentInRepository("test");
+        List<Documento> actualDocumenti = repositoryService.searchDocumentInRepository("test");
         assertEquals(actualDocumenti,expectedDocumenti);
     }
 
