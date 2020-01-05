@@ -41,8 +41,11 @@
                     </a>
                 </td>
                 <td>
-                    <span th:text="${consegna.destinatario.cognome}"></span>
-                    <span th:text="${consegna.destinatario.nome}"></span>
+                    <span th:if="${consegna.locazione} != 'USER'" th:text="${consegna.locazione}"></span>
+                    <th:block th:if="${consegna.locazione} == 'USER'">
+                        <span th:text="${consegna.destinatario.cognome}"></span>
+                        <span th:text="${consegna.destinatario.nome}"></span>
+                    </th:block>
                 </td>
                 <td>
                     <span th:text="${consegna.dataConsegna}"></span>

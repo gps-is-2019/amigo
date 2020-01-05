@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,26 +36,42 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     /**
      * Effettua la consegna di un documento ad uno o più destinatari
+     *
      * @param idDestinatari gli id dei destinatari che riceveranno il documento
-     * @param file il file allegato al documento
+     * @param file          il file allegato al documento
      */
     @Override
-    public void sendDocumento(int[] idDestinatari, MultipartFile file) {
+    public void sendDocumento(int[] idDestinatari, String locazione, MultipartFile file) {
         Documento doc = documentoService.addDocumento(file);
 
-        for (int id : idDestinatari) {
+        if (idDestinatari != null) {
+            for (int id : idDestinatari) {
+                Consegna consegna = new Consegna();
+                consegna.setDataConsegna(LocalDate.now());
+                consegna.setStato("da valutare");
+                consegna.setDocumento(doc);
+                consegna.setMittente(gruppoService.getAuthenticatedUser());
+                consegna.setLocazione(Consegna.USER_LOCAZIONE);
+                consegna.setDestinatario(gruppoService.findPersona(id));
+                consegnaDAO.save(consegna);
+            }
+        } else {
             Consegna consegna = new Consegna();
             consegna.setDataConsegna(LocalDate.now());
             consegna.setStato("da valutare");
             consegna.setDocumento(doc);
             consegna.setMittente(gruppoService.getAuthenticatedUser());
-            consegna.setDestinatario(gruppoService.findPersona(id));
+            if (locazione.equalsIgnoreCase(Consegna.PQA_LOCAZIONE))
+                consegna.setLocazione(Consegna.PQA_LOCAZIONE);
+            if (locazione.equalsIgnoreCase(Consegna.NDV_LOCAZIONE))
+                consegna.setLocazione(Consegna.NDV_LOCAZIONE);
             consegnaDAO.save(consegna);
         }
     }
 
     /**
      * Effettua il download di un documento
+     *
      * @param idDocument il documento da scaricare
      * @return la pagina di visualizzazione del documento scaricato
      */
@@ -71,36 +88,53 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     /**
      * Recupera la lista delle consegna inviate da una persona
-     * @param mittente l'id del mittente
+     *
      * @return la lista delle consegne
      */
     @Override
-    public List<Consegna> consegneInviate(Persona mittente) {
-        return consegnaDAO.findAllByMittente(mittente);
+    public List<Consegna> consegneInviate() {
+        return consegnaDAO.findAllByMittente(gruppoService.getAuthenticatedUser());
     }
 
     /**
      * Recupera la lista delle consegna ricevute da una persona
-     * @param destinatario l'id del destinatario
+     *
      * @return la lista delle consegne
      */
     @Override
-    public List<Consegna> consegneRicevute(Persona destinatario) {
-        return consegnaDAO.findAllByDestinatario(destinatario);
+    public List<Consegna> consegneRicevute() {
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Set<Role> ruoli = personaLoggata.getUser().getRoles();
+        List<String> ruoliString = new ArrayList<>();
+
+        List<Consegna> consegneReturn = consegnaDAO.findAllByDestinatario(personaLoggata);
+
+        for (Role r : ruoli)
+            ruoliString.add(r.getName());
+
+        if (ruoliString.contains(Role.PQA_ROLE))
+            consegneReturn.addAll(consegnaDAO.findAllByLocazione(Consegna.PQA_LOCAZIONE));
+
+        if (ruoliString.contains(Role.NDV_ROLE))
+            consegneReturn.addAll(consegnaDAO.findAllByLocazione(Consegna.NDV_LOCAZIONE));
+
+        return consegneReturn;
     }
 
     /**
      * Recupera una consegna tramite l'id del documento ad esso associata
+     *
      * @param idDocumento l'id del documento
      * @return la consegna
      */
     @Override
-    public Consegna findConsegnaByDocumento(int idDocumento){
+    public Consegna findConsegnaByDocumento(int idDocumento) {
         return consegnaDAO.findByDocumento_Id(idDocumento);
     }
 
     /**
      * Recupera tutti i possibili ruoli destinatari a cui effettuare una consegna
+     *
      * @return i destinatari
      */
     public Set<String> possibiliDestinatari() {

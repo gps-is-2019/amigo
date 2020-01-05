@@ -18,6 +18,9 @@ import java.time.LocalDate;
 public class Consegna implements Serializable {
 
     private final static long serialVersionUID = 1L;
+    public final static String PQA_LOCAZIONE = "PQA";
+    public final static String NDV_LOCAZIONE = "LOCAZIONE";
+    public final static String USER_LOCAZIONE = "USER";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -29,6 +32,8 @@ public class Consegna implements Serializable {
     @NonNull
     private String stato;
 
+    @NonNull
+    private String locazione;
 
     @OneToOne(cascade = CascadeType.ALL)
     @ToString.Exclude

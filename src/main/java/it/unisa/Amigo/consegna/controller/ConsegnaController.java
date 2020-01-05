@@ -1,5 +1,6 @@
 package it.unisa.Amigo.consegna.controller;
 
+import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.consegna.services.ConsegnaService;
 import it.unisa.Amigo.gruppo.domain.Persona;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 /**
  * Questa classe si occupa della logica di controllo del sottosistema "Consegna"
  */
@@ -33,7 +35,8 @@ public class ConsegnaController {
 
     /**
      * Mostra una pagina contenente tutti i possibili destinatari della consegna
-     * @param model per salvare informazioni da recuperare nell'html
+     *
+     * @param model     per salvare informazioni da recuperare nell'html
      * @param ruoloDest il ruolo a cui effettuare la consegna
      * @return il path della pagina su cui eseguire il redirect
      */
@@ -43,52 +46,66 @@ public class ConsegnaController {
 
         model.addAttribute("possibiliDestinatari", possibiliDestinatari);
 
-        if (ruoloDest == null)
+        if (ruoloDest == null) {
             ruoloDest = "";
-
-        if (possibiliDestinatari.size() == 1) {
-            List<Persona> destinatari = gruppoService.findAllByRuolo(possibiliDestinatari.iterator().next());
-            model.addAttribute("destinatari", destinatari);
-            model.addAttribute("ruoloDest", ruoloDest);
-        } else if (possibiliDestinatari.contains(ruoloDest)) {
-            List<Persona> destinatari = gruppoService.findAllByRuolo(ruoloDest);
-            model.addAttribute("destinatari", destinatari);
-            model.addAttribute("ruoloDest", ruoloDest);
         }
+
+        List<Persona> destinatari = new ArrayList<>();
+
+        /*if (possibiliDestinatari.size() == 1) {
+            destinatari = gruppoService.findAllByRuolo(possibiliDestinatari.iterator().next());
+        }*/
+
+        boolean flagRuolo = false;
+        if (ruoloDest.equalsIgnoreCase(Role.PQA_ROLE) || ruoloDest.equalsIgnoreCase(Role.NDV_ROLE)) {
+            destinatari.add(new Persona("", ruoloDest, ""));
+            flagRuolo = true;
+        } else if (possibiliDestinatari.contains(ruoloDest)) {
+            destinatari = gruppoService.findAllByRuolo(ruoloDest);
+        }
+
+        model.addAttribute("destinatari", destinatari);
+        model.addAttribute("ruoloDest", ruoloDest);
+        model.addAttribute("flagRuolo", flagRuolo);
 
         return "consegna/destinatari";
     }
 
     /**
      * Effettua delle consegne ai destinatari presi in input
-     * @param model  per salvare informazioni da recuperare nell'html
-     * @param file il documento da allegare alla consegna
+     *
+     * @param model           per salvare informazioni da recuperare nell'html
+     * @param file            il documento da allegare alla consegna
      * @param destinatariPost i destinatari
      * @return il path della pagina su cui eseguire il redirect
      */
     @PostMapping("/consegna")
     public String sendDocumento(Model model, @RequestParam MultipartFile file, @RequestParam String destinatariPost) {
-        String[] destinatariString = destinatariPost.split(",");
-        int[] destinatariInt = new int[destinatariString.length];
-        int i = 0;
+        if (!Character.isDigit(destinatariPost.charAt(0))) {
+            consegnaService.sendDocumento(null, destinatariPost, file);
+        } else {
+            String[] destinatariString = destinatariPost.split(",");
+            int[] destinatariInt = new int[destinatariString.length];
+            int i = 0;
 
-        for (String p : destinatariString)
-            destinatariInt[i++] = Integer.parseInt(p);
+            for (String p : destinatariString)
+                destinatariInt[i++] = Integer.parseInt(p);
 
-        consegnaService.sendDocumento(destinatariInt, file);
-
+            consegnaService.sendDocumento(destinatariInt, "", file);
+        }
         return "redirect:/consegna/inviati?name=";
     }
 
     /**
      * Recupera le consegne inviate dall'utente autenticato
-     * @param model  per salvare informazioni da recuperare nell'html
-     * @param name il nome su cui filtrare la ricerca
+     *
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param name  il nome su cui filtrare la ricerca
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/consegna/inviati")
     public String findConsegneInviate(Model model, @RequestParam("name") String name) {
-        List<Consegna> consegne = consegnaService.consegneInviate(gruppoService.getAuthenticatedUser());
+        List<Consegna> consegne = consegnaService.consegneInviate();
 
         model.addAttribute("consegne", consegneFilter(consegne, name));
         return "consegna/documenti-inviati";
@@ -96,13 +113,14 @@ public class ConsegnaController {
 
     /**
      * Recupera le consegne ricevute dall'utente autenticato
-     * @param model  per salvare informazioni da recuperare nell'html
-     * @param name il nome su cui filtrare la ricerca
+     *
+     * @param model per salvare informazioni da recuperare nell'html
+     * @param name  il nome su cui filtrare la ricerca
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/consegna/ricevuti")
     public String findConsegneRicevute(Model model, @RequestParam("name") String name) {
-        List<Consegna> consegne = consegnaService.consegneRicevute(gruppoService.getAuthenticatedUser());
+        List<Consegna> consegne = consegnaService.consegneRicevute();
 
         model.addAttribute("consegne", consegneFilter(consegne, name));
         return "consegna/documenti-ricevuti";
@@ -110,8 +128,9 @@ public class ConsegnaController {
 
     /**
      * Filtra la ricerca in base al nome della consegna
+     *
      * @param consegne le consegne da filtrare
-     * @param name utilizzato dal filtro
+     * @param name     utilizzato dal filtro
      * @return la lista delle consegne filtrate
      */
     private List<Consegna> consegneFilter(List<Consegna> consegne, String name) {
@@ -126,7 +145,8 @@ public class ConsegnaController {
 
     /**
      * Esegue il downlaod del file allegato ad un documento
-     * @param model per salvare informazioni da recuperare nell'html
+     *
+     * @param model       per salvare informazioni da recuperare nell'html
      * @param idDocumento l'id del documento
      * @return il path della pagina su cui eseguire il redirect
      */
