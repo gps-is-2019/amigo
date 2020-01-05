@@ -33,6 +33,11 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     private final GruppoServiceImpl gruppoService;
 
+    /**
+     * Effettua la consegna di un documento ad uno o più destinatari
+     * @param idDestinatari gli id dei destinatari che riceveranno il documento
+     * @param file il file allegato al documento
+     */
     @Override
     public void sendDocumento(int[] idDestinatari, MultipartFile file) {
         Documento doc = documentoService.addDocumento(file);
@@ -48,6 +53,11 @@ public class ConsegnaServiceImpl implements ConsegnaService {
         }
     }
 
+    /**
+     * Effettua il download di un documento
+     * @param idDocument il documento da scaricare
+     * @return la pagina di visualizzazione del documento scaricato
+     */
     @Override
     public ResponseEntity<Resource> downloadDocumento(int idDocument) {
         Documento documento = documentoService.findDocumento(idDocument);
@@ -59,21 +69,40 @@ public class ConsegnaServiceImpl implements ConsegnaService {
                 .body(resource);
     }
 
+    /**
+     * Recupera la lista delle consegna inviate da una persona
+     * @param mittente l'id del mittente
+     * @return la lista delle consegne
+     */
     @Override
     public List<Consegna> consegneInviate(Persona mittente) {
         return consegnaDAO.findAllByMittente(mittente);
     }
 
+    /**
+     * Recupera la lista delle consegna ricevute da una persona
+     * @param destinatario l'id del destinatario
+     * @return la lista delle consegne
+     */
     @Override
     public List<Consegna> consegneRicevute(Persona destinatario) {
         return consegnaDAO.findAllByDestinatario(destinatario);
     }
 
+    /**
+     * Recupera una consegna tramite l'id del documento ad esso associata
+     * @param idDocumento l'id del documento
+     * @return la consegna
+     */
     @Override
     public Consegna findConsegnaByDocumento(int idDocumento){
         return consegnaDAO.findByDocumento_Id(idDocumento);
     }
 
+    /**
+     * Recupera tutti i possibili ruoli destinatari a cui effettuare una consegna
+     * @return i destinatari
+     */
     public Set<String> possibiliDestinatari() {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         Set<Role> ruoli = personaLoggata.getUser().getRoles();
