@@ -1,5 +1,6 @@
 package it.unisa.Amigo.consegna.services;
 
+import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.consegna.dao.ConsegnaDAO;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.domain.Documento;
@@ -15,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -66,5 +69,27 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     @Override
     public Consegna findConsegnaByDocumento(int idDocumento){
         return consegnaDAO.findByDocumento_Id(idDocumento);
+    }
+
+    public Set<String> possibiliDestinatari() {
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Set<Role> ruoli = personaLoggata.getUser().getRoles();
+        Set<String> ruoliString = new HashSet<>();
+
+        for (Role r : ruoli) {
+            if (r.getName().equalsIgnoreCase(Role.PQA_ROLE)) {
+                ruoliString.add(Role.CAPOGRUPPO_ROLE);
+                ruoliString.add(Role.NDV_ROLE);
+            }
+            if (r.getName().equalsIgnoreCase(Role.CPDS_ROLE)) {
+                ruoliString.add(Role.NDV_ROLE);
+                ruoliString.add(Role.PQA_ROLE);
+            }
+            if (r.getName().equalsIgnoreCase(Role.CAPOGRUPPO_ROLE)) {
+                ruoliString.add(Role.PQA_ROLE);
+            }
+        }
+
+        return ruoliString;
     }
 }

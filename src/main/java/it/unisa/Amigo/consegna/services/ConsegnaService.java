@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ConsegnaService {
     void sendDocumento(int[] idDestinatari, MultipartFile file);
@@ -14,4 +15,5 @@ public interface ConsegnaService {
     List<Consegna> consegneInviate(Persona mittente);
     List<Consegna> consegneRicevute(Persona destinatario);
     Consegna findConsegnaByDocumento(int idDocumento);
+    Set<String> possibiliDestinatari();
 }

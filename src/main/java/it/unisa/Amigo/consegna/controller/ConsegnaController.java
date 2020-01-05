@@ -1,6 +1,5 @@
 package it.unisa.Amigo.consegna.controller;
 
-import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.consegna.services.ConsegnaService;
 import it.unisa.Amigo.gruppo.domain.Persona;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,34 +29,26 @@ public class ConsegnaController {
     @Autowired
     private GruppoService gruppoService;
 
-    @GetMapping("/consegna")
-    public String viewConsegna(Model model) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        Set<Role> ruoli = personaLoggata.getUser().getRoles();
-        Set<String> ruoliString = new HashSet<>();
-        for (Role r : ruoli) {
-            if (r.getName().equalsIgnoreCase(Role.PQA_ROLE)) {
-                ruoliString.add(Role.CAPOGRUPPO_ROLE);
-                ruoliString.add(Role.NDV_ROLE);
-            }
-            if (r.getName().equalsIgnoreCase(Role.CPDS_ROLE)) {
-                ruoliString.add(Role.NDV_ROLE);
-                ruoliString.add(Role.PQA_ROLE);
-            }
-            if (r.getName().equalsIgnoreCase(Role.CAPOGRUPPO_ROLE)) {
-                ruoliString.add(Role.PQA_ROLE);
-            }
-        }
-        model.addAttribute("personaLoggata", personaLoggata);
-        model.addAttribute("ruoliString", ruoliString);
-        return "consegna/destinatari";
-    }
+    @GetMapping({"/consegna/{ruolo}", "/consegna"})
+    public String viewConsegna(Model model, @PathVariable(name = "ruolo", required = false) String ruoloDest) {
+        Set<String> possibiliDestinatari = consegnaService.possibiliDestinatari();
 
-    @GetMapping("/consegna/{ruolo}")
-    public String sendDocumento(Model model, @PathVariable("ruolo") String ruolo) {
-        List<Persona> destinatari = gruppoService.findAllByRuolo(ruolo);
-        model.addAttribute("destinatari", destinatari);
-        return "consegna/invio-consegna";
+        model.addAttribute("possibiliDestinatari", possibiliDestinatari);
+
+        if (ruoloDest == null)
+            ruoloDest = "";
+
+        if (possibiliDestinatari.size() == 1) {
+            List<Persona> destinatari = gruppoService.findAllByRuolo(possibiliDestinatari.iterator().next());
+            model.addAttribute("destinatari", destinatari);
+            model.addAttribute("ruoloDest", ruoloDest);
+        } else if (possibiliDestinatari.contains(ruoloDest)) {
+            List<Persona> destinatari = gruppoService.findAllByRuolo(ruoloDest);
+            model.addAttribute("destinatari", destinatari);
+            model.addAttribute("ruoloDest", ruoloDest);
+        }
+
+        return "consegna/destinatari";
     }
 
     @PostMapping("/consegna")
@@ -105,10 +95,10 @@ public class ConsegnaController {
     public ResponseEntity<Resource> downloadDocumento(Model model, @PathVariable("idDocumento") int idDocumento) {
         Consegna consegna = consegnaService.findConsegnaByDocumento(idDocumento);
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        if(consegna.getMittente().getId() != personaLoggata.getId() && consegna.getDestinatario().getId()!= personaLoggata.getId()){
+        if (consegna.getMittente().getId() != personaLoggata.getId() && consegna.getDestinatario().getId() != personaLoggata.getId()) {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
-            return new ResponseEntity<>(headers,HttpStatus.FOUND);
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
         return consegnaService.downloadDocumento(idDocumento);
     }

@@ -9,16 +9,57 @@
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
 
-    <div th:if="${ruoliString.size()==0}">
-        <h1>Ci dispiace <span th:text="${personaLoggata.getCognome()}"></span> :( ma attualmente non hai i permessi per inviare documenti!</h1>
-    </div>
+<div th:if="${possibiliDestinatari.size()==0}">
+    <h1>Ci dispiace :( attualmente non hai i permessi per inviare documenti!</h1>
+</div>
 
-    <div th:if="${ruoliString.size()>0}">
-        <h1>Invia documento a:</h1>
-        <a th:each="ruolo : ${ruoliString}" class="ui primary button" th:href="@{/consegna/} + ${ruolo}">
+<div th:if="${possibiliDestinatari.size()>0}">
+    <h1>Invia documento a:</h1>
+    <th:block th:each="ruolo : ${possibiliDestinatari}">
+        <a class="ui button" th:href="@{/consegna/} + ${ruolo}" th:classappend="${#strings.equals(ruolo, ruoloDest)}? 'active'">
             <span th:text="${ruolo}"></span>
         </a>
-    </div>
+    </th:block>
+</div>
+
+<th:block th:if="${destinatari!=null}">
+    <form enctype="multipart/form-data" method="post" th:action="@{/consegna}">
+        <div th:if="${destinatari.size()==1}">
+            <h2 th:text="${'Destinatario: ' + destinatari.get(0).getCognome()}"></h2>
+            <input name="destinatariPost" th:value="${destinatari.get(0).getId()}" type="hidden"/>
+        </div>
+
+        <div th:if="${destinatari.size()>1}">
+            <h2>Seleziona i destinatari:</h2>
+            <div>
+                <select class="ui fluid dropdown" multiple name="destinatariPost" required>
+                    <option th:each="persona : ${destinatari}" th:text="${persona.cognome}"
+                            th:value="${persona.id}"></option>
+                </select>
+            </div>
+        </div>
+
+        <div>
+            <label class="ui icon button" for="file-upload">
+                <i class="file icon"></i>
+                Carica file</label>
+            <input id="file-upload" name="file" style="display:none" type="file">
+        </div>
+
+        <input name="submit" type="submit" value="Submit"/>
+    </form>
+</th:block>
+
+<script type="text/javascript">
+    $('.ui.fluid.dropdown')
+      .dropdown({placeholder:'Destinatari'});
+
+    $('#file-upload').change(function() {
+        var i = $(this).prev('label').clone();
+        var file = $('#file-upload')[0].files[0].name;
+        $(this).prev('label').text(file);
+    });
+</script>
 
 </body>
 </html>
