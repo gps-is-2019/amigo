@@ -25,12 +25,21 @@ import java.util.List;
  */
 @Controller
 public class TaskController {
+    /**
+     * Gestisce la logica del sottosistema Task.
+     */
     @Autowired
     private TaskService taskService;
 
+    /**
+     * Gestisce la logica del sottosistema Gruppo.
+     */
     @Autowired
     private GruppoService gruppoService;
 
+    /**
+     * Gestisce la logica del sottosistema Documento.
+     */
     @Autowired
     private DocumentoService documentoService;
 
@@ -348,7 +357,7 @@ public class TaskController {
     }
 
     /**
-     * Permette il download di un documento @{@link Documento}
+     * Permette il download di un documento @{@link Documento}.
      *
      * @param model      per salvare informazioni da recuperare nell'html
      * @param idDocument identifica univocamente il documento da scaricare

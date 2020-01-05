@@ -1,7 +1,5 @@
 package it.unisa.Amigo.task.services;
 
-
-import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.task.dao.TaskDAO;
@@ -21,10 +19,14 @@ import java.util.List;
 @Transactional
 public class TaskServiceImpl implements TaskService {
 
+    /**
+     * Fornisce accesso alla classe di dominio "Task".
+     */
     private final TaskDAO taskDAO;
 
-    /***
+    /**
      * Ritorna l'user @{@link Persona} incaricato del Task @{@link Task}.
+     *
      * @param id identifica univocamente un task
      * @return la persona a cui quel task è assegnato
      */
@@ -34,41 +36,22 @@ public class TaskServiceImpl implements TaskService {
         return task.getPersona();
     }
 
-    /***
-     * Ritorna il documento @{@link Documento} del Task @{@link Task}.
-     * @param id identifica univocamente un task
-     * @return il documento associato al task
-     */
-    @Override
-    public Documento getDocumentoTask(int id) {
-        return null;
-    } //TODO
-
-    /***
-     * Aggiunge un documento @{@link Documento} al Task @{@link Task}.
-     * @param documento da aggiungere al task
-     * @param idTask id del task al cui aggiungere il documento
-     * @return Boolean
-     */
-//    @Override
-//    public Boolean addDocumentoTask(Documento documento, int idTask) {
-//        return null;
-//    }
-
-
-    /***
+    /**
      * Definisce un nuovo Task @{@link Task}.
+     *
      * @param descrizione del nuovo task
-     * @param data di scadenza del nuovo task
-     * @param nome del nuovo task
-     * @param stato del nuovo task
+     * @param data        di scadenza del nuovo task
+     * @param nome        del nuovo task
+     * @param stato       del nuovo task
      * @param supergruppo di appartenenza del task da definire
-     * @param persona responsabile del task che si sta definendo
+     * @param persona     responsabile del task che si sta definendo
      * @return Task appena creato
      */
     @Override
-    public Task definizioneTaskSupergruppo(final String descrizione, final LocalDate data, final String nome, final String stato,
-                                           final Supergruppo supergruppo, final Persona persona) {
+    public Task definizioneTaskSupergruppo(final String descrizione, final LocalDate data, final String nome,
+                                           final String stato,
+                                           final Supergruppo supergruppo,
+                                           final Persona persona) {
         Task task = new Task(descrizione, data, nome, stato);
         task.setSupergruppo(supergruppo);
         task.setPersona(persona);
@@ -77,8 +60,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
-    /***
+    /**
      * Ritorna una lista di task @{@link Task} dell'utente passato.
+     *
      * @param idPersona id della persona di cui si vuole conosce la lista di task
      * @return lista di task
      */
@@ -87,8 +71,9 @@ public class TaskServiceImpl implements TaskService {
         return taskDAO.findAllByPersona_Id(idPersona);
     }
 
-    /***
+    /**
      * Ritorna la lista di task @{@link Task} del supergruppo @{@link Supergruppo} del supergruppo passato.
+     *
      * @param idSupergruppo di cui si vogliono visualizzare i task
      * @return lista di task
      */
@@ -107,8 +92,9 @@ public class TaskServiceImpl implements TaskService {
         return taskDAO.findById(id);
     }
 
-    /***
+    /**
      * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in approvato.
+     *
      * @param idTask identifica univocamente un task
      */
     @Override
@@ -118,8 +104,9 @@ public class TaskServiceImpl implements TaskService {
         taskDAO.save(task);
     }
 
-    /***
+    /**
      * Metodo che permette il cambiamento di stato del task@{@link Task}, passato tramite il suo id, in respinto.
+     *
      * @param idTask identifica univocamente un task
      */
     @Override

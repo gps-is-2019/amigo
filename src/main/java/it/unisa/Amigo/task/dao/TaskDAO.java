@@ -8,13 +8,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Questa interfaccia si occupa di fornire un accesso astratto  all'oggetto di dominio "Task".
+ * Questa interfaccia si occupa di fornire un accesso astratto all'oggetto di dominio "Task".
  */
 @Repository
 public interface TaskDAO extends CrudRepository<Task, Integer> {
-    //    List<Task> findAllByDataDataScadenza(Date dataScadenza);
-//    List<Task> findAllByNome(String nome);
-    //List<Task> findAllBySupergruppo_id(int idSupergruppo);
+
     List<Task> findAllBySupergruppo_Id(int idSupergruppo);
 
     List<Task> findAllByPersona_Id(int id);

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class TaskServiceImplIT {
@@ -163,4 +162,45 @@ class TaskServiceImplIT {
         assertEquals(expectedTask, actualTask);
     }
 
+/*    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2})
+    void getAssegnatarioTaskParametric(int id) {
+        Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task task = new Task("t1", tmpDate, "task1", "in valutazione");
+        Task task2 = new Task("t2", tmpDate, "task2", "in valutazione");
+        Task task3 = new Task("t3", tmpDate, "task3", "in valutazione");
+        task.setPersona(persona1);
+        task2.setPersona(persona1);
+        task3.setPersona(persona1);
+        persona1.addTask(task);
+        persona1.addTask(task2);
+        persona1.addTask(task3);
+        personaDAO.save(persona1);
+        taskDAO.save(task);
+        taskDAO.save(task2);
+        taskDAO.save(task3);
+        System.out.println(task);
+        Persona actualPersona = taskService.getAssegnatarioTask(id);
+        assertEquals(persona1, actualPersona);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2})
+    void getTaskByIdParametric(int id) {
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+        Task task = new Task("t1", tmpDate, "task1", "in valutazione");
+        task.setId(0);
+        Task task2 = new Task("t2", tmpDate, "task2", "in valutazione");
+        task2.setId(1);
+        Task task3 = new Task("t3", tmpDate, "task3", "incompleto");
+        task3.setId(2);
+        ArrayList<Task> tasks = new ArrayList<>();
+        tasks.add(task); tasks.add(task2); tasks.add(task3);
+        taskDAO.save(tasks.get(id));
+        Task actualTask = taskService.getTaskById(id);
+        assertEquals(tasks.get(id), actualTask);
+    }*/
 }

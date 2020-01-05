@@ -4,7 +4,6 @@ import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.autenticazione.domanin.User;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
-import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
@@ -29,13 +28,13 @@ public class AmigoApplication {
 
     @Bean
     public CommandLineRunner demo(
-            UserDAO userDAO
-            , PersonaDAO personaDAO
-            , ConsiglioDidatticoDAO consiglioDidatticoDAO
-            , SupergruppoDAO supergruppoDAO
-            , PasswordEncoder encoder
-            , TaskDAO taskDAO
-            , DocumentoDAO documentoDAO
+            UserDAO userDAO,
+            PersonaDAO personaDAO,
+            ConsiglioDidatticoDAO consiglioDidatticoDAO,
+            SupergruppoDAO supergruppoDAO,
+            PasswordEncoder encoder,
+            TaskDAO taskDAO,
+            DocumentoDAO documentoDAO
     ) {
         return args -> {
 
@@ -107,10 +106,6 @@ public class AmigoApplication {
             cd.addPersona(gravino);
 
 
-            //TODO add task
-//				Date tmpDate;
-//				SimpleDateFormat formatter=new SimpleDateFormat("dd-MM-yyyy");
-//				tmpDate = formatter.parse("1-1-2019");
             LocalDate tmpDate;
             tmpDate = LocalDate.of(2020, 4, 20);
 
@@ -121,7 +116,6 @@ public class AmigoApplication {
 
             taskprova.setSupergruppo(GAQD);
             GAQD.addTask(taskprova);
-
 
             Task taskprova2 = new Task("t2", tmpDate, "task2", "approvato");
             taskprova2.setPersona(scarano);
@@ -144,21 +138,12 @@ public class AmigoApplication {
             taskprova4.setSupergruppo(GAQD);
             GAQD.addTask(taskprova4);
 
-
-            Documento documento = new Documento("src/main/resources/documents/test.txt", tmpDate, "test", false, "");
-            taskprova4.setDocumento(documento);
-            documento.setTask(taskprova4);
-
             Task taskprova5 = new Task("task approvato 2", tmpDate, "taskapprovato2", "approvato");
             taskprova5.setPersona(ferrucci);
             ferrucci.addTask(taskprova5);
 
             taskprova5.setSupergruppo(GAQD);
             GAQD.addTask(taskprova5);
-
-            Documento documento2 = new Documento("src/main/resources/documents/gestioneaccount.png", tmpDate, "gestioneaccount.png", false, ".png");
-            taskprova5.setDocumento(documento2);
-            documento2.setTask(taskprova5);
 
 
             supergruppoDAO.save(GAQD);
@@ -168,7 +153,6 @@ public class AmigoApplication {
             personaDAO.saveAll(Arrays.asList(ferrucci, scarano, malandrino, dePrisco, polese, gravino));
             userDAO.saveAll(Arrays.asList(userFerrucci, userScarano, userMalandrino, userDePrisco, userPolese, userGravino));
             taskDAO.saveAll(Arrays.asList(taskprova, taskprova2, taskprova3, taskprova4, taskprova5));
-            documentoDAO.saveAll(Arrays.asList(documento, documento2));
         };
     }
 }
