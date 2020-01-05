@@ -54,7 +54,7 @@ public class RepositoryServiceImplIT {
     }
 
     @Test
-    void serarchDcoumentInRepository() {
+    void searchDocumentInRepository() {
 
         Documento documentoExample = new Documento();
         documentoExample.setInRepository(true);
