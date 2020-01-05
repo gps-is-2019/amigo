@@ -9,6 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Questa interfaccia definisce i metodi  per la logica di Business del sottositema "Consegna"
+ */
 public interface ConsegnaService {
     void sendDocumento(int[] idDestinatari, MultipartFile file);
     ResponseEntity<Resource> downloadDocumento(int idDocument);

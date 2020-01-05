@@ -20,6 +20,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Questa classe implementa i metodi  per la logica di Business del sottositema "Consegna"
+ */
 @Service
 @RequiredArgsConstructor
 public class ConsegnaServiceImpl implements ConsegnaService {
