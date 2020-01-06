@@ -190,9 +190,10 @@ class ConsegnaServiceImplTest {
         assertEquals(expectedConsegne, consegnaService.consegneRicevute());
     }
 
-    @Test
-    void findConsegnaByDocumento() {
-        Documento doc = new Documento();
+    @ParameterizedTest
+    @MethodSource("provideDocumenti")
+    void findConsegnaByDocumento(Documento documento) {
+        Documento doc = documento;
         doc.setDataInvio(LocalDate.now());
 
 
@@ -205,27 +206,78 @@ class ConsegnaServiceImplTest {
         assertEquals(expectedConsegna, consegnaService.findConsegnaByDocumento(doc.getId()));
     }
 
-    @Test
-    void testSendDocumento() {
+    private static Stream<Arguments> provideDocumenti() {
+        Documento documento1 = new Documento();
+        documento1.setNome("Documento1");
+        Documento documento2 = new Documento();
+        documento1.setNome("Documento2");
+        Documento documento3 = new Documento();
+        documento1.setNome("Documento3");
+
+        return Stream.of(
+                Arguments.of(documento1),
+                Arguments.of(documento2),
+                Arguments.of(documento3)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("providePossibiliDestinatari")
+    void possibiliDestinatari(Role role) {
+
+        User user = new User("admin", "admin");
+        Set<Role> ruoli = new HashSet<Role>();
+        ruoli.add(role);
+        user.setRoles(ruoli);
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        Persona persona = new Persona("persona", "persona", "PQA");
+        persona.setUser(user);
+
+        Set<String> expectedRuoli = new HashSet<>();
+
+        if (role.getName().equalsIgnoreCase(Role.PQA_ROLE)) {
+            expectedRuoli.add(Role.CAPOGRUPPO_ROLE);
+            expectedRuoli.add(Role.NDV_ROLE);
+        }
+        if (role.getName().equalsIgnoreCase(Role.CPDS_ROLE)) {
+            expectedRuoli.add(Role.NDV_ROLE);
+            expectedRuoli.add(Role.PQA_ROLE);
+        }
+        if (role.getName().equalsIgnoreCase(Role.CAPOGRUPPO_ROLE)) {
+            expectedRuoli.add(Role.PQA_ROLE);
+        }
+
+
+        when(gruppoService.getAuthenticatedUser()).thenReturn(persona);
+
+        assertEquals(expectedRuoli, consegnaService.possibiliDestinatari());
+
+    }
+
+    private static Stream<Arguments> providePossibiliDestinatari() {
+        Role role = new Role(Role.NDV_ROLE);
+        Role role1 = new Role(Role.CAPOGRUPPO_ROLE);
+        Role role2 = new Role(Role.CPDS_ROLE);
+        return Stream.of(
+                Arguments.of(role),
+                Arguments.of(role1),
+                Arguments.of(role2)
+        );
     }
 
     @Test
-    void testDownloadDocumento() {
+    void approvaConsegna() {
+        Consegna consegna = new Consegna();
+        when(consegnaDAO.findById(consegna.getId())).thenReturn(java.util.Optional.of(consegna));
+        consegnaService.approvaConsegna(consegna.getId());
+        assertEquals(consegna.getStato(), "APPROVATA");
     }
 
     @Test
-    void testConsegneInviate() {
-    }
-
-    @Test
-    void testConsegneRicevute() {
-    }
-
-    @Test
-    void testFindConsegnaByDocumento() {
-    }
-
-    @Test
-    void possibiliDestinatari() {
+    void rifiutaConsegna() {
+        Consegna consegna = new Consegna();
+        when(consegnaDAO.findById(consegna.getId())).thenReturn(java.util.Optional.of(consegna));
+        consegnaService.rifiutaConsegna(consegna.getId());
+        assertEquals(consegna.getStato(), "RIFIUTATA");
     }
 }
