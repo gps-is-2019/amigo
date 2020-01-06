@@ -38,12 +38,24 @@ public class RepositoryServiceImpl implements RepositoryService {
         }
     }
 
-
+    /**
+     * Permette il download di un documento.
+     *
+     * @param documento @{@Link Documento}da scaricare.
+     * @return Resource del documento associato.
+     */
     @Override
     public Resource downloadDocumento(Documento documento) {
         return documentoService.loadAsResource(documento);
 
     }
+
+    /**
+     * Permette la ricerca di un documento @{@Link Documento}.
+     *
+     * @param idDocumento id del documento @{@Link Documento} da cercare.
+     * @return Documento corrispondente all'id.
+     */
     @Override
     public Documento findDocumento(int idDocumento){
         return documentoService.findDocumento(idDocumento);

@@ -58,7 +58,8 @@ public class RepositoryControllerIT {
 
 
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("provideRepository")
     public void repository() throws Exception {
 
         User user = new User("admin", "admin");
@@ -102,7 +103,6 @@ public class RepositoryControllerIT {
 
         user.addRole(new Role(Role.PQA_ROLE));
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
         expectedPersona.setUser(user);
 
         personaDAO.save(expectedPersona);
