@@ -41,9 +41,9 @@ public class ConsegnaServiceImpl implements ConsegnaService {
      * @param file          il file allegato al documento
      */
     @Override
-    public void sendDocumento(int[] idDestinatari, String locazione, MultipartFile file) {
+    public List<Consegna> sendDocumento(int[] idDestinatari, String locazione, MultipartFile file) {
         Documento doc = documentoService.addDocumento(file);
-
+        List<Consegna> result = new ArrayList<>();
         if (idDestinatari != null) {
             for (int id : idDestinatari) {
                 Consegna consegna = new Consegna();
@@ -53,6 +53,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
                 consegna.setMittente(gruppoService.getAuthenticatedUser());
                 consegna.setLocazione(Consegna.USER_LOCAZIONE);
                 consegna.setDestinatario(gruppoService.findPersona(id));
+                result.add(consegna);
                 consegnaDAO.save(consegna);
             }
         } else {
@@ -65,8 +66,10 @@ public class ConsegnaServiceImpl implements ConsegnaService {
                 consegna.setLocazione(Consegna.PQA_LOCAZIONE);
             if (locazione.equalsIgnoreCase(Consegna.NDV_LOCAZIONE))
                 consegna.setLocazione(Consegna.NDV_LOCAZIONE);
+            result.add(consegna);
             consegnaDAO.save(consegna);
         }
+        return result;
     }
 
     /**
@@ -98,7 +101,6 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     /**
      * Recupera la lista delle consegna ricevute da una persona
-     *
      * @return la lista delle consegne
      */
     @Override

@@ -31,4 +31,24 @@ class ConsegnaControllerTest {
     @Test
     void downloadDocumento() {
     }
+
+    @Test
+    void testViewConsegna() {
+    }
+
+    @Test
+    void testSendDocumento1() {
+    }
+
+    @Test
+    void testFindConsegneInviate() {
+    }
+
+    @Test
+    void testFindConsegneRicevute() {
+    }
+
+    @Test
+    void testDownloadDocumento() {
+    }
 }
