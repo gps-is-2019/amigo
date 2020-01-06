@@ -22,6 +22,8 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -29,7 +31,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.text.Document;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -139,8 +143,29 @@ class ConsegnaServiceImplTest {
 
 
 
-    @Test
-    void downloadDocumento() {
+    @ParameterizedTest
+    @MethodSource("provideDownloadDocumento")
+    void downloadDocumento(Documento expectedDocumento, Resource expectedResource)  {
+
+        when(documentoService.loadAsResource(expectedDocumento)).thenReturn(expectedResource);
+        when(documentoService.findDocumento(expectedDocumento.getId())).thenReturn(expectedDocumento);
+        Resource actualResource = consegnaService.downloadDocumento(expectedDocumento.getId()).getBody();
+        assertEquals(actualResource, expectedResource);
+    }
+
+    private static Stream<Arguments> provideDownloadDocumento() throws MalformedURLException {
+        Documento doc1 = new Documento("src/main/resources/documents/file.txt", LocalDate.now(),
+                "file.txt", false, "application/txt");
+        Documento doc2 = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
+                "test.txt", false, "application/txt");
+
+        Resource res1 = new UrlResource(Paths.get(doc1.getPath()).toUri());
+        Resource res2 = new UrlResource(Paths.get(doc2.getPath()).toUri());
+
+        return Stream.of(
+                Arguments.of(doc1, res1),
+                Arguments.of(doc2, res2)
+        );
     }
 
     @Test
