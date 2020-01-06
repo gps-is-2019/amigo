@@ -159,6 +159,10 @@ public class ConsegnaServiceImpl implements ConsegnaService {
         return ruoliString;
     }
 
+    /**
+     * Modifica lo stato di una consegna in APPROVATA tramite il suo id
+     * @param idConsegna
+     */
     @Override
     public void approvaConsegna(int idConsegna) {
         Consegna consegna = consegnaDAO.findById(idConsegna).get();
@@ -166,6 +170,10 @@ public class ConsegnaServiceImpl implements ConsegnaService {
         consegnaDAO.save(consegna);
     }
 
+    /**
+     * Modifica lo stato di una consegna in RIFIUTATA tramite il suo id
+     * @param idConsegna
+     */
     @Override
     public void rifiutaConsegna(int idConsegna) {
         Consegna consegna = consegnaDAO.findById(idConsegna).get();

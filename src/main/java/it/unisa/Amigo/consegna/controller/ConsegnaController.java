@@ -148,6 +148,18 @@ public class ConsegnaController {
     public ResponseEntity<Resource> downloadDocumento(Model model, @PathVariable("idDocumento") int idDocumento) {
         Consegna consegna = consegnaService.findConsegnaByDocumento(idDocumento);
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Set<Role> role = personaLoggata.getUser().getRoles();
+        List<String> ruoliString = new ArrayList<>();
+        for(Role r : role){
+            ruoliString.add(r.getName());
+        }
+
+        if(consegna.getLocazione().equalsIgnoreCase(Consegna.PQA_LOCAZIONE) && (ruoliString.contains(Role.PQA_ROLE))){
+            return consegnaService.downloadDocumento(idDocumento);
+        }
+        if(consegna.getLocazione().equalsIgnoreCase(Consegna.NDV_LOCAZIONE) && (ruoliString.contains(Role.NDV_ROLE))){
+            return consegnaService.downloadDocumento(idDocumento);
+        }
         if (consegna.getMittente().getId() != personaLoggata.getId() && consegna.getDestinatario().getId() != personaLoggata.getId()) {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
@@ -156,6 +168,12 @@ public class ConsegnaController {
         return consegnaService.downloadDocumento(idDocumento);
     }
 
+    /**
+     * Modifica lo stato di una consegna in APPROVATA tramite il suo id
+     * @param model      per salvare informazioni da recuperare nell'html
+     * @param idConsegna l'id della consegna da approvare
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/consegna/approva/{id}")
     public String approvaConsegna(Model model, @PathVariable("id") int idConsegna) {
         consegnaService.approvaConsegna(idConsegna);
@@ -164,6 +182,12 @@ public class ConsegnaController {
         return "consegna/documenti-ricevuti";
     }
 
+    /**
+     * Modifica lo stato di una consegna in RIFIUTATA tramite il suo id
+     * @param model      per salvare informazioni da recuperare nell'html
+     * @param idConsegna l'id della consegna da rifiutare
+     * @return il path della pagina su cui eseguire il redirect
+     */
     @GetMapping("/consegna/rifiuta/{id}")
     public String rifiutaConsegna(Model model, @PathVariable("id") int idConsegna) {
         consegnaService.rifiutaConsegna(idConsegna);
