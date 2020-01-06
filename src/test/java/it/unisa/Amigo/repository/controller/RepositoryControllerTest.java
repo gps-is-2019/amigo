@@ -8,6 +8,9 @@ import it.unisa.Amigo.gruppo.domain.*;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.repository.services.RepositoryService;
 import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mockito.Mockito.when;
@@ -53,13 +57,12 @@ public class RepositoryControllerTest {
     private MockMvc mockMvc;
 
 
-    @Test
-    public void repository() throws Exception {
+    @ParameterizedTest
+    @MethodSource("provideRepository")
+    public void repository(User user, Persona expectedPersona) throws Exception {
 
-        User user = new User("admin", "admin");
         user.addRole(new Role(Role.PQA_ROLE));
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
         expectedPersona.setUser(user);
 
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
@@ -75,8 +78,24 @@ public class RepositoryControllerTest {
                 .andExpect(view().name("repository/repository"));
     }
 
+    private static Stream<Arguments> provideRepository() {
+        User user1 = new User("Too long, sorry", "33353");
+        User user2 = new User(null, "pass");
+        User user3 = new User("bounty", null);
 
-    @Test
+        Persona expectedPersona1 = new Persona(null, "123", "Administrator");
+        Persona expectedPersona2 = new Persona("123", null, "Administrator");
+        Persona expectedPersona3 = new Persona("123", null, null);
+
+        return Stream.of(
+                Arguments.of(user1, expectedPersona1),
+                Arguments.of(user2, expectedPersona2),
+                Arguments.of(user3, expectedPersona3)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideUploadDocumento")
     public void uploadDocumento() throws Exception {
 
         User user = new User("admin", "admin");
@@ -91,6 +110,22 @@ public class RepositoryControllerTest {
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("repository/aggiunta_documento_repository"));
+    }
+
+    private static Stream<Arguments> provideUploadDocumento() {
+        User user4 = new User("Too long, sorry", "33353");
+        User user5 = new User(null, "pass");
+        User user6 = new User("bounty", null);
+
+        Persona expectedPersona4 = new Persona(null, "123", "Administrator");
+        Persona expectedPersona5 = new Persona("123", null, "Administrator");
+        Persona expectedPersona6 = new Persona("123", null, null);
+
+        return Stream.of(
+                Arguments.of(user4, expectedPersona4),
+                Arguments.of(user5, expectedPersona5),
+                Arguments.of(user6, expectedPersona6)
+        );
     }
 /*
     @Test
