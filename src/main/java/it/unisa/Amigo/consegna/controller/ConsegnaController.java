@@ -44,18 +44,13 @@ public class ConsegnaController {
     public String viewConsegna(Model model, @PathVariable(name = "ruolo", required = false) String ruoloDest) {
         Set<String> possibiliDestinatari = consegnaService.possibiliDestinatari();
 
-        model.addAttribute("possibiliDestinatari", possibiliDestinatari);
-
-        if (ruoloDest == null) {
+        if (ruoloDest == null)
             ruoloDest = "";
-        }
+
+        if (possibiliDestinatari.size() == 1 && ruoloDest.equals(""))
+            ruoloDest = possibiliDestinatari.iterator().next();
 
         List<Persona> destinatari = new ArrayList<>();
-
-        /*if (possibiliDestinatari.size() == 1) {
-            destinatari = gruppoService.findAllByRuolo(possibiliDestinatari.iterator().next());
-        }*/
-
         boolean flagRuolo = false;
         if (ruoloDest.equalsIgnoreCase(Role.PQA_ROLE) || ruoloDest.equalsIgnoreCase(Role.NDV_ROLE)) {
             destinatari.add(new Persona("", ruoloDest, ""));
@@ -64,6 +59,7 @@ public class ConsegnaController {
             destinatari = gruppoService.findAllByRuolo(ruoloDest);
         }
 
+        model.addAttribute("possibiliDestinatari", possibiliDestinatari);
         model.addAttribute("destinatari", destinatari);
         model.addAttribute("ruoloDest", ruoloDest);
         model.addAttribute("flagRuolo", flagRuolo);
@@ -106,7 +102,6 @@ public class ConsegnaController {
     @GetMapping("/consegna/inviati")
     public String findConsegneInviate(Model model, @RequestParam("name") String name) {
         List<Consegna> consegne = consegnaService.consegneInviate();
-
         model.addAttribute("consegne", consegneFilter(consegne, name));
         return "consegna/documenti-inviati";
     }
@@ -121,7 +116,6 @@ public class ConsegnaController {
     @GetMapping("/consegna/ricevuti")
     public String findConsegneRicevute(Model model, @RequestParam("name") String name) {
         List<Consegna> consegne = consegnaService.consegneRicevute();
-
         model.addAttribute("consegne", consegneFilter(consegne, name));
         return "consegna/documenti-ricevuti";
     }
@@ -160,5 +154,21 @@ public class ConsegnaController {
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
         return consegnaService.downloadDocumento(idDocumento);
+    }
+
+    @GetMapping("/consegna/approva/{id}")
+    public String approvaConsegna(Model model, @PathVariable("id") int idConsegna) {
+        consegnaService.approvaConsegna(idConsegna);
+        List<Consegna> consegne = consegnaService.consegneRicevute();
+        model.addAttribute("consegne", consegneFilter(consegne, ""));
+        return "consegna/documenti-ricevuti";
+    }
+
+    @GetMapping("/consegna/rifiuta/{id}")
+    public String rifiutaConsegna(Model model, @PathVariable("id") int idConsegna) {
+        consegnaService.rifiutaConsegna(idConsegna);
+        List<Consegna> consegne = consegnaService.consegneRicevute();
+        model.addAttribute("consegne", consegneFilter(consegne, ""));
+        return "consegna/documenti-ricevuti";
     }
 }

@@ -48,7 +48,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
             for (int id : idDestinatari) {
                 Consegna consegna = new Consegna();
                 consegna.setDataConsegna(LocalDate.now());
-                consegna.setStato("da valutare");
+                consegna.setStato("NO_VALUTARE");
                 consegna.setDocumento(doc);
                 consegna.setMittente(gruppoService.getAuthenticatedUser());
                 consegna.setLocazione(Consegna.USER_LOCAZIONE);
@@ -58,7 +58,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
         } else {
             Consegna consegna = new Consegna();
             consegna.setDataConsegna(LocalDate.now());
-            consegna.setStato("da valutare");
+            consegna.setStato("DA_VALUTARE");
             consegna.setDocumento(doc);
             consegna.setMittente(gruppoService.getAuthenticatedUser());
             if (locazione.equalsIgnoreCase(Consegna.PQA_LOCAZIONE))
@@ -157,5 +157,19 @@ public class ConsegnaServiceImpl implements ConsegnaService {
         }
 
         return ruoliString;
+    }
+
+    @Override
+    public void approvaConsegna(int idConsegna) {
+        Consegna consegna = consegnaDAO.findById(idConsegna).get();
+        consegna.setStato("APPROVATA");
+        consegnaDAO.save(consegna);
+    }
+
+    @Override
+    public void rifiutaConsegna(int idConsegna) {
+        Consegna consegna = consegnaDAO.findById(idConsegna).get();
+        consegna.setStato("RIFIUTATA");
+        consegnaDAO.save(consegna);
     }
 }
