@@ -2,7 +2,6 @@ package it.unisa.Amigo.repository.services;
 
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.service.DocumentoService;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -11,8 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.*;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
@@ -21,8 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,14 +34,14 @@ class RepositoryServiceImplTest {
     private DocumentoService documentoService;
 
     @Mock
-    private ResponseEntity  responseEntity;
+    private ResponseEntity responseEntity;
 
 
     @ParameterizedTest
     @MethodSource("provideAddDocumentoInRepository")
-    void addDocumentoInRepository( MultipartFile file) {
+    void addDocumentoInRepository(MultipartFile file) {
 
-        MultipartFile file = new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes());
+
         Documento expectedDocumento = new Documento();
         when(documentoService.addDocumento(file)).thenReturn(expectedDocumento);
         expectedDocumento.setInRepository(true);
@@ -54,9 +50,10 @@ class RepositoryServiceImplTest {
         assertEquals(true, expectedValue);
 
     }
+
     private static Stream<Arguments> provideAddDocumentoInRepository() {
         MultipartFile file1 = new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes());
-        MultipartFile file2 = new MockMultipartFile("testtestetst", "file.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes());
+        MultipartFile file2 = new MockMultipartFile("testtestetst", "file.txt", MediaType.TEXT_PLAIN_VALUE, "ciao mondo ciao mondo".getBytes());
 
         return Stream.of(
                 Arguments.of(file1),
@@ -64,22 +61,38 @@ class RepositoryServiceImplTest {
         );
     }
 
-    @Test
-    void downloadDocumento() throws MalformedURLException {
-        Documento expectedDocumento = new Documento("src/main/resources/documents/dip.pdf", LocalDate.now(),
-                "dip.pdf", false, "application/pdf");
-        Resource expectedResource = new UrlResource(Paths.get(expectedDocumento.getPath()).toUri());
+    @ParameterizedTest
+    @MethodSource("provideDownloadDocumento")
+    void downloadDocumento(Documento expectedDocumento, Resource expectedResource)  {
+
         when(documentoService.loadAsResource(expectedDocumento)).thenReturn(expectedResource);
         Resource actualResource = repositoryService.downloadDocumento(expectedDocumento);
-        assertEquals(actualResource,expectedResource);
+        assertEquals(actualResource, expectedResource);
     }
+
+    private static Stream<Arguments> provideDownloadDocumento() throws MalformedURLException {
+        Documento doc1 = new Documento("src/main/resources/documents/file.txt", LocalDate.now(),
+                "file.txt", false, "application/txt");
+        Documento doc2 = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
+                "test.txt", false, "application/txt");
+
+        Resource res1 = new UrlResource(Paths.get(doc1.getPath()).toUri());
+        Resource res2 = new UrlResource(Paths.get(doc2.getPath()).toUri());
+
+        return Stream.of(
+                Arguments.of(doc1, res1),
+                Arguments.of(doc2, res2)
+        );
+    }
+
     @Test
-    void findDocumento(){
+    void findDocumento() {
         Documento expectedDocumento = new Documento();
         when(documentoService.findDocumento(0)).thenReturn(expectedDocumento);
         Documento actualDocumento = repositoryService.findDocumento(0);
-        assertEquals(actualDocumento,expectedDocumento);
+        assertEquals(actualDocumento, expectedDocumento);
     }
+}
 /*
     @SneakyThrows
     @Test
@@ -129,3 +142,4 @@ class RepositoryServiceImplTest {
 
 
 }
+***/
