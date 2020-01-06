@@ -24,4 +24,8 @@ public interface ConsegnaService {
     Consegna findConsegnaByDocumento(int idDocumento);
 
     Set<String> possibiliDestinatari();
+
+    void approvaConsegna(int idConsegna);
+
+    void rifiutaConsegna(int idConsegna);
 }

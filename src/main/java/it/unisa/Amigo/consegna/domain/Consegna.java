@@ -49,5 +49,4 @@ public class Consegna implements Serializable {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Persona destinatario;
-
 }

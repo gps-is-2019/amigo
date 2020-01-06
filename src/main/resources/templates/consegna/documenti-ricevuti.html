@@ -11,10 +11,12 @@
 <h1 align="center" class="ui header">Documenti ricevuti</h1>
 <div class="ui main text container">
 
-    <form action="/consegna/inviati" method="get">
-        <div class="center aligned">
-            <input name="name" placeholder="Inserisci il nome del documento da ricercare" type="text">
-            <input type="submit" value="Ricerca">
+    <form action="/consegna/ricevuti" method="get">
+        <div class="ui search">
+            <div class="ui icon input">
+                <input class="prompt" name="name" placeholder="Nome del documento" type="text">
+                <input type="submit" value="Cerca"> <i class="search icon"></i> </input>
+            </div>
         </div>
     </form>
 
@@ -25,6 +27,7 @@
             <th>Mittente</th>
             <th>Ruoli mittente</th>
             <th>Data invio</th>
+            <th>Valutazione</th>
         </tr>
         </thead>
         <tbody>
@@ -44,20 +47,29 @@
                 <td>
                     <span th:text="${consegna.mittente.cognome}"></span>
                     <span th:text="${consegna.mittente.nome}"></span>
-
                 </td>
                 <td>
                     <th:block th:each="ruolo : ${consegna.mittente.user.roles}">
-                        <th:block th:if="${ruolo.name} != 'CAPOGRUPPO' AND ${ruolo.name} != 'USER'" th:text="${ruolo.name}">
+                        <th:block th:if="${ruolo.name} != 'CAPOGRUPPO' AND ${ruolo.name} != 'USER'"
+                                  th:text="${ruolo.name}">
                         </th:block>
                     </th:block>
                     <th:block th:each="gruppo : ${consegna.mittente.supergruppiResponsabile}">
-                        <th:block th:if="${gruppo.type} == 'Gruppo'"> Responsabile di: <span th:text="${gruppo.name}"></span>
+                        <th:block th:if="${gruppo.type} == 'Gruppo'"> Responsabile di: <span
+                                th:text="${gruppo.name}"></span>
                         </th:block>
                     </th:block>
                 </td>
                 <td>
                     <span th:text="${consegna.dataConsegna}"></span>
+                </td>
+                <td>
+                    <th:block th:if="${consegna.stato} == 'DA_VALUTARE'">
+                        <a class="ui positive button" th:href="@{/consegna/approva/} + ${consegna.id}">Approva</a>
+                        <a class="ui negative button" th:href="@{/consegna/rifiuta/} + ${consegna.id}">Rifiuta</a>
+                    </th:block>
+                    <span th:if="${consegna.stato} == 'APPROVATA'" th:text="Approvato"></span>
+                    <span th:if="${consegna.stato} == 'RIFIUTATA'" th:text="Rifiutata"></span>
                 </td>
             </tr>
         </th:block>

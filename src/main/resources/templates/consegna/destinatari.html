@@ -13,12 +13,16 @@
     <h1>Ci dispiace :( attualmente non hai i permessi per inviare documenti!</h1>
 </div>
 
-<div th:if="${possibiliDestinatari.size()>0}">
+<div th:if="${possibiliDestinatari.size()>1}">
     <h1>Invia documento a:</h1>
     <th:block th:each="ruolo : ${possibiliDestinatari}">
         <a class="ui button" th:classappend="${#strings.equals(ruolo, ruoloDest)}? 'active'"
            th:href="@{/consegna/} + ${ruolo}">
-            <span th:text="${ruolo}"></span>
+            <span th:switch="${ruolo}">
+                <p th:case="CAPOGRUPPO">Responsabile GAQ</p>
+                <p th:case="CPDS">Responsabile CPDS</p>
+                <p th:case="*" th:text="${ruolo}"></p>
+            </span>
         </a>
     </th:block>
 </div>
@@ -42,14 +46,14 @@
             </div>
         </div>
 
-        <div>
+        <span>
             <label class="ui icon button" for="file-upload">
                 <i class="file icon"></i>
                 Carica file</label>
             <input id="file-upload" name="file" required style="display:none" type="file">
-        </div>
+        </span>
 
-        <input name="submit" type="submit" value="Submit"/>
+        <input class="ui positive button" name="submit" type="submit" value="Invia"/>
     </form>
 </th:block>
 
@@ -62,6 +66,7 @@
         var file = $('#file-upload')[0].files[0].name;
         $(this).prev('label').text(file);
     });
+
 
 </script>
 

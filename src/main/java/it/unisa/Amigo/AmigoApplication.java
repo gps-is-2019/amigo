@@ -60,8 +60,6 @@ public class AmigoApplication {
 				User userDePrisco= new User("robdep@unisa.it",encoder.encode("dePrisco"));
 				userDePrisco.addRole(userRole);
 				userDePrisco.addRole(pqaRole);
-				userDePrisco.addRole(capogruppoRole);
-				userDePrisco.addRole(cpdsRole);
 
 				User userPolese = new User("gpolese@unisa.it",encoder.encode("polese"));
 				userPolese.addRole(userRole);

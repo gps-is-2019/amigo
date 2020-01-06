@@ -12,9 +12,11 @@
 <div class="ui main text container">
 
     <form action="/consegna/inviati" method="get">
-        <div class="center aligned">
-            <input name="name" placeholder="Inserisci il nome del documento da ricercare" type="text">
-            <input type="submit" value="Ricerca">
+        <div class="ui search">
+            <div class="ui icon input">
+                <input class="prompt" type="text" name="name" placeholder="Nome del documento">
+                <input type="submit" value="Cerca"> <i class="search icon"></i> </input>
+            </div>
         </div>
     </form>
 
@@ -24,6 +26,7 @@
             <th>Nome documento</th>
             <th>Destinatario</th>
             <th>Data invio</th>
+            <th>Stato</th>
         </tr>
         </thead>
         <tbody>
@@ -49,6 +52,11 @@
                 </td>
                 <td>
                     <span th:text="${consegna.dataConsegna}"></span>
+                </td>
+                <td>
+                    <span th:if="${consegna.stato} == 'DA_VALUTARE'">In valutazione</span>
+                    <span th:if="${consegna.stato} == 'APPROVATA'">Approvato</span>
+                    <span th:if="${consegna.stato} == 'RIFIUTATA'">Rifiutata</span>
                 </td>
             </tr>
         </th:block>

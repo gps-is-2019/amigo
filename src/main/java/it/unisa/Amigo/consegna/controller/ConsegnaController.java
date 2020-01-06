@@ -44,18 +44,13 @@ public class ConsegnaController {
     public String viewConsegna(Model model, @PathVariable(name = "ruolo", required = false) String ruoloDest) {
         Set<String> possibiliDestinatari = consegnaService.possibiliDestinatari();
 
-        model.addAttribute("possibiliDestinatari", possibiliDestinatari);
-
-        if (ruoloDest == null) {
+        if (ruoloDest == null)
             ruoloDest = "";
-        }
+
+        if (possibiliDestinatari.size() == 1 && ruoloDest.equals(""))
+            ruoloDest = possibiliDestinatari.iterator().next();
 
         List<Persona> destinatari = new ArrayList<>();
-
-        /*if (possibiliDestinatari.size() == 1) {
-            destinatari = gruppoService.findAllByRuolo(possibiliDestinatari.iterator().next());
-        }*/
-
         boolean flagRuolo = false;
         if (ruoloDest.equalsIgnoreCase(Role.PQA_ROLE) || ruoloDest.equalsIgnoreCase(Role.NDV_ROLE)) {
             destinatari.add(new Persona("", ruoloDest, ""));
@@ -64,6 +59,7 @@ public class ConsegnaController {
             destinatari = gruppoService.findAllByRuolo(ruoloDest);
         }
 
+        model.addAttribute("possibiliDestinatari", possibiliDestinatari);
         model.addAttribute("destinatari", destinatari);
         model.addAttribute("ruoloDest", ruoloDest);
         model.addAttribute("flagRuolo", flagRuolo);
@@ -106,7 +102,6 @@ public class ConsegnaController {
     @GetMapping("/consegna/inviati")
     public String findConsegneInviate(Model model, @RequestParam("name") String name) {
         List<Consegna> consegne = consegnaService.consegneInviate();
-
         model.addAttribute("consegne", consegneFilter(consegne, name));
         return "consegna/documenti-inviati";
     }
@@ -121,7 +116,6 @@ public class ConsegnaController {
     @GetMapping("/consegna/ricevuti")
     public String findConsegneRicevute(Model model, @RequestParam("name") String name) {
         List<Consegna> consegne = consegnaService.consegneRicevute();
-
         model.addAttribute("consegne", consegneFilter(consegne, name));
         return "consegna/documenti-ricevuti";
     }
@@ -154,11 +148,51 @@ public class ConsegnaController {
     public ResponseEntity<Resource> downloadDocumento(Model model, @PathVariable("idDocumento") int idDocumento) {
         Consegna consegna = consegnaService.findConsegnaByDocumento(idDocumento);
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Set<Role> role = personaLoggata.getUser().getRoles();
+        List<String> ruoliString = new ArrayList<>();
+        for(Role r : role){
+            ruoliString.add(r.getName());
+        }
+
+        if(consegna.getLocazione().equalsIgnoreCase(Consegna.PQA_LOCAZIONE) && (ruoliString.contains(Role.PQA_ROLE))){
+            return consegnaService.downloadDocumento(idDocumento);
+        }
+        if(consegna.getLocazione().equalsIgnoreCase(Consegna.NDV_LOCAZIONE) && (ruoliString.contains(Role.NDV_ROLE))){
+            return consegnaService.downloadDocumento(idDocumento);
+        }
         if (consegna.getMittente().getId() != personaLoggata.getId() && consegna.getDestinatario().getId() != personaLoggata.getId()) {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
         return consegnaService.downloadDocumento(idDocumento);
+    }
+
+    /**
+     * Modifica lo stato di una consegna in APPROVATA tramite il suo id
+     * @param model      per salvare informazioni da recuperare nell'html
+     * @param idConsegna l'id della consegna da approvare
+     * @return il path della pagina su cui eseguire il redirect
+     */
+    @GetMapping("/consegna/approva/{id}")
+    public String approvaConsegna(Model model, @PathVariable("id") int idConsegna) {
+        consegnaService.approvaConsegna(idConsegna);
+        List<Consegna> consegne = consegnaService.consegneRicevute();
+        model.addAttribute("consegne", consegneFilter(consegne, ""));
+        return "consegna/documenti-ricevuti";
+    }
+
+    /**
+     * Modifica lo stato di una consegna in RIFIUTATA tramite il suo id
+     * @param model      per salvare informazioni da recuperare nell'html
+     * @param idConsegna l'id della consegna da rifiutare
+     * @return il path della pagina su cui eseguire il redirect
+     */
+    @GetMapping("/consegna/rifiuta/{id}")
+    public String rifiutaConsegna(Model model, @PathVariable("id") int idConsegna) {
+        consegnaService.rifiutaConsegna(idConsegna);
+        List<Consegna> consegne = consegnaService.consegneRicevute();
+        model.addAttribute("consegne", consegneFilter(consegne, ""));
+        return "consegna/documenti-ricevuti";
     }
 }
