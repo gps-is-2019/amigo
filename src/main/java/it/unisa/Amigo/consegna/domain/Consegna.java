@@ -19,7 +19,7 @@ public class Consegna implements Serializable {
 
     private final static long serialVersionUID = 1L;
     public final static String PQA_LOCAZIONE = "PQA";
-    public final static String NDV_LOCAZIONE = "LOCAZIONE";
+    public final static String NDV_LOCAZIONE = "NDV";
     public final static String USER_LOCAZIONE = "USER";
 
     @Id

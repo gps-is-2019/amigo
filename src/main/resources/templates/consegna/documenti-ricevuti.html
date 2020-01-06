@@ -23,6 +23,7 @@
         <tr class="center aligned">
             <th>Nome documento</th>
             <th>Mittente</th>
+            <th>Ruoli mittente</th>
             <th>Data invio</th>
         </tr>
         </thead>
@@ -43,6 +44,17 @@
                 <td>
                     <span th:text="${consegna.mittente.cognome}"></span>
                     <span th:text="${consegna.mittente.nome}"></span>
+
+                </td>
+                <td>
+                    <th:block th:each="ruolo : ${consegna.mittente.user.roles}">
+                        <th:block th:if="${ruolo.name} != 'CAPOGRUPPO' AND ${ruolo.name} != 'USER'" th:text="${ruolo.name}">
+                        </th:block>
+                    </th:block>
+                    <th:block th:each="gruppo : ${consegna.mittente.supergruppiResponsabile}">
+                        <th:block th:if="${gruppo.type} == 'Gruppo'"> Responsabile di: <span th:text="${gruppo.name}"></span>
+                        </th:block>
+                    </th:block>
                 </td>
                 <td>
                     <span th:text="${consegna.dataConsegna}"></span>

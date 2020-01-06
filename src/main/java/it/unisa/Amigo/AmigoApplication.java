@@ -107,6 +107,7 @@ public class AmigoApplication {
 				GAQD.addPersona(rossi);
 				GAQD.addPersona(vincenzi);
 				GAQD.setResponsabile(ferrucci);
+				ferrucci.addSupergruppoResponsabile(GAQD);
 				GAQD.addCommissione(commissioneAAL);
 				GAQD.addCommissione(commissioneEL);
 
