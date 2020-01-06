@@ -9,20 +9,31 @@ import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.repository.services.RepositoryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.FileCopyUtils;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -34,6 +45,9 @@ public class RepositoryControllerTest {
 
     @MockBean
     private RepositoryService repositoryService;
+
+    @Mock
+    private Resource resource;
 
     @Autowired
     private MockMvc mockMvc;
@@ -51,7 +65,6 @@ public class RepositoryControllerTest {
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
         List<Documento> documenti = new ArrayList<>();
         when(repositoryService.searchDocumentInRepository("")).thenReturn(documenti);
-
 
 
         this.mockMvc.perform(get("/repository")
@@ -87,15 +100,25 @@ public class RepositoryControllerTest {
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
         expectedPersona.setUser(user);
 
-        ResponseEntity<Resource> expectedValue = new ResponseEntity<Resource>(HttpStatus.OK);
-        when(repositoryService.downloadDocumento(0)).thenReturn(expectedValue);
+        Documento expectedDocumento = new Documento("src/main/resources/documents/dip.pdf", LocalDate.now(),
+                "dip.pdf", false, "application/pdf");
+        Resource resource = new UrlResource(Paths.get(expectedDocumento.getPath()).toUri());
+        when(repositoryService.findDocumento(0)).thenReturn(expectedDocumento);
+        when(repositoryService.downloadDocumento(expectedDocumento)).thenReturn(resource);
 
 
-        this.mockMvc.perform(get("/repository/{idDocument}", 0)
+        String actualString = this.mockMvc.perform(get("/repository/{idDocument}", 0)
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$."));
-    }
-    */
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        Reader reader = new InputStreamReader(resource.getInputStream(), UTF_8);
+        String expectedString = FileCopyUtils.copyToString(reader);
 
+        System.out.println(expectedString);
+        assertEquals(actualString,expectedString);
+    }
+
+*/
 }

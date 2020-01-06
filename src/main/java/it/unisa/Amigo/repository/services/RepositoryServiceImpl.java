@@ -4,9 +4,6 @@ import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.service.DocumentoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,21 +38,15 @@ public class RepositoryServiceImpl implements RepositoryService {
         }
     }
 
-    /**
-     * Permette il download di un documento @{@Link Documento}.
-     *
-     * @param idDocument del documento da scaricare.
-     * @return documento scaricato.
-     */
-    @Override
-    public ResponseEntity<Resource> downloadDocumento(int idDocument) {
-        Documento documento = documentoService.findDocumento(idDocument);
-        Resource resource = documentoService.loadAsResource(documento);
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(documento.getFormat()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
-                .body(resource);
+    @Override
+    public Resource downloadDocumento(Documento documento) {
+        return documentoService.loadAsResource(documento);
+
+    }
+    @Override
+    public Documento findDocumento(int idDocumento){
+        return documentoService.findDocumento(idDocumento);
     }
 
     /**

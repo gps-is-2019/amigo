@@ -15,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +50,23 @@ class RepositoryServiceImplTest {
 
     }
 
+    @Test
+    void downloadDocumento() throws MalformedURLException {
+        Documento expectedDocumento = new Documento("src/main/resources/documents/dip.pdf", LocalDate.now(),
+                "dip.pdf", false, "application/pdf");
+        Resource expectedResource = new UrlResource(Paths.get(expectedDocumento.getPath()).toUri());
+        when(documentoService.loadAsResource(expectedDocumento)).thenReturn(expectedResource);
+        Resource actualResource = repositoryService.downloadDocumento(expectedDocumento);
+        assertEquals(actualResource,expectedResource);
+    }
+    @Test
+    void findDocumento(){
+        Documento expectedDocumento = new Documento();
+        when(documentoService.findDocumento(0)).thenReturn(expectedDocumento);
+        Documento actualDocumento = repositoryService.findDocumento(0);
+        assertEquals(actualDocumento,expectedDocumento);
+    }
+/*
     @SneakyThrows
     @Test
     void downloadDocumento() {
@@ -65,7 +85,7 @@ class RepositoryServiceImplTest {
         assertEquals(actualValue,expectedValue);
 
     }
-
+*/
     @Test
     void serarchDcoumentInRepository() {
         Documento documentoExample = new Documento();

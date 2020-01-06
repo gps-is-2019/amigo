@@ -6,6 +6,8 @@ import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.repository.services.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,12 +66,11 @@ public class RepositoryController {
     /**
      * Permette di caricare il documento @{@Link Documento} nella repository.
      *
-     * @param model per salvare le informazioni da recuperare nell'html.
      * @return il path della pagina su cui eseguire il redirect.
      */
-\
+
     @GetMapping("/repository/uploadDocumento")
-    public String uploadDocumento(Model model) {
+    public String uploadDocumento() {
         if (gruppoService.getAuthenticatedUser() == null)
             return "redirect:/";
         else if (!isResponsabilePQA())
@@ -96,13 +97,19 @@ public class RepositoryController {
     /**
      * Permette di scaricare un documento @{@Link Documento} dalla repository.
      *
-     * @param model      per salvare le informazioni da recuperare nell'html.
      * @param idDocument id del documento da scaricare.
      * @return documento.
      */
 
     @GetMapping("/repository/{idDocument}")
-    public ResponseEntity<Resource> downloadDocumento(Model model, @PathVariable("idDocument") int idDocument) {
-        return repositoryService.downloadDocumento(idDocument);
+    public ResponseEntity<Resource> downloadDocumento(@PathVariable("idDocument") int idDocument) {
+
+        Documento documento = repositoryService.findDocumento(idDocument);
+        Resource resource = repositoryService.downloadDocumento(documento);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(documento.getFormat()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
+                .body(resource);
     }
 }
