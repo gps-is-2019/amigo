@@ -150,6 +150,7 @@ public class GruppoControllerTest {
         when(gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(expectedSupergruppo.getId())).thenReturn(persone);
         when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), expectedSupergruppo.getId())).thenReturn(true);
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", expectedSupergruppo.getId(), expectedPersona.getId())
                 .with(user(userDetails)))
@@ -172,6 +173,7 @@ public class GruppoControllerTest {
         when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
         when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), expectedSupergruppo.getId())).thenReturn(true);
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", expectedSupergruppo.getId(), expectedPersona.getId())
                 .with(user(userDetails)))
@@ -202,6 +204,7 @@ public class GruppoControllerTest {
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedCommissione.getId())).thenReturn(true);
         when(gruppoService.findSupergruppo(expectedCommissione.getId())).thenReturn(expectedCommissione);
         when(gruppoService.findAllMembriInSupergruppo(expectedCommissione.getId())).thenReturn(persone);
+
 
         this.mockMvc.perform(get("/gruppi/{id}/commissione_detail/{id_commissione}", expectedGruppo.getId(), expectedCommissione.getId())
                 .with(user(userDetails)))
