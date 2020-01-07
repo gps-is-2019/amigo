@@ -46,7 +46,6 @@ import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
-
 class ConsegnaServiceImplTest {
 
     @Mock
