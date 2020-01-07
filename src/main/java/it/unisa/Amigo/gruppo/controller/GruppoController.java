@@ -100,7 +100,7 @@ public class GruppoController {
     @GetMapping("/gruppi/{idSupergruppo}/add/{idPersona}")
     public String addMembro(@PathVariable(name = "idPersona") int idPersona, @PathVariable(name = "idSupergruppo") int idSupergruppo, Model model) {
         if(!gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), idSupergruppo)){
-            return "/unautorized";
+            return "unauthorized";
         }
         Persona persona = gruppoService.findPersona(idPersona);
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
@@ -128,7 +128,7 @@ public class GruppoController {
     @GetMapping("/gruppi/{idSupergruppo}/remove/{idPersona}")
     public String removeMembro(@PathVariable(name = "idPersona") int idPersona, @PathVariable(name = "idSupergruppo") int idSupergruppo, Model model) {
         if(!gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), idSupergruppo)){
-            return "/unautorized";
+            return "unauthorized";
         }
         Persona persona = gruppoService.findPersona(idPersona);
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
@@ -175,7 +175,7 @@ public class GruppoController {
     public String closeCommissione(Model model, @PathVariable(name = "id2") int idCommissione) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         if(! gruppoService.isResponsabile(personaLoggata.getId(), gruppoService.findGruppoByCommissione(idCommissione).getId())){
-            return "/unautorized";
+            return "unauthorized";
         }
         prepareCandidateList(idCommissione, model, gruppoService.findAllMembriInSupergruppo(idCommissione));
         model.addAttribute("isCapogruppo", gruppoService.isResponsabile(personaLoggata.getId(), gruppoService.findGruppoByCommissione(idCommissione).getId()));
@@ -213,7 +213,7 @@ public class GruppoController {
     public String createCommissione(@ModelAttribute("command") GruppoFormCommand gruppoFormCommand, Model model, @PathVariable(name = "idGruppo") int idGruppo) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         if(!gruppoService.isResponsabile(personaLoggata.getId(), idGruppo)){
-            return "/unautorized";
+            return "unauthorized";
         }
         Commissione commissione = new Commissione(gruppoFormCommand.getName(), "Commissione", true, gruppoFormCommand.getDescrizione());
         gruppoService.createCommissione(commissione, idGruppo);
@@ -242,7 +242,7 @@ public class GruppoController {
         gruppoService.nominaResponsabile(idPersona, idCommissione);
         Commissione commissione = (Commissione) gruppoService.findSupergruppo(idCommissione);
         if(!gruppoService.isResponsabile(personaLoggata.getId(), gruppoService.findGruppoByCommissione(idCommissione).getId())) {
-            return "/unautorized";
+            return "unauthorized";
         }
         List<Persona> persone = gruppoService.findAllMembriInSupergruppo(commissione.getId());
 
