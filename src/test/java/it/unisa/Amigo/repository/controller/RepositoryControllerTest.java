@@ -79,13 +79,13 @@ public class RepositoryControllerTest {
     }
 
     private static Stream<Arguments> provideRepository() {
-        User user1 = new User("Too long, sorry", "33353");
+        User user1 = new User("Admin", "Admin");
         User user2 = new User(".", "pass");
-        User user3 = new User("bounty", null);
+        User user3 = new User("bounty", ".");
 
-        Persona expectedPersona1 = new Persona(null, "123", "Administrator");
-        Persona expectedPersona2 = new Persona("123", null, "Administrator");
-        Persona expectedPersona3 = new Persona("123", null, null);
+        Persona expectedPersona1 = new Persona("Admin", "Admin", "Administrator");
+        Persona expectedPersona2 = new Persona("123", ".", "Administrator");
+        Persona expectedPersona3 = new Persona("123", ".", ".");
 
         return Stream.of(
                 Arguments.of(user1, expectedPersona1),
@@ -113,13 +113,13 @@ public class RepositoryControllerTest {
     }
 
     private static Stream<Arguments> provideUploadDocumento() {
-        User user4 = new User("Too long, sorry", "33353");
+        User user4 = new User("Admin", "Admin");
         User user5 = new User(".", "pass");
-        User user6 = new User("bounty", null);
+        User user6 = new User("bounty", ".");
 
-        Persona expectedPersona4 = new Persona(null, "123", "Administrator");
-        Persona expectedPersona5 = new Persona("123", null, "Administrator");
-        Persona expectedPersona6 = new Persona("123", null, null);
+        Persona expectedPersona4 = new Persona(".", "123", "Administrator");
+        Persona expectedPersona5 = new Persona("123", ".", "Administrator");
+        Persona expectedPersona6 = new Persona("123", ".", ".");
 
         return Stream.of(
                 Arguments.of(user4, expectedPersona4),
