@@ -28,13 +28,14 @@ public class RepositoryServiceImpl implements RepositoryService {
      */
     @Override
     public boolean addDocumentoInRepository(MultipartFile file) {
-        if (file.getSize() < 10485760) {
+        if(file.getSize()==0 || file.getSize()>10485760){
+            return false;
+        }
+        else {
             Documento documento = documentoService.addDocumento(file);
             documento.setInRepository(true);
             documentoService.updateDocumento(documento);
             return true;
-        } else {
-            return false;
         }
     }
 
