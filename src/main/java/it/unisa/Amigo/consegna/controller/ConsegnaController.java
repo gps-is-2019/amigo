@@ -154,19 +154,27 @@ public class ConsegnaController {
         for (Role r : role)
             ruoliString.add(r.getName());
 
-        if (consegna.getLocazione().equals(Consegna.USER_LOCAZIONE)) {
-            if (consegna.getMittente().getId() == personaLoggata.getId() || consegna.getDestinatario().getId() == personaLoggata.getId())
-                return consegnaService.downloadDocumento(idDocumento);
+        boolean downloadConsentito = false;
+
+        if (consegna.getMittente().getId() == personaLoggata.getId()) {
+            downloadConsentito = true;
+        } else if (consegna.getLocazione().equals(Consegna.USER_LOCAZIONE)) {
+            if (consegna.getDestinatario().getId() == personaLoggata.getId())
+                downloadConsentito = true;
         } else {
             if ((consegna.getLocazione().equalsIgnoreCase(Consegna.PQA_LOCAZIONE) && (ruoliString.contains(Role.PQA_ROLE))) ||
                 (consegna.getLocazione().equalsIgnoreCase(Consegna.NDV_LOCAZIONE) && (ruoliString.contains(Role.NDV_ROLE)))) {
-                return consegnaService.downloadDocumento(idDocumento);
+                downloadConsentito = true;
             }
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
-        return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        if (downloadConsentito) {
+            return consegnaService.downloadDocumento(idDocumento);
+        } else {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        }
     }
 
     /**
