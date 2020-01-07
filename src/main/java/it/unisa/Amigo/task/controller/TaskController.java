@@ -376,7 +376,7 @@ public class TaskController {
      */
     @GetMapping("/documento/{idDocument}")
     public ResponseEntity<Resource> downloadDocumento(Model model, @PathVariable("idDocument") int idDocument) {
-        Documento documento = documentoService.findDocumento(idDocument);
+        Documento documento = documentoService.findDocumentoById(idDocument);
         Resource resource = documentoService.loadAsResource(documento);
 
         return ResponseEntity.ok()
