@@ -7,7 +7,7 @@ import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.task.domain.Task;
 import it.unisa.Amigo.task.services.TaskService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,24 +24,23 @@ import java.util.List;
  * Questa classe si occupa della logica di controllo del sottosistema Task.
  */
 @Controller
+@RequiredArgsConstructor
 public class TaskController {
     /**
      * Gestisce la logica del sottosistema Task.
      */
-    @Autowired
-    private TaskService taskService;
+    private final TaskService taskService;
 
     /**
      * Gestisce la logica del sottosistema Gruppo.
      */
-    @Autowired
-    private GruppoService gruppoService;
+    private final GruppoService gruppoService;
 
     /**
      * Gestisce la logica del sottosistema Documento.
      */
-    @Autowired
-    private DocumentoService documentoService;
+    private final DocumentoService documentoService;
+
 
     /**
      * Ritorna ad una pagina i task @{@link Task} di un supergruppo @{@link Supergruppo}.
@@ -72,7 +71,7 @@ public class TaskController {
      * @param idSupergruppo id del supergruppo a cui il task da definire appartine
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppi/{idSupergruppo}/tasks/creaTask")
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/create")
     public String definizioneTaskSupergruppo(@ModelAttribute Task taskForm, Model model,
                                              @PathVariable(name = "idSupergruppo") int idSupergruppo) {
 
@@ -93,33 +92,45 @@ public class TaskController {
      * @param idSupergruppo id del supergruppo a cui il task da salvare appartine
      * @return il path della pagina su cui eseguire il redirect
      */
-    @RequestMapping(value = "/gruppi/{idSupergruppo}/tasks/creazioneTask", method = RequestMethod.POST)
+    @PostMapping(value = "/gruppi/{idSupergruppo}/tasks/create")
     public String saveTaskPost(@ModelAttribute TaskForm taskForm, Model model,
                                @PathVariable(name = "idSupergruppo") int idSupergruppo) {
         LocalDate tmpData;
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
         Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
-        if (((taskForm.getNome() == null) || (taskForm.getNome().equals("")))
-                || ((taskForm.getDataScadenza() == null) || (taskForm.getDataScadenza().equals("")))
-                || ((taskForm.getDescrizione() == null) || (taskForm.getDescrizione().equals("")))
-                || ((taskForm.getIdPersona() == 0))) { // da rivedere
+        if (!taskVerify(taskForm)) {
             List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
             model.addAttribute("persone", persone);
             model.addAttribute("flagCreazione", false);
             return "task/crea_task";
-        }
-        tmpData = LocalDate.of(Integer.parseInt(taskForm.getDataScadenza().substring(0, 4)),
-                Integer.parseInt(taskForm.getDataScadenza().substring(5, 7)),
-                Integer.parseInt(taskForm.getDataScadenza().substring(8, 10)));
-        Task task = taskService.definizioneTaskSupergruppo(taskForm.getDescrizione(),
-                tmpData, taskForm.getNome(), "incompleto", supergruppo, persona);
+        } else {
+            tmpData = LocalDate.of(Integer.parseInt(taskForm.getDataScadenza().substring(0, 4)),
+                    Integer.parseInt(taskForm.getDataScadenza().substring(5, 7)),
+                    Integer.parseInt(taskForm.getDataScadenza().substring(8, 10)));
+            Task task = taskService.definizioneTaskSupergruppo(taskForm.getDescrizione(),
+                    tmpData, taskForm.getNome(), "incompleto", supergruppo, persona);
 
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
-        model.addAttribute("idSupergruppo", idSupergruppo);
-        model.addAttribute("task", task);
-        model.addAttribute("flagCreazione", true);
-        return "task/dettagli_task_supergruppo";
+            Persona personaLoggata = gruppoService.getAuthenticatedUser();
+            model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+            model.addAttribute("idSupergruppo", idSupergruppo);
+            model.addAttribute("task", task);
+            model.addAttribute("flagCreazione", true);
+            return "task/dettagli_task_supergruppo";
+        }
+    }
+
+    /**
+     * Metodo che controlla i Parametri immessi nel form sia corretti.
+     *
+     * @param taskForm valori immessi nel form
+     * @return boolean indicante l'esatezza
+     */
+    private boolean taskVerify(TaskForm taskForm) {
+        return ((taskForm.getNome() != null) && (!taskForm.getNome().equals("")))
+                && ((taskForm.getDataScadenza() != null) && (!taskForm.getDataScadenza().equals("")))
+                && ((taskForm.getDescrizione() != null) && (!taskForm.getDescrizione().equals(""))) //si può aggiungere il controllo sulla data < Data odierna
+                && ((taskForm.getIdPersona() != 0));
+
     }
 
     /**
@@ -152,9 +163,9 @@ public class TaskController {
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/approva")
-    String approvazioneTask(Model model,
-                            @PathVariable(name = "idSupergruppo") int idSupergruppo,
-                            @PathVariable(name = "idTask") int idTask) {
+    public String approvazioneTask(Model model,
+                                   @PathVariable(name = "idSupergruppo") int idSupergruppo,
+                                   @PathVariable(name = "idTask") int idTask) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
 
@@ -176,9 +187,9 @@ public class TaskController {
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/rifiuta")
-    String rifiutoTask(Model model,
-                       @PathVariable(name = "idSupergruppo") int idSupergruppo,
-                       @PathVariable(name = "idTask") int idTask) {
+    public String rifiutoTask(Model model,
+                              @PathVariable(name = "idSupergruppo") int idSupergruppo,
+                              @PathVariable(name = "idTask") int idTask) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
 
@@ -199,12 +210,12 @@ public class TaskController {
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/completa")
-    String completaTask(Model model,
-                        @PathVariable(name = "idSupergruppo") int idSupergruppo,
-                        @PathVariable(name = "idTask") int idTask) {
+    public String completaTask(Model model,
+                               @PathVariable(name = "idSupergruppo") int idSupergruppo,
+                               @PathVariable(name = "idTask") int idTask) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
 
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("task", taskService.getTaskById(idTask));
         model.addAttribute("flagAzione", 4);
@@ -224,9 +235,9 @@ public class TaskController {
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modifica")
-    String modificaTask(@ModelAttribute TaskForm taskForm, Model model,
-                        @PathVariable(name = "idSupergruppo") int idSupergruppo,
-                        @PathVariable(name = "idTask") int idTask) {
+    public String modificaTask(@ModelAttribute TaskForm taskForm, Model model,
+                               @PathVariable(name = "idSupergruppo") int idSupergruppo,
+                               @PathVariable(name = "idTask") int idTask) {
 
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         Task task = taskService.getTaskById(idTask);
@@ -271,8 +282,8 @@ public class TaskController {
         taskToUpdate.setPersona(persona);
         taskToUpdate.setNome(taskForm.getNome());
         taskToUpdate.setDescrizione(taskForm.getDescrizione());
-        model.addAttribute("flagAzione", 3);
         taskService.updateTask(taskToUpdate);
+        model.addAttribute("flagAzione", 3);
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
         model.addAttribute("task", taskToUpdate);
         return "task/dettagli_task_supergruppo";
@@ -316,7 +327,7 @@ public class TaskController {
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/taskPersonali/task_detail/{idTask}/completa")
-    String completaTaskPersonale(Model model
+    public String completaTaskPersonale(Model model
             , @PathVariable(name = "idTask") int idTask) {
         model.addAttribute("task", taskService.getTaskById(idTask));
         taskService.completaTask(idTask);

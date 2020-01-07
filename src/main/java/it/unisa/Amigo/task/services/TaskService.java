@@ -11,7 +11,7 @@ import java.util.List;
  * Questa interfaccia definisce i metodi  per la logica di Business del sottositema "Task".
  */
 public interface TaskService {
-    Persona getAssegnatarioTask(int id);
+    Persona getAssegnatarioTask(Integer idTask);
 
 //    Boolean addDocumentoTask(Documento documento, int idTask);
 //    List<Documenti> visualizzaDocumentiApprovati(Supergruppo supergruppo);
@@ -23,13 +23,13 @@ public interface TaskService {
 
     List<Task> visualizzaTaskSuperGruppo(int idSupergruppo);
 
-    Task getTaskById(int id);
+    Task getTaskById(Integer id);
 
-    void accettazioneTask(int idTask);
+    void accettazioneTask(Integer idTask);
 
-    void rifiutoTask(int idTask);
+    void rifiutoTask(Integer idTask);
 
-    void completaTask(int idTask);
+    void completaTask(Integer idTask);
 
     void updateTask(Task taskToUpdate);
 }

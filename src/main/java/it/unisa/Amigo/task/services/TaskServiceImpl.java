@@ -31,8 +31,8 @@ public class TaskServiceImpl implements TaskService {
      * @return la persona a cui quel task è assegnato
      */
     @Override
-    public Persona getAssegnatarioTask(int id) {
-        Task task = taskDAO.findById(id);
+    public Persona getAssegnatarioTask(Integer id) {
+        Task task = taskDAO.findById(id).get();
         return task.getPersona();
     }
 
@@ -88,8 +88,8 @@ public class TaskServiceImpl implements TaskService {
      * @return task
      */
     @Override
-    public Task getTaskById(int id) {
-        return taskDAO.findById(id);
+    public Task getTaskById(Integer id) {
+        return taskDAO.findById(id).get();
     }
 
     /**
@@ -98,8 +98,8 @@ public class TaskServiceImpl implements TaskService {
      * @param idTask identifica univocamente un task
      */
     @Override
-    public void accettazioneTask(int idTask) {
-        Task task = taskDAO.findById(idTask);
+    public void accettazioneTask(Integer idTask) {
+        Task task = taskDAO.findById(idTask).get();
         task.setStato("approvato");
         taskDAO.save(task);
     }
@@ -110,8 +110,8 @@ public class TaskServiceImpl implements TaskService {
      * @param idTask identifica univocamente un task
      */
     @Override
-    public void rifiutoTask(int idTask) {
-        Task task = taskDAO.findById(idTask);
+    public void rifiutoTask(Integer idTask) {
+        Task task = taskDAO.findById(idTask).get();
         task.setStato("respinto");
         taskDAO.save(task);
     }
@@ -122,8 +122,8 @@ public class TaskServiceImpl implements TaskService {
      * @param idTask identifica univocamente un task
      */
     @Override
-    public void completaTask(int idTask) {
-        Task task = taskDAO.findById(idTask);
+    public void completaTask(Integer idTask) {
+        Task task = taskDAO.findById(idTask).get();
         task.setStato("in valutazione");
         taskDAO.save(task);
     }

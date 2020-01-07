@@ -1,7 +1,6 @@
 package it.unisa.Amigo.task.controller;
 
 import it.unisa.Amigo.autenticazione.domanin.User;
-import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
@@ -37,9 +36,6 @@ class TaskControllerTest {
 
     @MockBean
     private GruppoService gruppoService;
-
-    @MockBean
-    private DocumentoService documentoService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -102,7 +98,7 @@ class TaskControllerTest {
 
         when(gruppoService.findAllMembriInSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/creaTask", expectedSupergruppo.getId()))
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/create", expectedSupergruppo.getId()))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("taskForm", task))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
@@ -188,8 +184,11 @@ class TaskControllerTest {
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        task1.setId(1);
         Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        task2.setId(2);
         Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        task3.setId(3);
 
         return Stream.of(
                 Arguments.of(persona1, gruppo1, task1, true),
@@ -234,8 +233,11 @@ class TaskControllerTest {
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        task1.setId(1);
         Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        task2.setId(2);
         Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        task3.setId(3);
 
         return Stream.of(
                 Arguments.of(persona1, gruppo1, task1, true),
@@ -281,8 +283,11 @@ class TaskControllerTest {
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        task1.setId(1);
         Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        task2.setId(2);
         Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        task3.setId(3);
 
         return Stream.of(
                 Arguments.of(persona1, gruppo1, task1, true),
@@ -326,8 +331,11 @@ class TaskControllerTest {
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        task1.setId(1);
         Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        task2.setId(2);
         Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        task3.setId(3);
 
         return Stream.of(
                 Arguments.of(persona1, gruppo1, task1, true),
@@ -386,8 +394,11 @@ class TaskControllerTest {
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        task1.setId(1);
         Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        task2.setId(2);
         Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        task3.setId(3);
 
         return Stream.of(
                 Arguments.of(user1, persona1, gruppo1, task1, true),
@@ -439,8 +450,11 @@ class TaskControllerTest {
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        task1.setId(1);
         Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        task2.setId(2);
         Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        task3.setId(3);
 
         return Stream.of(
                 Arguments.of(user1, persona1, gruppo1, task1),
@@ -478,8 +492,11 @@ class TaskControllerTest {
 
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        task1.setId(1);
         Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        task2.setId(2);
         Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        task3.setId(3);
 
         return Stream.of(
                 Arguments.of(user1, persona1, task1),
@@ -513,8 +530,11 @@ class TaskControllerTest {
 
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        task1.setId(1);
         Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        task2.setId(2);
         Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        task3.setId(3);
 
         return Stream.of(
                 Arguments.of(persona1, task1),

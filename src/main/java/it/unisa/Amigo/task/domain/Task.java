@@ -37,7 +37,7 @@ public class Task implements Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
+    private Integer id;
 
     /**
      * Breve descrizione dell'oggetto Task.

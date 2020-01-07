@@ -3,7 +3,6 @@ package it.unisa.Amigo.task.controller;
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
 import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domanin.User;
-import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.Persona;
@@ -62,7 +61,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideVisualizzaListaTaskSupergruppo")
-    void visualizzaListaTaskSupergruppo( User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task) throws Exception {
+    void visualizzaListaTaskSupergruppo(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -86,6 +85,7 @@ class TaskControllerIT {
                 .andExpect(model().attribute("listaTask", expectedTask))
                 .andExpect(view().name("task/tasks_supergruppo"));
     }
+
     private static Stream<Arguments> provideVisualizzaListaTaskSupergruppo() {
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -104,9 +104,9 @@ class TaskControllerIT {
         Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
 
         return Stream.of(
                 Arguments.of(user1, persona1, gruppo1, task1),
@@ -117,7 +117,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideDefinizioneTaskSupergruppo")
-    void definizioneTaskSupergruppo(User user,  Persona expectedPersona, Supergruppo expectedSupergruppo) throws Exception {
+    void definizioneTaskSupergruppo(User user, Persona expectedPersona, Supergruppo expectedSupergruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -129,7 +129,7 @@ class TaskControllerIT {
         supergruppoDAO.save(expectedSupergruppo);
         userDAO.save(user);
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/creaTask", expectedSupergruppo.getId())
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/create", expectedSupergruppo.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("taskForm", task))
@@ -137,6 +137,7 @@ class TaskControllerIT {
                 .andExpect(model().attribute("persone", expectedPersone))
                 .andExpect(view().name("task/crea_task"));
     }
+
     private static Stream<Arguments> provideDefinizioneTaskSupergruppo() {
 
         User user1 = new User("admin", "admin");
@@ -202,6 +203,7 @@ class TaskControllerIT {
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
+
     private static Stream<Arguments> provideVisualizzaDettagliTaskSupergruppo() {
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -219,9 +221,9 @@ class TaskControllerIT {
         Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
 
         return Stream.of(
                 Arguments.of(user1, persona1, gruppo1, task1),
@@ -252,10 +254,11 @@ class TaskControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
-                .andExpect(model().attribute("task", expectedTask))
+                .andExpect(model().attribute("task", taskService.getTaskById(expectedTask.getId())))
                 .andExpect(model().attribute("flagAzione", flagAzione))
                 .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
+
     private static Stream<Arguments> provideApprovazioneTask() {
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -273,13 +276,13 @@ class TaskControllerIT {
         Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
 
         return Stream.of(
-                Arguments.of(user1,persona1, gruppo1, task1),
-                Arguments.of(user2,persona2, gruppo2, task2),
+                Arguments.of(user1, persona1, gruppo1, task1),
+                Arguments.of(user2, persona2, gruppo2, task2),
                 Arguments.of(user3, persona3, gruppo3, task3)
         );
     }
@@ -306,10 +309,11 @@ class TaskControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
-                .andExpect(model().attribute("task", expectedTask))
+                .andExpect(model().attribute("task", taskService.getTaskById(expectedTask.getId())))
                 .andExpect(model().attribute("flagAzione", flagAzione))
                 .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
+
     private static Stream<Arguments> provideRifiutoTask() {
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -327,20 +331,20 @@ class TaskControllerIT {
         Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
 
         return Stream.of(
-                Arguments.of(user1,persona1, gruppo1, task1),
-                Arguments.of(user2,persona2, gruppo2, task2),
-                Arguments.of(user3,persona3, gruppo3, task3)
+                Arguments.of(user1, persona1, gruppo1, task1),
+                Arguments.of(user2, persona2, gruppo2, task2),
+                Arguments.of(user3, persona3, gruppo3, task3)
         );
     }
 
     @ParameterizedTest
     @MethodSource("provideCompletaTask")
-    void completaTask( User user ,Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask) throws Exception {
+    void completaTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -359,9 +363,10 @@ class TaskControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
-                .andExpect(model().attribute("task", expectedTask))
+                .andExpect(model().attribute("task", taskService.getTaskById(expectedTask.getId())))
                 .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
+
     private static Stream<Arguments> provideCompletaTask() {
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -379,14 +384,14 @@ class TaskControllerIT {
         Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
 
         return Stream.of(
-                Arguments.of(user1,persona1, gruppo1, task1),
-                Arguments.of(user2,persona2, gruppo2, task2),
-                Arguments.of(user3,persona3, gruppo3, task3)
+                Arguments.of(user1, persona1, gruppo1, task1),
+                Arguments.of(user2, persona2, gruppo2, task2),
+                Arguments.of(user3, persona3, gruppo3, task3)
         );
     }
 
@@ -426,6 +431,7 @@ class TaskControllerIT {
                 .andExpect(model().attribute("persone", expectedPersone))
                 .andExpect(view().name("task/modifica_task"));
     }
+
     private static Stream<Arguments> provideModificaTask() {
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -443,9 +449,12 @@ class TaskControllerIT {
         Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
+        task1.setId(1);
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
+        task2.setId(2);
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
+        task3.setId(3);
 
         return Stream.of(
                 Arguments.of(user1, persona1, gruppo1, task1),
@@ -483,6 +492,7 @@ class TaskControllerIT {
                 .andExpect(model().attribute("listaTask", expectedTasks))
                 .andExpect(view().name("task/miei_task"));
     }
+
     private static Stream<Arguments> provideVisualizzaListaTaskPersonali() {
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -500,9 +510,9 @@ class TaskControllerIT {
         Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
 
         return Stream.of(
                 Arguments.of(user1, persona1, gruppo1, task1),
@@ -513,7 +523,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideVisualizzaDettagliTaskPersonali")
-    void visualizzaDettagliTaskPersonali(User user,Supergruppo expectedSupergruppo, Persona expectedPersona, Task expectedTask) throws Exception {
+    void visualizzaDettagliTaskPersonali(User user, Supergruppo expectedSupergruppo, Persona expectedPersona, Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -532,6 +542,7 @@ class TaskControllerIT {
                 .andExpect(view().name("task/dettagli_task_personali"));
 
     }
+
     private static Stream<Arguments> provideVisualizzaDettagliTaskPersonali() {
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -550,12 +561,12 @@ class TaskControllerIT {
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
 
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
 
         return Stream.of(
-                Arguments.of(user1, gruppo1,persona1, task1),
+                Arguments.of(user1, gruppo1, persona1, task1),
                 Arguments.of(user2, gruppo2, persona2, task2),
                 Arguments.of(user3, gruppo3, persona3, task3)
         );
@@ -563,7 +574,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideCompletaTaskPersonale")
-    void completaTaskPersonale(User user,Supergruppo expectedSupergruppo,Persona expectedPersona,Task expectedTask) throws Exception {
+    void completaTaskPersonale(User user, Supergruppo expectedSupergruppo, Persona expectedPersona, Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -580,9 +591,10 @@ class TaskControllerIT {
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("flagAzione", expectedFlag))
-                .andExpect(model().attribute("task", expectedTask))
+                .andExpect(model().attribute("task", taskService.getTaskById(expectedTask.getId())))
                 .andExpect(view().name("task/dettagli_task_personali"));
     }
+
     private static Stream<Arguments> provideCompletaTaskPersonale() {
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -600,13 +612,13 @@ class TaskControllerIT {
         Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
 
         return Stream.of(
-                Arguments.of(user1, gruppo1,persona1, task1),
-                Arguments.of(user2, gruppo2,persona2, task2),
+                Arguments.of(user1, gruppo1, persona1, task1),
+                Arguments.of(user2, gruppo2, persona2, task2),
                 Arguments.of(user3, gruppo3, persona3, task3)
         );
     }

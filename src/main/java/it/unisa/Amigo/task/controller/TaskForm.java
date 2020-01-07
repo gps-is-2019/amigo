@@ -16,7 +16,7 @@ public class TaskForm {
     /**
      * Identificativo del relativo task che verrà creato o modificato.
      */
-    private int id;
+    private Integer id;
 
     /**
      * Breve descrizione del task che verrà creato o modificato.
@@ -45,7 +45,6 @@ public class TaskForm {
     /**
      * Indica lo stato del task che verrà creato o modificato.
      */
-    @NonNull
     private int idPersona;
 
 }

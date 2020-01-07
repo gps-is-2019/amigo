@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +33,7 @@ class TaskServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideGetAssegnatarioTask")
     void getAssegnatarioTask(Persona persona, Task task) {
-        when(taskDAO.findById(task.getId())).thenReturn(task);
+        when(taskDAO.findById(task.getId())).thenReturn(Optional.of(task));
         assertEquals(persona, taskService.getAssegnatarioTask(task.getId()));
     }
 
@@ -168,7 +169,7 @@ class TaskServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideGetTaskById")
     void getTaskById(Task task) {
-        when(taskDAO.findById(task.getId())).thenReturn(task);
+        when(taskDAO.findById(task.getId())).thenReturn(Optional.of(task));
         assertEquals(task, taskService.getTaskById(task.getId()));
     }
 
@@ -191,7 +192,7 @@ class TaskServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideAccettazioneTask")
     void accettazioneTask(Task task) {
-        when(taskDAO.findById(task.getId())).thenReturn(task);
+        when(taskDAO.findById(task.getId())).thenReturn(Optional.of(task));
         taskService.accettazioneTask(task.getId());
         String expectedStato = "approvato";
         assertEquals(expectedStato, task.getStato());
@@ -215,7 +216,7 @@ class TaskServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideRifiutoTask")
     void rifiutoTask(Task task) {
-        when(taskDAO.findById(task.getId())).thenReturn(task);
+        when(taskDAO.findById(task.getId())).thenReturn(Optional.of(task));
         taskService.rifiutoTask(task.getId());
 
         String expectedStato = "respinto";
@@ -240,7 +241,7 @@ class TaskServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideCompletaTask")
     void completaTask(Task task) {
-        when(taskDAO.findById(task.getId())).thenReturn(task);
+        when(taskDAO.findById(task.getId())).thenReturn(Optional.of(task));
         taskService.completaTask(task.getId());
 
         String expectedStato = "in valutazione";

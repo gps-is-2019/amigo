@@ -196,7 +196,7 @@ class TaskServiceImplIT {
         taskDAO.save(task);
         taskService.accettazioneTask(task.getId());
         String expectedStato = "approvato";
-        assertEquals(expectedStato, taskDAO.findById(task.getId()).getStato());
+        assertEquals(expectedStato, taskDAO.findById(task.getId()).get().getStato());
     }
 
     private static Stream<Arguments> provideAccettazioneTask() {
@@ -221,7 +221,7 @@ class TaskServiceImplIT {
         taskService.rifiutoTask(task.getId());
 
         String expectedStato = "respinto";
-        assertEquals(expectedStato, taskDAO.findById(task.getId()).getStato());
+        assertEquals(expectedStato, taskDAO.findById(task.getId()).get().getStato());
     }
 
     private static Stream<Arguments> provideRifiutoTask() {
@@ -246,7 +246,7 @@ class TaskServiceImplIT {
         taskService.completaTask(task.getId());
 
         String expectedStato = "in valutazione";
-        assertEquals(expectedStato, taskDAO.findById(task.getId()).getStato());
+        assertEquals(expectedStato, taskDAO.findById(task.getId()).get().getStato());
     }
 
     private static Stream<Arguments> provideCompletaTask() {

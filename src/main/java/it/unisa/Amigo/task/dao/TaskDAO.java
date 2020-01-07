@@ -1,6 +1,7 @@
 package it.unisa.Amigo.task.dao;
 
 
+import com.sun.xml.bind.v2.model.core.ID;
 import it.unisa.Amigo.task.domain.Task;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -17,5 +18,5 @@ public interface TaskDAO extends CrudRepository<Task, Integer> {
 
     List<Task> findAllByPersona_Id(int id);
 
-    Task findById(int idTask);
+    Task findById(ID id);
 }
