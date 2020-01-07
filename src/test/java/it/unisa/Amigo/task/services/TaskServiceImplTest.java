@@ -32,7 +32,7 @@ class TaskServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideGetAssegnatarioTask")
     void getAssegnatarioTask(Persona persona, Task task) {
-        taskDAO.save(task);
+        when(taskDAO.findById(task.getId())).thenReturn(task);
         assertEquals(persona, taskService.getAssegnatarioTask(task.getId()));
     }
 
