@@ -3,7 +3,7 @@
 <head>
 
     <head th:include="/fragments/fragments.html :: head">
-        <title id="pageTitle">Amigo|I miei gruppi</title>
+        <title id="pageTitle">Amigo| Upload repository</title>
     </head>
 </head>
 <body>
@@ -28,7 +28,7 @@
 
         <div class="ui error message" th:if="${flagAggiunta==false}">
             <i class="close icon"></i>
-            <p>Documento <span th:text="${documentoNome}"></span> non caricato!</span></p>
+            <p>Documento non caricato!</span></p>
         </div>
     </div>
     <script>$('.message .close')

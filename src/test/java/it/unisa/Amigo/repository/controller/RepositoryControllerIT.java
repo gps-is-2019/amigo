@@ -38,7 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class RepositoryControllerIT {
 
-
     @Autowired
     private GruppoService gruppoService;
 
@@ -54,10 +53,6 @@ public class RepositoryControllerIT {
     @Autowired
     private MockMvc mockMvc;
 
-
-
-
-
     @ParameterizedTest
     @MethodSource("provideRepository")
     public void repository() throws Exception {
@@ -66,10 +61,8 @@ public class RepositoryControllerIT {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
         expectedPersona.setUser(user);
-
         personaDAO.save(expectedPersona);
         userDAO.save(user);
-
         repositoryService.addDocumentoInRepository(new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes()));
         List<Documento> expectedDocumenti = new ArrayList<>();
         expectedDocumenti = repositoryService.searchDocumentInRepository("");

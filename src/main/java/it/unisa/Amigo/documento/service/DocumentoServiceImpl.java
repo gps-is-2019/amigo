@@ -111,14 +111,16 @@ public class DocumentoServiceImpl implements DocumentoService{
      * @return documento con id uguale a idDocumento.
      */
     @Override
-    public Documento findDocumento(int idDocumento) {
+    public Documento findDocumento(Integer idDocumento) {
         return documentoDAO.findById(idDocumento).get();
+
     }
 
     /**
-     * Ritorna una lista di documenti il cui nome contiene la stringa passata come parametro.
+     * Ritorna una lista di documenti dato un documento di confronto.
      *
-     * @param example@return lista di documenti contenenti la stringa ricercata.
+     * @param example Documento da confrontare
+     * @return lista di documenti contenenti la stringa ricercata.
      */
     @Override
     public List<Documento> searchDocumenti(Documento example) {

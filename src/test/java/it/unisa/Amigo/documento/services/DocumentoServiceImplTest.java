@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -63,8 +63,12 @@ class DocumentoServiceImplTest {
         expectedDocumenti.add(documento);
         expectedDocumenti.add(documento1);
 
-        when(documentoDAO.findAllByNomeContains(documento.getNome())).thenReturn(expectedDocumenti);
-        List<Documento> actualDocumenti = documentoService.searchDocumenti(documento);
+        Documento example = new Documento();
+        example.setNome("test");
+        ExampleMatcher matcher = ExampleMatcher.matchingAll().withMatcher("nome", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+        Iterable<Documento> iterable = new ArrayList<>();
+        when(documentoDAO.findAll(Example.of(example,matcher))).thenReturn(expectedDocumenti);
+        List<Documento> actualDocumenti = documentoService.searchDocumenti(example);
         assertEquals(expectedDocumenti, actualDocumenti);
     }
 }

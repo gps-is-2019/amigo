@@ -89,8 +89,11 @@ public class RepositoryController {
     //submit form
     @PostMapping("/repository/uploadDocumento")
     public String uploadDocumento(Model model, @RequestParam("file") MultipartFile file) {
-        model.addAttribute("flagAggiunta", repositoryService.addDocumentoInRepository(file));
-        model.addAttribute("documentoNome", file.getOriginalFilename());
+        boolean flagAggiunta = repositoryService.addDocumentoInRepository(file);
+        model.addAttribute("flagAggiunta", flagAggiunta);
+        if(flagAggiunta){
+            model.addAttribute("documentoNome", file.getOriginalFilename());
+        }
         return "repository/aggiunta_documento_repository";
     }
 

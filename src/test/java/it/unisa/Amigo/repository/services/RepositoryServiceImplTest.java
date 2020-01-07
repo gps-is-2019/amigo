@@ -10,17 +10,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.*;
-
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -40,21 +39,17 @@ class RepositoryServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideAddDocumentoInRepository")
     void addDocumentoInRepository(MultipartFile file) {
-
-
         Documento expectedDocumento = new Documento();
         when(documentoService.addDocumento(file)).thenReturn(expectedDocumento);
         expectedDocumento.setInRepository(true);
         when(documentoService.updateDocumento(expectedDocumento)).thenReturn(expectedDocumento);
         boolean expectedValue = repositoryService.addDocumentoInRepository(file);
         assertEquals(true, expectedValue);
-
     }
 
     private static Stream<Arguments> provideAddDocumentoInRepository() {
         MultipartFile file1 = new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes());
         MultipartFile file2 = new MockMultipartFile("testtestetst", "file.txt", MediaType.TEXT_PLAIN_VALUE, "ciao mondo ciao mondo".getBytes());
-
         return Stream.of(
                 Arguments.of(file1),
                 Arguments.of(file2)
@@ -64,7 +59,6 @@ class RepositoryServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideDownloadDocumento")
     void downloadDocumento(Documento expectedDocumento, Resource expectedResource)  {
-
         when(documentoService.loadAsResource(expectedDocumento)).thenReturn(expectedResource);
         Resource actualResource = repositoryService.downloadDocumento(expectedDocumento);
         assertEquals(actualResource, expectedResource);
@@ -75,10 +69,8 @@ class RepositoryServiceImplTest {
                 "file.txt", false, "application/txt");
         Documento doc2 = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
                 "test.txt", false, "application/txt");
-
         Resource res1 = new UrlResource(Paths.get(doc1.getPath()).toUri());
         Resource res2 = new UrlResource(Paths.get(doc2.getPath()).toUri());
-
         return Stream.of(
                 Arguments.of(doc1, res1),
                 Arguments.of(doc2, res2)
@@ -92,7 +84,7 @@ class RepositoryServiceImplTest {
         Documento actualDocumento = repositoryService.findDocumento(0);
         assertEquals(actualDocumento, expectedDocumento);
     }
-}
+
 /*
     @SneakyThrows
     @Test
@@ -112,8 +104,7 @@ class RepositoryServiceImplTest {
         assertEquals(actualValue,expectedValue);
 
     }
-
-
+*/
     @ParameterizedTest
     @MethodSource("provideSerarchDcoumentInRepository")
     void serarchDcoumentInRepository( Documento documentoExample, String name) {
@@ -133,13 +124,9 @@ class RepositoryServiceImplTest {
         Documento documento2 = new Documento();
         documento2.setInRepository(true);
         documento2.setNome(nome2);
-
         return Stream.of(
                 Arguments.of(documento1, nome1),
                 Arguments.of(documento2, nome2)
         );
     }
-
-
 }
-***/
