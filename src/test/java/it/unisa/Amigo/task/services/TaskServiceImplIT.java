@@ -1,7 +1,6 @@
 package it.unisa.Amigo.task.services;
 
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
-import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.task.dao.TaskDAO;
@@ -30,9 +29,6 @@ class TaskServiceImplIT {
 
     @Autowired
     private PersonaDAO personaDAO;
-
-    @Autowired
-    private SupergruppoDAO supergruppoDAO;
 
     @ParameterizedTest
     @MethodSource("provideGetAssegnatarioTask")

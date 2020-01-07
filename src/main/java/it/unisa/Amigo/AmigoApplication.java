@@ -4,6 +4,7 @@ import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.autenticazione.domanin.User;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
+import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
@@ -145,6 +146,9 @@ public class AmigoApplication {
             taskprova5.setSupergruppo(GAQD);
             GAQD.addTask(taskprova5);
 
+            Documento documento1 = new Documento("src/main/resources/documents/test.txt", tmpDate, "test.txt", false, "text/txt");
+            documento1.setTask(taskprova2);
+            taskprova2.setDocumento(documento1);
 
             supergruppoDAO.save(GAQD);
             supergruppoDAO.save(commissioneAAL);
@@ -153,6 +157,7 @@ public class AmigoApplication {
             personaDAO.saveAll(Arrays.asList(ferrucci, scarano, malandrino, dePrisco, polese, gravino));
             userDAO.saveAll(Arrays.asList(userFerrucci, userScarano, userMalandrino, userDePrisco, userPolese, userGravino));
             taskDAO.saveAll(Arrays.asList(taskprova, taskprova2, taskprova3, taskprova4, taskprova5));
+            documentoDAO.save(documento1);
         };
     }
 }
