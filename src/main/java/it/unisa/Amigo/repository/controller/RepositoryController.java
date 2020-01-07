@@ -36,12 +36,9 @@ public class RepositoryController {
      */
 
     private boolean isResponsabilePQA() {
-        Set<Role> ruoli = gruppoService.getAuthenticatedUser().getUser().getRoles();
-        for (Role ruolo : ruoli) {
-            if (ruolo.getName().equals(Role.PQA_ROLE))
-                return true;
-        }
-        return false;
+
+       return gruppoService.findAllRoleOfPersona(gruppoService.getAuthenticatedUser().getId()).contains(Role.PQA_ROLE);
+
     }
 
     /**
@@ -54,7 +51,7 @@ public class RepositoryController {
 
     //show form
     @GetMapping("/repository")
-    public String repository(Model model, @RequestParam(required = false) String name) {
+    public String getRepository(Model model, @RequestParam(required = false) String name) {
         if (isResponsabilePQA()) {
             model.addAttribute("flagPQA", 1);
         }
@@ -74,7 +71,7 @@ public class RepositoryController {
         if (gruppoService.getAuthenticatedUser() == null)
             return "redirect:/";
         else if (!isResponsabilePQA())
-            return "dashboard";
+            return "redirect:/dashboard";
         return "repository/aggiunta_documento_repository";
     }
 
@@ -89,12 +86,12 @@ public class RepositoryController {
     //submit form
     @PostMapping("/repository/uploadDocumento")
     public String uploadDocumento(Model model, @RequestParam("file") MultipartFile file) {
-        boolean flagAggiunta = repositoryService.addDocumentoInRepository(file);
-        model.addAttribute("flagAggiunta", flagAggiunta);
-        if(flagAggiunta){
+        boolean addFlag = repositoryService.addDocumentoInRepository(file);
+        model.addAttribute("addFlag", addFlag);
+        if(addFlag){
             model.addAttribute("documentoNome", file.getOriginalFilename());
         }
-        return "repository/aggiunta_documento_repository";
+        return "repository/repository";
     }
 
     /**
@@ -107,7 +104,7 @@ public class RepositoryController {
     @GetMapping("/repository/{idDocument}")
     public ResponseEntity<Resource> downloadDocumento(@PathVariable("idDocument") int idDocument) {
 
-        Documento documento = repositoryService.findDocumento(idDocument);
+        Documento documento = repositoryService.findDocumentoById(idDocument);
         Resource resource = repositoryService.downloadDocumento(documento);
 
         return ResponseEntity.ok()

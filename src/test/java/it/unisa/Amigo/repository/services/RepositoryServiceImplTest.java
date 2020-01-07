@@ -80,8 +80,8 @@ class RepositoryServiceImplTest {
     @Test
     void findDocumento() {
         Documento expectedDocumento = new Documento();
-        when(documentoService.findDocumento(0)).thenReturn(expectedDocumento);
-        Documento actualDocumento = repositoryService.findDocumento(0);
+        when(documentoService.findDocumentoById(0)).thenReturn(expectedDocumento);
+        Documento actualDocumento = repositoryService.findDocumentoById(0);
         assertEquals(actualDocumento, expectedDocumento);
     }
 

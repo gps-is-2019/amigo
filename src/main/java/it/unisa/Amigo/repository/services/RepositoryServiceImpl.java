@@ -19,7 +19,16 @@ import java.util.List;
 public class RepositoryServiceImpl implements RepositoryService {
 
     private final DocumentoService documentoService;
+    private static final int MIN_SIZE_FILE = 0;
+    private static final int MAX_SIZE_FILE = 10485760;
 
+    private boolean checkFile(MultipartFile file){
+        if(file.getSize()== MIN_SIZE_FILE || file.getSize()>MAX_SIZE_FILE){
+            return false;
+        }else {
+            return true;
+        }
+    }
     /**
      * Aggiunge un documento @{@link Documento} alla repository.
      *
@@ -28,15 +37,13 @@ public class RepositoryServiceImpl implements RepositoryService {
      */
     @Override
     public boolean addDocumentoInRepository(MultipartFile file) {
-        if(file.getSize()==0 || file.getSize()>10485760){
-            return false;
-        }
-        else {
+       if(checkFile(file)){
             Documento documento = documentoService.addDocumento(file);
             documento.setInRepository(true);
             documentoService.updateDocumento(documento);
             return true;
-        }
+       }else
+           return false;
     }
 
     /**
@@ -58,8 +65,8 @@ public class RepositoryServiceImpl implements RepositoryService {
      * @return Documento corrispondente all'id.
      */
     @Override
-    public Documento findDocumento(int idDocumento){
-        return documentoService.findDocumento(idDocumento);
+    public Documento findDocumentoById(int idDocumento){
+        return documentoService.findDocumentoById(idDocumento);
     }
 
     /**

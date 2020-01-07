@@ -9,7 +9,7 @@ import java.util.List;
 public interface DocumentoService {
     Documento addDocumento(MultipartFile file);
     Documento updateDocumento(Documento documento);
-    Documento findDocumento(Integer idDocumento);
+    Documento findDocumentoById(Integer idDocumento);
     List<Documento> searchDocumenti(Documento example);
     Resource loadAsResource(Documento documento);
 }

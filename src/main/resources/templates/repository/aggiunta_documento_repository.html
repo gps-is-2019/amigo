@@ -21,23 +21,6 @@
                 </button>
             </form>
         </div>
-        <div class="ui message success" th:if="${flagAggiunta==true}">
-            <i class="close icon"></i>
-            <p>Documento <span th:text="${documentoNome}"></span> caricato con successo!</span></p>
-        </div>
-
-        <div class="ui error message" th:if="${flagAggiunta==false}">
-            <i class="close icon"></i>
-            <p>Documento non caricato!</span></p>
-        </div>
     </div>
-    <script>$('.message .close')
-        .on('click', function () {
-            $(this)
-                .closest('.message')
-                .transition('fade')
-            ;
-        })
-    ;</script>
 </body>
 </html>

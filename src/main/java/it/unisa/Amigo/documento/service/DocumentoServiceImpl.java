@@ -111,7 +111,7 @@ public class DocumentoServiceImpl implements DocumentoService{
      * @return documento con id uguale a idDocumento.
      */
     @Override
-    public Documento findDocumento(Integer idDocumento) {
+    public Documento findDocumentoById(Integer idDocumento) {
         return documentoDAO.findById(idDocumento).get();
 
     }

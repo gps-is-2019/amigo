@@ -10,6 +10,6 @@ public interface RepositoryService {
     boolean addDocumentoInRepository(MultipartFile file);
     Resource downloadDocumento(Documento documento);
     List<Documento> searchDocumentInRepository(String nameDocumento);
-    Documento findDocumento(int idDocumento);
+    Documento findDocumentoById(int idDocumento);
 
 }

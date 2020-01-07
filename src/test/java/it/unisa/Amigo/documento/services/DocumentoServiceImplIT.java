@@ -10,8 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,7 +23,7 @@ public class DocumentoServiceImplIT {
     @Autowired
     private DocumentoDAO documentoDAO;
 
-   @AfterEach
+    @AfterEach
     void afterEach() {
         documentoDAO.deleteAll();
     }
@@ -48,11 +47,11 @@ public class DocumentoServiceImplIT {
     }
 
     @Test
-    void findDocumento() {
+    void findDocumentoById() {
         Documento expectedDocumento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
                 "test.txt", false, "text/plain");
         documentoDAO.save(expectedDocumento);
-        Documento actualDocumento = documentoService.findDocumento(expectedDocumento.getId());
+        Documento actualDocumento = documentoService.findDocumentoById(expectedDocumento.getId());
         assertEquals(expectedDocumento,actualDocumento);
     }
 /*

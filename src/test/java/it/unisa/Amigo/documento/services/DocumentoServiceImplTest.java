@@ -45,11 +45,11 @@ class DocumentoServiceImplTest {
     }
 
     @Test
-    void findDocumento() {
+    void findDocumentoById() {
         Documento expectedDocumento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
                 "test.txt", false, "text/plain");
         when(documentoDAO.findById(expectedDocumento.getId())).thenReturn(Optional.of(expectedDocumento));
-        Documento actualDocumento = documentoService.findDocumento(expectedDocumento.getId());
+        Documento actualDocumento = documentoService.findDocumentoById(expectedDocumento.getId());
         assertEquals(expectedDocumento,actualDocumento);
     }
 

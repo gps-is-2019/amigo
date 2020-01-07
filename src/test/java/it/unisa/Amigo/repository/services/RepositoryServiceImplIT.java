@@ -56,7 +56,7 @@ public class RepositoryServiceImplIT {
     @MethodSource("provideDownloadDocumento")
     void downloadDocumento(Documento expectedDocumento) {
         documentoDAO.save(expectedDocumento);
-        Documento actualDocumento = documentoService.findDocumento(expectedDocumento.getId());
+        Documento actualDocumento = documentoService.findDocumentoById(expectedDocumento.getId());
         assertEquals(expectedDocumento, actualDocumento);
     }
     private static Stream<Arguments> provideDownloadDocumento() {

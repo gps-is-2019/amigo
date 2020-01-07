@@ -10,6 +10,15 @@
 <div th:insert="fragments/fragments.html :: header"></div>
 <h1 class="ui header" align="center">Repository d'Ateneo</h1>
     <div class="ui main text container">
+        <div class="ui message success" th:if="${addFlag==true}">
+            <i class="close icon"></i>
+            <p>Documento <span th:text="${documentoNome}"></span> caricato con successo!</span></p>
+        </div>
+
+        <div class="ui error message" th:if="${addFlag==false}">
+            <i class="close icon"></i>
+            <p>Documento non caricato!</span></p>
+        </div>
 
         <div class="ui search">
             <div class="ui icon input">
@@ -25,17 +34,6 @@
 
 
         <table class="ui celled table striped">
-            <!--<tr class="center aligned">
-                <th>
-                    <form action="/repository">
-                        <div >
-                            <input type="text" name="name" placeholder="Inserisci nome documento da ricercare">
-                            <input type="submit" value="Ricerca" >
-                        </div>
-                    </form>
-                </th>
-            </tr>
-            -->
             <tbody>
                 <tr class="center aligned">
                     <td th:if="${#lists.isEmpty(documenti)}">
@@ -66,5 +64,14 @@
             Aggiungi
         </a>
     </div>
+
+<script>$('.message .close')
+    .on('click', function () {
+        $(this)
+            .closest('.message')
+            .transition('fade')
+        ;
+    })
+;</script>
 </body>
 </html>
