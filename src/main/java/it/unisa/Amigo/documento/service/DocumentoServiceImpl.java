@@ -7,6 +7,8 @@ import it.unisa.Amigo.documento.exceptions.StorageFileNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -114,17 +117,25 @@ public class DocumentoServiceImpl implements DocumentoService{
      * @return documento con id uguale a idDocumento.
      */
     @Override
-    public Documento findDocumento(int idDocumento) {
+    public Documento findDocumentoById(Integer idDocumento) {
         return documentoDAO.findById(idDocumento).get();
+
     }
 
     /**
-     * Ritorna una lista di documenti il cui nome contiene la stringa passata come parametro.
-     * @param nameDocumento stringa da ricercare nel nome dei documenti.
+     * Ritorna una lista di documenti dato un documento di confronto.
+     *
+     * @param example Documento da confrontare
      * @return lista di documenti contenenti la stringa ricercata.
      */
     @Override
-    public List<Documento> searchDocumenti(String nameDocumento) {
-       return documentoDAO.findAllByNomeContains(nameDocumento);
+    public List<Documento> searchDocumenti(Documento example) {
+        List <Documento> result = new ArrayList<>();
+        ExampleMatcher matcher = ExampleMatcher.matchingAll().withMatcher("nome", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+        Iterable<Documento> iterable= documentoDAO.findAll(Example.of(example,matcher));
+        for (Documento documento: iterable){
+            result.add(documento);
+        }
+        return result;
     }
 }

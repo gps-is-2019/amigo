@@ -1,5 +1,6 @@
 package it.unisa.Amigo.gruppo.services;
 
+import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.gruppo.domain.*;
 
 import java.util.List;
@@ -47,4 +48,6 @@ public interface GruppoService {
     void nominaResponsabile(int idPersona, int idCommissione);
 
     Gruppo findGruppoByCommissione(int idCommissione);
+
+    List<String> findAllRoleOfPersona(int idPersona);
 }
