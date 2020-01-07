@@ -80,7 +80,7 @@ public class RepositoryControllerTest {
 
     private static Stream<Arguments> provideRepository() {
         User user1 = new User("Too long, sorry", "33353");
-        User user2 = new User(null, "pass");
+        User user2 = new User(".", "pass");
         User user3 = new User("bounty", null);
 
         Persona expectedPersona1 = new Persona(null, "123", "Administrator");
@@ -96,12 +96,12 @@ public class RepositoryControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideUploadDocumento")
-    public void uploadDocumento() throws Exception {
+    public void uploadDocumento(User user, Persona expectedPersona) throws Exception {
 
-        User user = new User("admin", "admin");
+        //User user = new User("admin", "admin");
         user.addRole(new Role(Role.PQA_ROLE));
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        //Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
         expectedPersona.setUser(user);
 
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
@@ -114,7 +114,7 @@ public class RepositoryControllerTest {
 
     private static Stream<Arguments> provideUploadDocumento() {
         User user4 = new User("Too long, sorry", "33353");
-        User user5 = new User(null, "pass");
+        User user5 = new User(".", "pass");
         User user6 = new User("bounty", null);
 
         Persona expectedPersona4 = new Persona(null, "123", "Administrator");
