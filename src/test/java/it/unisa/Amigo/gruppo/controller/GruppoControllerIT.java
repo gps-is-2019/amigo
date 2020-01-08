@@ -10,6 +10,9 @@ import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.*;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -55,15 +59,17 @@ public class GruppoControllerIT {
     private UserDAO userDAO;
 
 
-    @Test
-    public void findAllMembriInSupergruppo() throws Exception {
 
-        User user = new User("admin", "admin");
+    @ParameterizedTest
+    @MethodSource("provideFindAllMembriInSupergruppi")
+    public void findAllMembriInSupergruppo(User userArg, Persona personaArg, Gruppo gruppo, ConsiglioDidattico consiglioDidattico) throws Exception {
+
+        User user = userArg;
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        Persona expectedPersona = personaArg;
         expectedPersona.setUser(user);
-        Gruppo expectedGruppo = new Gruppo("GAQD- Informatica", "Gruppo", true);
-        ConsiglioDidattico expectedConsiglioDidattico = new ConsiglioDidattico("Informatica");
+        Gruppo expectedGruppo = gruppo;
+        ConsiglioDidattico expectedConsiglioDidattico = consiglioDidattico;
         expectedGruppo.addPersona(expectedPersona);
         expectedGruppo.setResponsabile(expectedPersona);
         List<Persona> expectedPersone = new ArrayList<>();
@@ -71,8 +77,9 @@ public class GruppoControllerIT {
 
         personaDAO.save(expectedPersona);
         userDAO.save(user);
-        supergruppoDAO.save(expectedGruppo);
+
         consiglioDidatticoDAO.save(expectedConsiglioDidattico);
+        supergruppoDAO.save(expectedGruppo);
 
         this.mockMvc.perform(get("/gruppi/{id}", expectedGruppo.getId())
                 .with(user(userDetails)))
@@ -84,26 +91,45 @@ public class GruppoControllerIT {
                 .andExpect(view().name("gruppo/gruppo_detail"));
     }
 
-
-    @Test
-    public void findAllSupergruppi() throws Exception {
+    private static Stream<Arguments> provideFindAllMembriInSupergruppi(){
+        Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
+        ConsiglioDidattico consiglio1 = new ConsiglioDidattico("Informatica");
+        Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
+        ConsiglioDidattico consiglio2 = new ConsiglioDidattico("Ingegneria");
 
         User user = new User("admin", "admin");
+        User user1 = new User("admin1", "admin1");
+
+        Persona persona1 = new Persona("persona1", "persona1", "persona");
+        Persona persona2 = new Persona("persona2", "persona2", "persona");
+
+        return Stream.of(
+                Arguments.of(user, persona1, gruppo1, consiglio1),
+                Arguments.of(user1, persona2 ,gruppo2, consiglio2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideAllSupergruppi")
+    public void findAllSupergruppi(User userArg, Persona personaArg, Gruppo gruppo1, Gruppo gruppo2) throws Exception {
+
+        User user = userArg;
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        Persona expectedPersona = personaArg;
         expectedPersona.setUser(user);
-        Gruppo expectedSupergruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
-        Gruppo expectedSupergruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
+        Gruppo expectedSupergruppo1 = gruppo1;
+        Gruppo expectedSupergruppo2 = gruppo2;
         List<Gruppo> expectedSupergruppi = new ArrayList<>();
         expectedSupergruppi.add(expectedSupergruppo2);
         expectedSupergruppi.add(expectedSupergruppo1);
         expectedPersona.addSupergruppo(expectedSupergruppo2);
         expectedPersona.addSupergruppo(expectedSupergruppo1);
 
-        personaDAO.save(expectedPersona);
-        userDAO.save(user);
         supergruppoDAO.save(expectedSupergruppo1);
         supergruppoDAO.save(expectedSupergruppo2);
+        personaDAO.save(expectedPersona);
+        userDAO.save(user);
+
 
         this.mockMvc.perform(get("/gruppi")
                 .with(user(userDetails)))
@@ -113,17 +139,36 @@ public class GruppoControllerIT {
                 .andExpect(view().name("gruppo/miei_gruppi"));
     }
 
+    private static Stream<Arguments> provideAllSupergruppi(){
+        Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
+        Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
+        Gruppo gruppo3 = new Gruppo("GAQR- Ingegneria", "Gruppo", true);
+        Gruppo gruppo4 = new Gruppo("GAQD- Ingegneria", "Gruppo", true);
 
-    @Test
-    public void groupCandidatesList() throws Exception {
+        User user = new User("admin", "admin");
+        User user1 = new User("admin1", "admin1");
 
-        User user1 = new User("admin", "admin");
+        Persona persona1 = new Persona("persona1", "persona1", "persona");
+        Persona persona2 = new Persona("persona2", "persona2", "persona");
+
+        return Stream.of(
+                Arguments.of(user,persona1, gruppo1, gruppo2),
+                Arguments.of(user1, persona2 ,gruppo4 ,gruppo3)
+        );
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("provideGroupCandidatesList")
+    public void groupCandidatesList(Persona persona1, Persona persona2, User user1, User user2) throws Exception {
+
+
         UserDetailImpl userDetails1 = new UserDetailImpl(user1);
-        User user2 = new User("admin2", "admin2");
+        UserDetailImpl userDetails2 = new UserDetailImpl(user2);
 
 
-        Persona expectedPersona1 = new Persona("Persona1", "Persona1", "Persona");
-        Persona expectedPersona2 = new Persona("Persona2", "Persona2", "Persona");
+        Persona expectedPersona1 = persona1;
+        Persona expectedPersona2 = persona2;
         expectedPersona1.setUser(user1);
         expectedPersona2.setUser(user2);
 
@@ -156,19 +201,38 @@ public class GruppoControllerIT {
                 .andExpect(view().name("gruppo/aggiunta_membro"));
     }
 
-    @Test
-    public void addMembroCommissione() throws Exception {
-
+    private static Stream<Arguments> provideGroupCandidatesList(){
         User user = new User("admin", "admin");
+        User user1 = new User("admin1", "admin1");
+        User user3 = new User("admin3", "admin3");
+        User user4 = new User("admin4", "admin4");
+
+        Persona persona1 = new Persona("persona1", "persona1", "persona");
+        Persona persona2 = new Persona("persona2", "persona2", "persona");
+        Persona persona3 = new Persona("persona3", "persona3", "persona");
+        Persona persona4 = new Persona("persona4", "persona4", "persona");
+
+        return Stream.of(
+                Arguments.of(persona1,persona2, user1, user),
+                Arguments.of(persona3, persona4, user3,user4)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideAddMembroCommissione")
+    public void addMembroCommissione(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
+
+
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        Persona expectedPersona = persona;
         expectedPersona.setUser(user);
 
 
-        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
-        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+        Commissione expectedCommissione = commissione;
+        Gruppo expectedGruppo = gruppo;
         expectedGruppo.addPersona(expectedPersona);
         expectedCommissione.addPersona(expectedPersona);
+        expectedCommissione.setResponsabile(persona);
         expectedGruppo.addCommissione(expectedCommissione);
 
         personaDAO.save(expectedPersona);
@@ -184,19 +248,39 @@ public class GruppoControllerIT {
 
     }
 
-    @Test
-    public void addMembroGruppo() throws Exception {
+    private static Stream<Arguments> provideAddMembroCommissione(){
+        Persona persona1 = new Persona("persona1", "persona1", "persona");
+        Persona persona2 = new Persona("persona2", "persona2", "persona");
 
         User user = new User("admin", "admin");
+        User user1 = new User("admin1", "admin1");
+
+        Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
+        Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
+
+        Commissione commissione1 = new Commissione("Commissione", "Commissione", true,"");
+        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true,"");
+
+        return Stream.of(
+                Arguments.of(user,persona1, commissione1, gruppo1),
+                Arguments.of(user1, persona2, commissione2, gruppo2)
+        );
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideAddMembroGruppo")
+    public void addMembroGruppo(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
+
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        Persona expectedPersona = persona;
         expectedPersona.setUser(user);
 
         ConsiglioDidattico expectedConsiglioDidattico = new ConsiglioDidattico("Informatica");
         expectedConsiglioDidattico.addPersona(expectedPersona);
 
-        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
-        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+        Commissione expectedCommissione = commissione;
+        Gruppo expectedGruppo = gruppo;
         expectedGruppo.setConsiglio(expectedConsiglioDidattico);
         expectedGruppo.addPersona(expectedPersona);
         expectedGruppo.setResponsabile(expectedPersona);
@@ -216,19 +300,38 @@ public class GruppoControllerIT {
 
     }
 
-
-    @Test
-    public void removeMembroCommissione() throws Exception {
+    private static Stream<Arguments> provideAddMembroGruppo() {
+        Persona persona1 = new Persona("persona1", "persona1", "persona");
+        Persona persona2 = new Persona("persona2", "persona2", "persona");
 
         User user = new User("admin", "admin");
+        User user1 = new User("admin1", "admin1");
+
+        Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
+        Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
+
+        Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
+        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true, "");
+
+        return Stream.of(
+                Arguments.of(user, persona1, commissione1, gruppo1),
+                Arguments.of(user1, persona2, commissione2, gruppo2)
+        );
+
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("provideRemoveMembroCommissione")
+    public void removeMembroCommissione(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        Persona expectedPersona = persona;
         expectedPersona.setUser(user);
-        Commissione expectedCommissione = new Commissione("GAQD- Informatica", "gruppo", true, "");
+        Commissione expectedCommissione = commissione;
         expectedCommissione.addPersona(expectedPersona);
         expectedCommissione.setResponsabile(expectedPersona);
         expectedPersona.addSupergruppo(expectedCommissione);
-        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+        Gruppo expectedGruppo = gruppo;
         expectedGruppo.addCommissione(expectedCommissione);
         expectedGruppo.addPersona(expectedPersona);
         expectedGruppo.setResponsabile(expectedPersona);
@@ -246,18 +349,38 @@ public class GruppoControllerIT {
                 .andExpect(view().name("gruppo/commissione_detail"));
     }
 
-    @Test
-    public void removeMembroGruppo() throws Exception {
+    private static Stream<Arguments> provideRemoveMembroCommissione(){
+
+        Persona persona1 = new Persona("persona1", "persona1", "persona");
+        Persona persona2 = new Persona("persona2", "persona2", "persona");
 
         User user = new User("admin", "admin");
+        User user1 = new User("admin1", "admin1");
+
+        Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
+        Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
+
+        Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
+        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true, "");
+
+        return Stream.of(
+                Arguments.of(user, persona1, commissione1, gruppo1),
+                Arguments.of(user1, persona2, commissione2, gruppo2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideRemoveMembroSupergruppo")
+    public void removeMembroGruppo(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
+
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        Persona expectedPersona = persona;
         expectedPersona.setUser(user);
-        Commissione expectedCommissione = new Commissione("GAQD- Informatica", "gruppo", true, "");
+        Commissione expectedCommissione = commissione;
         expectedCommissione.addPersona(expectedPersona);
         expectedCommissione.setResponsabile(expectedPersona);
         expectedPersona.addSupergruppo(expectedCommissione);
-        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+        Gruppo expectedGruppo = gruppo;
         expectedGruppo.addCommissione(expectedCommissione);
         expectedGruppo.addPersona(expectedPersona);
         expectedGruppo.setResponsabile(expectedPersona);
@@ -275,18 +398,38 @@ public class GruppoControllerIT {
                 .andExpect(view().name("gruppo/gruppo_detail"));
     }
 
-    @Test
-    public void findAllMembriInCommissione() throws Exception {
+    private static Stream<Arguments> provideRemoveMembroSupergruppo(){
+        Persona persona1 = new Persona("persona1", "persona1", "persona");
+        Persona persona2 = new Persona("persona2", "persona2", "persona");
 
         User user = new User("admin", "admin");
+        User user1 = new User("admin1", "admin1");
+
+        Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
+        Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
+
+        Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
+        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true, "");
+
+        return Stream.of(
+                Arguments.of(user, persona1, commissione1, gruppo1),
+                Arguments.of(user1, persona2, commissione2, gruppo2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideAllMembriInCommissione")
+    public void findAllMembriInCommissione(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
+
+
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        Persona expectedPersona = persona;
         expectedPersona.setUser(user);
-        Commissione expectedCommissione = new Commissione("GAQD- Informatica", "gruppo", true, "");
+        Commissione expectedCommissione = commissione;
         expectedCommissione.addPersona(expectedPersona);
         expectedCommissione.setResponsabile(expectedPersona);
         expectedPersona.addSupergruppo(expectedCommissione);
-        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+        Gruppo expectedGruppo = gruppo;
         expectedGruppo.addCommissione(expectedCommissione);
         expectedGruppo.addPersona(expectedPersona);
         expectedGruppo.setResponsabile(expectedPersona);
@@ -315,17 +458,37 @@ public class GruppoControllerIT {
                 .andExpect(view().name("gruppo/commissione_detail"));
     }
 
-    @Test
-    public void closeCommissione() throws Exception {
+    private static Stream<Arguments> provideAllMembriInCommissione(){
+        Persona persona1 = new Persona("persona1", "persona1", "persona");
+        Persona persona2 = new Persona("persona2", "persona2", "persona");
+
         User user = new User("admin", "admin");
+        User user1 = new User("admin1", "admin1");
+
+        Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
+        Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
+
+        Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
+        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true, "");
+
+        return Stream.of(
+                Arguments.of(user, persona1, commissione1, gruppo1),
+                Arguments.of(user1, persona2, commissione2, gruppo2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideCloseCommissione")
+    public void closeCommissione(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
+
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        Persona expectedPersona = persona;
         expectedPersona.setUser(user);
-        Commissione expectedCommissione = new Commissione("GAQD- Informatica", "gruppo", true, "");
+        Commissione expectedCommissione = commissione;
         expectedCommissione.addPersona(expectedPersona);
         expectedCommissione.setResponsabile(expectedPersona);
         expectedPersona.addSupergruppo(expectedCommissione);
-        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+        Gruppo expectedGruppo = gruppo;
         expectedGruppo.addCommissione(expectedCommissione);
         expectedGruppo.addPersona(expectedPersona);
         expectedGruppo.setResponsabile(expectedPersona);
@@ -356,14 +519,35 @@ public class GruppoControllerIT {
                 .andExpect(view().name("gruppo/commissione_detail"));
     }
 
-    @Test
-    public void createCommissioneForm() throws Exception {
+    private static Stream<Arguments> provideCloseCommissione(){
+        Persona persona1 = new Persona("persona1", "persona1", "persona");
+        Persona persona2 = new Persona("persona2", "persona2", "persona");
+
         User user = new User("admin", "admin");
+        User user1 = new User("admin1", "admin1");
+
+        Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
+        Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
+
+        Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
+        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true, "");
+
+        return Stream.of(
+                Arguments.of(user, persona1, commissione1, gruppo1),
+                Arguments.of(user1, persona2, commissione2, gruppo2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideCreateCommissioneForm")
+    public void createCommissioneForm(User user, Persona persona, Commissione commissione) throws Exception {
+
+
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        Persona expectedPersona = persona;
         expectedPersona.setUser(user);
 
-        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
+        Commissione expectedCommissione = commissione;
         expectedCommissione.addPersona(expectedPersona);
         expectedCommissione.setResponsabile(expectedPersona);
 
@@ -376,19 +560,35 @@ public class GruppoControllerIT {
                 .andExpect(model().attribute("command", gruppoFormCommand))
                 .andExpect(view().name("gruppo/crea_commissione"));
     }
-
-    @Test
-    public void nominaResponsabile() throws Exception {
+    private static Stream<Arguments> provideCreateCommissioneForm(){
+        Persona persona1 = new Persona("persona1", "persona1", "persona");
+        Persona persona2 = new Persona("persona2", "persona2", "persona");
 
         User user = new User("admin", "admin");
+        User user1 = new User("admin1", "admin1");
+
+
+
+        Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
+        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true, "");
+
+        return Stream.of(
+                Arguments.of(user, persona1, commissione1),
+                Arguments.of(user1, persona2, commissione2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideNominaResponsabile")
+    public void nominaResponsabile(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        Persona expectedPersona = persona;
         expectedPersona.setUser(user);
-        Commissione expectedCommissione = new Commissione("GAQD- Informatica", "gruppo", true, "");
+        Commissione expectedCommissione = commissione;
         expectedCommissione.addPersona(expectedPersona);
         expectedCommissione.setResponsabile(expectedPersona);
         expectedPersona.addSupergruppo(expectedCommissione);
-        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+        Gruppo expectedGruppo = gruppo;
         expectedGruppo.addCommissione(expectedCommissione);
         expectedGruppo.addPersona(expectedPersona);
         expectedGruppo.setResponsabile(expectedPersona);
@@ -417,6 +617,25 @@ public class GruppoControllerIT {
                 .andExpect(model().attribute("flagNomina", 1))
                 .andExpect(model().attribute("responsabile", expectedPersona))
                 .andExpect(view().name("gruppo/commissione_detail"));
+    }
+
+    private static Stream<Arguments> provideNominaResponsabile(){
+        Persona persona1 = new Persona("persona1", "persona1", "persona");
+        Persona persona2 = new Persona("persona2", "persona2", "persona");
+
+        User user = new User("admin", "admin");
+        User user1 = new User("admin1", "admin1");
+
+        Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
+        Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
+
+        Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
+        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true, "");
+
+        return Stream.of(
+                Arguments.of(user, persona1, commissione1, gruppo1),
+                Arguments.of(user1, persona2, commissione2, gruppo2)
+        );
     }
 
 

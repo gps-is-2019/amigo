@@ -6,11 +6,15 @@ import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,118 +37,137 @@ public class GruppoServiceImplIT {
     @Autowired
     private DipartimentoDAO dipartimentoDAO;
 
-
-    @Test
-    void findAllMembriInSupergruppo() {
-        Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
-        Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
-        Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
-        supergruppo.addPersona(persona1);
-        supergruppo.addPersona(persona2);
-        personaDAO.save(persona1);
-        personaDAO.save(persona2);
+    @ParameterizedTest
+    @MethodSource("provideGetAssegnatarioTask")
+    void getAssegnatarioTask(Persona persona, Supergruppo supergruppo) {
+        supergruppo.addPersona(persona);
+        personaDAO.save(persona);
         supergruppoDAO.save(supergruppo);
         List<Persona> expectedPersone = new ArrayList<>();
-        expectedPersone.add(persona1);
-        expectedPersone.add(persona2);
+        expectedPersone.add(persona);
         List<Persona> actualPersone = gruppoService.findAllMembriInSupergruppo(supergruppo.getId());
         assertEquals(expectedPersone, actualPersone);
     }
 
-    @Test
-    void findAllMembriInDipartimento() {
+    private static Stream<Arguments> provideGetAssegnatarioTask() {
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
         Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
-        Dipartimento dipartimento = new Dipartimento("Informatica");
-        dipartimento.addPersona(persona1);
-        dipartimento.addPersona(persona2);
-        personaDAO.save(persona1);
-        personaDAO.save(persona2);
+        Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
+        Supergruppo supergruppo2 = new Supergruppo("GAQR Informatica", "gruppo", true);
+        return Stream.of(
+                Arguments.of(persona1, supergruppo),
+                Arguments.of(persona2, supergruppo2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("providefindAllMembriInDipartimento")
+    void findAllMembriInDipartimento(Persona persona, Dipartimento dipartimento) {
+        dipartimento.addPersona(persona);
+        personaDAO.save(persona);
         dipartimentoDAO.save(dipartimento);
         List<Persona> expectedPersone = new ArrayList<>();
-        expectedPersone.add(persona1);
-        expectedPersone.add(persona2);
+        expectedPersone.add(persona);
         List<Persona> actualPersone = gruppoService.findAllMembriInDipartimento(dipartimento.getId());
         assertEquals(expectedPersone, actualPersone);
     }
 
-    @Test
-    void findAllSupergruppiOfPersona() {
+    private static Stream<Arguments> providefindAllMembriInDipartimento() {
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
-        Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "Supergruppo", true);
-        Supergruppo supergruppo1 = new Supergruppo("GAQR Informatica", "Supergruppo", true);
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
+        Dipartimento dipartimento = new Dipartimento("Informatica");
+        Dipartimento dipartimento2 = new Dipartimento("Informatica2");
+        return Stream.of(
+                Arguments.of(persona1, dipartimento),
+                Arguments.of(persona2, dipartimento2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("providefindAllSupergruppiOfPersona")
+    void findAllSupergruppiOfPersona(Persona persona1, Supergruppo supergruppo) {
         supergruppo.addPersona(persona1);
-        supergruppo1.addPersona(persona1);
         personaDAO.save(persona1);
         supergruppoDAO.save(supergruppo);
-        supergruppoDAO.save(supergruppo1);
         List<Supergruppo> expectedSupergruppi = new ArrayList<>();
-        expectedSupergruppi.add(supergruppo1);
         expectedSupergruppi.add(supergruppo);
         List<Supergruppo> actualSupergruppi = gruppoService.findAllSupergruppiOfPersona(persona1.getId());
         assertEquals(expectedSupergruppi, actualSupergruppi);
     }
 
-    @Test
-    void findAllConsigliDidatticiOfPersona() {
+    private static Stream<Arguments> providefindAllSupergruppiOfPersona() {
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
-        ConsiglioDidattico consiglioDidattico = new ConsiglioDidattico("Informatica");
-        ConsiglioDidattico consiglioDidattico1 = new ConsiglioDidattico("Ingegneria");
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
+        Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "Supergruppo", true);
+        Supergruppo supergruppo1 = new Supergruppo("GAQR Informatica", "Supergruppo", true);
+        return Stream.of(
+                Arguments.of(persona1, supergruppo),
+                Arguments.of(persona2, supergruppo1)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("providefindAllConsigliDidatticiOfPersona")
+    void findAllConsigliDidatticiOfPersona(Persona persona1, ConsiglioDidattico consiglioDidattico) {
         consiglioDidattico.addPersona(persona1);
-        consiglioDidattico1.addPersona(persona1);
         personaDAO.save(persona1);
         consiglioDidatticoDAO.save(consiglioDidattico);
-        consiglioDidatticoDAO.save(consiglioDidattico1);
         List<ConsiglioDidattico> expectedConsigli = new ArrayList<>();
-        expectedConsigli.add(consiglioDidattico1);
         expectedConsigli.add(consiglioDidattico);
         List<ConsiglioDidattico> actualConsigli = gruppoService.findAllConsigliDidatticiOfPersona(persona1.getId());
         assertEquals(expectedConsigli, actualConsigli);
     }
 
-    @Test
-    void findAllDipartimentiOfPersona() {
+    private static Stream<Arguments> providefindAllConsigliDidatticiOfPersona() {
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
-        Dipartimento dipartimento = new Dipartimento("Informatica");
-        Dipartimento dipartimento1 = new Dipartimento("Ingegneria");
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
+        ConsiglioDidattico consiglioDidattico = new ConsiglioDidattico("Informatica");
+        ConsiglioDidattico consiglioDidattico2 = new ConsiglioDidattico("Ingegneria");
+        return Stream.of(
+                Arguments.of(persona1, consiglioDidattico),
+                Arguments.of(persona2, consiglioDidattico2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("providefindAllDipartimentiOfPersona")
+    void findAllDipartimentiOfPersona(Persona persona1, Dipartimento dipartimento) {
         dipartimento.addPersona(persona1);
-        dipartimento1.addPersona(persona1);
         personaDAO.save(persona1);
         dipartimentoDAO.save(dipartimento);
-        dipartimentoDAO.save(dipartimento1);
         List<Dipartimento> expectedDipartimenti = new ArrayList<>();
-        expectedDipartimenti.add(dipartimento1);
         expectedDipartimenti.add(dipartimento);
         List<Dipartimento> actualDipartimenti = gruppoService.findAllDipartimentiOfPersona(persona1.getId());
         assertEquals(expectedDipartimenti, actualDipartimenti);
     }
 
-    @Test
-    void findAllMembriInConsiglioDidatticoNoSupergruppo() {
-
+    private static Stream<Arguments> providefindAllDipartimentiOfPersona() {
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
         Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
+        Dipartimento dipartimento = new Dipartimento("Informatica");
+        Dipartimento dipartimento2 = new Dipartimento("Ingegneria");
+        return Stream.of(
+                Arguments.of(persona1, dipartimento),
+                Arguments.of(persona2, dipartimento2)
+        );
+    }
 
-        ConsiglioDidattico consiglioDidattico = new ConsiglioDidattico("Informatica");
+    @ParameterizedTest
+    @MethodSource("providefindAllMembriInConsiglioDidatticoNoSupergruppo")
+    void findAllMembriInConsiglioDidatticoNoSupergruppo(Persona persona1, Persona persona2, ConsiglioDidattico consiglioDidattico, Supergruppo supergruppo) {
         consiglioDidattico.addPersona(persona1);
         consiglioDidattico.addPersona(persona2);
-
-        Supergruppo supergruppo = new Supergruppo("GAQR Informatica", "Supergruppo", true);
         supergruppo.setConsiglio(consiglioDidattico);
         consiglioDidattico.setSupergruppo(supergruppo);
         supergruppo.addPersona(persona1);
 
-
         List<Persona> expectedSupergruppoPersone = new ArrayList<>();
         expectedSupergruppoPersone.add(persona1);
-
         List<Persona> exptectedConsiglioPersone = new ArrayList<>();
         exptectedConsiglioPersone.add(persona1);
         exptectedConsiglioPersone.add(persona2);
-
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(persona2);
-
 
         personaDAO.save(persona1);
         personaDAO.save(persona2);
@@ -155,26 +178,58 @@ public class GruppoServiceImplIT {
         assertEquals(actualPersone, expectedPersone);
     }
 
-    @Test
-    void findPersona() {
-        Persona expectedPersona = new Persona("Persona1", "Persona1", "Persona");
+    private static Stream<Arguments> providefindAllMembriInConsiglioDidatticoNoSupergruppo() {
+        Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
+        Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "Supergruppo", true);
+        ConsiglioDidattico consiglioDidattico = new ConsiglioDidattico("Informatica");
+        Persona persona3 = new Persona("Persona3", "Persona3", "Persona");
+        Persona persona4 = new Persona("Persona4", "Persona4", "Persona");
+        Supergruppo supergruppo2 = new Supergruppo("GAQR Informatica", "Supergruppo", true);
+        ConsiglioDidattico consiglioDidattico2 = new ConsiglioDidattico("Informatica2");
+        return Stream.of(
+                Arguments.of(persona1, persona2, consiglioDidattico, supergruppo),
+                Arguments.of(persona3, persona4, consiglioDidattico2, supergruppo2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("providefindPersona")
+    void findPersona(Persona expectedPersona) {
         personaDAO.save(expectedPersona);
         Persona actualPersona = gruppoService.findPersona(expectedPersona.getId());
         assertEquals(expectedPersona, actualPersona);
     }
 
-    @Test
-    void findSupergruppo() {
-        Supergruppo expectedSupergruppo = new Supergruppo("GAQR- Informatica", "Supergruppo", true);
+    private static Stream<Arguments> providefindPersona() {
+        Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
+        return Stream.of(
+                Arguments.of(persona1),
+                Arguments.of(persona2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("providefindSupergruppo")
+    void findSupergruppo(Supergruppo expectedSupergruppo) {
         supergruppoDAO.save(expectedSupergruppo);
         Supergruppo actualSupergruppo = gruppoService.findSupergruppo(expectedSupergruppo.getId());
         assertEquals(expectedSupergruppo, actualSupergruppo);
     }
 
-    @Test
-    void findConsiglioBySupergruppo() {
-        Supergruppo expectedSupergruppo = new Supergruppo("GAQR- Informatica", "gruppo", true);
-        ConsiglioDidattico expectedConsiglio = new ConsiglioDidattico("Informatica");
+    private static Stream<Arguments> providefindSupergruppo() {
+        Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "Supergruppo", true);
+        Supergruppo expectedSupergruppo2 = new Supergruppo("GAQR- Informatica", "Supergruppo", true);
+        return Stream.of(
+                Arguments.of(expectedSupergruppo),
+                Arguments.of(expectedSupergruppo2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("providefindConsiglioBySupergruppo")
+    void findConsiglioBySupergruppo(Supergruppo expectedSupergruppo, ConsiglioDidattico expectedConsiglio) {
         expectedSupergruppo.setConsiglio(expectedConsiglio);
         expectedConsiglio.setSupergruppo(expectedSupergruppo);
         consiglioDidatticoDAO.save(expectedConsiglio);
@@ -183,35 +238,46 @@ public class GruppoServiceImplIT {
         assertEquals(actualConsiglio, expectedConsiglio);
     }
 
-    @Test
-    void isResponsabile() {
-        Persona expectedPersona = new Persona("Mario", "Inglese", "ciao");
+    private static Stream<Arguments> providefindConsiglioBySupergruppo() {
+        Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
+        ConsiglioDidattico expectedConsiglio = new ConsiglioDidattico("Informatica");
+        Supergruppo expectedSupergruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        ConsiglioDidattico expectedConsiglio2 = new ConsiglioDidattico("Informatica2");
+        return Stream.of(
+                Arguments.of(expectedSupergruppo, expectedConsiglio),
+                Arguments.of(expectedSupergruppo2, expectedConsiglio2)
+        );
+    }
 
-        Supergruppo expectedSupergruppo = new Supergruppo("GAQD-Informatica", "gruppo", true);
+    @ParameterizedTest
+    @MethodSource("provideisResponsabile")
+    void isResponsabile(Persona expectedPersona, Supergruppo expectedSupergruppo) {
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
-
         personaDAO.save(expectedPersona);
         supergruppoDAO.save(expectedSupergruppo);
-
         boolean expectedValue = gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId());
         assertEquals(true, expectedValue);
     }
 
+    private static Stream<Arguments> provideisResponsabile() {
+        Persona expectedPersona = new Persona("Mario", "Rossi", "ciao");
+        Supergruppo expectedSupergruppo = new Supergruppo("GAQD-Informatica", "gruppo", true);
+        Persona expectedPersona2 = new Persona("Luca", "Verdi", "ciao");
+        Supergruppo expectedSupergruppo2 = new Supergruppo("GAQR-Informatica", "gruppo", true);
+        return Stream.of(
+                Arguments.of(expectedPersona, expectedSupergruppo),
+                Arguments.of(expectedPersona2, expectedSupergruppo2)
+        );
+    }
 
-    @Test
-    void findAllCommissioniByGruppo() {
-        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
-        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
-        Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione", true, "Commissione2");
+    @ParameterizedTest
+    @MethodSource("providefindAllCommissioniByGruppo")
+    void findAllCommissioniByGruppo(Gruppo expectedGruppo, Commissione expectedCommissione) {
         List<Commissione> expectedCommissioni = new ArrayList<>();
-        expectedCommissioni.add(expectedCommissione2);
         expectedCommissioni.add(expectedCommissione);
-        expectedGruppo.addCommissione(expectedCommissione2);
         expectedGruppo.addCommissione(expectedCommissione);
-
         supergruppoDAO.save(expectedGruppo);
-        supergruppoDAO.save(expectedCommissione2);
         supergruppoDAO.save(expectedCommissione);
 
         List<Commissione> actualCommissioni = gruppoService.findAllCommissioniByGruppo(expectedGruppo.getId());
@@ -219,23 +285,24 @@ public class GruppoServiceImplIT {
         assertEquals(actualCommissioni, expectedCommissioni);
     }
 
-    @Test
-    void findAllMembriInGruppoNoCommissione() {
+    private static Stream<Arguments> providefindAllCommissioniByGruppo() {
+        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
+        return Stream.of(
+                Arguments.of(expectedGruppo, expectedCommissione)
+        );
+    }
 
-        Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
-        Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
-
+    @ParameterizedTest
+    @MethodSource("providefindAllMembriInGruppoNoCommissione")
+    void findAllMembriInGruppoNoCommissione(Persona persona1, Persona persona2, Commissione expectedCommissione, Gruppo expectedGruppo) {
         List<Persona> persone = new ArrayList<>();
         persone.add(persona1);
         persone.add(persona2);
-
-        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
-        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
         expectedGruppo.addPersona(persona1);
         expectedGruppo.addPersona(persona2);
         expectedCommissione.addPersona(persona1);
         expectedGruppo.addCommissione(expectedCommissione);
-
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(persona2);
 
@@ -248,51 +315,88 @@ public class GruppoServiceImplIT {
         assertEquals(expectedPersone, acutalPersone);
     }
 
-    @Test
-    void closeCommissione() {
-        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
-        supergruppoDAO.save(expectedCommissione);
-        gruppoService.closeCommissione(expectedCommissione.getId());
-        Commissione actualCommissione = (Commissione) supergruppoDAO.findById(expectedCommissione.getId());
-        assertEquals(actualCommissione.getState(), false);
-    }
-
-    @Test
-    void createCommissione() {
-
+    private static Stream<Arguments> providefindAllMembriInGruppoNoCommissione() {
+        Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
 
-        supergruppoDAO.save(expectedGruppo);
+        Persona persona3 = new Persona("Persona3", "Persona3", "Persona");
+        Persona persona4 = new Persona("Persona4", "Persona4", "Persona");
+        Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione", true, "Commissione");
+        Gruppo expectedGruppo2 = new Gruppo("Gruppo2", "Gruppo", true);
+        return Stream.of(
+                Arguments.of(persona1, persona2, expectedCommissione, expectedGruppo),
+                Arguments.of(persona3, persona4, expectedCommissione2, expectedGruppo2)
+        );
+    }
 
+    @ParameterizedTest
+    @MethodSource("providecloseCommissione")
+    void closeCommissione(Commissione expectedCommissione) {
+        supergruppoDAO.save(expectedCommissione);
+        gruppoService.closeCommissione(expectedCommissione.getId());
+        Commissione actualCommissione = (Commissione) supergruppoDAO.findById(expectedCommissione.getId()).get();
+        assertEquals(actualCommissione.getState(), false);
+    }
+
+    private static Stream<Arguments> providecloseCommissione() {
+        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
+        Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione", true, "Commissione2");
+        return Stream.of(
+                Arguments.of(expectedCommissione),
+                Arguments.of(expectedCommissione2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("providecreateCommissione")
+    void createCommissione(Commissione expectedCommissione, Gruppo expectedGruppo) {
+        supergruppoDAO.save(expectedGruppo);
         gruppoService.createCommissione(expectedCommissione, expectedGruppo.getId());
 
         assertTrue(gruppoService.findAllCommissioniByGruppo(expectedGruppo.getId()).contains(expectedCommissione));
     }
 
-
-    @Test
-    void nominaResponsabile() {
-
-        Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
+    private static Stream<Arguments> providecreateCommissione() {
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
+        Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione", true, "Commissione2");
+        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+        Gruppo expectedGruppo2 = new Gruppo("Gruppo2", "Gruppo", true);
+        return Stream.of(
+                Arguments.of(expectedCommissione, expectedGruppo),
+                Arguments.of(expectedCommissione2, expectedGruppo2)
+        );
+    }
 
+    @ParameterizedTest
+    @MethodSource("providenominaResponsabile")
+    void nominaResponsabile(Persona persona1, Commissione expectedCommissione, Commissione actualCommissione) {
         personaDAO.save(persona1);
         supergruppoDAO.save(expectedCommissione);
-
         gruppoService.nominaResponsabile(persona1.getId(), expectedCommissione.getId());
-
-        Commissione actualCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
         actualCommissione.addPersona(persona1);
         actualCommissione.setResponsabile(persona1);
-
         assertEquals(persona1, gruppoService.findSupergruppo(expectedCommissione.getId()).getResponsabile());
     }
 
-    @Test
-    void findGruppoByCommissione() {
-        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+    private static Stream<Arguments> providenominaResponsabile() {
+        Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
+        Commissione actualCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
+        Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione", true, "Commissione");
+        Commissione actualCommissione2 = new Commissione("Commissione2", "Commissione", true, "Commissione");
+
+        return Stream.of(
+                Arguments.of(persona1, expectedCommissione, actualCommissione),
+                Arguments.of(persona2, expectedCommissione2, actualCommissione2)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("providefindGruppoByCommissione")
+    void findGruppoByCommissione(Gruppo expectedGruppo, Commissione expectedCommissione) {
         expectedGruppo.addCommissione(expectedCommissione);
         supergruppoDAO.save(expectedGruppo);
         supergruppoDAO.save(expectedCommissione);
@@ -300,5 +404,16 @@ public class GruppoServiceImplIT {
         assertEquals(expectedGruppo, actualGruppo);
     }
 
+    private static Stream<Arguments> providefindGruppoByCommissione() {
+        Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
+        Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
+
+        Gruppo expectedGruppo2 = new Gruppo("Gruppo2", "Gruppo", true);
+        Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione", true, "Commissione");
+        return Stream.of(
+                Arguments.of(expectedGruppo, expectedCommissione),
+                Arguments.of(expectedGruppo2, expectedCommissione2)
+        );
+    }
 
 }

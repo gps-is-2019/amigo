@@ -1,6 +1,5 @@
 package it.unisa.Amigo.gruppo.services;
 
-import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.gruppo.domain.*;
 
 import java.util.List;
@@ -9,17 +8,17 @@ import java.util.List;
  * Questa interfaccia definisce i metodi  per la logica di Business del sottositema "Gruppo"
  */
 public interface GruppoService {
-    List<Persona> findAllMembriInSupergruppo(int idSupergruppo);
+    List<Persona> findAllMembriInSupergruppo(Integer idSupergruppo);
 
-    List<Persona> findAllMembriInConsiglioDidattico(int idConsiglioDidattico);
+    List<Persona> findAllMembriInConsiglioDidattico(Integer idConsiglioDidattico);
 
-    List<Persona> findAllMembriInDipartimento(int idDipartimento);
+    List<Persona> findAllMembriInDipartimento(Integer idDipartimento);
 
-    List<Persona> findAllMembriInConsiglioDidatticoNoSupergruppo(int idSupergruppo);
+    List<Persona> findAllMembriInConsiglioDidatticoNoSupergruppo(Integer idSupergruppo);
 
-    List<Persona> findAllMembriInGruppoNoCommissione(int idSupergruppo);
+    List<Persona> findAllMembriInGruppoNoCommissione(Integer idSupergruppo);
 
-    Persona findPersona(int id);
+    Persona findPersona(Integer id);
 
     Persona getAuthenticatedUser();
 
@@ -27,27 +26,27 @@ public interface GruppoService {
 
     void removeMembro(Persona persona, Supergruppo supergruppo);
 
-    boolean isResponsabile(int idPersona, int idSupergruppo);
+    boolean isResponsabile(Integer idPersona, Integer idSupergruppo);
 
-    List<Supergruppo> findAllSupergruppiOfPersona(int idPersona);
+    List<Supergruppo> findAllSupergruppiOfPersona(Integer idPersona);
 
-    Supergruppo findSupergruppo(int id);
+    Supergruppo findSupergruppo(Integer id);
 
-    List<ConsiglioDidattico> findAllConsigliDidatticiOfPersona(int idPersona);
+    List<ConsiglioDidattico> findAllConsigliDidatticiOfPersona(Integer idPersona);
 
-    ConsiglioDidattico findConsiglioBySupergruppo(int idSupergruppo);
+    ConsiglioDidattico findConsiglioBySupergruppo(Integer idSupergruppo);
 
-    List<Dipartimento> findAllDipartimentiOfPersona(int idPersona);
+    List<Dipartimento> findAllDipartimentiOfPersona(Integer idPersona);
 
-    List<Commissione> findAllCommissioniByGruppo(int idGruppo);
+    List<Commissione> findAllCommissioniByGruppo(Integer idGruppo);
 
-    void closeCommissione(int idSupergruppo);
+    void closeCommissione(Integer idSupergruppo);
 
-    void createCommissione(Commissione commissione, int idSupergruppo);
+    void createCommissione(Commissione commissione, Integer idSupergruppo);
 
-    void nominaResponsabile(int idPersona, int idCommissione);
+    void nominaResponsabile(Integer idPersona, Integer idCommissione);
 
-    Gruppo findGruppoByCommissione(int idCommissione);
+    Gruppo findGruppoByCommissione(Integer idCommissione);
 
-    List<String> findAllRoleOfPersona(int idPersona);
+    List<String> findAllRoleOfPersona(Integer idPersona);
 }

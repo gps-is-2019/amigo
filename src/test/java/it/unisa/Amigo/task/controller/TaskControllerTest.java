@@ -1,5 +1,6 @@
 package it.unisa.Amigo.task.controller;
 
+import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
 import it.unisa.Amigo.autenticazione.domanin.User;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -42,54 +44,69 @@ class TaskControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideVisualizzaListaTaskSupergruppo")
-    void visualizzaListaTaskSupergruppo(Persona expectedPersona, Supergruppo expectedSupergruppo, Task task, Boolean isResponsible) throws Exception {
+    void visualizzaListaTaskSupergruppo(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task, Boolean isResponsible) throws Exception {
 
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
 
         task.setSupergruppo(expectedSupergruppo);
         expectedSupergruppo.addTask(task);
-        List<Task> expectedTask= new ArrayList<>();
+        List<Task> expectedTask = new ArrayList<>();
         expectedTask.add(task);
 
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.visualizzaTaskSuperGruppo(expectedSupergruppo.getId())).thenReturn(expectedTask);
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks", expectedSupergruppo.getId()))
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks", expectedSupergruppo.getId())
+                .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
+                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", "" + expectedSupergruppo.getId()))
                 .andExpect(model().attribute("listaTask", expectedTask))
                 .andExpect(view().name("task/tasks_supergruppo"));
     }
+
     private static Stream<Arguments> provideVisualizzaListaTaskSupergruppo() {
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
+        User user1 = new User("admin", "admin");
+        User user2 = new User("rob@deprisco.it", "roberto");
+        User user3 = new User("vittorio@scarano.it", "scarano");
+
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
-        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
+        task1.setId(1);
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
+        task2.setId(2);
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
+        task3.setId(3);
 
         return Stream.of(
-                Arguments.of(persona1, gruppo1, task1, true),
-                Arguments.of(persona2, gruppo2, task2, true),
-                Arguments.of(persona3, gruppo3, task3, false)
+                Arguments.of(user1, persona1, gruppo1, task1, true),
+                Arguments.of(user2, persona2, gruppo2, task2, true),
+                Arguments.of(user3, persona3, gruppo3, task3, false)
         );
     }
 
     @ParameterizedTest
     @MethodSource("provideDefinizioneTaskSupergruppo")
-    void definizioneTaskSupergruppo( User user,  Persona expectedPersona, Supergruppo expectedSupergruppo) throws Exception{
+    void definizioneTaskSupergruppo(User user, Persona expectedPersona, Supergruppo expectedSupergruppo) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
         List<Persona> expectedPersone = new ArrayList<>();
@@ -98,7 +115,8 @@ class TaskControllerTest {
 
         when(gruppoService.findAllMembriInSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/create", expectedSupergruppo.getId()))
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/create", expectedSupergruppo.getId())
+                .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("taskForm", task))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
@@ -113,17 +131,23 @@ class TaskControllerTest {
         User user3 = new User("vittorio@scarano.it", "scarano");
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
+        persona1.setId(1);
         Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
-        Supergruppo supergruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo supergruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
-        Supergruppo supergruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
         return Stream.of(
-                Arguments.of(user1, persona1, supergruppo1),
-                Arguments.of(user2, persona2, supergruppo2),
-                Arguments.of(user3, persona3, supergruppo3)
+                Arguments.of(user2, persona2, gruppo2),
+                Arguments.of(user1, persona1, gruppo1),
+                Arguments.of(user3, persona3, gruppo3)
         );
     }
 
@@ -152,7 +176,10 @@ class TaskControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideVisualizzaDettagliTaskSupergruppo")
-    void visualizzaDettagliTaskSupergruppo(Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask, Boolean isResponsible) throws Exception{
+    void visualizzaDettagliTaskSupergruppo(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask, Boolean isResponsible) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedPersona.setUser(user);
+
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         expectedTask.setSupergruppo(expectedSupergruppo);
@@ -160,46 +187,61 @@ class TaskControllerTest {
         expectedTask.setPersona(expectedPersona);
 
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}", expectedSupergruppo.getId(), expectedTask.getId()))
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}", expectedSupergruppo.getId(), expectedTask.getId())
+                .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
+                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
+
     private static Stream<Arguments> provideVisualizzaDettagliTaskSupergruppo() {
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
+        User user1 = new User("admin", "admin");
+        User user2 = new User("rob@deprisco.it", "roberto");
+        User user3 = new User("vittorio@scarano.it", "scarano");
+
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
-        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
         task2.setId(2);
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
         task3.setId(3);
 
         return Stream.of(
-                Arguments.of(persona1, gruppo1, task1, true),
-                Arguments.of(persona2, gruppo2, task2, true),
-                Arguments.of(persona3, gruppo3, task3, false)
+                Arguments.of(user1, persona1, gruppo1, task1, true),
+                Arguments.of(user2, persona2, gruppo2, task2, true),
+                Arguments.of(user3, persona3, gruppo3, task3, false)
         );
     }
 
     @ParameterizedTest
     @MethodSource("provideApprovazioneTask")
-    void approvazioneTask(Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask, Boolean isResponsible) throws Exception{
+    void approvazioneTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask, Boolean isResponsible) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedPersona.setUser(user);
+
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         expectedTask.setSupergruppo(expectedSupergruppo);
@@ -208,47 +250,61 @@ class TaskControllerTest {
         int flagAzione = 1;
 
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/approva", expectedSupergruppo.getId(), expectedTask.getId()))
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/approva", expectedSupergruppo.getId(), expectedTask.getId())
+                .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
+                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(model().attribute("flagAzione", flagAzione))
                 .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
+
     private static Stream<Arguments> provideApprovazioneTask() {
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
+        User user1 = new User("admin", "admin");
+        User user2 = new User("rob@deprisco.it", "roberto");
+        User user3 = new User("vittorio@scarano.it", "scarano");
+
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
-        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
         task2.setId(2);
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
         task3.setId(3);
 
         return Stream.of(
-                Arguments.of(persona1, gruppo1, task1, true),
-                Arguments.of(persona2, gruppo2, task2, true),
-                Arguments.of(persona3, gruppo3, task3, false)
+                Arguments.of(user1, persona1, gruppo1, task1, true),
+                Arguments.of(user2, persona2, gruppo2, task2, true),
+                Arguments.of(user3, persona3, gruppo3, task3, false)
         );
     }
 
     @ParameterizedTest
     @MethodSource("provideRifiutoTask")
-    void rifiutoTask(Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask, Boolean isResponsible) throws Exception{
+    void rifiutoTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask, Boolean isResponsible) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedPersona.setUser(user);
 
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
@@ -258,48 +314,63 @@ class TaskControllerTest {
         int flagAzione = 2;
 
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/rifiuta", expectedSupergruppo.getId(), expectedTask.getId()))
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/rifiuta", expectedSupergruppo.getId(), expectedTask.getId())
+                .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
+                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(model().attribute("flagAzione", flagAzione))
                 .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
+
     private static Stream<Arguments> provideRifiutoTask() {
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
+        User user1 = new User("admin", "admin");
+        User user2 = new User("rob@deprisco.it", "roberto");
+        User user3 = new User("vittorio@scarano.it", "scarano");
+
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
-        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
         task2.setId(2);
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
         task3.setId(3);
 
         return Stream.of(
-                Arguments.of(persona1, gruppo1, task1, true),
-                Arguments.of(persona2, gruppo2, task2, true),
-                Arguments.of(persona3, gruppo3, task3, false)
+                Arguments.of(user1, persona1, gruppo1, task1, true),
+                Arguments.of(user2, persona2, gruppo2, task2, true),
+                Arguments.of(user3, persona3, gruppo3, task3, false)
         );
     }
 
 
     @ParameterizedTest
     @MethodSource("provideCompletaTask")
-    void completaTask(Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask, Boolean isResponsible) throws Exception{
+    void completaTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask, Boolean isResponsible) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedPersona.setUser(user);
+
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         expectedTask.setSupergruppo(expectedSupergruppo);
@@ -307,47 +378,62 @@ class TaskControllerTest {
         expectedTask.setPersona(expectedPersona);
 
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/completa", expectedSupergruppo.getId(), expectedTask.getId()))
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/completa", expectedSupergruppo.getId(), expectedTask.getId())
+                .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(),expectedSupergruppo.getId())))
+                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
+
     private static Stream<Arguments> provideCompletaTask() {
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
+
+        User user1 = new User("admin", "admin");
+        User user2 = new User("rob@deprisco.it", "roberto");
+        User user3 = new User("vittorio@scarano.it", "scarano");
+
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
-        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
         task2.setId(2);
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
         task3.setId(3);
 
         return Stream.of(
-                Arguments.of(persona1, gruppo1, task1, true),
-                Arguments.of(persona2, gruppo2, task2, true),
-                Arguments.of(persona3, gruppo3, task3, false)
+                Arguments.of(user1, persona1, gruppo1, task1, true),
+                Arguments.of(user2, persona2, gruppo2, task2, true),
+                Arguments.of(user3, persona3, gruppo3, task3, false)
         );
     }
 
     @ParameterizedTest
     @MethodSource("provideModificaTask")
-    void modificaTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task, Boolean isResponsible) throws Exception{
+    void modificaTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task, Boolean isResponsible) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
+
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         List<Persona> expectedPersone = new ArrayList<>();
@@ -367,7 +453,8 @@ class TaskControllerTest {
         when(gruppoService.findAllMembriInSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modifica", expectedSupergruppo.getId(), task.getId()))
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modifica", expectedSupergruppo.getId(), task.getId())
+                .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("taskForm", taskForm))
                 .andExpect(model().attribute("idTask", task.getId()))
@@ -376,6 +463,7 @@ class TaskControllerTest {
                 .andExpect(model().attribute("persone", expectedPersone))
                 .andExpect(view().name("task/modifica_task"));
     }
+
     private static Stream<Arguments> provideModificaTask() {
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -386,18 +474,24 @@ class TaskControllerTest {
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
-        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
         task2.setId(2);
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
         task3.setId(3);
 
         return Stream.of(
@@ -414,24 +508,28 @@ class TaskControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideVisualizzaListaTaskPersonali")
-    void visualizzaListaTaskPersonali(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task) throws Exception{
+    void visualizzaListaTaskPersonali(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
+
         expectedSupergruppo.addPersona(expectedPersona);
         task.setSupergruppo(expectedSupergruppo);
         expectedSupergruppo.addTask(task);
         task.setPersona(expectedPersona);
         expectedPersona.addTask(task);
-        List<Task> expectedTasks= new ArrayList<>();
+        List<Task> expectedTasks = new ArrayList<>();
         expectedTasks.add(task);
 
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
         when(taskService.visualizzaTaskUser(expectedPersona.getId())).thenReturn(expectedTasks);
 
-        this.mockMvc.perform(get("/taskPersonali"))
+        this.mockMvc.perform(get("/taskPersonali")
+                .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("listaTask", expectedTasks))
                 .andExpect(view().name("task/miei_task"));
     }
+
     private static Stream<Arguments> provideVisualizzaListaTaskPersonali() {
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -442,18 +540,24 @@ class TaskControllerTest {
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
-        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
         task2.setId(2);
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
         task3.setId(3);
 
         return Stream.of(
@@ -465,18 +569,22 @@ class TaskControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideVisualizzaDettagliTaskPersonali")
-    void visualizzaDettagliTaskPersonali( User user,Persona expectedPersona, Task expectedTask) throws Exception{
+    void visualizzaDettagliTaskPersonali(User user, Persona expectedPersona, Task expectedTask) throws Exception {
+
+        UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedTask.setPersona(expectedPersona);
 
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
-        this.mockMvc.perform(get("/taskPersonali/task_detail/{idTask}", expectedTask.getId()))
+        this.mockMvc.perform(get("/taskPersonali/task_detail/{idTask}", expectedTask.getId())
+                .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(view().name("task/dettagli_task_personali"));
 
     }
+
     private static Stream<Arguments> provideVisualizzaDettagliTaskPersonali() {
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -487,15 +595,17 @@ class TaskControllerTest {
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
-
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
         task2.setId(2);
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
         task3.setId(3);
 
         return Stream.of(
@@ -507,39 +617,49 @@ class TaskControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideCompletaTaskPersonale")
-    void completaTaskPersonale(Persona expectedPersona,Task expectedTask) throws Exception{
+    void completaTaskPersonale(User user, Persona expectedPersona, Task expectedTask) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedPersona.setUser(user);
         expectedTask.setPersona(expectedPersona);
         int expectedFlag = 4;
 
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
-        this.mockMvc.perform(get("/taskPersonali/task_detail/{idTask}/completa", expectedTask.getId()))
+        this.mockMvc.perform(get("/taskPersonali/task_detail/{idTask}/completa", expectedTask.getId())
+                .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("flagAzione", expectedFlag))
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(view().name("task/dettagli_task_personali"));
     }
+
     private static Stream<Arguments> provideCompletaTaskPersonale() {
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
+        User user1 = new User("admin", "admin");
+        User user2 = new User("rob@deprisco.it", "roberto");
+        User user3 = new User("vittorio@scarano.it", "scarano");
+
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
-
-        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" , date1, "task1" , "completo");
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
-        Task task2 = new Task("t1" , date2, "task2" , "incompleto");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
         task2.setId(2);
-        Task task3 = new Task("t1" , date3, "chiamare azienda" , "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
         task3.setId(3);
 
         return Stream.of(
-                Arguments.of(persona1, task1),
-                Arguments.of(persona2, task2),
-                Arguments.of(persona3, task3)
+                Arguments.of(user1, persona1, task1),
+                Arguments.of(user2, persona2, task2),
+                Arguments.of(user3, persona3, task3)
         );
     }
 /*
