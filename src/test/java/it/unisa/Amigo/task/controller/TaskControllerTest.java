@@ -106,8 +106,6 @@ class TaskControllerTest {
     @ParameterizedTest
     @MethodSource("provideDefinizioneTaskSupergruppo")
     void definizioneTaskSupergruppo(User user, Persona expectedPersona, Supergruppo expectedSupergruppo) throws Exception {
-        expectedPersona.setId(1);
-        expectedSupergruppo.setId(1);
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -133,17 +131,23 @@ class TaskControllerTest {
         User user3 = new User("vittorio@scarano.it", "scarano");
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
+        persona1.setId(1);
         Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
-        Supergruppo supergruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo supergruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
-        Supergruppo supergruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
         return Stream.of(
-                Arguments.of(user1, persona1, supergruppo1),
-                Arguments.of(user2, persona2, supergruppo2),
-                Arguments.of(user3, persona3, supergruppo3)
+                Arguments.of(user2, persona2, gruppo2),
+                Arguments.of(user1, persona1, gruppo1),
+                Arguments.of(user3, persona3, gruppo3)
         );
     }
 
@@ -176,9 +180,6 @@ class TaskControllerTest {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
 
-        expectedPersona.setId(1);
-        expectedSupergruppo.setId(1);
-
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         expectedTask.setSupergruppo(expectedSupergruppo);
@@ -208,12 +209,18 @@ class TaskControllerTest {
         User user3 = new User("vittorio@scarano.it", "scarano");
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
-        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
@@ -234,9 +241,6 @@ class TaskControllerTest {
     void approvazioneTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask, Boolean isResponsible) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
-
-        expectedPersona.setId(1);
-        expectedSupergruppo.setId(1);
 
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
@@ -269,12 +273,18 @@ class TaskControllerTest {
         User user3 = new User("vittorio@scarano.it", "scarano");
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
-        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
@@ -295,9 +305,6 @@ class TaskControllerTest {
     void rifiutoTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask, Boolean isResponsible) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
-
-        expectedPersona.setId(1);
-        expectedSupergruppo.setId(1);
 
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
@@ -330,12 +337,18 @@ class TaskControllerTest {
         User user3 = new User("vittorio@scarano.it", "scarano");
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
-        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
@@ -357,9 +370,6 @@ class TaskControllerTest {
     void completaTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask, Boolean isResponsible) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
-
-        expectedPersona.setId(1);
-        expectedSupergruppo.setId(1);
 
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
@@ -391,12 +401,18 @@ class TaskControllerTest {
         User user3 = new User("vittorio@scarano.it", "scarano");
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
-        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
@@ -417,9 +433,6 @@ class TaskControllerTest {
     void modificaTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task, Boolean isResponsible) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
-
-        expectedPersona.setId(1);
-        expectedSupergruppo.setId(1);
 
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
@@ -461,12 +474,18 @@ class TaskControllerTest {
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
-        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
@@ -493,10 +512,6 @@ class TaskControllerTest {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
 
-        expectedPersona.setId(1);
-        expectedSupergruppo.setId(1);
-
-        expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
         task.setSupergruppo(expectedSupergruppo);
         expectedSupergruppo.addTask(task);
@@ -525,12 +540,18 @@ class TaskControllerTest {
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
-        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
-        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
@@ -549,7 +570,7 @@ class TaskControllerTest {
     @ParameterizedTest
     @MethodSource("provideVisualizzaDettagliTaskPersonali")
     void visualizzaDettagliTaskPersonali(User user, Persona expectedPersona, Task expectedTask) throws Exception {
-        expectedPersona.setId(1);
+
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedTask.setPersona(expectedPersona);
@@ -574,9 +595,11 @@ class TaskControllerTest {
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
-
+        persona3.setId(3);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);
@@ -595,7 +618,6 @@ class TaskControllerTest {
     @ParameterizedTest
     @MethodSource("provideCompletaTaskPersonale")
     void completaTaskPersonale(User user, Persona expectedPersona, Task expectedTask) throws Exception {
-        expectedPersona.setId(1);
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedTask.setPersona(expectedPersona);
@@ -621,8 +643,11 @@ class TaskControllerTest {
         User user3 = new User("vittorio@scarano.it", "scarano");
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
         task1.setId(1);

@@ -132,7 +132,6 @@ class TaskServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideVisualizzaTaskUser")
     void visualizzaTaskUser(Persona persona, List<Task> expectedTasks) {
-        persona.setId(1);
         when(taskDAO.findAllByPersona_Id(persona.getId())).thenReturn(expectedTasks);
 
         assertEquals(expectedTasks, taskService.visualizzaTaskUser(persona.getId()));
@@ -143,11 +142,17 @@ class TaskServiceImplTest {
         LocalDate tmpDate2 = LocalDate.of(2029, 12, 31);
         LocalDate tmpDate3 = LocalDate.of(2120, 1, 1);
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
+        persona1.setId(1);
         Persona persona2 = new Persona("Persona2", "2", "PQA");
+        persona2.setId(2);
         Persona persona3 = new Persona("Persona3", "3", "DePrisco");
+        persona3.setId(3);
         Persona persona4 = new Persona("Admin", "Admin", "Administrator");
+        persona4.setId(4);
         Persona persona5 = new Persona("giovanni", "magi", "Administrator");
+        persona5.setId(5);
         Persona persona6 = new Persona("Vittorio", "Scarano", "user");
+        persona6.setId(6);
         Task task1 = new Task("descrizione 1", tmpDate, "Task 1", "incompleto");
         Task task2 = new Task("descrizione 2", tmpDate2, "Task 2", "in valutazione");
         Task task3 = new Task("descrizione 3", tmpDate3, "Task 3", "respinto");
@@ -191,7 +196,6 @@ class TaskServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideVisualizzaTaskSuperGruppo")
     void visualizzaTaskSuperGruppo(Supergruppo supergruppo, List<Task> expectedTasks) {
-        supergruppo.setId(1);
         when(taskDAO.findAllBySupergruppo_Id(supergruppo.getId())).thenReturn(expectedTasks);
 
         assertEquals(expectedTasks, taskService.visualizzaTaskSuperGruppo(supergruppo.getId()));
@@ -205,11 +209,17 @@ class TaskServiceImplTest {
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
         Supergruppo supergruppo1 = new Supergruppo("GAQD Informatica", "gruppo", true);
+        supergruppo1.setId(1);
         Supergruppo supergruppo2 = new Supergruppo("Robe", "commisione", false);
+        supergruppo2.setId(2);
         Supergruppo supergruppo3 = new Supergruppo("Boh", "gruppo", true);
+        supergruppo3.setId(3);
         Supergruppo supergruppo4 = new Supergruppo("GAQD- Informatica", "gruppo", true);
+        supergruppo4.setId(4);
         Supergruppo supergruppo5 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
+        supergruppo5.setId(5);
         Supergruppo supergruppo6 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        supergruppo6.setId(6);
         Task task1 = new Task("descrizione 1", tmpDate, "Task 1", "incompleto");
         Task task2 = new Task("descrizione 2", tmpDate2, "Task 2", "in valutazione");
         Task task3 = new Task("descrizione 3", tmpDate3, "Task 3", "respinto");
