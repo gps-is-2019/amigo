@@ -132,6 +132,7 @@ class TaskServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideVisualizzaTaskUser")
     void visualizzaTaskUser(Persona persona, List<Task> expectedTasks) {
+        persona.setId(1);
         when(taskDAO.findAllByPersona_Id(persona.getId())).thenReturn(expectedTasks);
 
         assertEquals(expectedTasks, taskService.visualizzaTaskUser(persona.getId()));
@@ -190,6 +191,7 @@ class TaskServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideVisualizzaTaskSuperGruppo")
     void visualizzaTaskSuperGruppo(Supergruppo supergruppo, List<Task> expectedTasks) {
+        supergruppo.setId(1);
         when(taskDAO.findAllBySupergruppo_Id(supergruppo.getId())).thenReturn(expectedTasks);
 
         assertEquals(expectedTasks, taskService.visualizzaTaskSuperGruppo(supergruppo.getId()));
