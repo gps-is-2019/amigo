@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -183,7 +184,7 @@ class GruppoServiceImplTest {
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(persona2);
 
-        when(supergruppoDAO.findById(supergruppo.getId())).thenReturn(supergruppo);
+        when(supergruppoDAO.findById(supergruppo.getId())).thenReturn(Optional.of(supergruppo));
         List<Persona> actualPersone = gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(supergruppo.getId());
         assertEquals(actualPersone, expectedPersone);
     }
@@ -203,7 +204,7 @@ class GruppoServiceImplTest {
     @ParameterizedTest
     @MethodSource("providefindPersona")
     void findPersona(Persona expectedPersona) {
-        when(personaDAO.findById(expectedPersona.getId())).thenReturn(expectedPersona);
+        when(personaDAO.findById(expectedPersona.getId())).thenReturn(Optional.of(expectedPersona));
         Persona actualPersona = gruppoService.findPersona(expectedPersona.getId());
         assertEquals(expectedPersona, actualPersona);
     }
@@ -220,7 +221,7 @@ class GruppoServiceImplTest {
     @ParameterizedTest
     @MethodSource("providefindSupergruppo")
     void findSupergruppo(Supergruppo expectedSupergruppo) {
-        when(supergruppoDAO.findById(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
+        when(supergruppoDAO.findById(expectedSupergruppo.getId())).thenReturn(Optional.of(expectedSupergruppo));
         Supergruppo actualSupergruppo = gruppoService.findSupergruppo(expectedSupergruppo.getId());
         assertEquals(expectedSupergruppo, actualSupergruppo);
     }
@@ -297,7 +298,7 @@ class GruppoServiceImplTest {
     void isResponsabile(Persona expectedPersona, Supergruppo expectedSupergruppo) {
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
-        when(supergruppoDAO.findById(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
+        when(supergruppoDAO.findById(expectedSupergruppo.getId())).thenReturn(Optional.of(expectedSupergruppo));
         boolean expectedValue = gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId());
         assertEquals(true, expectedValue);
     }
@@ -314,13 +315,11 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindAllCommissioniByGruppo")
-    void findAllCommissioniByGruppo(Commissione expectedCommissione, Commissione expectedCommissione2, Gruppo expectedGruppo) {
+    void findAllCommissioniByGruppo(Commissione expectedCommissione, Gruppo expectedGruppo) {
         List<Commissione> expectedCommissioni = new ArrayList<>();
         expectedCommissioni.add(expectedCommissione);
-        expectedCommissioni.add(expectedCommissione2);
         expectedGruppo.addCommissione(expectedCommissione);
-        expectedGruppo.addCommissione(expectedCommissione2);
-        when(supergruppoDAO.findById(expectedGruppo.getId())).thenReturn(expectedGruppo);
+        when(supergruppoDAO.findById(expectedGruppo.getId())).thenReturn(Optional.of(expectedGruppo));
         List<Commissione> actualCommissioni = gruppoService.findAllCommissioniByGruppo(expectedGruppo.getId());
         assertEquals(actualCommissioni, expectedCommissioni);
     }
@@ -331,8 +330,8 @@ class GruppoServiceImplTest {
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
         Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione2", true, "Commissione2");
         return Stream.of(
-                Arguments.of(expectedCommissione, expectedCommissione2, expectedGruppo),
-                Arguments.of(expectedCommissione, expectedCommissione2, expectedGruppo2)
+                Arguments.of(expectedCommissione, expectedGruppo),
+                Arguments.of(expectedCommissione2, expectedGruppo2)
         );
     }
 
@@ -349,7 +348,7 @@ class GruppoServiceImplTest {
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(persona2);
 
-        when(supergruppoDAO.findById(expectedCommissione.getId())).thenReturn(expectedCommissione);
+        when(supergruppoDAO.findById(expectedCommissione.getId())).thenReturn(Optional.of(expectedCommissione));
 
         List<Persona> acutalPersone = gruppoService.findAllMembriInGruppoNoCommissione(expectedCommissione.getId());
         assertEquals(expectedPersone, acutalPersone);
@@ -372,7 +371,7 @@ class GruppoServiceImplTest {
     @ParameterizedTest
     @MethodSource("providecloseCommissione")
     void closeCommissione(Commissione expectedCommissione) {
-        when(supergruppoDAO.findById(expectedCommissione.getId())).thenReturn(expectedCommissione);
+        when(supergruppoDAO.findById(expectedCommissione.getId())).thenReturn(Optional.of(expectedCommissione));
         gruppoService.closeCommissione(expectedCommissione.getId());
         assertEquals(false, expectedCommissione.getState());
     }
@@ -389,7 +388,7 @@ class GruppoServiceImplTest {
     @ParameterizedTest
     @MethodSource("providecreateCommissione")
     void createCommissione(Commissione expectedCommissione, Commissione actualCommissione, Gruppo expectedGruppo) {
-        when(supergruppoDAO.findById(expectedGruppo.getId())).thenReturn(expectedGruppo);
+        when(supergruppoDAO.findById(expectedGruppo.getId())).thenReturn(Optional.of(expectedGruppo));
         gruppoService.createCommissione(expectedCommissione, expectedGruppo.getId());
         actualCommissione.setGruppo(expectedGruppo);
         assertEquals(actualCommissione, expectedCommissione);
@@ -410,8 +409,8 @@ class GruppoServiceImplTest {
     @ParameterizedTest
     @MethodSource("providenominaResponsabile")
     void nominaResponsabile(Persona persona1, Commissione expectedCommissione, Commissione actualCommissione) {
-        when(personaDAO.findById(persona1.getId())).thenReturn(persona1);
-        when(supergruppoDAO.findById(expectedCommissione.getId())).thenReturn(expectedCommissione);
+        when(personaDAO.findById(persona1.getId())).thenReturn(Optional.of(persona1));
+        when(supergruppoDAO.findById(expectedCommissione.getId())).thenReturn(Optional.of(expectedCommissione));
         actualCommissione.addPersona(persona1);
         actualCommissione.setResponsabile(persona1);
         assertEquals(actualCommissione, expectedCommissione);
@@ -433,7 +432,7 @@ class GruppoServiceImplTest {
     @ParameterizedTest
     @MethodSource("providefindGruppoByCommissione")
     void findGruppoByCommissione(Gruppo expectedGruppo, Gruppo actualGruppo) {
-        when(supergruppoDAO.findById(expectedGruppo.getId())).thenReturn(expectedGruppo);
+        when(supergruppoDAO.findById(expectedGruppo.getId())).thenReturn(Optional.of(expectedGruppo));
         assertEquals(expectedGruppo, actualGruppo);
     }
 

@@ -273,14 +273,11 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providefindAllCommissioniByGruppo")
-    void findAllCommissioniByGruppo(Gruppo expectedGruppo, Commissione expectedCommissione, Commissione expectedCommissione2) {
+    void findAllCommissioniByGruppo(Gruppo expectedGruppo, Commissione expectedCommissione) {
         List<Commissione> expectedCommissioni = new ArrayList<>();
         expectedCommissioni.add(expectedCommissione);
-        expectedCommissioni.add(expectedCommissione2);
-        expectedGruppo.addCommissione(expectedCommissione2);
         expectedGruppo.addCommissione(expectedCommissione);
         supergruppoDAO.save(expectedGruppo);
-        supergruppoDAO.save(expectedCommissione2);
         supergruppoDAO.save(expectedCommissione);
 
         List<Commissione> actualCommissioni = gruppoService.findAllCommissioniByGruppo(expectedGruppo.getId());
@@ -291,9 +288,8 @@ public class GruppoServiceImplIT {
     private static Stream<Arguments> providefindAllCommissioniByGruppo() {
         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
-        Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione", true, "Commissione2");
         return Stream.of(
-                Arguments.of(expectedGruppo, expectedCommissione, expectedCommissione2)
+                Arguments.of(expectedGruppo, expectedCommissione)
         );
     }
 
@@ -340,7 +336,7 @@ public class GruppoServiceImplIT {
     void closeCommissione(Commissione expectedCommissione) {
         supergruppoDAO.save(expectedCommissione);
         gruppoService.closeCommissione(expectedCommissione.getId());
-        Commissione actualCommissione = (Commissione) supergruppoDAO.findById(expectedCommissione.getId());
+        Commissione actualCommissione = (Commissione) supergruppoDAO.findById(expectedCommissione.getId()).get();
         assertEquals(actualCommissione.getState(), false);
     }
 
