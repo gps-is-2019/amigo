@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class TaskServiceImpl implements TaskService {
-
+ 
     /**
      * Fornisce accesso alla classe di dominio "Task".
      */
