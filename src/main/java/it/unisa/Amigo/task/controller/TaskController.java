@@ -74,12 +74,6 @@ public class TaskController {
     @GetMapping("/gruppi/{idSupergruppo}/tasks/create")
     public String definizioneTaskSupergruppo(@ModelAttribute Task taskForm, Model model,
                                              @PathVariable(name = "idSupergruppo") int idSupergruppo) {
-
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        if(gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo) == false){
-            return "403";
-        }
-
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("taskForm", taskForm);
 

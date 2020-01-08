@@ -88,9 +88,12 @@ public class RepositoryController {
     public String uploadDocumento(Model model, @RequestParam("file") MultipartFile file) {
         boolean addFlag = repositoryService.addDocumentoInRepository(file);
         model.addAttribute("addFlag", addFlag);
-        if(addFlag){
+        if (addFlag) {
             model.addAttribute("documentoNome", file.getOriginalFilename());
         }
+        model.addAttribute("flagPQA", 1);
+        List<Documento> documenti = repositoryService.searchDocumentInRepository("");
+        model.addAttribute("documenti", documenti);
         return "repository/repository";
     }
 
