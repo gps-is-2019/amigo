@@ -13,7 +13,7 @@
 <form
         class="ui form text container"
         method="post"
-        th:action="@{'/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modificaTaskSupergruppo'( idSupergruppo=${idSupergruppo} , idTask=${idTask} )}"
+        th:action="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modificaTask'( idSupergruppo=${idSupergruppo} , idTask=${idTask} )}"
         th:object="${taskForm}">
 
     <div class="field">
@@ -48,7 +48,8 @@
         <th:block th:each="persona : ${persone}">
             <tr class="center aligned">
                 <td>
-                    <input type="radio" th:name="idPersona" path="idPersona" id="${persona.id}" th:value="${persona.id}"  th:checked="${persona.id==taskForm.idPersona}">
+                    <input type="radio" class="ui radio checkbox" th:name="idPersona" path="idPersona"
+                           id="${persona.id}" th:value="${persona.id}" th:checked="${persona.id==taskForm.idPersona}">
                 </td>
                 <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.cognome}"></td>
@@ -57,7 +58,7 @@
         </th:block>
         </tbody>
     </table>
-    <button class="ui primary button" type="submit">Modifica Task</button>
+    <button class="ui primary button" type="submit">Aggiorna Task</button>
 </form>
 
 </table>

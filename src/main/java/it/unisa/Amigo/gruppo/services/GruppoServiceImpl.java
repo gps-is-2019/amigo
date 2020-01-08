@@ -1,5 +1,7 @@
 package it.unisa.Amigo.gruppo.services;
 
+import it.unisa.Amigo.autenticazione.dao.RoleDAO;
+import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
@@ -274,6 +276,16 @@ public class GruppoServiceImpl implements GruppoService {
         Commissione commissione = (Commissione) supergruppoDAO.findById(idCommissione).get();
         Gruppo result = commissione.getGruppo();
         return result;
+    }
+
+    @Override
+    public List<String> findAllRoleOfPersona(int idPersona) {
+        List<String> r = new ArrayList<>();
+        Set<Role> ruoli = personaDAO.findById(idPersona).getUser().getRoles();
+        for(Role ruolo :ruoli){
+            r.add(ruolo.getName());
+        }
+        return r;
     }
 
 
