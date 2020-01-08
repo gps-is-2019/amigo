@@ -135,6 +135,17 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     }
 
     /**
+     * Recupera una consegna tramite l'id del documento ad esso associata
+     *
+     * @param idDocumento l'id del documento
+     * @return la consegna
+     */
+    @Override
+    public Consegna findConsegnaByDocumentoAndDestinatario(int idDocumento, int idDestinatario) {
+        return consegnaDAO.findByDocumento_IdAndDestinatario_Id(idDocumento, idDestinatario);
+    }
+
+    /**
      * Recupera tutti i possibili ruoli destinatari a cui effettuare una consegna
      *
      * @return i destinatari

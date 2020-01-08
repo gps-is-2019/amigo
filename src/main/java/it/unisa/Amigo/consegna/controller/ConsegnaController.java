@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.annotation.ServletSecurity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -146,8 +147,12 @@ public class ConsegnaController {
      */
     @GetMapping("/consegna/miei-documenti/{idDocumento}")
     public ResponseEntity<Resource> downloadDocumento(Model model, @PathVariable("idDocumento") int idDocumento) {
-        Consegna consegna = consegnaService.findConsegnaByDocumento(idDocumento);
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Consegna consegna = consegnaService.findConsegnaByDocumentoAndDestinatario(idDocumento, personaLoggata.getId());
+
+        if (consegna == null)
+            consegna = consegnaService.findConsegnaByDocumento(idDocumento);
+
         Set<Role> role = personaLoggata.getUser().getRoles();
         List<String> ruoliString = new ArrayList<>();
 

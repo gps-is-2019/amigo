@@ -28,4 +28,6 @@ public interface ConsegnaService {
     void approvaConsegna(int idConsegna);
 
     void rifiutaConsegna(int idConsegna);
+
+    Consegna findConsegnaByDocumentoAndDestinatario(int idDocumento, int idDestinatario);
 }

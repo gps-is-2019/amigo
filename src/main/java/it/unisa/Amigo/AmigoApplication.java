@@ -66,6 +66,7 @@ public class AmigoApplication {
 
 				User userGravino = new User("gravino@unisa.it",encoder.encode("gravino"));
 				userGravino.addRole(userRole);
+				userGravino.addRole(cpdsRole);
 
 				User userVincenzi = new User("vincenzi@unisa.it",encoder.encode("vincenzi"));
 				userVincenzi.addRole(userRole);

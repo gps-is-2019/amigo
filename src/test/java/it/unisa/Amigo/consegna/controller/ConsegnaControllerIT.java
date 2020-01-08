@@ -1,11 +1,13 @@
 package it.unisa.Amigo.consegna.controller;
 
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
+import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.autenticazione.domanin.User;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.consegna.services.ConsegnaService;
 import it.unisa.Amigo.documento.domain.Documento;
+import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.junit.jupiter.api.Test;
@@ -38,27 +40,34 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-class ConsegnaControllerTest {
+class ConsegnaControllerIT {
 
-    @MockBean
+    @Autowired
     private ConsegnaService consegnaService;
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private GruppoService gruppoService;
 
+    @Autowired
+    private PersonaDAO personaDAO;
+
+    @Autowired
+    private UserDAO userDAO;
 
     @ParameterizedTest
     @MethodSource("provideDestinatari")
-    void viewConsegna(Set<String> possibiliDestinatari, List<Persona> destinatari, String ruoloDest, boolean flagRuolo) throws Exception {
+    void viewConsegna(Set<String> possibiliDestinatari, List<Persona> destinatari, String ruoloDest, boolean flagRuolo, User userLoggato) throws Exception {
 
-        User user = new User("admin", "admin");
-        UserDetailImpl userDetails = new UserDetailImpl(user);
+        for(int i = 0; i<destinatari.size(); i++)
+            if (!destinatari.get(i).getCognome().equals(Role.PQA_ROLE))
+                personaDAO.save(destinatari.get(i));
 
-        when(consegnaService.possibiliDestinatari()).thenReturn(possibiliDestinatari);
-        when(gruppoService.findAllByRuolo(ruoloDest)).thenReturn(destinatari);
+        UserDetailImpl userDetails = new UserDetailImpl(userLoggato);
+        personaDAO.save(userLoggato.getPersona());
+        userDAO.save(userLoggato);
 
         this.mockMvc.perform(get("/consegna/{ruolo}", ruoloDest)
                 .with(user(userDetails)))
@@ -80,7 +89,13 @@ class ConsegnaControllerTest {
         List<Persona> destinatari1 = new ArrayList<>();
         destinatari1.add(new Persona("", pqaRole.getName(), ""));
 
-        //test 2
+        Persona persona1 = new Persona("Nome", "Cognome", "");
+        User user1 = new User("admin", "admin");
+        user1.addRole(new Role(Role.CAPOGRUPPO_ROLE));
+        user1.setPersona(persona1);
+        persona1.setUser(user1);
+
+        /*//test 2
         Role capogruppoRole = new Role(Role.CAPOGRUPPO_ROLE);
 
         Set<String> possibiliDest2 = new HashSet<String>();
@@ -88,15 +103,30 @@ class ConsegnaControllerTest {
         possibiliDest2.add(Role.NDV_ROLE);
 
         List<Persona> destinatari2 = new ArrayList<>();
-        destinatari2.add(new Persona("Nome", "Cognome", Role.CAPOGRUPPO_ROLE));
-        destinatari2.add(new Persona("Nome", "Cognome", Role.CAPOGRUPPO_ROLE));
+        Persona persona2 = new Persona("Nome", "Cognome", "");
+        Persona persona3 = new Persona("Nome", "Cognome", "");
+        User user2 = new User("nome", "cognome");
+        User user3 = new User("nome", "cognome");
+        user2.addRole(new Role(Role.CAPOGRUPPO_ROLE));
+        user3.addRole(new Role(Role.CAPOGRUPPO_ROLE));
+        persona2.setUser(user2);
+        persona3.setUser(user3);
+        destinatari2.add(persona2);
+        destinatari2.add(persona3);
 
+        Persona persona4 = new Persona("Nome", "Cognome", "");
+        User user4 = new User("admin", "admin");
+        user4.addRole(new Role(Role.PQA_ROLE));
+        user4.setPersona(persona4);
+        persona4.setUser(user4);
+        */
         return Stream.of(
-                Arguments.of(possibiliDest1, destinatari1, pqaRole.getName(), true),
-                Arguments.of(possibiliDest2, destinatari2, capogruppoRole.getName(), false)
-                );
+                Arguments.of(possibiliDest1, destinatari1, pqaRole.getName(), true, user1)
+                //Arguments.of(possibiliDest2, destinatari2, capogruppoRole.getName(), false, user4)
+        );
     }
 
+/*
     @Test
     void sendDocumento() {
     }
@@ -233,7 +263,6 @@ class ConsegnaControllerTest {
 
     }
 
-    /*
     @ParameterizedTest
     @MethodSource("provideDownloadDocumento")
     void downloadDocumento(Consegna consegna, Persona personaLoggata) throws Exception {
@@ -308,7 +337,6 @@ class ConsegnaControllerTest {
                 Arguments.of(consegna2, persona1)
         );
     }
-    */
 
     @ParameterizedTest
     @MethodSource("provideApprovaConsegna")
@@ -453,4 +481,5 @@ class ConsegnaControllerTest {
         );
 
     }
+    */
 }
