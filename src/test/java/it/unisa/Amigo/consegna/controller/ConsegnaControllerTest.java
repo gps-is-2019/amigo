@@ -3,7 +3,9 @@ package it.unisa.Amigo.consegna.controller;
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.consegna.services.ConsegnaService;
+import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.junit.jupiter.api.Test;
@@ -104,67 +106,357 @@ class ConsegnaControllerTest {
     void sendDocumento() {
     }
 
-    @Test
-    void testSendDocumento() {
+    @ParameterizedTest
+    @MethodSource("provideConsegneInviate")
+    void findConsegneInviate(List<Consegna> consegne) throws Exception {
+
+        User user = new User("admin", "admin");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        expectedPersona.setUser(user);
+
+
+        when(consegnaService.consegneInviate()).thenReturn(consegne);
+        this.mockMvc.perform(get("/consegna/inviati")
+                .param("name", "")
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("consegne", consegne))
+                .andExpect(view().name("consegna/documenti-inviati"));
     }
 
-    @Test
-    void findConsegneInviate() {
+    private static Stream<Arguments> provideConsegneInviate(){
+
+        Persona persona1 = new Persona("persona1", "persona1", "");
+
+
+        Documento documento1 = new Documento();
+        documento1.setNome("Ciao");
+        Documento documento2 = new Documento();
+        documento2.setNome("Ciao");
+        Documento documento3 = new Documento();
+        documento3.setNome("Ciao");
+        Documento documento4 = new Documento();
+        documento4.setNome("Ciao");
+
+        Consegna consegna = new Consegna();
+        consegna.setId(1);
+        consegna.setMittente(persona1);
+        consegna.setDocumento(documento1);
+        Consegna consegna1 = new Consegna();
+        consegna1.setId(2);
+        consegna1.setDocumento(documento2);
+        consegna1.setMittente(persona1);
+        Consegna consegna2 = new Consegna();
+        consegna2.setId(3);
+        consegna2.setDocumento(documento3);
+        consegna2.setMittente(persona1);
+        Consegna consegna3 = new Consegna();
+        consegna3.setId(4);
+        consegna3.setDocumento(documento4);
+        consegna3.setMittente(persona1);
+
+        List<Consegna> test1 = new ArrayList<>();
+        List<Consegna> test2 = new ArrayList<>();
+        test1.add(consegna);
+        test1.add(consegna2);
+        test2.add(consegna3);
+        test2.add(consegna1);
+
+        return Stream.of(
+                Arguments.of(test1),
+                Arguments.of(test2)
+        );
+
     }
 
-    @Test
-    void findConsegneRicevute() {
+    @ParameterizedTest
+    @MethodSource("provideConsegneRicevute")
+    void findConsegneRicevute(List<Consegna> consegne) throws Exception {
+
+        User user = new User("admin", "admin");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        expectedPersona.setUser(user);
+
+
+        when(consegnaService.consegneRicevute()).thenReturn(consegne);
+
+        this.mockMvc.perform(get("/consegna/ricevuti")
+                .param("name", "")
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("consegne", consegne))
+                .andExpect(view().name("consegna/documenti-ricevuti"));
     }
 
-    @Test
-    void downloadDocumento() {
+    private static Stream<Arguments> provideConsegneRicevute(){
+        User user = new User("admin", "admin");
+        user.addRole(new Role(Role.PQA_ROLE));
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        Persona persona1 = new Persona("persona1", "persona1", "");
+        persona1.setUser(user);
+
+
+        Documento documento1 = new Documento();
+        documento1.setNome("Ciao");
+        Documento documento2 = new Documento();
+        documento2.setNome("Ciao");
+        Documento documento3 = new Documento();
+        documento3.setNome("Ciao");
+        Documento documento4 = new Documento();
+        documento4.setNome("Ciao");
+
+        Consegna consegna = new Consegna();
+        consegna.setId(1);
+        consegna.setMittente(persona1);
+        consegna.setDocumento(documento1);
+        Consegna consegna1 = new Consegna();
+        consegna1.setId(2);
+        consegna1.setDocumento(documento2);
+        consegna1.setMittente(persona1);
+        Consegna consegna2 = new Consegna();
+        consegna2.setId(3);
+        consegna2.setDocumento(documento3);
+        consegna2.setMittente(persona1);
+        Consegna consegna3 = new Consegna();
+        consegna3.setId(4);
+        consegna3.setDocumento(documento4);
+        consegna3.setMittente(persona1);
+
+        List<Consegna> test1 = new ArrayList<>();
+        List<Consegna> test2 = new ArrayList<>();
+        test1.add(consegna);
+        test1.add(consegna2);
+        test2.add(consegna3);
+        test2.add(consegna1);
+
+        return Stream.of(
+                Arguments.of(test1),
+                Arguments.of(test2)
+        );
+
     }
 
-    @Test
-    void testViewConsegna() {
+    /*@ParameterizedTest
+    @MethodSource("provideDownloadDocumento")
+    void downloadDocumento(Consegna consegna, Persona personaLoggata) throws Exception {
+
+        User user = new User("admin", "admin");
+        user.addRole(new Role(Role.PQA_ROLE));
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        Persona persona1 = new Persona("persona1", "persona1", "");
+        persona1.setUser(user);
+
+
+
+        when(consegnaService.findConsegnaByDocumento(consegna.getDocumento().getId())).thenReturn(consegna);
+        when(gruppoService.getAuthenticatedUser()).thenReturn(personaLoggata);
+
+        /* Come ritorno alla pagina di download?
+
+        this.mockMvc.perform(get("/consegna/miei-documenti/{idDocumento}", consegna.getDocumento().getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("consegna/documenti-ricevuti"));
+
+
+    }*/
+
+    private static Stream<Arguments> provideDownloadDocumento(){
+
+        User user = new User("admin", "admin");
+        user.addRole(new Role(Role.PQA_ROLE));
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        Persona persona1 = new Persona("persona1", "persona1", "");
+        persona1.setUser(user);
+
+
+        Documento documento1 = new Documento();
+        documento1.setNome("Ciao");
+        Documento documento2 = new Documento();
+        documento2.setNome("Ciao");
+        Documento documento3 = new Documento();
+        documento3.setNome("Ciao");
+        Documento documento4 = new Documento();
+        documento4.setNome("Ciao");
+
+        Consegna consegna = new Consegna();
+        consegna.setId(1);
+        consegna.setMittente(persona1);
+        consegna.setDestinatario(persona1);
+        consegna.setDocumento(documento1);
+        Consegna consegna1 = new Consegna();
+        consegna1.setId(2);
+        consegna1.setDocumento(documento2);
+        consegna1.setMittente(persona1);
+        consegna1.setDestinatario(persona1);
+        Consegna consegna2 = new Consegna();
+        consegna2.setId(3);
+        consegna2.setDocumento(documento3);
+        consegna2.setDestinatario(persona1);
+        consegna2.setMittente(persona1);
+        Consegna consegna3 = new Consegna();
+        consegna3.setId(4);
+        consegna3.setDocumento(documento4);
+        consegna3.setDestinatario(persona1);
+        consegna3.setMittente(persona1);
+
+        List<Consegna> test1 = new ArrayList<>();
+        List<Consegna> test2 = new ArrayList<>();
+        test1.add(consegna);
+        test1.add(consegna2);
+        test2.add(consegna3);
+        test2.add(consegna1);
+
+        return Stream.of(
+                Arguments.of(consegna, persona1),
+                Arguments.of(consegna2, persona1)
+        );
+
     }
 
-    @Test
-    void testSendDocumento1() {
+    @ParameterizedTest
+    @MethodSource("provideApprovaConsegna")
+    void approvaConsegna(List<Consegna> consegne) throws Exception {
+
+        User user = new User("admin", "admin");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        expectedPersona.setUser(user);
+
+
+        when(consegnaService.consegneRicevute()).thenReturn(consegne);
+
+        this.mockMvc.perform(get("/consegna/approva/{id}", consegne.get(0).getId())
+                .param("name", "")
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("consegne", consegne))
+                .andExpect(view().name("consegna/documenti-ricevuti"));
     }
 
-    @Test
-    void testFindConsegneInviate() {
+    private static Stream<Arguments> provideApprovaConsegna(){
+
+        User user = new User("admin", "admin");
+        user.addRole(new Role(Role.PQA_ROLE));
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        Persona persona1 = new Persona("persona1", "persona1", "");
+        persona1.setUser(user);
+
+
+        Documento documento1 = new Documento();
+        documento1.setNome("Ciao");
+        Documento documento2 = new Documento();
+        documento2.setNome("Ciao");
+        Documento documento3 = new Documento();
+        documento3.setNome("Ciao");
+        Documento documento4 = new Documento();
+        documento4.setNome("Ciao");
+
+        Consegna consegna = new Consegna();
+        consegna.setId(1);
+        consegna.setMittente(persona1);
+        consegna.setDestinatario(persona1);
+        consegna.setDocumento(documento1);
+        Consegna consegna1 = new Consegna();
+        consegna1.setId(2);
+        consegna1.setDocumento(documento2);
+        consegna1.setMittente(persona1);
+        consegna1.setDestinatario(persona1);
+        Consegna consegna2 = new Consegna();
+        consegna2.setId(3);
+        consegna2.setDocumento(documento3);
+        consegna2.setDestinatario(persona1);
+        consegna2.setMittente(persona1);
+        Consegna consegna3 = new Consegna();
+        consegna3.setId(4);
+        consegna3.setDocumento(documento4);
+        consegna3.setDestinatario(persona1);
+        consegna3.setMittente(persona1);
+
+        List<Consegna> test1 = new ArrayList<>();
+        List<Consegna> test2 = new ArrayList<>();
+        test1.add(consegna);
+        test1.add(consegna2);
+        test2.add(consegna3);
+        test2.add(consegna1);
+
+        return Stream.of(
+                Arguments.of(test1),
+                Arguments.of(test2)
+        );
+
     }
 
-    @Test
-    void testFindConsegneRicevute() {
+    @ParameterizedTest
+    @MethodSource("provideRifiutaConsegna")
+    void rifiutaConsegna(List<Consegna> consegne) throws Exception {
+        User user = new User("admin", "admin");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
+        expectedPersona.setUser(user);
+
+
+        when(consegnaService.consegneRicevute()).thenReturn(consegne);
+
+        this.mockMvc.perform(get("/consegna/rifiuta/{id}", consegne.get(0).getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("consegne", consegne))
+                .andExpect(view().name("consegna/documenti-ricevuti"));
     }
 
-    @Test
-    void testDownloadDocumento() {
-    }
+    private static Stream<Arguments> provideRifiutaConsegna(){
 
-    @Test
-    void testViewConsegna1() {
-    }
+        User user = new User("admin", "admin");
+        user.addRole(new Role(Role.PQA_ROLE));
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        Persona persona1 = new Persona("persona1", "persona1", "");
+        persona1.setUser(user);
 
-    @Test
-    void testSendDocumento2() {
-    }
 
-    @Test
-    void testFindConsegneInviate1() {
-    }
+        Documento documento1 = new Documento();
+        documento1.setNome("Ciao");
+        Documento documento2 = new Documento();
+        documento2.setNome("Ciao");
+        Documento documento3 = new Documento();
+        documento3.setNome("Ciao");
+        Documento documento4 = new Documento();
+        documento4.setNome("Ciao");
 
-    @Test
-    void testFindConsegneRicevute1() {
-    }
+        Consegna consegna = new Consegna();
+        consegna.setId(1);
+        consegna.setMittente(persona1);
+        consegna.setDestinatario(persona1);
+        consegna.setDocumento(documento1);
+        Consegna consegna1 = new Consegna();
+        consegna1.setId(2);
+        consegna1.setDocumento(documento2);
+        consegna1.setMittente(persona1);
+        consegna1.setDestinatario(persona1);
+        Consegna consegna2 = new Consegna();
+        consegna2.setId(3);
+        consegna2.setDocumento(documento3);
+        consegna2.setDestinatario(persona1);
+        consegna2.setMittente(persona1);
+        Consegna consegna3 = new Consegna();
+        consegna3.setId(4);
+        consegna3.setDocumento(documento4);
+        consegna3.setDestinatario(persona1);
+        consegna3.setMittente(persona1);
 
-    @Test
-    void testDownloadDocumento1() {
-    }
+        List<Consegna> test1 = new ArrayList<>();
+        List<Consegna> test2 = new ArrayList<>();
+        test1.add(consegna);
+        test1.add(consegna2);
+        test2.add(consegna3);
+        test2.add(consegna1);
 
-    @Test
-    void approvaConsegna() {
-    }
+        return Stream.of(
+                Arguments.of(test1),
+                Arguments.of(test2)
+        );
 
-    @Test
-    void rifiutaConsegna() {
     }
 }
