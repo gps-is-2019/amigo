@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-
     <head th:include="/fragments/fragments.html :: head">
         <title id="pageTitle">Amigo | Destinatari</title>
     </head>
@@ -56,19 +55,6 @@
         <input class="ui positive button" name="submit" type="submit" value="Invia"/>
     </form>
 </th:block>
-
-<script type="text/javascript">
-    $('.ui.fluid.dropdown')
-      .dropdown({placeholder:'Destinatari'});
-
-    $('#file-upload').change(function() {
-        var i = $(this).prev('label').clone();
-        var file = $('#file-upload')[0].files[0].name;
-        $(this).prev('label').text(file);
-    });
-
-
-</script>
-
+    <script type="text/javascript" th:src="@{/destinatari.js}"></script>
 </body>
 </html>
