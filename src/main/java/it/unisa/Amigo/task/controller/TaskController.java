@@ -74,7 +74,6 @@ public class TaskController {
     @GetMapping("/gruppi/{idSupergruppo}/tasks/create")
     public String definizioneTaskSupergruppo(@ModelAttribute Task taskForm, Model model,
                                              @PathVariable(name = "idSupergruppo") int idSupergruppo) {
-
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("taskForm", taskForm);
 

@@ -1,6 +1,7 @@
 package it.unisa.Amigo.task.controller;
 
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
+import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.autenticazione.domanin.User;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
@@ -125,10 +126,12 @@ class TaskControllerTest {
     }
 
     private static Stream<Arguments> provideDefinizioneTaskSupergruppo() {
-
         User user1 = new User("admin", "admin");
+        user1.addRole(new Role(Role.CAPOGRUPPO_ROLE));
         User user2 = new User("rob@deprisco.it", "roberto");
+        user2.addRole(new Role(Role.CAPOGRUPPO_ROLE));
         User user3 = new User("vittorio@scarano.it", "scarano");
+        user3.addRole(new Role(Role.CAPOGRUPPO_ROLE));
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
         persona1.setId(1);
