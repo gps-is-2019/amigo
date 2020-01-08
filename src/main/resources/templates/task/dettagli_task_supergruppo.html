@@ -41,7 +41,13 @@
                 <td colspan="4" th:text="${task.descrizione}"></td>
             </tr>
             <tr class="center aligned">
-                <th colspan="4" th:text="'Assegnatario'+' '+'task'"></th>
+                <th colspan="4" th:text="'Gruppo' + ' ' + 'task'"></th>
+            </tr>
+            <tr class="center aligned">
+                <td colspan="4" th:text="${task.supergruppo.getName()}"></td>
+            </tr>
+            <tr class="center aligned">
+                <th colspan="4" th:text="'Documento'+' '+'task'"></th>
             </tr>
             <tr class="center aligned" >
                 <td colspan="4" th:if="${task.getDocumento()}!=null">
@@ -77,6 +83,7 @@
                     > Respingi</a>
                 </td>
             </tr>
+            <!--
             <tr th:if="${(isResponsabile==false) and ( ( task.stato.equals('approvato') )==false ) and ( ( task.stato.equals('in valutazione') )==false )}"
                 class="center aligned">
                 <td colspan="3">
@@ -85,7 +92,7 @@
                     > Completa</a>
                 </td>
 
-            </tr>
+            </tr>-->
 
         </th:block>
         </tbody>

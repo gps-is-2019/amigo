@@ -106,7 +106,6 @@ public class AmigoApplication {
             cd.addPersona(polese);
             cd.addPersona(gravino);
 
-
             LocalDate tmpDate;
             tmpDate = LocalDate.of(2020, 4, 20);
 
