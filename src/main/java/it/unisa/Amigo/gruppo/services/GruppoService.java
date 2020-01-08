@@ -47,4 +47,6 @@ public interface GruppoService {
     void nominaResponsabile(Integer idPersona, Integer idCommissione);
 
     Gruppo findGruppoByCommissione(Integer idCommissione);
+
+    List<String> findAllRoleOfPersona(Integer idPersona);
 }

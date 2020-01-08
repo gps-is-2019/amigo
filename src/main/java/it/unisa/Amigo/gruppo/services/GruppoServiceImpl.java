@@ -279,9 +279,9 @@ public class GruppoServiceImpl implements GruppoService {
     }
 
     @Override
-    public List<String> findAllRoleOfPersona(int idPersona) {
+    public List<String> findAllRoleOfPersona(Integer idPersona) {
         List<String> r = new ArrayList<>();
-        Set<Role> ruoli = personaDAO.findById(idPersona).getUser().getRoles();
+        Set<Role> ruoli = personaDAO.findById(idPersona).get().getUser().getRoles();
         for(Role ruolo :ruoli){
             r.add(ruolo.getName());
         }
