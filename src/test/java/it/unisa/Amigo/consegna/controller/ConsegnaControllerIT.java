@@ -12,6 +12,7 @@ import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -64,6 +65,14 @@ class ConsegnaControllerIT {
 
     @Autowired
     private DocumentoDAO documentoDAO;
+
+    @AfterEach
+    void afterEach() {
+        consegnaDAO.deleteAll();
+        documentoDAO.deleteAll();
+        personaDAO.deleteAll();
+        userDAO.deleteAll();
+    }
 
     @ParameterizedTest
     @MethodSource("provideDestinatari")

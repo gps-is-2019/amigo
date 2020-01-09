@@ -11,7 +11,5 @@ import java.util.List;
  */
 @Repository
 public interface SupergruppoDAO extends CrudRepository<Supergruppo, Integer> {
-    List<Supergruppo> findAllByPersone_id(int idPersona);
-
-    Supergruppo findById(int idSupergruppo);
+    List<Supergruppo> findAllByPersone_id(Integer idPersona);
 }

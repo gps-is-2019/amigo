@@ -9,14 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 @SpringBootTest
 public class DocumentoServiceImplIT {
@@ -51,24 +47,30 @@ public class DocumentoServiceImplIT {
     }
 
     @Test
-    void findDocumento() {
+    void findDocumentoById() {
         Documento expectedDocumento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
                 "test.txt", false, "text/plain");
         documentoDAO.save(expectedDocumento);
-        Documento actualDocumento = documentoService.findDocumento(expectedDocumento.getId());
+        Documento actualDocumento = documentoService.findDocumentoById(expectedDocumento.getId());
         assertEquals(expectedDocumento,actualDocumento);
     }
-
+/*
+    //TODO
     @Test
-    void searchDocumenti() {
+    void searchDocumenti(){
         Documento documento1 = new Documento("src/main/resources/documents/test.txt", LocalDate.now(), "test.txt", true, "text/plain");
         Documento documento2 = new Documento("src/main/resources/documents/test1.txt", LocalDate.now(), "test1.txt", true, "text/plain");
         documentoDAO.save(documento1);
         documentoDAO.save(documento2);
-        List<Documento> documentiExpected = new ArrayList<>();
-        documentiExpected.add(documento1);
-        documentiExpected.add(documento2);
-        List<Documento> actualDocumenti = documentoService.searchDocumenti("test");
-        assertEquals(documentiExpected,actualDocumenti);
+        List<Documento> expectedDocumenti = new ArrayList<>();
+        expectedDocumenti.add(documento1);
+        expectedDocumenti.add(documento2);
+        Documento example = new Documento();
+        example.setNome("test.txt");
+        List<Documento> actualDocumenti = documentoService.searchDocumenti(example);
+        assertEquals(expectedDocumenti,actualDocumenti);
+
     }
+
+ */
 }

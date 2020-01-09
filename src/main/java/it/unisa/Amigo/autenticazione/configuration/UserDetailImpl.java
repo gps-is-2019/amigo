@@ -28,7 +28,7 @@ public class UserDetailImpl implements UserDetails {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         user.getRoles().forEach(role -> {
-            grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_"+role.getName()));
         });
 
         return grantedAuthorities;

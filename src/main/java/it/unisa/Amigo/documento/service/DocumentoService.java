@@ -9,7 +9,12 @@ import java.util.List;
 public interface DocumentoService {
     Documento addDocumento(MultipartFile file);
     Documento updateDocumento(Documento documento);
-    Documento findDocumento(int idDocumento);
-    List<Documento> searchDocumenti(String nameDocumento);
+    Documento findDocumentoById(Integer idDocumento);
+    List<Documento> searchDocumenti(Documento example);
     Resource loadAsResource(Documento documento);
+
+
+    //TODO comunicare l'agginta della funzione per visualizzare lista documenti approvati
+    List<Documento> approvedDocuments(int idSupergruppo);
+
 }

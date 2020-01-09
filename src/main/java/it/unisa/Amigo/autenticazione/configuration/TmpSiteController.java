@@ -48,4 +48,38 @@ public class TmpSiteController {
         model.addAttribute("idPersona", persona.getId());
         return "/dashboard";
     }
+
+    @GetMapping("/login")
+    public String getLogin(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        persona = personaDAO.findByUser_email(auth.getName());
+//        System.out.println(auth.getDetails());
+//        System.out.println(auth.getCredentials());
+//        System.out.println(auth.getAuthorities());
+//        System.out.println(auth.getPrincipal());
+//        System.out.println(auth.getName());
+
+        return "/login_page";
+    }
+
+    @GetMapping("/logout")
+    public String getLogout(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        persona = personaDAO.findByUser_email(auth.getName());
+//        System.out.println(auth.getDetails());
+//        System.out.println(auth.getCredentials());
+//        System.out.println(auth.getAuthorities());
+//        System.out.println(auth.getPrincipal());
+//        System.out.println(auth.getName());
+//        for(Role r : persona.getUser().getRoles())
+//        {
+//            System.out.println(r.getName());
+//        }
+
+        SecurityContextHolder.getContext().setAuthentication(null);
+
+
+        return "redirect:/";
+    }
+
 }

@@ -21,7 +21,7 @@ public  class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
+    private Integer id;
 
     @NonNull
     private String email;

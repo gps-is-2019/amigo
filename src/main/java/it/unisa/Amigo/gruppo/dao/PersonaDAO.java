@@ -1,6 +1,5 @@
 package it.unisa.Amigo.gruppo.dao;
 
-import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -12,15 +11,13 @@ import java.util.List;
  */
 @Repository
 public interface PersonaDAO extends CrudRepository<Persona, Integer> {
-    List<Persona> findBySupergruppi_id(int idSupergruppo);
+    List<Persona> findBySupergruppi_id(Integer idSupergruppo);
 
-    List<Persona> findByDipartimenti_id(int idDipartimento);
+    List<Persona> findByDipartimenti_id(Integer idDipartimento);
 
-    List<Persona> findByConsigli_id(int idConsiglioDidattico);
+    List<Persona> findByConsigli_id(Integer idConsiglioDidattico);
 
     Persona findByUser_email(String email);
-
-    Persona findById(int idPersona);
 
     List<Persona> findAllByUser_Roles_Name(String ruolo);
 }

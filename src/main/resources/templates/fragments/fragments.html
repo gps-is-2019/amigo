@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="@{/style.css}">
     <script th:src="@{/webjars/jquery/jquery.js}"></script>
     <script th:src="@{/webjars/Semantic-UI/semantic.js}"></script>
+    <script th:src="@{/index.js}"></script>
 </head>
 <body>
 
@@ -34,7 +35,7 @@
             Documenti ricevuti
         </a>
         <div class="right menu">
-            <a class="item">Logout</a>
+            <a class="item" th:href="@{/logout}">Logout</a>
         </div>
     </div>
 </div>

@@ -1,213 +1,244 @@
 package it.unisa.Amigo.task.controller;
 
-
+import it.unisa.Amigo.documento.domain.Documento;
+import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.task.domain.Task;
 import it.unisa.Amigo.task.services.TaskService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Questa classe si occupa della logica di controllo del sottosistema Task
+ * Questa classe si occupa della logica di controllo del sottosistema Task.
  */
 @Controller
+@RequiredArgsConstructor
 public class TaskController {
-    @Autowired
-    private TaskService taskService;
-
-    @Autowired
-    private GruppoService gruppoService;
+    /**
+     * Gestisce la logica del sottosistema Task.
+     */
+    private final TaskService taskService;
 
     /**
-     * Ritorna ad una pagina i task @{@link Task} di un supergruppo @{@link Supergruppo}
-     * @param model per salvare informazioni da recuperare nell'html
+     * Gestisce la logica del sottosistema Gruppo.
+     */
+    private final GruppoService gruppoService;
+
+    /**
+     * Gestisce la logica del sottosistema Documento.
+     */
+    private final DocumentoService documentoService;
+
+
+    /**
+     * Ritorna ad una pagina i task @{@link Task} di un supergruppo @{@link Supergruppo}.
+     *
+     * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui i task da visualizzare appartengono
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}")
+    @GetMapping("/gruppi/{idSupergruppo}/tasks")
     public String visualizzaListaTaskSupergruppo(Model model, @PathVariable(name = "idSupergruppo") int idSupergruppo) {
-        //TODO da vedere come prendere l'utente corrente
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
 
-        model.addAttribute("idSupergruppo" , Integer.toString(idSupergruppo) );
-        model.addAttribute("listaTask",taskService.visualizzaTaskSuperGruppo(idSupergruppo));
+        model.addAttribute("idSupergruppo", Integer.toString(idSupergruppo));
+        model.addAttribute("listaTask", taskService.visualizzaTaskSuperGruppo(idSupergruppo));
 
-        return "task/paginaVisualizzaListaTaskSupergruppo";
+        List<Documento> listaDocumenti = documentoService.approvedDocuments(idSupergruppo);
+        model.addAttribute("documenti", listaDocumenti);
+
+        return "task/tasks_supergruppo";
     }
 
     /**
-     * Permette di definire un task @{@link Task}
-     * @param taskForm contiene le informazioni da inserire nel task
-     * @param model per salvare informazioni da recuperare nell'html
+     * Permette di definire un task @{@link Task}.
+     *
+     * @param taskForm      contiene le informazioni da inserire nel task
+     * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da definire appartine
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/definizioneTaskSupergruppo")
-    public String definizioneTaskSupergruppo( @ModelAttribute Task taskForm, Model model ,  @PathVariable(name = "idSupergruppo") int idSupergruppo){
-
-        model.addAttribute("idSupergruppo" , idSupergruppo );
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/create")
+    public String definizioneTaskSupergruppo(@ModelAttribute Task taskForm, Model model,
+                                             @PathVariable(name = "idSupergruppo") int idSupergruppo) {
+        model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("taskForm", taskForm);
 
         List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
-        model.addAttribute("persone" , persone);
+        model.addAttribute("persone", persone);
 
-        return "task/paginaDefinizioneTaskSupergruppo";//pagina che usa il form (pagina corrente)
+        return "task/crea_task"; //pagina che usa il form (pagina corrente)
     }
 
     /**
-     * Permette di salvare il task @{@link Task}
-     * @param taskForm contiene le informazioni da inserire nel task
-     * @param model per salvare informazioni da recuperare nell'html
+     * Permette di salvare il task @{@link Task}.
+     *
+     * @param taskForm      contiene le informazioni da inserire nel task
+     * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da salvare appartine
      * @return il path della pagina su cui eseguire il redirect
-     * @throws ParseException
      */
-    @RequestMapping(value="/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/creazioneTaskSupergruppo", method=RequestMethod.POST)
-    public String saveTaskPost(@ModelAttribute TaskForm taskForm , Model model, @PathVariable(name = "idSupergruppo") int idSupergruppo) throws ParseException {
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
-        Date tmpData;
-        System.out.println("-------------"+ taskForm.getDataScadenza());
-        if(taskForm.getDataScadenza().equals("")) {
-            tmpData = formatter.parse("1-1-2021");
-        }
-        else {
-            tmpData= formatter.parse(taskForm.getDataScadenza());
-        }
+    @PostMapping(value = "/gruppi/{idSupergruppo}/tasks/create")
+    public String saveTaskPost(@ModelAttribute TaskForm taskForm, Model model,
+                               @PathVariable(name = "idSupergruppo") int idSupergruppo) {
+        LocalDate tmpData;
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
-        Persona persona = gruppoService.findPersona( taskForm.getIdPersona() );
-        if (       ( (taskForm.getNome()==null) || (taskForm.getNome().equals("")) )
-                || ( (taskForm.getDataScadenza()==null) || (taskForm.getDataScadenza().equals("")) )
-                || ( (taskForm.getDescrizione()==null) || (taskForm.getDescrizione().equals("")) )
-                || ( (taskForm.getIdPersona() < 0 ) )){
+        Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
+        if (!taskVerify(taskForm)) {
             List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
             model.addAttribute("persone", persone);
-            model.addAttribute("flagCreazione" , false);
-            return "task/paginaDefinizioneTaskSupergruppo";
+            model.addAttribute("flagCreazione", false);
+            return "task/crea_task";
+        } else {
+            tmpData = LocalDate.of(Integer.parseInt(taskForm.getDataScadenza().substring(0, 4)),
+                    Integer.parseInt(taskForm.getDataScadenza().substring(5, 7)),
+                    Integer.parseInt(taskForm.getDataScadenza().substring(8, 10)));
+            Task task = taskService.definizioneTaskSupergruppo(taskForm.getDescrizione(),
+                    tmpData, taskForm.getNome(), "incompleto", supergruppo, persona);
+
+            Persona personaLoggata = gruppoService.getAuthenticatedUser();
+            model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+            model.addAttribute("idSupergruppo", idSupergruppo);
+            model.addAttribute("task", task);
+            model.addAttribute("flagCreazione", true);
+            return "task/dettagli_task_supergruppo";
         }
-        Boolean flagCreazione = taskService.definizioneTaskSupergruppo(taskForm.getDescrizione(), tmpData, taskForm.getNome(), "incompleto", supergruppo, persona);
-        List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
-        model.addAttribute("persone", persone);
-        model.addAttribute("flagCreazione", flagCreazione);
-        return "task/paginaDefinizioneTaskSupergruppo";
     }
 
-    //TODO  da vedere come prendere correttamente l'utente corrente lo sto prendendo tramite grupposervice
+    /**
+     * Metodo che controlla i Parametri immessi nel form sia corretti.
+     *
+     * @param taskForm valori immessi nel form
+     * @return boolean indicante l'esatezza
+     */
+    private boolean taskVerify(TaskForm taskForm) {
+        return ((taskForm.getNome() != null) && (!taskForm.getNome().equals("")))
+                && ((taskForm.getDataScadenza() != null) && (!taskForm.getDataScadenza().equals("")))
+                && ((taskForm.getDescrizione() != null) && (!taskForm.getDescrizione().equals(""))) //si può aggiungere il controllo sulla data < Data odierna
+                && ((taskForm.getIdPersona() != 0));
+
+    }
 
     /**
-     * Ritorna ad una pagina i dettagli di uno specifico  task @{@link Task} di un supergruppo @{@link Supergruppo}
-     * @param model per salvare informazioni da recuperare nell'html
+     * Ritorna ad una pagina i dettagli di uno specifico  task @{@link Task} di un supergruppo @{@link Supergruppo}.
+     *
+     * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task di cui si vogliono visualizzare i dettagli appartine
-     * @param idTask identifica univocamente un task di cui si vogliono visualizzare i dettagli
+     * @param idTask        identifica univocamente un task di cui si vogliono visualizzare i dettagli
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}")
-    public String visualizzaDettagliTaskSupergruppo(Model model
-            , @PathVariable(name = "idSupergruppo") int idSupergruppo
-            , @PathVariable(name = "idTask") int idTask ) {
-        //TODO da vedere come prendere l'utente corrente
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}")
+    public String visualizzaDettagliTaskSupergruppo(Model model,
+                                                    @PathVariable(name = "idSupergruppo") int idSupergruppo,
+                                                    @PathVariable(name = "idTask") int idTask) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
 
-        model.addAttribute("idSupergruppo" , idSupergruppo );
-        model.addAttribute("task" , taskService.getTaskById(idTask));
+        model.addAttribute("idSupergruppo", idSupergruppo);
+        model.addAttribute("task", taskService.getTaskById(idTask));
 
-        return "task/paginaDettagliTaskSupergruppo";
+        return "task/dettagli_task_supergruppo";
     }
 
-
     /**
-     * Permette di approvare un task @{@link Task}
-     * @param model per salvare informazioni da recuperare nell'html
+     * Permette di approvare un task @{@link Task}.
+     *
+     * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da approvare appartine
-     * @param idTask identifica univocamente un task che si vuole approvare
+     * @param idTask        identifica univocamente un task che si vuole approvare
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/approvazione")
-    String approvazioneTask(Model model
-            , @PathVariable(name = "idSupergruppo") int idSupergruppo
-            , @PathVariable(name = "idTask") int idTask) {
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/approva")
+    public String approvazioneTask(Model model,
+                                   @PathVariable(name = "idSupergruppo") int idSupergruppo,
+                                   @PathVariable(name = "idTask") int idTask) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
 
-        //TODO da vedere come prendere l'utente corrente
-        model.addAttribute("idSupergruppo" , idSupergruppo );
-        model.addAttribute("task" , taskService.getTaskById(idTask));
+        model.addAttribute("idSupergruppo", idSupergruppo);
+        model.addAttribute("task", taskService.getTaskById(idTask));
 
         taskService.accettazioneTask(idTask);
-        model.addAttribute("flagAzione",1);
-        return "task/paginaDettagliTaskSupergruppo";
+        model.addAttribute("flagAzione", 1);
+        return "task/dettagli_task_supergruppo";
     }
 
 
     /**
-     * Permette di rifiutare un task @{@link Task}
-     * @param model per salvare informazioni da recuperare nell'html
+     * Permette di rifiutare un task @{@link Task}.
+     *
+     * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da rifiutare appartine
-     * @param idTask identifica univocamente un task che si vuole rifiutare
+     * @param idTask        identifica univocamente un task che si vuole rifiutare
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/rifiuta")
-    String rifiutoTask(Model model
-            , @PathVariable(name = "idSupergruppo") int idSupergruppo
-            , @PathVariable(name = "idTask") int idTask) {
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/rifiuta")
+    public String rifiutoTask(Model model,
+                              @PathVariable(name = "idSupergruppo") int idSupergruppo,
+                              @PathVariable(name = "idTask") int idTask) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
 
-        //TODO da vedere come prendere l'utente corrente
-        model.addAttribute("idSupergruppo" , idSupergruppo );
-        model.addAttribute("task" , taskService.getTaskById(idTask));
+        model.addAttribute("idSupergruppo", idSupergruppo);
+        model.addAttribute("task", taskService.getTaskById(idTask));
 
         taskService.rifiutoTask(idTask);
-        model.addAttribute("flagAzione",2);
-        return "task/paginaDettagliTaskSupergruppo";
+        model.addAttribute("flagAzione", 2);
+        return "task/dettagli_task_supergruppo";
     }
 
     /**
-     * Permette di completare un task @{@link Task}
-     * @param model per salvare informazioni da recuperare nell'html
+     * Permette di completare un task @{@link Task}.
+     *
+     * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da completare  appartine
-     * @param idTask identifica univocamente un task che si vuole completare
+     * @param idTask        identifica univocamente un task che si vuole completare
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/completa")
-    String completaTask(Model model
-            , @PathVariable(name = "idSupergruppo") int idSupergruppo
-            , @PathVariable(name = "idTask") int idTask) {
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/completa")
+    public String completaTask(Model model,
+                               @PathVariable(name = "idSupergruppo") int idSupergruppo,
+                               @PathVariable(name = "idTask") int idTask) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(),idSupergruppo));
 
-        //TODO da vedere come prendere l'utente corrente
-        model.addAttribute("idSupergruppo" , idSupergruppo );
-        model.addAttribute("task" , taskService.getTaskById(idTask));
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+        model.addAttribute("idSupergruppo", idSupergruppo);
+        model.addAttribute("task", taskService.getTaskById(idTask));
+        model.addAttribute("flagAzione", 4);
 
         taskService.completaTask(idTask);
-        return "task/paginaDettagliTaskSupergruppo";
+        return "task/dettagli_task_supergruppo";
     }
 
 
     /**
-     * Permette di modificare un task @{@link Task}
-     * @param taskForm contiene le informazioni per modificare il task
-     * @param model  per salvare informazioni da recuperare nell'html
+     * Permette di modificare un task @{@link Task}.
+     *
+     * @param taskForm      contiene le informazioni per modificare il task
+     * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task da modificare  appartine
-     * @param idTask identifica univocamente un task che si vuole modificare
+     * @param idTask        identifica univocamente un task che si vuole modificare
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modifica")
-    String modificaTask(@ModelAttribute TaskForm taskForm, Model model
-            , @PathVariable(name = "idSupergruppo") int idSupergruppo
-            , @PathVariable(name = "idTask") int idTask) {
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modifica")
+    public String modificaTask(@ModelAttribute TaskForm taskForm, Model model,
+                               @PathVariable(name = "idSupergruppo") int idSupergruppo,
+                               @PathVariable(name = "idTask") int idTask) {
 
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
         Task task = taskService.getTaskById(idTask);
         taskForm.setId(task.getId());
         taskForm.setNome(task.getNome());
@@ -216,89 +247,140 @@ public class TaskController {
         taskForm.setStato(task.getStato());
         Persona persona = task.getPersona();
         taskForm.setIdPersona(persona.getId());
-        model.addAttribute("idTask" , idTask);
-        model.addAttribute("idSupergruppo" , idSupergruppo );
+        model.addAttribute("idTask", idTask);
+        model.addAttribute("idSupergruppo", idSupergruppo);
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
         model.addAttribute("taskForm", taskForm);
 
         List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
-        model.addAttribute("persone" , persone);
-        return "task/paginaModificaTask";
+        model.addAttribute("persone", persone);
+        return "task/modifica_task";
     }
 
     /**
-     * Permette di salvare le modifiche apportante ad  un task @{@link Task}
-     * @param taskForm contiene le informazioni da salvare
-     * @param model per salvare informazioni da recuperare nell'html
+     * Permette di salvare le modifiche apportante ad  un task @{@link Task}.
+     *
+     * @param taskForm      contiene le informazioni da salvare
+     * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task modificato appartine  appartine
      * @return il path della pagina su cui eseguire il redirect
-     * @throws ParseException
      */
-    @RequestMapping(value = "/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/dettagliTaskSupergruppo{idTask}/modificaTaskSupergruppo")
-    public String saveModifyTask(@ModelAttribute TaskForm taskForm , Model model, @PathVariable(name = "idSupergruppo") int idSupergruppo) throws ParseException {
+    @RequestMapping(value = "/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modificaTask")
+    public String saveModifyTask(@ModelAttribute TaskForm taskForm, Model model,
+                                 @PathVariable(name = "idSupergruppo") int idSupergruppo) {
         Task taskToUpdate = taskService.getTaskById(taskForm.getId());
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
-        Date tmpData = null;
-        if(taskForm.getDataScadenza().equals("")) {
-            tmpData = formatter.parse(taskToUpdate.getDataScadenza().toString());
-        }
-        else{
-            tmpData= formatter.parse(taskForm.getDataScadenza());
-        }
+        LocalDate tmpData;
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        tmpData = LocalDate.of(Integer.parseInt(taskForm.getDataScadenza().substring(0, 4)),
+                Integer.parseInt(taskForm.getDataScadenza().substring(5, 7)),
+                Integer.parseInt(taskForm.getDataScadenza().substring(8, 10)));
         taskToUpdate.setDataScadenza(tmpData);
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
         taskToUpdate.setSupergruppo(supergruppo);
-        Persona persona = gruppoService.findPersona( taskForm.getIdPersona() );
+        Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
         taskToUpdate.setPersona(persona);
         taskToUpdate.setNome(taskForm.getNome());
         taskToUpdate.setDescrizione(taskForm.getDescrizione());
-        model.addAttribute("flagAzione",3);
         taskService.updateTask(taskToUpdate);
-        model.addAttribute("task" , taskToUpdate);
-        return "task/paginaDettagliTaskSupergruppo";
+        model.addAttribute("flagAzione", 3);
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+        model.addAttribute("task", taskToUpdate);
+        return "task/dettagli_task_supergruppo";
     }
 
     /**
-     * Ritorna ad una pagina i task @{@link Task} di una persona @{@link Persona}
+     * Ritorna ad una pagina i task @{@link Task} di una persona @{@link Persona}.
+     *
      * @param model per salvare informazioni da recuperare nell'html
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/taskPersonali")
     public String visualizzaListaTaskPersonali(Model model) {
-        //TODO da vedere come prendere l'utente corrente
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         List<Task> ris = taskService.visualizzaTaskUser(personaLoggata.getId());
-        model.addAttribute("listaTask" , ris);
+        model.addAttribute("listaTask", ris);
 
-        return "task/paginaVisualizzaListaTaskPersonali";
+        return "task/miei_task";
     }
 
     /**
-     * Ritorna ad una pagina i dettagli di un  task @{@link Task} di una persona @{@link Persona}
-     * @param model per salvare informazioni da recuperare nell'html
+     * Ritorna ad una pagina i dettagli di un  task @{@link Task} di una persona @{@link Persona}.
+     *
+     * @param model  per salvare informazioni da recuperare nell'html
      * @param idTask identifica univocamente un task di cui si vogliono visualizzare i dettagli
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/taskPersonali/dettagliTask{idTask}")
-    public String visualizzaDettagliTaskPersonali(Model model , @PathVariable(name = "idTask") int idTask) {
+    @GetMapping("/taskPersonali/task_detail/{idTask}")
+    public String visualizzaDettagliTaskPersonali(Model model, @PathVariable(name = "idTask") int idTask) {
         Task task = taskService.getTaskById(idTask);
-        model.addAttribute("task" , task);
-        return "task/paginaDettagliTaskPersonali";
+        model.addAttribute("task", task);
+        model.addAttribute("documento", task.getDocumento());
+        return "task/dettagli_task_personali";
     }
 
     /**
-     * Permette di completare un task @{@link Task} personale
-     * @param model per salvare informazioni da recuperare nell'html
+     * Permette di completare un task @{@link Task} personale.
+     *
+     * @param model  per salvare informazioni da recuperare nell'html
      * @param idTask identifica univocamente un task che si vuole completare
      * @return il path della pagina su cui eseguire il redirect
      */
-    @GetMapping("/taskPersonali/dettagliTask{idTask}/completa")
-    String completaTaskPersonale(Model model
+    @GetMapping("/taskPersonali/task_detail/{idTask}/completa")
+    public String completaTaskPersonale(Model model
             , @PathVariable(name = "idTask") int idTask) {
-        model.addAttribute("task" , taskService.getTaskById(idTask));
+        model.addAttribute("task", taskService.getTaskById(idTask));
         taskService.completaTask(idTask);
-        model.addAttribute("flagAzione",1);
+        model.addAttribute("flagAzione", 4);
 
-        return "task/paginaDettagliTaskPersonali";
+        return "task/dettagli_task_personali";
     }
 
+    /**
+     * Permette di aggiungere un documento @{@link Documento} ad un task @{@link Task}.
+     *
+     * @param model  per salvare informazioni da recuperare nell'html
+     * @param file   da aggiungere a documento
+     * @param idTask identifica univocamente un task al cui si vuole aggiungere un documento
+     * @return il path della pagina su cui eseguire il redirect
+     */
+    @PostMapping("/taskPersonali/task_detail/{idTask}/uploadDocumento")
+    public String uploadDocumentoTask(Model model, @RequestParam("file") MultipartFile file, @PathVariable(name = "idTask") int idTask) {
+
+        Task task = taskService.getTaskById(idTask);
+        if (file.isEmpty()) {
+            model.addAttribute("task", task);
+            model.addAttribute("flagAggiunta", 0); //cambiare
+            return "task/dettagli_task_personali";
+        }
+
+        Documento documento = documentoService.addDocumento(file);
+        task.setDocumento(documento);
+        taskService.updateTask(task);
+        documento.setTask(task);
+        documentoService.updateDocumento(documento);
+
+        model.addAttribute("flagAggiunta", 1); //cambiare
+        model.addAttribute("task", task);
+        model.addAttribute("documento", documento);
+
+        return "task/dettagli_task_personali";
+    }
+
+    /**
+     * Permette il download di un documento @{@link Documento}.
+     *
+     * @param model      per salvare informazioni da recuperare nell'html
+     * @param idDocument identifica univocamente il documento da scaricare
+     * @return risorsa neccessaria per il download
+     */
+    @GetMapping("/documento/{idDocument}")
+    public ResponseEntity<Resource> downloadDocumento(Model model, @PathVariable("idDocument") int idDocument) {
+        Documento documento = documentoService.findDocumentoById(idDocument);
+        Resource resource = documentoService.loadAsResource(documento);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(documento.getFormat()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
+                .body(resource);
+    }
 }

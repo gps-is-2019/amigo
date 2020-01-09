@@ -80,7 +80,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
      */
     @Override
     public ResponseEntity<Resource> downloadDocumento(int idDocument) {
-        Documento documento = documentoService.findDocumento(idDocument);
+        Documento documento = documentoService.findDocumentoById(idDocument);
         Resource resource = documentoService.loadAsResource(documento);
 
         return ResponseEntity.ok()

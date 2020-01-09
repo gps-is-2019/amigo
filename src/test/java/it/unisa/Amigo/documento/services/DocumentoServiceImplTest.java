@@ -7,17 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -30,10 +30,12 @@ class DocumentoServiceImplTest {
 
     @Test
     void addDocumentoStoreAndLoad() {
+        Documento doc = new Documento("src/main/resources/documents/1", LocalDate.now(), "test.txt", false, "text/plain");
+        doc.setId(1);
+        when(documentoDAO.save(any(Documento.class))).thenReturn(doc);
         documentoService.addDocumento(new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE,
                 "Hello World".getBytes()));
-        Documento documento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(), "test.txt", false, "text/plain");
-        assertThat((documentoService.loadAsResource(documento)).exists());
+        assertThat((documentoService.loadAsResource(doc)).exists());
     }
 
     @Test
@@ -46,11 +48,11 @@ class DocumentoServiceImplTest {
     }
 
     @Test
-    void findDocumento() {
+    void findDocumentoById() {
         Documento expectedDocumento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
                 "test.txt", false, "text/plain");
         when(documentoDAO.findById(expectedDocumento.getId())).thenReturn(Optional.of(expectedDocumento));
-        Documento actualDocumento = documentoService.findDocumento(expectedDocumento.getId());
+        Documento actualDocumento = documentoService.findDocumentoById(expectedDocumento.getId());
         assertEquals(expectedDocumento,actualDocumento);
     }
 
@@ -64,8 +66,12 @@ class DocumentoServiceImplTest {
         expectedDocumenti.add(documento);
         expectedDocumenti.add(documento1);
 
-        when(documentoDAO.findAllByNomeContains(documento.getNome())).thenReturn(expectedDocumenti);
-        List<Documento> actualDocumenti = documentoService.searchDocumenti(documento.getNome());
+        Documento example = new Documento();
+        example.setNome("test");
+        ExampleMatcher matcher = ExampleMatcher.matchingAll().withMatcher("nome", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+        Iterable<Documento> iterable = new ArrayList<>();
+        when(documentoDAO.findAll(Example.of(example,matcher))).thenReturn(expectedDocumenti);
+        List<Documento> actualDocumenti = documentoService.searchDocumenti(example);
         assertEquals(expectedDocumenti, actualDocumenti);
     }
 }

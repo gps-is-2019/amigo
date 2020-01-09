@@ -45,7 +45,6 @@ public class GruppoController {
      */
     @GetMapping("/gruppi")
     public String findAllSupergruppi(Model model) {
-      
         int idPersona = gruppoService.getAuthenticatedUser().getId();
         model.addAttribute("supergruppi", gruppoService.findAllSupergruppiOfPersona(idPersona));
         model.addAttribute("personaLoggata",idPersona);
@@ -100,6 +99,9 @@ public class GruppoController {
      */
     @GetMapping("/gruppi/{idSupergruppo}/add/{idPersona}")
     public String addMembro(@PathVariable(name = "idPersona") int idPersona, @PathVariable(name = "idSupergruppo") int idSupergruppo, Model model) {
+        if(!gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), idSupergruppo)){
+            return "unauthorized";
+        }
         Persona persona = gruppoService.findPersona(idPersona);
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
         gruppoService.addMembro(persona, supergruppo);
@@ -125,6 +127,9 @@ public class GruppoController {
      */
     @GetMapping("/gruppi/{idSupergruppo}/remove/{idPersona}")
     public String removeMembro(@PathVariable(name = "idPersona") int idPersona, @PathVariable(name = "idSupergruppo") int idSupergruppo, Model model) {
+        if(!gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), idSupergruppo)){
+            return "unauthorized";
+        }
         Persona persona = gruppoService.findPersona(idPersona);
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
         gruppoService.removeMembro(persona, supergruppo);
@@ -169,6 +174,9 @@ public class GruppoController {
     @GetMapping("/gruppi/commissioni/{id2}/chiusura")
     public String closeCommissione(Model model, @PathVariable(name = "id2") int idCommissione) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        if(! gruppoService.isResponsabile(personaLoggata.getId(), gruppoService.findGruppoByCommissione(idCommissione).getId())){
+            return "unauthorized";
+        }
         prepareCandidateList(idCommissione, model, gruppoService.findAllMembriInSupergruppo(idCommissione));
         model.addAttribute("isCapogruppo", gruppoService.isResponsabile(personaLoggata.getId(), gruppoService.findGruppoByCommissione(idCommissione).getId()));
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idCommissione));
@@ -188,6 +196,8 @@ public class GruppoController {
     public String createCommissioneForm(Model model, @PathVariable(name = "id") int idSupergruppo) {
         model.addAttribute("idGruppo", idSupergruppo);
         model.addAttribute("command", new GruppoFormCommand());
+        List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
+        model.addAttribute("persone", persone);
         return "gruppo/crea_commissione";
     }
 
@@ -201,16 +211,20 @@ public class GruppoController {
      */
     @PostMapping("/gruppi/{idGruppo}/commissioni/create")
     public String createCommissione(@ModelAttribute("command") GruppoFormCommand gruppoFormCommand, Model model, @PathVariable(name = "idGruppo") int idGruppo) {
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        if(!gruppoService.isResponsabile(personaLoggata.getId(), idGruppo)){
+            return "unauthorized";
+        }
         Commissione commissione = new Commissione(gruppoFormCommand.getName(), "Commissione", true, gruppoFormCommand.getDescrizione());
         gruppoService.createCommissione(commissione, idGruppo);
+        gruppoService.nominaResponsabile(gruppoFormCommand.getIdPersona(), commissione.getId());
 
-        model.addAttribute("idCommissione", commissione.getId());
-        model.addAttribute("idGruppo", idGruppo);
 
-        List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idGruppo);
-        model.addAttribute("persone", persone);
+        model.addAttribute("isCapogruppo", gruppoService.isResponsabile(personaLoggata.getId(), idGruppo));
+        prepareCandidateList(idGruppo, model, gruppoService.findAllMembriInSupergruppo(idGruppo));
+        model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idGruppo));
 
-        return "gruppo/nomina_responsabile";
+        return "gruppo/gruppo_detail";
     }
 
     /**
@@ -227,7 +241,11 @@ public class GruppoController {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         gruppoService.nominaResponsabile(idPersona, idCommissione);
         Commissione commissione = (Commissione) gruppoService.findSupergruppo(idCommissione);
+        if(!gruppoService.isResponsabile(personaLoggata.getId(), gruppoService.findGruppoByCommissione(idCommissione).getId())) {
+            return "unauthorized";
+        }
         List<Persona> persone = gruppoService.findAllMembriInSupergruppo(commissione.getId());
+
         model.addAttribute("idCommissione", idCommissione);
         model.addAttribute("isCapogruppo", gruppoService.isResponsabile(personaLoggata.getId(), gruppoService.findGruppoByCommissione(idCommissione).getId()));
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idCommissione));

@@ -3,6 +3,8 @@ package it.unisa.Amigo;
 import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.documento.dao.DocumentoDAO;
+import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
@@ -18,27 +20,27 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 
 
 @SpringBootApplication
 public class AmigoApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(AmigoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(AmigoApplication.class, args);
+    }
 
-		@Bean
-		public CommandLineRunner demo(
-				UserDAO userDAO
-				, PersonaDAO personaDAO
-				, ConsiglioDidatticoDAO consiglioDidatticoDAO
-				, SupergruppoDAO supergruppoDAO
-				, PasswordEncoder encoder
-				, TaskDAO taskDAO
-		){
-			return args -> {
+    @Bean
+    public CommandLineRunner demo(
+            UserDAO userDAO,
+            PersonaDAO personaDAO,
+            ConsiglioDidatticoDAO consiglioDidatticoDAO,
+            SupergruppoDAO supergruppoDAO,
+            PasswordEncoder encoder,
+            TaskDAO taskDAO,
+            DocumentoDAO documentoDAO
+    ) {
+        return args -> {
 
 				Role userRole = new Role(Role.USER_ROLE);
 				Role pqaRole = new Role(Role.PQA_ROLE);
@@ -50,19 +52,19 @@ public class AmigoApplication {
 				userFerrucci.addRole(userRole);
 				userFerrucci.addRole(capogruppoRole);
 
-				User userScarano = new User("vitsca@unisa.it",encoder.encode("scarano"));
-				userScarano.addRole(userRole);
+            	User userScarano = new User("vitsca@unisa.it", encoder.encode("scarano"));
+            	userScarano.addRole(userRole);
 
 				User userMalandrino = new User("dmalandrino@unisa.it",encoder.encode("malandrino"));
 				userMalandrino.addRole(userRole);
 				userMalandrino.addRole(ndvRole);
 
-				User userDePrisco= new User("robdep@unisa.it",encoder.encode("dePrisco"));
-				userDePrisco.addRole(userRole);
-				userDePrisco.addRole(pqaRole);
+            	User userDePrisco = new User("robdep@unisa.it", encoder.encode("dePrisco"));
+            	userDePrisco.addRole(userRole);
+            	userDePrisco.addRole(pqaRole);
 
-				User userPolese = new User("gpolese@unisa.it",encoder.encode("polese"));
-				userPolese.addRole(userRole);
+            	User userPolese = new User("gpolese@unisa.it", encoder.encode("polese"));
+            	userPolese.addRole(userRole);
 
 				User userGravino = new User("gravino@unisa.it",encoder.encode("gravino"));
 				userGravino.addRole(userRole);
@@ -94,8 +96,8 @@ public class AmigoApplication {
 				rossi.setUser(userRossi);
 				vincenzi.setUser(userVincenzi);
 
-				Commissione commissioneAAL = new Commissione("Accompagnamento al lavoro", "Commissione", true, "");
-				Commissione commissioneEL = new Commissione("Piattaforme EL", "Commissione", true, "");
+            	Commissione commissioneAAL = new Commissione("Accompagnamento al lavoro", "Commissione", true, "");
+            	Commissione commissioneEL = new Commissione("Piattaforme EL", "Commissione", true, "");
 
 				Gruppo GAQD = new Gruppo( "GAQD-Informatica","Gruppo",true );
 				GAQD.addPersona(scarano);
@@ -129,12 +131,10 @@ public class AmigoApplication {
 				cd.addPersona(gravino);
 				cd.addPersona(vincenzi);
 
-				//TODO add task
-				Date tmpDate;
-				SimpleDateFormat formatter=new SimpleDateFormat("dd-MM-yyyy");
-				tmpDate = formatter.parse("1-1-2019");
+				LocalDate tmpDate;
+				tmpDate = LocalDate.of(2020, 4, 20);
 
-				Task taskprova = new Task("t1" , tmpDate, "task1" , "in valutazione");
+            	Task taskprova = new Task("t1", tmpDate, "task1", "in valutazione");
 
 				taskprova.setPersona(ferrucci);
 				ferrucci.addTask(taskprova);
@@ -142,20 +142,49 @@ public class AmigoApplication {
 				taskprova.setSupergruppo(GAQD);
 				GAQD.addTask(taskprova);
 
-				Task taskprova2 = new Task("t2" , tmpDate , "task2" , "approvato");
-				taskprova2.setPersona(scarano);
-				scarano.addTask(taskprova2);
+            	Task taskprova2 = new Task("t2", tmpDate, "task2", "approvato");
+            	taskprova2.setPersona(scarano);
+            	scarano.addTask(taskprova2);
 
 				taskprova2.setSupergruppo(GAQD);
 				GAQD.addTask(taskprova2);
 
-				supergruppoDAO.save(GAQD);
-				supergruppoDAO.save(commissioneAAL);
-				supergruppoDAO.save(commissioneEL);
-				consiglioDidatticoDAO.save(cd);
-				personaDAO.saveAll(Arrays.asList(ferrucci, scarano, malandrino, dePrisco, polese, gravino, rossi, vincenzi));
-				userDAO.saveAll(Arrays.asList(userFerrucci, userScarano, userMalandrino, userDePrisco, userPolese, userGravino, userRossi, userVincenzi));
-				taskDAO.saveAll(Arrays.asList(taskprova, taskprova2));
-			};
-		}
-	}
+            Task taskprova3 = new Task("t3", tmpDate, "task3", "incompleto");
+            taskprova3.setPersona(ferrucci);
+            ferrucci.addTask(taskprova3);
+
+            taskprova3.setSupergruppo(GAQD);
+            GAQD.addTask(taskprova3);
+
+            Task taskprova4 = new Task("task approvato 1", tmpDate, "task approvato1", "approvato");
+            taskprova4.setPersona(ferrucci);
+            ferrucci.addTask(taskprova4);
+
+            taskprova4.setSupergruppo(GAQD);
+            GAQD.addTask(taskprova4);
+
+            Task taskprova5 = new Task("task approvato 2", tmpDate, "taskapprovato2", "approvato");
+            taskprova5.setPersona(ferrucci);
+            ferrucci.addTask(taskprova5);
+
+            taskprova5.setSupergruppo(GAQD);
+            GAQD.addTask(taskprova5);
+
+            Documento documento1 = new Documento("src/main/resources/documents/test.txt", tmpDate, "test.txt", false, "text/txt");
+            documento1.setTask(taskprova2);
+            taskprova2.setDocumento(documento1);
+
+            supergruppoDAO.save(GAQD);
+            supergruppoDAO.save(commissioneAAL);
+            supergruppoDAO.save(commissioneEL);
+            consiglioDidatticoDAO.save(cd);
+            personaDAO.saveAll(Arrays.asList(ferrucci, scarano, malandrino, dePrisco, polese, gravino, rossi, vincenzi));
+            userDAO.saveAll(Arrays.asList(userFerrucci, userScarano, userMalandrino, userDePrisco, userPolese, userGravino, userRossi, userVincenzi));
+            taskDAO.saveAll(Arrays.asList(taskprova, taskprova2, taskprova3, taskprova4, taskprova5));
+            documentoDAO.save(documento1);
+        };
+    }
+}
+
+
+
