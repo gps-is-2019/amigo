@@ -1,5 +1,6 @@
 package it.unisa.Amigo.gruppo.dao;
 
+import com.sun.xml.bind.v2.model.core.ID;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -18,7 +19,7 @@ public interface PersonaDAO extends CrudRepository<Persona, Integer> {
     List<Persona> findByConsigli_id(Integer idConsiglioDidattico);
 
     Persona findByUser_email(String email);
-
+  
     List<Persona> findAllByUser_Roles_Name(String ruolo);
 }
 
