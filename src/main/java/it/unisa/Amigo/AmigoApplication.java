@@ -41,113 +41,112 @@ public class AmigoApplication {
             DocumentoDAO documentoDAO
     ) {
         return args -> {
+            Role userRole = new Role(Role.USER_ROLE);
+            Role pqaRole = new Role(Role.PQA_ROLE);
+            Role capogruppoRole = new Role(Role.CAPOGRUPPO_ROLE);
+            Role ndvRole = new Role(Role.NDV_ROLE);
+            Role cpdsRole = new Role(Role.CPDS_ROLE);
 
-				Role userRole = new Role(Role.USER_ROLE);
-				Role pqaRole = new Role(Role.PQA_ROLE);
-				Role capogruppoRole = new Role(Role.CAPOGRUPPO_ROLE);
-				Role ndvRole = new Role(Role.NDV_ROLE);
-				Role cpdsRole = new Role(Role.CPDS_ROLE);
+            User userFerrucci = new User("ferrucci@unisa.it",encoder.encode("ferrucci"));
+            userFerrucci.addRole(userRole);
+            userFerrucci.addRole(capogruppoRole);
 
-				User userFerrucci = new User("ferrucci@unisa.it",encoder.encode("ferrucci"));
-				userFerrucci.addRole(userRole);
-				userFerrucci.addRole(capogruppoRole);
+            User userScarano = new User("vitsca@unisa.it", encoder.encode("scarano"));
+            userScarano.addRole(userRole);
 
-            	User userScarano = new User("vitsca@unisa.it", encoder.encode("scarano"));
-            	userScarano.addRole(userRole);
+            User userMalandrino = new User("dmalandrino@unisa.it",encoder.encode("malandrino"));
+            userMalandrino.addRole(userRole);
+            userMalandrino.addRole(ndvRole);
 
-				User userMalandrino = new User("dmalandrino@unisa.it",encoder.encode("malandrino"));
-				userMalandrino.addRole(userRole);
-				userMalandrino.addRole(ndvRole);
+            User userDePrisco = new User("robdep@unisa.it", encoder.encode("dePrisco"));
+            userDePrisco.addRole(userRole);
+            userDePrisco.addRole(pqaRole);
 
-            	User userDePrisco = new User("robdep@unisa.it", encoder.encode("dePrisco"));
-            	userDePrisco.addRole(userRole);
-            	userDePrisco.addRole(pqaRole);
+            User userPolese = new User("gpolese@unisa.it", encoder.encode("polese"));
+            userPolese.addRole(userRole);
 
-            	User userPolese = new User("gpolese@unisa.it", encoder.encode("polese"));
-            	userPolese.addRole(userRole);
+            User userGravino = new User("gravino@unisa.it",encoder.encode("gravino"));
+            userGravino.addRole(userRole);
+            userGravino.addRole(cpdsRole);
 
-				User userGravino = new User("gravino@unisa.it",encoder.encode("gravino"));
-				userGravino.addRole(userRole);
-				userGravino.addRole(cpdsRole);
+            User userVincenzi = new User("vincenzi@unisa.it",encoder.encode("vincenzi"));
+            userVincenzi.addRole(userRole);
+            userVincenzi.addRole(ndvRole);
 
-				User userVincenzi = new User("vincenzi@unisa.it",encoder.encode("vincenzi"));
-				userVincenzi.addRole(userRole);
-				userVincenzi.addRole(ndvRole);
+            User userRossi = new User("mariorossi@unisa.it",encoder.encode("mario"));
+            userRossi.addRole(userRole);
+            userRossi.addRole(cpdsRole);
 
-				User userRossi = new User("mariorossi@unisa.it",encoder.encode("mario"));
-				userRossi.addRole(userRole);
-				userRossi.addRole(cpdsRole);
+            Persona ferrucci = new Persona("Filomena","Ferrucci","Professore Ordinario");
+            Persona scarano = new Persona("Vittorio","Scarano","Professore Ordinario");
+            Persona malandrino = new Persona("Delfina","Malandrino","Professore Associato");
+            Persona dePrisco = new Persona("Roberto","De Prisco","Professore Ordinario");
+            Persona polese = new Persona("Giuseppe","Polese","Professore Associato");
+            Persona gravino = new Persona("Carmine","Gravino","Professore Associato");
+            Persona rossi = new Persona("Mario","Rossi", "Professore Associato");
+            Persona vincenzi = new Persona("Giovanni","Vincenzi", "Professore Associato");
 
-				Persona ferrucci = new Persona("Filomena","Ferrucci","Professore Ordinario");
-				Persona scarano = new Persona("Vittorio","Scarano","Professore Ordinario");
-				Persona malandrino = new Persona("Delfina","Malandrino","Professore Associato");
-				Persona dePrisco = new Persona("Roberto","De Prisco","Professore Ordinario");
-				Persona polese = new Persona("Giuseppe","Polese","Professore Associato");
-				Persona gravino = new Persona("Carmine","Gravino","Professore Associato");
-				Persona rossi = new Persona("Mario","Rossi", "Professore Associato");
-				Persona vincenzi = new Persona("Giovanni","Vincenzi", "Professore Associato");
+            ferrucci.setUser(userFerrucci);
+            scarano.setUser(userScarano);
+            malandrino.setUser(userMalandrino);
+            dePrisco.setUser(userDePrisco);
+            polese.setUser(userPolese);
+            gravino.setUser(userGravino);
+            rossi.setUser(userRossi);
+            vincenzi.setUser(userVincenzi);
 
-				ferrucci.setUser(userFerrucci);
-				scarano.setUser(userScarano);
-				malandrino.setUser(userMalandrino);
-				dePrisco.setUser(userDePrisco);
-				polese.setUser(userPolese);
-				gravino.setUser(userGravino);
-				rossi.setUser(userRossi);
-				vincenzi.setUser(userVincenzi);
+            Commissione commissioneAAL = new Commissione("Accompagnamento al lavoro", "Commissione", true, "");
+            Commissione commissioneEL = new Commissione("Piattaforme EL", "Commissione", true, "");
 
-            	Commissione commissioneAAL = new Commissione("Accompagnamento al lavoro", "Commissione", true, "");
-            	Commissione commissioneEL = new Commissione("Piattaforme EL", "Commissione", true, "");
+            Gruppo GAQD = new Gruppo( "GAQD-Informatica","Gruppo",true );
+            GAQD.addPersona(scarano);
+            GAQD.addPersona(ferrucci);
+            GAQD.addPersona(dePrisco);
+            GAQD.addPersona(malandrino);
+            GAQD.addPersona(gravino);
+            GAQD.addPersona(rossi);
+            GAQD.addPersona(vincenzi);
+            GAQD.setResponsabile(ferrucci);
+            ferrucci.addSupergruppoResponsabile(GAQD);
+            GAQD.addCommissione(commissioneAAL);
+            GAQD.addCommissione(commissioneEL);
 
-				Gruppo GAQD = new Gruppo( "GAQD-Informatica","Gruppo",true );
-				GAQD.addPersona(scarano);
-				GAQD.addPersona(ferrucci);
-				GAQD.addPersona(dePrisco);
-				GAQD.addPersona(malandrino);
-				GAQD.addPersona(gravino);
-				GAQD.addPersona(rossi);
-				GAQD.addPersona(vincenzi);
-				GAQD.setResponsabile(ferrucci);
-				ferrucci.addSupergruppoResponsabile(GAQD);
-				GAQD.addCommissione(commissioneAAL);
-				GAQD.addCommissione(commissioneEL);
+            commissioneAAL.addPersona(scarano);
+            commissioneAAL.addPersona(malandrino);
+            commissioneAAL.setResponsabile(scarano);
+            commissioneAAL.addPersona(dePrisco);
+            commissioneEL.addPersona(dePrisco);
+            commissioneEL.setResponsabile(dePrisco);
 
-				commissioneAAL.addPersona(scarano);
-				commissioneAAL.addPersona(malandrino);
-				commissioneAAL.setResponsabile(scarano);
-				commissioneAAL.addPersona(dePrisco);
-				commissioneEL.addPersona(dePrisco);
-				commissioneEL.setResponsabile(dePrisco);
+            ConsiglioDidattico cd = new ConsiglioDidattico("Informatica");
+            cd.setSupergruppo(GAQD);
+            GAQD.setConsiglio(cd);
+            cd.addPersona(rossi);
+            cd.addPersona(ferrucci);
+            cd.addPersona(scarano);
+            cd.addPersona(malandrino);
+            cd.addPersona(dePrisco);
+            cd.addPersona(polese);
+            cd.addPersona(gravino);
+            cd.addPersona(vincenzi);
 
-				ConsiglioDidattico cd = new ConsiglioDidattico("Informatica");
-				cd.setSupergruppo(GAQD);
-				GAQD.setConsiglio(cd);
-				cd.addPersona(rossi);
-				cd.addPersona(ferrucci);
-				cd.addPersona(scarano);
-				cd.addPersona(malandrino);
-				cd.addPersona(dePrisco);
-				cd.addPersona(polese);
-				cd.addPersona(gravino);
-				cd.addPersona(vincenzi);
+            LocalDate tmpDate;
+            tmpDate = LocalDate.of(2020, 4, 20);
 
-				LocalDate tmpDate;
-				tmpDate = LocalDate.of(2020, 4, 20);
+            Task taskprova = new Task("t1", tmpDate, "task1", "in valutazione");
 
-            	Task taskprova = new Task("t1", tmpDate, "task1", "in valutazione");
+				    taskprova.setPersona(ferrucci);
+				    ferrucci.addTask(taskprova);
 
-				taskprova.setPersona(ferrucci);
-				ferrucci.addTask(taskprova);
+				    taskprova.setSupergruppo(GAQD);
+				    GAQD.addTask(taskprova);
 
-				taskprova.setSupergruppo(GAQD);
-				GAQD.addTask(taskprova);
+            Task taskprova2 = new Task("t2", tmpDate, "task2", "approvato");
+            taskprova2.setPersona(scarano);
+            scarano.addTask(taskprova2);
 
-            	Task taskprova2 = new Task("t2", tmpDate, "task2", "approvato");
-            	taskprova2.setPersona(scarano);
-            	scarano.addTask(taskprova2);
-
-				taskprova2.setSupergruppo(GAQD);
-				GAQD.addTask(taskprova2);
+				    taskprova2.setSupergruppo(GAQD);
+				    GAQD.addTask(taskprova2);
 
             Task taskprova3 = new Task("t3", tmpDate, "task3", "incompleto");
             taskprova3.setPersona(ferrucci);
