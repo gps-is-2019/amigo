@@ -4,9 +4,9 @@ import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.consegna.dao.ConsegnaDAO;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoServiceImpl;
+import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.services.GruppoServiceImpl;
+import it.unisa.Amigo.gruppo.services.GruppoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -30,9 +30,9 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     private final ConsegnaDAO consegnaDAO;
 
-    private final DocumentoServiceImpl documentoService;
+    private final DocumentoService documentoService;
 
-    private final GruppoServiceImpl gruppoService;
+    private final GruppoService gruppoService;
 
     /**
      * Effettua la consegna di un documento ad uno o più destinatari
