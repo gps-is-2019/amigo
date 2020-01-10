@@ -54,9 +54,14 @@
                                   th:text="${ruolo.name}">
                         </th:block>
                     </th:block>
-                    <th:block th:each="gruppo : ${consegna.mittente.supergruppiResponsabile}">
-                        <th:block th:if="${gruppo.type} == 'Gruppo'"> Responsabile di: <span
-                                th:text="${gruppo.name}"></span>
+                    <th:block th:each="gruppo : ${consegna.mittente.supergruppi}">
+                        <th:block th:if="${gruppo.type} == 'Gruppo'">
+                            <th:block th:if="${consegna.mittente.id==gruppo.responsabile.id}">
+                                Responsabile di: <span th:text="${gruppo.name}"></span>
+                            </th:block>
+                            <th:block th:if="${consegna.mittente.id!=gruppo.responsabile.id}">
+                                Membro di: <span th:text="${gruppo.name}"></span>
+                            </th:block>
                         </th:block>
                     </th:block>
                 </td>
@@ -65,8 +70,11 @@
                 </td>
                 <td>
                     <th:block th:if="${consegna.stato} == 'DA_VALUTARE'">
+                        <div class="ui buttons">
                         <a class="ui positive button" th:href="@{/consegna/approva/} + ${consegna.id}">Approva</a>
+                        <div class="or"></div>
                         <a class="ui negative button" th:href="@{/consegna/rifiuta/} + ${consegna.id}">Rifiuta</a>
+                        </div>
                     </th:block>
                     <span th:if="${consegna.stato} == 'APPROVATA'" th:text="Approvato"></span>
                     <span th:if="${consegna.stato} == 'RIFIUTATA'" th:text="Rifiutata"></span>

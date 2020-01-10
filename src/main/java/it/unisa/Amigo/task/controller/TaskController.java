@@ -1,5 +1,7 @@
 package it.unisa.Amigo.task.controller;
 
+import it.unisa.Amigo.consegna.domain.Consegna;
+import it.unisa.Amigo.consegna.services.ConsegnaService;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
@@ -40,6 +42,8 @@ public class TaskController {
      * Gestisce la logica del sottosistema Documento.
      */
     private final DocumentoService documentoService;
+
+    private final ConsegnaService consegnaService;
 
 
     /**
@@ -382,5 +386,25 @@ public class TaskController {
                 .contentType(MediaType.parseMediaType(documento.getFormat()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
                 .body(resource);
+    }
+
+    @GetMapping("/gruppi/{idSupergruppo}/tasks/{idTask}/inoltro")
+    public String inoltroPQA(@ModelAttribute TaskForm taskForm, Model model,
+                               @PathVariable(name = "idSupergruppo") int idSupergruppo,
+                               @PathVariable(name = "idTask") int idTask) {
+
+        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Documento documento = taskService.getTaskById(idTask).getDocumento();
+        Consegna consegna = consegnaService.inoltraPQAfromGruppo(documento);
+        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+
+        model.addAttribute("idSupergruppo", Integer.toString(idSupergruppo));
+        model.addAttribute("listaTask", taskService.visualizzaTaskSuperGruppo(idSupergruppo));
+
+        List<Documento> listaDocumenti = documentoService.approvedDocuments(idSupergruppo);
+        model.addAttribute("documenti", listaDocumenti);
+        model.addAttribute("flagInoltro", 1);
+
+        return "task/tasks_supergruppo";
     }
 }

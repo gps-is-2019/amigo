@@ -1,6 +1,7 @@
 package it.unisa.Amigo.consegna.services;
 
 import it.unisa.Amigo.consegna.domain.Consegna;
+import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -28,4 +29,6 @@ public interface ConsegnaService {
     void rifiutaConsegna(int idConsegna);
 
     Consegna findConsegnaByDocumentoAndDestinatario(int idDocumento, int idDestinatario);
+
+    Consegna inoltraPQAfromGruppo(Documento doc);
 }

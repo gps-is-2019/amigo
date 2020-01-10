@@ -84,6 +84,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     /**
      * Recupera la lista delle consegna ricevute da una persona
+     *
      * @return la lista delle consegne
      */
     @Override
@@ -157,6 +158,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     /**
      * Modifica lo stato di una consegna in APPROVATA tramite il suo id
+     *
      * @param idConsegna
      */
     @Override
@@ -168,6 +170,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     /**
      * Modifica lo stato di una consegna in RIFIUTATA tramite il suo id
+     *
      * @param idConsegna
      */
     @Override
@@ -175,5 +178,18 @@ public class ConsegnaServiceImpl implements ConsegnaService {
         Consegna consegna = consegnaDAO.findById(idConsegna).get();
         consegna.setStato("RIFIUTATA");
         consegnaDAO.save(consegna);
+    }
+
+    @Override
+    public Consegna inoltraPQAfromGruppo(Documento doc) {
+        Consegna consegna = new Consegna();
+        consegna.setDataConsegna(LocalDate.now());
+        consegna.setStato("DA_VALUTARE");
+        consegna.setDocumento(doc);
+        consegna.setMittente(gruppoService.getAuthenticatedUser());
+        consegna.setLocazione(Consegna.PQA_LOCAZIONE);
+        consegnaDAO.save(consegna);
+        doc.setConsegna(consegna);
+        return consegna;
     }
 }
