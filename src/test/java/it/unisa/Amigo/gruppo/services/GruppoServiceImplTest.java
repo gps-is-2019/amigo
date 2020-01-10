@@ -4,12 +4,8 @@ import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
-import it.unisa.Amigo.gruppo.domain.Commissione;
-import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
-import it.unisa.Amigo.gruppo.domain.Dipartimento;
-import it.unisa.Amigo.gruppo.domain.Gruppo;
-import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.domain.Supergruppo;
+import it.unisa.Amigo.gruppo.domain.*;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -42,6 +38,14 @@ class GruppoServiceImplTest {
 
     @Mock
     private DipartimentoDAO dipartimentoDAO;
+
+    @AfterEach
+    void afterEach() {
+        personaDAO.deleteAll();
+        supergruppoDAO.deleteAll();
+        consiglioDidatticoDAO.deleteAll();
+        dipartimentoDAO.deleteAll();
+    }
 
     @ParameterizedTest
     @MethodSource("providefindAllMembriInSupergruppo")

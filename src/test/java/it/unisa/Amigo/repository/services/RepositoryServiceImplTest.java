@@ -34,7 +34,6 @@ class RepositoryServiceImplTest {
     @Mock
     private DocumentoService documentoService;
 
-
     @ParameterizedTest
     @MethodSource("provideAddDocumentoInRepository")
     void addDocumentoInRepository(final MultipartFile file) {

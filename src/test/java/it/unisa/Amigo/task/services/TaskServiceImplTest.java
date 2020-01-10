@@ -4,12 +4,14 @@ import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.task.dao.TaskDAO;
 import it.unisa.Amigo.task.domain.Task;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,11 @@ class TaskServiceImplTest {
 
     @Mock
     private TaskDAO taskDAO;
+
+    @AfterEach
+    void afterEach() {
+        taskDAO.deleteAll();
+    }
 
     @ParameterizedTest
     @MethodSource("provideGetAssegnatarioTask")
@@ -81,9 +88,9 @@ class TaskServiceImplTest {
     }
 
     private static Stream<Arguments> provideDefinizioneTaskSupergruppo() {
-        LocalDate tmpDate  = LocalDate.of(2020, 4, 20);
+        LocalDate tmpDate = LocalDate.of(2020, 4, 20);
         LocalDate tmpDate2 = LocalDate.of(2069, 12, 31);
-        LocalDate tmpDate3  = LocalDate.of(2120, 1, 1);
+        LocalDate tmpDate3 = LocalDate.of(2120, 1, 1);
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);

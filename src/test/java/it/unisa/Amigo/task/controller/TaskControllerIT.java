@@ -12,15 +12,14 @@ import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.task.dao.TaskDAO;
 import it.unisa.Amigo.task.domain.Task;
 import it.unisa.Amigo.task.services.TaskService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -30,11 +29,7 @@ import java.util.stream.Stream;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
-@RunWith(SpringRunner.class)
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -44,13 +39,10 @@ class TaskControllerIT {
     private TaskService taskService;
 
     @Autowired
-    private TaskDAO taskDAO;
-
-    @Autowired
     private GruppoService gruppoService;
 
     @Autowired
-    private MockMvc mockMvc;
+    private TaskDAO taskDAO;
 
     @Autowired
     private PersonaDAO personaDAO;
@@ -60,6 +52,17 @@ class TaskControllerIT {
 
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @AfterEach
+    void afterEach() {
+        taskDAO.deleteAll();
+        supergruppoDAO.deleteAll();
+        personaDAO.deleteAll();
+        userDAO.deleteAll();
+    }
 
     @ParameterizedTest
     @MethodSource("provideVisualizzaListaTaskSupergruppo")
@@ -247,9 +250,9 @@ class TaskControllerIT {
         int flagAzione = 1;
 
         personaDAO.save(expectedPersona);
+        userDAO.save(user);
         supergruppoDAO.save(expectedSupergruppo);
         taskDAO.save(expectedTask);
-        userDAO.save(user);
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/approva", expectedSupergruppo.getId(), expectedTask.getId())
                 .with(user(userDetails)))
@@ -444,8 +447,11 @@ class TaskControllerIT {
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
+        persona1.setId(1);
         Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        persona1.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona1.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
         Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);

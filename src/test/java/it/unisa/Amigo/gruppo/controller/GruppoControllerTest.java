@@ -2,23 +2,18 @@ package it.unisa.Amigo.gruppo.controller;
 
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
 import it.unisa.Amigo.autenticazione.domain.User;
-import it.unisa.Amigo.gruppo.domain.Commissione;
-import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
-import it.unisa.Amigo.gruppo.domain.Gruppo;
-import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.domain.Supergruppo;
+import it.unisa.Amigo.gruppo.domain.*;
 import it.unisa.Amigo.gruppo.services.GruppoService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -27,11 +22,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
-@RunWith(SpringRunner.class)
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -337,7 +328,6 @@ public class GruppoControllerTest {
 
     @Test
     public void findAllMembriInCommissione() throws Exception {
-
         User user = new User("admin", "admin");
         user.setId(1);
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -362,7 +352,6 @@ public class GruppoControllerTest {
         when(gruppoService.findSupergruppo(expectedCommissione.getId())).thenReturn(expectedCommissione);
         when(gruppoService.findAllMembriInSupergruppo(expectedCommissione.getId())).thenReturn(persone);
 
-
         this.mockMvc.perform(get("/gruppi/{id}/commissione_detail/{id_commissione}", expectedGruppo.getId(), expectedCommissione.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
@@ -377,7 +366,6 @@ public class GruppoControllerTest {
     @ParameterizedTest
     @MethodSource("provideCloseCommissione")
     public void closeCommissione(final User user, final Persona persona, final Commissione commissione, final Gruppo gruppo) throws Exception {
-
         UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona expectedPersona = persona;
         expectedPersona.setUser(user);
