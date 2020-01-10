@@ -106,7 +106,7 @@ class ConsegnaServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideDocumento")
-    void sendDocumento(int[] idDestinatari, String locazione, MultipartFile file) {
+    void sendDocumento(final int[] idDestinatari, final String locazione, final MultipartFile file) {
         Persona expectedPersona1 = new Persona("Admin", "123", "Administrator");
         Persona expectedPersona2 = new Persona("123", "null", "Administrator");
 
@@ -147,10 +147,12 @@ class ConsegnaServiceImplTest {
             consegna.setStato("da valutare");
             consegna.setDocumento(doc);
             consegna.setMittente(gruppoService.getAuthenticatedUser());
-            if (locazione.equalsIgnoreCase(Consegna.PQA_LOCAZIONE))
+            if (locazione.equalsIgnoreCase(Consegna.PQA_LOCAZIONE)) {
                 consegna.setLocazione(Consegna.PQA_LOCAZIONE);
-            if (locazione.equalsIgnoreCase(Consegna.NDV_LOCAZIONE))
+            }
+            if (locazione.equalsIgnoreCase(Consegna.NDV_LOCAZIONE)) {
                 consegna.setLocazione(Consegna.NDV_LOCAZIONE);
+            }
             expectedConsegne.add(consegna);
             assertEquals(expectedConsegne.size(), consegnaService.sendDocumento(idDestinatari, locazione, file).size());
         }
@@ -204,7 +206,7 @@ class ConsegnaServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideDocumenti")
-    void findConsegnaByDocumento(Documento documento) {
+    void findConsegnaByDocumento(final Documento documento) {
         Documento doc = documento;
         doc.setDataInvio(LocalDate.now());
 
@@ -220,7 +222,7 @@ class ConsegnaServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providePossibiliDestinatari")
-    void possibiliDestinatari(Role role) {
+    void possibiliDestinatari(final Role role) {
 
         User user = new User("admin", "admin");
         Set<Role> ruoli = new HashSet<Role>();
@@ -271,7 +273,7 @@ class ConsegnaServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideInoltraPQAfromGruppo")
-    void inoltraPQAfromGruppo(Documento doc, Persona persona, Consegna expectedConsegna){
+    void inoltraPQAfromGruppo(final Documento doc, final Persona persona, final Consegna expectedConsegna) {
 
         when(gruppoService.getAuthenticatedUser()).thenReturn(persona);
         assertEquals(expectedConsegna, consegnaService.inoltraPQAfromGruppo(doc));

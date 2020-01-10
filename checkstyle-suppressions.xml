@@ -13,4 +13,6 @@
               files ="/src" />
     <suppress checks="naming"
               files ="/src" />
+    <suppress checks="MagicNumber"
+              files ="/src" />
 </suppressions>

@@ -30,11 +30,12 @@ import java.util.stream.Stream;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @RunWith(SpringRunner.class)
-//@ContextConfiguration(classes = WebMvcAutoConfiguration.class)
-//@WebMvcTest(GruppoController.class)
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class TaskControllerIT {
@@ -62,7 +63,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideVisualizzaListaTaskSupergruppo")
-    void visualizzaListaTaskSupergruppo(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task) throws Exception {
+    void visualizzaListaTaskSupergruppo(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task task) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -118,7 +119,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideDefinizioneTaskSupergruppo")
-    void definizioneTaskSupergruppo(User user, Persona expectedPersona, Supergruppo expectedSupergruppo) throws Exception {
+    void definizioneTaskSupergruppo(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -183,7 +184,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideVisualizzaDettagliTaskSupergruppo")
-    void visualizzaDettagliTaskSupergruppo(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask) throws Exception {
+    void visualizzaDettagliTaskSupergruppo(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -235,7 +236,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideApprovazioneTask")
-    void approvazioneTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask) throws Exception {
+    void approvazioneTask(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -290,7 +291,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideRifiutoTask")
-    void rifiutoTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask) throws Exception {
+    void rifiutoTask(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -345,7 +346,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideCompletaTask")
-    void completaTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task expectedTask) throws Exception {
+    void completaTask(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -398,7 +399,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideModificaTask")
-    void modificaTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task) throws Exception {
+    void modificaTask(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task task) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -471,7 +472,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideVisualizzaListaTaskPersonali")
-    void visualizzaListaTaskPersonali(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task) throws Exception {
+    void visualizzaListaTaskPersonali(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task task) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -524,7 +525,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideVisualizzaDettagliTaskPersonali")
-    void visualizzaDettagliTaskPersonali(User user, Supergruppo expectedSupergruppo, Persona expectedPersona, Task expectedTask) throws Exception {
+    void visualizzaDettagliTaskPersonali(final User user, final Supergruppo expectedSupergruppo, final Persona expectedPersona, final Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -575,7 +576,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideCompletaTaskPersonale")
-    void completaTaskPersonale(User user, Supergruppo expectedSupergruppo, Persona expectedPersona, Task expectedTask) throws Exception {
+    void completaTaskPersonale(final User user, final Supergruppo expectedSupergruppo, final Persona expectedPersona, final Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -626,7 +627,7 @@ class TaskControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideInoltroPQA")
-    void inoltroPQA(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task) throws Exception {
+    void inoltroPQA(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task task) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);

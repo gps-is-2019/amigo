@@ -4,8 +4,12 @@ import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
-import it.unisa.Amigo.gruppo.domain.*;
-import org.junit.jupiter.api.Test;
+import it.unisa.Amigo.gruppo.domain.Commissione;
+import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
+import it.unisa.Amigo.gruppo.domain.Dipartimento;
+import it.unisa.Amigo.gruppo.domain.Gruppo;
+import it.unisa.Amigo.gruppo.domain.Persona;
+import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -41,7 +45,7 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindAllMembriInSupergruppo")
-    void findAllMembriInSupergruppo(Persona persona, Supergruppo supergruppo) {
+    void findAllMembriInSupergruppo(final Persona persona, final Supergruppo supergruppo) {
         supergruppo.addPersona(persona);
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(persona);
@@ -50,7 +54,7 @@ class GruppoServiceImplTest {
         assertEquals(expectedPersone, actualPersone);
     }
 
-    private static Stream<Arguments> providefindAllMembriInSupergruppo(){
+    private static Stream<Arguments> providefindAllMembriInSupergruppo() {
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
         Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
         Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
@@ -62,7 +66,7 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindAllMembriInConsiglioDidattico")
-    void findAllMembriInConsiglioDidattico(Persona persona, ConsiglioDidattico consiglioDidattico) {
+    void findAllMembriInConsiglioDidattico(final Persona persona, final ConsiglioDidattico consiglioDidattico) {
         consiglioDidattico.addPersona(persona);
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(persona);
@@ -71,7 +75,7 @@ class GruppoServiceImplTest {
         assertEquals(expectedPersone, actualPersone);
     }
 
-    private static Stream<Arguments> providefindAllMembriInConsiglioDidattico(){
+    private static Stream<Arguments> providefindAllMembriInConsiglioDidattico() {
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
         Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
         ConsiglioDidattico consiglioDidattico = new ConsiglioDidattico("Consiglio Informatica");
@@ -83,7 +87,7 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindAllMembriInDipartimento")
-    void findAllMembriInDipartimento(Persona persona, Dipartimento dipartimento) {
+    void findAllMembriInDipartimento(final Persona persona, final Dipartimento dipartimento) {
         dipartimento.addPersona(persona);
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(persona);
@@ -92,7 +96,7 @@ class GruppoServiceImplTest {
         assertEquals(expectedPersone, actualPersone);
     }
 
-    private static Stream<Arguments> providefindAllMembriInDipartimento(){
+    private static Stream<Arguments> providefindAllMembriInDipartimento() {
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
         Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
         Dipartimento dipartimento = new Dipartimento("Informatica");
@@ -104,7 +108,7 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindAllSupergruppiOfPersona")
-    void findAllSupergruppiOfPersona(Persona persona, Supergruppo supergruppo) {
+    void findAllSupergruppiOfPersona(final Persona persona, final Supergruppo supergruppo) {
         supergruppo.addPersona(persona);
         List<Supergruppo> expectedSupergruppi = new ArrayList<>();
         expectedSupergruppi.add(supergruppo);
@@ -113,7 +117,7 @@ class GruppoServiceImplTest {
         assertEquals(expectedSupergruppi, actualSupergruppi);
     }
 
-    private static Stream<Arguments> providefindAllSupergruppiOfPersona(){
+    private static Stream<Arguments> providefindAllSupergruppiOfPersona() {
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
         Supergruppo supergruppo = new Supergruppo("GAQD Informatica", "gruppo", true);
         Supergruppo supergruppo1 = new Supergruppo("GAQR Informatica", "gruppo", true);
@@ -125,7 +129,7 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindAllConsigliDidatticiOfPersona")
-    void findAllConsigliDidatticiOfPersona(Persona persona, ConsiglioDidattico consiglioDidattico) {
+    void findAllConsigliDidatticiOfPersona(final Persona persona, final ConsiglioDidattico consiglioDidattico) {
         consiglioDidattico.addPersona(persona);
         List<ConsiglioDidattico> expectedConsigli = new ArrayList<>();
         expectedConsigli.add(consiglioDidattico);
@@ -134,7 +138,7 @@ class GruppoServiceImplTest {
         assertEquals(expectedConsigli, actualConsigli);
     }
 
-    private static Stream<Arguments> providefindAllConsigliDidatticiOfPersona(){
+    private static Stream<Arguments> providefindAllConsigliDidatticiOfPersona() {
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
         ConsiglioDidattico consiglioDidattico = new ConsiglioDidattico("Informatica");
         ConsiglioDidattico consiglioDidattico1 = new ConsiglioDidattico("Ingegneria");
@@ -146,7 +150,7 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindAllDipartimentiOfPersona")
-    void findAllDipartimentiOfPersona(Persona persona, Dipartimento dipartimento) {
+    void findAllDipartimentiOfPersona(final Persona persona, final Dipartimento dipartimento) {
         dipartimento.addPersona(persona);
         List<Dipartimento> expectedDipartimenti = new ArrayList<>();
         expectedDipartimenti.add(dipartimento);
@@ -155,7 +159,7 @@ class GruppoServiceImplTest {
         assertEquals(expectedDipartimenti, actualDipartimenti);
     }
 
-    private static Stream<Arguments> providefindAllDipartimentiOfPersona(){
+    private static Stream<Arguments> providefindAllDipartimentiOfPersona() {
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
         Dipartimento dipartimento = new Dipartimento("Informatica");
         Dipartimento dipartimento1 = new Dipartimento("Ingegneria");
@@ -167,7 +171,7 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindAllMembriInConsiglioDidatticoNoSupergruppo")
-    void findAllMembriInConsiglioDidatticoNoSupergruppo(Persona persona1, Persona persona2, ConsiglioDidattico consiglioDidattico, Supergruppo supergruppo) {
+    void findAllMembriInConsiglioDidatticoNoSupergruppo(final Persona persona1, final Persona persona2, final ConsiglioDidattico consiglioDidattico, final Supergruppo supergruppo) {
         consiglioDidattico.addPersona(persona1);
         consiglioDidattico.addPersona(persona2);
         supergruppo.setConsiglio(consiglioDidattico);
@@ -189,7 +193,7 @@ class GruppoServiceImplTest {
         assertEquals(actualPersone, expectedPersone);
     }
 
-    private static Stream<Arguments> providefindAllMembriInConsiglioDidatticoNoSupergruppo(){
+    private static Stream<Arguments> providefindAllMembriInConsiglioDidatticoNoSupergruppo() {
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
         Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
         Persona persona3 = new Persona("Persona3", "Persona3", "Persona");
@@ -203,13 +207,13 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindPersona")
-    void findPersona(Persona expectedPersona) {
+    void findPersona(final Persona expectedPersona) {
         when(personaDAO.findById(expectedPersona.getId())).thenReturn(Optional.of(expectedPersona));
         Persona actualPersona = gruppoService.findPersona(expectedPersona.getId());
         assertEquals(expectedPersona, actualPersona);
     }
 
-    private static Stream<Arguments> providefindPersona(){
+    private static Stream<Arguments> providefindPersona() {
         Persona expectedPersona = new Persona("Persona1", "Persona1", "Persona");
         Persona expectedPersona2 = new Persona("Persona2", "Persona2", "Persona");
         return Stream.of(
@@ -220,13 +224,13 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindSupergruppo")
-    void findSupergruppo(Supergruppo expectedSupergruppo) {
+    void findSupergruppo(final Supergruppo expectedSupergruppo) {
         when(supergruppoDAO.findById(expectedSupergruppo.getId())).thenReturn(Optional.of(expectedSupergruppo));
         Supergruppo actualSupergruppo = gruppoService.findSupergruppo(expectedSupergruppo.getId());
         assertEquals(expectedSupergruppo, actualSupergruppo);
     }
 
-    private static Stream<Arguments> providefindSupergruppo(){
+    private static Stream<Arguments> providefindSupergruppo() {
         Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
         Supergruppo expectedSupergruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
         return Stream.of(
@@ -237,14 +241,14 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideaddMembro")
-    void addMembro(Persona expectedPersona, Supergruppo expectedSupergruppo) {
+    void addMembro(final Persona expectedPersona, final Supergruppo expectedSupergruppo) {
         int oldSize = expectedSupergruppo.getPersone().size();
         gruppoService.addMembro(expectedPersona, expectedSupergruppo);
         int actualSize = expectedSupergruppo.getPersone().size();
         assertEquals(oldSize + 1, actualSize);
     }
 
-    private static Stream<Arguments> provideaddMembro(){
+    private static Stream<Arguments> provideaddMembro() {
         Persona expectedPersona = new Persona("Persona1", "Persona1", "Persona");
         Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
         Supergruppo expectedSupergruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
@@ -256,14 +260,14 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideremoveMembro")
-    void removeMembro(Persona expectedPersona, Supergruppo expectedSupergruppo) {
+    void removeMembro(final Persona expectedPersona, final Supergruppo expectedSupergruppo) {
         int oldSize = expectedSupergruppo.getPersone().size();
         gruppoService.addMembro(expectedPersona, expectedSupergruppo);
         int actualSize = expectedSupergruppo.getPersone().size();
         assertEquals(oldSize + 1, actualSize);
     }
 
-    private static Stream<Arguments> provideremoveMembro(){
+    private static Stream<Arguments> provideremoveMembro() {
         Persona expectedPersona = new Persona("Persona1", "Persona1", "Persona");
         Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
         Supergruppo expectedSupergruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
@@ -275,7 +279,7 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindConsiglioBySupergruppo")
-    void findConsiglioBySupergruppo(Supergruppo expectedSupergruppo, ConsiglioDidattico expectedConsiglio) {
+    void findConsiglioBySupergruppo(final Supergruppo expectedSupergruppo, final ConsiglioDidattico expectedConsiglio) {
         expectedSupergruppo.setConsiglio(expectedConsiglio);
         expectedConsiglio.setSupergruppo(expectedSupergruppo);
         when(consiglioDidatticoDAO.findBySupergruppo_id(expectedSupergruppo.getId())).thenReturn(expectedConsiglio);
@@ -283,7 +287,7 @@ class GruppoServiceImplTest {
         assertEquals(actualConsiglio, expectedConsiglio);
     }
 
-    private static Stream<Arguments> providefindConsiglioBySupergruppo(){
+    private static Stream<Arguments> providefindConsiglioBySupergruppo() {
         Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
         Supergruppo expectedSupergruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
         ConsiglioDidattico expectedConsiglio = new ConsiglioDidattico("Informatica");
@@ -295,7 +299,7 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideisResponsabile")
-    void isResponsabile(Persona expectedPersona, Supergruppo expectedSupergruppo) {
+    void isResponsabile(final Persona expectedPersona, final Supergruppo expectedSupergruppo) {
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         when(supergruppoDAO.findById(expectedSupergruppo.getId())).thenReturn(Optional.of(expectedSupergruppo));
@@ -303,7 +307,7 @@ class GruppoServiceImplTest {
         assertEquals(true, expectedValue);
     }
 
-    private static Stream<Arguments> provideisResponsabile(){
+    private static Stream<Arguments> provideisResponsabile() {
         Persona expectedPersona = new Persona("Mario", "Rossi", "ciao");
         Persona expectedPersona2 = new Persona("Luca", "Verdi", "ciao");
         Supergruppo expectedSupergruppo = new Supergruppo("GAQD-Informatica", "gruppo", true);
@@ -315,7 +319,7 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindAllCommissioniByGruppo")
-    void findAllCommissioniByGruppo(Commissione expectedCommissione, Gruppo expectedGruppo) {
+    void findAllCommissioniByGruppo(final Commissione expectedCommissione, final Gruppo expectedGruppo) {
         List<Commissione> expectedCommissioni = new ArrayList<>();
         expectedCommissioni.add(expectedCommissione);
         expectedGruppo.addCommissione(expectedCommissione);
@@ -324,7 +328,7 @@ class GruppoServiceImplTest {
         assertEquals(actualCommissioni, expectedCommissioni);
     }
 
-    private static Stream<Arguments> providefindAllCommissioniByGruppo(){
+    private static Stream<Arguments> providefindAllCommissioniByGruppo() {
         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
         Gruppo expectedGruppo2 = new Gruppo("Gruppo2", "Gruppo", true);
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
@@ -337,7 +341,7 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindAllMembriInGruppoNoCommissione")
-    void findAllMembriInGruppoNoCommissione(Persona persona1, Persona persona2, Commissione expectedCommissione, Gruppo expectedGruppo) {
+    void findAllMembriInGruppoNoCommissione(final Persona persona1, final Persona persona2, final Commissione expectedCommissione, final Gruppo expectedGruppo) {
         List<Persona> persone = new ArrayList<>();
         persone.add(persona1);
         persone.add(persona2);
@@ -354,7 +358,7 @@ class GruppoServiceImplTest {
         assertEquals(expectedPersone, acutalPersone);
     }
 
-    private static Stream<Arguments> providefindAllMembriInGruppoNoCommissione(){
+    private static Stream<Arguments> providefindAllMembriInGruppoNoCommissione() {
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
         Persona persona2 = new Persona("Persona2", "Persona2", "Persona");
         Persona persona3 = new Persona("Persona3", "Persona3", "Persona");
@@ -370,13 +374,13 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providecloseCommissione")
-    void closeCommissione(Commissione expectedCommissione) {
+    void closeCommissione(final Commissione expectedCommissione) {
         when(supergruppoDAO.findById(expectedCommissione.getId())).thenReturn(Optional.of(expectedCommissione));
         gruppoService.closeCommissione(expectedCommissione.getId());
         assertEquals(false, expectedCommissione.getState());
     }
 
-    private static Stream<Arguments> providecloseCommissione(){
+    private static Stream<Arguments> providecloseCommissione() {
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
         Commissione expectedCommissione2 = new Commissione("Commissione2", "Commissione", true, "Commissione");
         return Stream.of(
@@ -387,14 +391,14 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providecreateCommissione")
-    void createCommissione(Commissione expectedCommissione, Commissione actualCommissione, Gruppo expectedGruppo) {
+    void createCommissione(final Commissione expectedCommissione, final Commissione actualCommissione, final Gruppo expectedGruppo) {
         when(supergruppoDAO.findById(expectedGruppo.getId())).thenReturn(Optional.of(expectedGruppo));
         gruppoService.createCommissione(expectedCommissione, expectedGruppo.getId());
         actualCommissione.setGruppo(expectedGruppo);
         assertEquals(actualCommissione, expectedCommissione);
     }
 
-    private static Stream<Arguments> providecreateCommissione(){
+    private static Stream<Arguments> providecreateCommissione() {
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
         Gruppo expectedGruppo2 = new Gruppo("Gruppo2", "Gruppo", true);
@@ -408,7 +412,7 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providenominaResponsabile")
-    void nominaResponsabile(Persona persona1, Commissione expectedCommissione, Commissione actualCommissione) {
+    void nominaResponsabile(final Persona persona1, final Commissione expectedCommissione, final Commissione actualCommissione) {
         when(personaDAO.findById(persona1.getId())).thenReturn(Optional.of(persona1));
         when(supergruppoDAO.findById(expectedCommissione.getId())).thenReturn(Optional.of(expectedCommissione));
         actualCommissione.addPersona(persona1);
@@ -416,7 +420,7 @@ class GruppoServiceImplTest {
         assertEquals(actualCommissione, expectedCommissione);
     }
 
-    private static Stream<Arguments> providenominaResponsabile(){
+    private static Stream<Arguments> providenominaResponsabile() {
         Persona persona = new Persona("Persona1", "Persona1", "Persona");
         Commissione expectedCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
         Commissione actualCommissione = new Commissione("Commissione", "Commissione", true, "Commissione");
@@ -431,12 +435,12 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providefindGruppoByCommissione")
-    void findGruppoByCommissione(Gruppo expectedGruppo, Gruppo actualGruppo) {
+    void findGruppoByCommissione(final Gruppo expectedGruppo, final Gruppo actualGruppo) {
         when(supergruppoDAO.findById(expectedGruppo.getId())).thenReturn(Optional.of(expectedGruppo));
         assertEquals(expectedGruppo, actualGruppo);
     }
 
-    private static Stream<Arguments> providefindGruppoByCommissione(){
+    private static Stream<Arguments> providefindGruppoByCommissione() {
         Gruppo expectedGruppo = new Gruppo("Gruppo", "Gruppo", true);
         Gruppo actualGruppo = new Gruppo("Gruppo", "Gruppo", true);
         Gruppo expectedGruppo2 = new Gruppo("Gruppo2", "Gruppo", true);

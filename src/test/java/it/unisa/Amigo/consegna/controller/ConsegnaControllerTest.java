@@ -29,7 +29,9 @@ import java.util.stream.Stream;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -48,7 +50,7 @@ class ConsegnaControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideDestinatari")
-    void viewConsegna(Set<String> possibiliDestinatari, List<Persona> destinatari, String ruoloDest, boolean flagRuolo) throws Exception {
+    void viewConsegna(final Set<String> possibiliDestinatari, final List<Persona> destinatari, final String ruoloDest, final boolean flagRuolo) throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -90,7 +92,7 @@ class ConsegnaControllerTest {
         return Stream.of(
                 Arguments.of(possibiliDest1, destinatari1, pqaRole.getName(), true),
                 Arguments.of(possibiliDest2, destinatari2, capogruppoRole.getName(), false)
-                );
+        );
     }
 
     @Test
@@ -99,13 +101,12 @@ class ConsegnaControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideConsegneInviate")
-    void findConsegneInviate(List<Consegna> consegne) throws Exception {
+    void findConsegneInviate(final List<Consegna> consegne) throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
         expectedPersona.setUser(user);
-
 
         when(consegnaService.consegneInviate()).thenReturn(consegne);
         this.mockMvc.perform(get("/consegna/inviati")
@@ -116,10 +117,8 @@ class ConsegnaControllerTest {
                 .andExpect(view().name("consegna/documenti-inviati"));
     }
 
-    private static Stream<Arguments> provideConsegneInviate(){
-
+    private static Stream<Arguments> provideConsegneInviate() {
         Persona persona1 = new Persona("persona1", "persona1", "");
-
 
         Documento documento1 = new Documento();
         documento1.setNome("Ciao");
@@ -163,7 +162,7 @@ class ConsegnaControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideConsegneRicevute")
-    void findConsegneRicevute(List<Consegna> consegne) throws Exception {
+    void findConsegneRicevute(final List<Consegna> consegne) throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -181,7 +180,7 @@ class ConsegnaControllerTest {
                 .andExpect(view().name("consegna/documenti-ricevuti"));
     }
 
-    private static Stream<Arguments> provideConsegneRicevute(){
+    private static Stream<Arguments> provideConsegneRicevute() {
         User user = new User("admin", "admin");
         user.addRole(new Role(Role.PQA_ROLE));
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -308,7 +307,7 @@ class ConsegnaControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideApprovaConsegna")
-    void approvaConsegna(List<Consegna> consegne) throws Exception {
+    void approvaConsegna(final List<Consegna> consegne) throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -326,7 +325,7 @@ class ConsegnaControllerTest {
                 .andExpect(view().name("consegna/documenti-ricevuti"));
     }
 
-    private static Stream<Arguments> provideApprovaConsegna(){
+    private static Stream<Arguments> provideApprovaConsegna() {
 
         User user = new User("admin", "admin");
         user.addRole(new Role(Role.PQA_ROLE));
@@ -381,7 +380,7 @@ class ConsegnaControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideRifiutaConsegna")
-    void rifiutaConsegna(List<Consegna> consegne) throws Exception {
+    void rifiutaConsegna(final List<Consegna> consegne) throws Exception {
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
@@ -397,7 +396,7 @@ class ConsegnaControllerTest {
                 .andExpect(view().name("consegna/documenti-ricevuti"));
     }
 
-    private static Stream<Arguments> provideRifiutaConsegna(){
+    private static Stream<Arguments> provideRifiutaConsegna() {
 
         User user = new User("admin", "admin");
         user.addRole(new Role(Role.PQA_ROLE));

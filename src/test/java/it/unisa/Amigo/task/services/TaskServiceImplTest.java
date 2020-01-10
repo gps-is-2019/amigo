@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 
@@ -32,7 +32,7 @@ class TaskServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideGetAssegnatarioTask")
-    void getAssegnatarioTask(Persona persona, Task task) {
+    void getAssegnatarioTask(final Persona persona, final Task task) {
         when(taskDAO.findById(task.getId())).thenReturn(Optional.of(task));
         assertEquals(persona, taskService.getAssegnatarioTask(task.getId()));
     }
@@ -75,16 +75,16 @@ class TaskServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideDefinizioneTaskSupergruppo")
-    void definizioneTaskSupergruppo(String descrizione, LocalDate dataScadenza, String nome, String stato,
-                                    Supergruppo s, Persona persona, Task expectedTask) {
+    void definizioneTaskSupergruppo(final String descrizione, final LocalDate dataScadenza, final String nome, final String stato,
+                                    final Supergruppo s, final Persona persona, final Task expectedTask) {
         Task actual = taskService.definizioneTaskSupergruppo(descrizione, dataScadenza, nome, stato, s, persona);
         assertEquals(expectedTask, actual);
     }
 
     private static Stream<Arguments> provideDefinizioneTaskSupergruppo() {
-        LocalDate tmpDate;
-        LocalDate tmpDate2;
-        LocalDate tmpDate3;
+        LocalDate tmpDate  = LocalDate.of(2020, 4, 20);
+        LocalDate tmpDate2 = LocalDate.of(2069, 12, 31);
+        LocalDate tmpDate3  = LocalDate.of(2120, 1, 1);
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
@@ -101,13 +101,13 @@ class TaskServiceImplTest {
         Supergruppo supergruppo5 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
         Supergruppo supergruppo6 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
-        Task task1 = new Task("descrizione 1", tmpDate = LocalDate.of(2020, 4, 20), "Task 1", "incompleto");
+        Task task1 = new Task("descrizione 1", tmpDate, "Task 1", "incompleto");
         task1.setPersona(persona1);
         task1.setSupergruppo(supergruppo1);
-        Task task2 = new Task("descrizione 2", tmpDate2 = LocalDate.of(2069, 12, 31), "Task 2", "in valutazione");
+        Task task2 = new Task("descrizione 2", tmpDate2, "Task 2", "in valutazione");
         task2.setPersona(persona2);
         task2.setSupergruppo(supergruppo2);
-        Task task3 = new Task("descrizione 3", tmpDate3 = LocalDate.of(2120, 1, 1), "Task 3", "respinto");
+        Task task3 = new Task("descrizione 3", tmpDate3, "Task 3", "respinto");
         task3.setPersona(persona3);
         task3.setSupergruppo(supergruppo3);
         Task task4 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
@@ -131,7 +131,7 @@ class TaskServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideVisualizzaTaskUser")
-    void visualizzaTaskUser(Persona persona, List<Task> expectedTasks) {
+    void visualizzaTaskUser(final Persona persona, final List<Task> expectedTasks) {
         when(taskDAO.findAllByPersona_Id(persona.getId())).thenReturn(expectedTasks);
 
         assertEquals(expectedTasks, taskService.visualizzaTaskUser(persona.getId()));
@@ -195,7 +195,7 @@ class TaskServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideVisualizzaTaskSuperGruppo")
-    void visualizzaTaskSuperGruppo(Supergruppo supergruppo, List<Task> expectedTasks) {
+    void visualizzaTaskSuperGruppo(final Supergruppo supergruppo, final List<Task> expectedTasks) {
         when(taskDAO.findAllBySupergruppo_Id(supergruppo.getId())).thenReturn(expectedTasks);
 
         assertEquals(expectedTasks, taskService.visualizzaTaskSuperGruppo(supergruppo.getId()));
@@ -260,7 +260,7 @@ class TaskServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideGetTaskById")
-    void getTaskById(Task task) {
+    void getTaskById(final Task task) {
         when(taskDAO.findById(task.getId())).thenReturn(Optional.of(task));
         assertEquals(task, taskService.getTaskById(task.getId()));
     }
@@ -292,7 +292,7 @@ class TaskServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideAccettazioneTask")
-    void accettazioneTask(Task task) {
+    void accettazioneTask(final Task task) {
         when(taskDAO.findById(task.getId())).thenReturn(Optional.of(task));
         taskService.accettazioneTask(task.getId());
         String expectedStato = "approvato";
@@ -325,7 +325,7 @@ class TaskServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideRifiutoTask")
-    void rifiutoTask(Task task) {
+    void rifiutoTask(final Task task) {
         when(taskDAO.findById(task.getId())).thenReturn(Optional.of(task));
         taskService.rifiutoTask(task.getId());
 
@@ -359,7 +359,7 @@ class TaskServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideCompletaTask")
-    void completaTask(Task task) {
+    void completaTask(final Task task) {
         when(taskDAO.findById(task.getId())).thenReturn(Optional.of(task));
         taskService.completaTask(task.getId());
 

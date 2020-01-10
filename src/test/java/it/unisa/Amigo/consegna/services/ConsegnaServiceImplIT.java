@@ -8,10 +8,9 @@ import it.unisa.Amigo.consegna.dao.ConsegnaDAO;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoServiceImpl;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.services.GruppoServiceImpl;
+import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,16 +33,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ConsegnaServiceImplIT {
 
     @Autowired
-    private DocumentoServiceImpl documentoService;
-
-    @Autowired
-    private GruppoServiceImpl gruppoService;
+    private GruppoService gruppoService;
 
     @Autowired
     private ConsegnaDAO consegnaDAO;
 
     @Autowired
-    private  ConsegnaServiceImpl consegnaService;
+    private ConsegnaService consegnaService;
 
     @Autowired
     private PersonaDAO personaDAO;
@@ -103,7 +99,7 @@ public class ConsegnaServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("provideDocumenti")
-    void findConsegnaByDocumento(Documento documento) {
+    void findConsegnaByDocumento(final Documento documento) {
         Documento doc = documento;
         doc.setDataInvio(LocalDate.now());
 
@@ -115,9 +111,6 @@ public class ConsegnaServiceImplIT {
         expectedConsegna.setDocumento(doc);
 
         consegnaDAO.save(expectedConsegna);
-
-
-       // when(consegnaDAO.findByDocumento_Id(doc.getId())). thenReturn(expectedConsegna);
         assertEquals(expectedConsegna, consegnaService.findConsegnaByDocumento(doc.getId()));
     }
 
@@ -139,7 +132,7 @@ public class ConsegnaServiceImplIT {
     @WithMockUser("ferrucci")
     @ParameterizedTest
     @MethodSource("providePossibiliDestinatari")
-    void possibiliDestinatari(Role role) {
+    void possibiliDestinatari(final Role role) {
         User user = new User("ferrucci", "admin");
         Set<Role> ruoli = new HashSet<Role>();
         ruoli.add(role);

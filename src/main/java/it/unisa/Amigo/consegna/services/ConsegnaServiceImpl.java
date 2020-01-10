@@ -181,7 +181,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
      * @return
      */
     @Override
-    public Consegna inoltraPQAfromGruppo(Documento doc) {
+    public Consegna inoltraPQAfromGruppo(final Documento doc) {
         Consegna consegna = new Consegna();
         consegna.setDataConsegna(LocalDate.now());
         consegna.setStato("DA_VALUTARE");

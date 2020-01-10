@@ -44,7 +44,7 @@ class DocumentoServiceImplTest {
                 "test.txt", false, "text/plain");
         when(documentoDAO.save(expectedDocumento)).thenReturn(expectedDocumento);
         Documento actualDocumento = documentoService.updateDocumento(expectedDocumento);
-        assertEquals(expectedDocumento,actualDocumento);
+        assertEquals(expectedDocumento, actualDocumento);
     }
 
     @Test
@@ -53,7 +53,7 @@ class DocumentoServiceImplTest {
                 "test.txt", false, "text/plain");
         when(documentoDAO.findById(expectedDocumento.getId())).thenReturn(Optional.of(expectedDocumento));
         Documento actualDocumento = documentoService.findDocumentoById(expectedDocumento.getId());
-        assertEquals(expectedDocumento,actualDocumento);
+        assertEquals(expectedDocumento, actualDocumento);
     }
 
     @Test
@@ -70,7 +70,7 @@ class DocumentoServiceImplTest {
         example.setNome("test");
         ExampleMatcher matcher = ExampleMatcher.matchingAll().withMatcher("nome", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
         Iterable<Documento> iterable = new ArrayList<>();
-        when(documentoDAO.findAll(Example.of(example,matcher))).thenReturn(expectedDocumenti);
+        when(documentoDAO.findAll(Example.of(example, matcher))).thenReturn(expectedDocumenti);
         List<Documento> actualDocumenti = documentoService.searchDocumenti(example);
         assertEquals(expectedDocumenti, actualDocumenti);
     }
