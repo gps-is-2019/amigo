@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class TaskServiceImplIT {
 
     @Autowired
-    private TaskServiceImpl taskService;
+    private TaskService taskService;
 
     @Autowired
     private TaskDAO taskDAO;

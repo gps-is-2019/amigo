@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 class TaskServiceImplTest {
 
     @InjectMocks
-    private TaskServiceImpl taskService;
+    private TaskService taskService;
 
     @Mock
     private TaskDAO taskDAO;

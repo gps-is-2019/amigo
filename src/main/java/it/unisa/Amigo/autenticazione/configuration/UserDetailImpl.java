@@ -1,7 +1,7 @@
 package it.unisa.Amigo.autenticazione.configuration;
 
 
-import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.autenticazione.domain.User;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

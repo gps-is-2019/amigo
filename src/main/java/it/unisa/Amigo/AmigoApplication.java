@@ -1,8 +1,8 @@
 package it.unisa.Amigo;
 
 import it.unisa.Amigo.autenticazione.dao.UserDAO;
-import it.unisa.Amigo.autenticazione.domanin.Role;
-import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.autenticazione.domain.Role;
+import it.unisa.Amigo.autenticazione.domain.User;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
@@ -130,7 +130,7 @@ public class AmigoApplication {
             cd.addPersona(vincenzi);
 
             LocalDate tmpDate;
-            tmpDate = LocalDate.of(2020, 4, 20);
+            tmpDate = LocalDate.now();
 
             Task taskprova = new Task("t1", tmpDate, "task1", "in valutazione");
             taskprova.setPersona(ferrucci);

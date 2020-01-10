@@ -1,6 +1,6 @@
 package it.unisa.Amigo.autenticazione.configuration;
 
-import it.unisa.Amigo.autenticazione.domanin.Role;
+import it.unisa.Amigo.autenticazione.domain.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

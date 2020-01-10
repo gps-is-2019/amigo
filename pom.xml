@@ -106,6 +106,7 @@
 					<!-- This will not stop the build if there are some violations -->
 					<failOnViolation>false</failOnViolation>
 					<linkXRef>false</linkXRef>
+					<includeTestSourceDirectory>true</includeTestSourceDirectory>
 				</configuration>
 				<executions>
 					<execution>

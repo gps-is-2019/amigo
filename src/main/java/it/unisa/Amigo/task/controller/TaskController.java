@@ -50,7 +50,7 @@ public class TaskController {
     private final DocumentoService documentoService;
 
     /**
-     * Gestisce la logica del sottosistema Consegna
+     * Gestisce la logica del sottosistema Consegna.
      */
     private final ConsegnaService consegnaService;
 
@@ -400,9 +400,9 @@ public class TaskController {
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/{idSupergruppo}/tasks/{idTask}/inoltro")
-    public String inoltroPQA(@ModelAttribute TaskForm taskForm, Model model,
-                             @PathVariable(name = "idSupergruppo") int idSupergruppo,
-                             @PathVariable(name = "idTask") int idTask) {
+    public String inoltroPQA(@ModelAttribute final TaskForm taskForm, final Model model,
+                             @PathVariable(name = "idSupergruppo") final int idSupergruppo,
+                             @PathVariable(name = "idTask") final int idTask) {
 
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         Documento documento = taskService.getTaskById(idTask).getDocumento();

@@ -1,6 +1,6 @@
 package it.unisa.Amigo.consegna.services;
 
-import it.unisa.Amigo.autenticazione.domanin.Role;
+import it.unisa.Amigo.autenticazione.domain.Role;
 import it.unisa.Amigo.consegna.dao.ConsegnaDAO;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.domain.Documento;

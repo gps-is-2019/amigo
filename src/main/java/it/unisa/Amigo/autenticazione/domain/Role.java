@@ -1,4 +1,4 @@
-package it.unisa.Amigo.autenticazione.domanin;
+package it.unisa.Amigo.autenticazione.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

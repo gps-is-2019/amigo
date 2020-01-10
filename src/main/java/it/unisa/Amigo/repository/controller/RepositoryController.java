@@ -1,11 +1,10 @@
 package it.unisa.Amigo.repository.controller;
 
-import it.unisa.Amigo.autenticazione.domanin.Role;
+import it.unisa.Amigo.autenticazione.domain.Role;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.repository.services.RepositoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

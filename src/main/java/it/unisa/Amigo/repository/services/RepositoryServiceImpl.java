@@ -23,11 +23,7 @@ public class RepositoryServiceImpl implements RepositoryService {
     private static final int MAX_SIZE_FILE = 10485760;
 
     private boolean checkFile(final MultipartFile file) {
-        if (file.getSize() == MIN_SIZE_FILE || file.getSize() > MAX_SIZE_FILE) {
-            return false;
-        } else {
-            return true;
-        }
+        return file.getSize() != MIN_SIZE_FILE && file.getSize() <= MAX_SIZE_FILE;
     }
     /**
      * Aggiunge un documento @{@link Documento} alla repository.

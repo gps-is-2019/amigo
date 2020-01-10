@@ -1,6 +1,6 @@
 package it.unisa.Amigo.gruppo.domain;
 
-import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.autenticazione.domain.User;
 import it.unisa.Amigo.task.domain.Task;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
