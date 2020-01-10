@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 /**
- * La classe rappresenta l'oggetto di dominio "Commissione"
+ * La classe rappresenta l'oggetto di dominio "Commissione".
  */
 @EqualsAndHashCode(callSuper = true)
 @Entity

@@ -14,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * Questa classe definisce  chi puo accedere alle diverse sezioni
+ * Questa classe definisce  chi puo accedere alle diverse sezioni.
  */
 @EnableWebSecurity
 @Configuration

@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Questa classe rappresenta l'oggetto di dominio "Persona"
+ * Questa classe rappresenta l'oggetto di dominio "Persona".
  */
 @Entity
 @Data

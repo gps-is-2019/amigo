@@ -37,7 +37,7 @@ public class ConsegnaController {
     private final DocumentoService documentoService;
 
     /**
-     * Mostra una pagina contenente tutti i possibili destinatari della consegna
+     * Mostra una pagina contenente tutti i possibili destinatari della consegna.
      *
      * @param model     per salvare informazioni da recuperare nell'html
      * @param ruoloDest il ruolo a cui effettuare la consegna
@@ -73,7 +73,7 @@ public class ConsegnaController {
     }
 
     /**
-     * Effettua delle consegne ai destinatari presi in input
+     * Effettua delle consegne ai destinatari presi in input.
      *
      * @param model           per salvare informazioni da recuperare nell'html
      * @param file            il documento da allegare alla consegna
@@ -98,7 +98,7 @@ public class ConsegnaController {
     }
 
     /**
-     * Recupera le consegne inviate dall'utente autenticato
+     * Recupera le consegne inviate dall'utente autenticato.
      *
      * @param model per salvare informazioni da recuperare nell'html
      * @param name  il nome su cui filtrare la ricerca
@@ -112,7 +112,7 @@ public class ConsegnaController {
     }
 
     /**
-     * Recupera le consegne ricevute dall'utente autenticato
+     * Recupera le consegne ricevute dall'utente autenticato.
      *
      * @param model per salvare informazioni da recuperare nell'html
      * @param name  il nome su cui filtrare la ricerca
@@ -126,7 +126,7 @@ public class ConsegnaController {
     }
 
     /**
-     * Filtra la ricerca in base al nome della consegna
+     * Filtra la ricerca in base al nome della consegna.
      *
      * @param consegne le consegne da filtrare
      * @param name     utilizzato dal filtro
@@ -144,7 +144,7 @@ public class ConsegnaController {
     }
 
     /**
-     * Esegue il downlaod del file allegato ad un documento
+     * Esegue il downlaod del file allegato ad un documento.
      *
      * @param model       per salvare informazioni da recuperare nell'html
      * @param idDocumento l'id del documento
@@ -194,7 +194,7 @@ public class ConsegnaController {
     }
 
     /**
-     * Modifica lo stato di una consegna in APPROVATA tramite il suo id
+     * Modifica lo stato di una consegna in APPROVATA tramite il suo id.
      *
      * @param model      per salvare informazioni da recuperare nell'html
      * @param idConsegna l'id della consegna da approvare
@@ -209,7 +209,7 @@ public class ConsegnaController {
     }
 
     /**
-     * Modifica lo stato di una consegna in RIFIUTATA tramite il suo id
+     * Modifica lo stato di una consegna in RIFIUTATA tramite il suo id.
      *
      * @param model      per salvare informazioni da recuperare nell'html
      * @param idConsegna l'id della consegna da rifiutare
