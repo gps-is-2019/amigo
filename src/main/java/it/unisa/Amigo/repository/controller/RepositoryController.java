@@ -1,8 +1,10 @@
 package it.unisa.Amigo.repository.controller;
+
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.repository.services.RepositoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -15,14 +17,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class RepositoryController {
-    @Autowired
-    private RepositoryService repositoryService;
-    @Autowired
-    private GruppoService gruppoService;
+
+    private final RepositoryService repositoryService;
+    private final GruppoService gruppoService;
 
     /**
      * Permette di verificare se l'utente il Responsabile del PQA.
@@ -30,7 +33,7 @@ public class RepositoryController {
      * @return true se l'utente è il Responsabile del PQA.
      */
     private boolean isResponsabilePQA() {
-       return gruppoService.findAllRoleOfPersona(gruppoService.getAuthenticatedUser().getId()).contains(Role.PQA_ROLE);
+        return gruppoService.findAllRoleOfPersona(gruppoService.getAuthenticatedUser().getId()).contains(Role.PQA_ROLE);
     }
 
     /**

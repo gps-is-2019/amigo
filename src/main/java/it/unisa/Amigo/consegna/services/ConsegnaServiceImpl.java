@@ -174,4 +174,22 @@ public class ConsegnaServiceImpl implements ConsegnaService {
         consegna.setStato("RIFIUTATA");
         consegnaDAO.save(consegna);
     }
+
+    /**
+     *
+     * @param doc
+     * @return
+     */
+    @Override
+    public Consegna inoltraPQAfromGruppo(Documento doc) {
+        Consegna consegna = new Consegna();
+        consegna.setDataConsegna(LocalDate.now());
+        consegna.setStato("DA_VALUTARE");
+        consegna.setDocumento(doc);
+        consegna.setMittente(gruppoService.getAuthenticatedUser());
+        consegna.setLocazione(Consegna.PQA_LOCAZIONE);
+        consegnaDAO.save(consegna);
+        doc.setConsegna(consegna);
+        return consegna;
+    }
 }

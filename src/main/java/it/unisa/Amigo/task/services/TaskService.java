@@ -13,9 +13,6 @@ import java.util.List;
 public interface TaskService {
     Persona getAssegnatarioTask(Integer idTask);
 
-//    Boolean addDocumentoTask(Documento documento, int idTask);
-//    List<Documenti> visualizzaDocumentiApprovati(Supergruppo supergruppo);
-
     Task definizioneTaskSupergruppo(String descrizione, LocalDate data, String nome, String stato,
                                     Supergruppo supergruppo, Persona persona);
 

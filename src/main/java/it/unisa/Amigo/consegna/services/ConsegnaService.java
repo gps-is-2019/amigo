@@ -1,6 +1,7 @@
 package it.unisa.Amigo.consegna.services;
 
 import it.unisa.Amigo.consegna.domain.Consegna;
+import it.unisa.Amigo.documento.domain.Documento;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -25,4 +26,6 @@ public interface ConsegnaService {
     void rifiutaConsegna(int idConsegna);
 
     Consegna findConsegnaByDocumentoAndDestinatario(int idDocumento, int idDestinatario);
+
+    Consegna inoltraPQAfromGruppo(Documento doc);
 }

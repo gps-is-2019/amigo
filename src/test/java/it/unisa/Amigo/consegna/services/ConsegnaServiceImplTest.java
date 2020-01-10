@@ -272,4 +272,56 @@ class ConsegnaServiceImplTest {
         consegnaService.rifiutaConsegna(consegna.getId());
         assertEquals(consegna.getStato(), "RIFIUTATA");
     }
+
+    @ParameterizedTest
+    @MethodSource("provideInoltraPQAfromGruppo")
+    void inoltraPQAfromGruppo(Documento doc, Persona persona, Consegna expectedConsegna){
+
+        when(gruppoService.getAuthenticatedUser()).thenReturn(persona);
+        assertEquals(expectedConsegna, consegnaService.inoltraPQAfromGruppo(doc));
+    }
+
+    private static Stream<Arguments> provideInoltraPQAfromGruppo() {
+
+        Persona expectedPersona1 = new Persona("Admin", "123", "Administrator");
+        expectedPersona1.setId(1);
+        Persona expectedPersona2 = new Persona("123", "112", "Administrator");
+        expectedPersona2.setId(2);
+        Persona expectedPersona3 = new Persona("123", "Boh", "Administrator");
+        expectedPersona3.setId(3);
+
+        Documento documento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
+                "test.txt", false, "text/plain");
+        Documento documento1 = new Documento("src/main/resources/documents/test1.txt", LocalDate.now(),
+                "test1.txt", false, "text/plain");
+        Documento documento2 = new Documento("src/main/resources/documents/test2.txt", LocalDate.now(),
+                "test2.txt", false, "text/plain");
+
+        Consegna consegna1 = new Consegna();
+        consegna1.setDataConsegna(LocalDate.now());
+        consegna1.setStato("DA_VALUTARE");
+        consegna1.setDocumento(documento);
+        consegna1.setMittente(expectedPersona1);
+        consegna1.setLocazione(Consegna.PQA_LOCAZIONE);
+
+        Consegna consegna2 = new Consegna();
+        consegna2.setDataConsegna(LocalDate.now());
+        consegna2.setStato("DA_VALUTARE");
+        consegna2.setDocumento(documento1);
+        consegna2.setMittente(expectedPersona2);
+        consegna2.setLocazione(Consegna.PQA_LOCAZIONE);
+
+        Consegna consegna3 = new Consegna();
+        consegna3.setDataConsegna(LocalDate.now());
+        consegna3.setStato("DA_VALUTARE");
+        consegna3.setDocumento(documento2);
+        consegna3.setMittente(expectedPersona3);
+        consegna3.setLocazione(Consegna.PQA_LOCAZIONE);
+
+        return Stream.of(
+                Arguments.of(documento, expectedPersona1, consegna1),
+                Arguments.of(documento1, expectedPersona2, consegna2),
+                Arguments.of(documento2, expectedPersona3, consegna3)
+        );
+    }
 }

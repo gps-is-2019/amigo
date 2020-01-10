@@ -3,6 +3,8 @@ package it.unisa.Amigo.task.controller;
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
 import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.consegna.domain.Consegna;
+import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.Persona;
@@ -620,6 +622,76 @@ class TaskControllerIT {
                 Arguments.of(user1, gruppo1, persona1, task1),
                 Arguments.of(user2, gruppo2, persona2, task2),
                 Arguments.of(user3, gruppo3, persona3, task3)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInoltroPQA")
+    void inoltroPQA(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedPersona.setUser(user);
+        expectedSupergruppo.addPersona(expectedPersona);
+        expectedSupergruppo.setResponsabile(expectedPersona);
+        expectedPersona.addSupergruppoResponsabile(expectedSupergruppo);
+        task.setSupergruppo(expectedSupergruppo);
+        expectedSupergruppo.addTask(task);
+        List<Task> expectedTask = new ArrayList<>();
+        expectedTask.add(task);
+
+        personaDAO.save(expectedPersona);
+        supergruppoDAO.save(expectedSupergruppo);
+        taskDAO.save(task);
+        userDAO.save(user);
+
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/{idTask}/inoltro", expectedSupergruppo.getId(), task.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
+                .andExpect(model().attribute("idSupergruppo", "" + expectedSupergruppo.getId()))
+                .andExpect(model().attribute("listaTask", expectedTask))
+                .andExpect(model().attribute("flagInoltro", 1))
+                .andExpect(view().name("task/tasks_supergruppo"));
+    }
+
+    private static Stream<Arguments> provideInoltroPQA() {
+        User user1 = new User("admin", "admin");
+        User user2 = new User("rob@deprisco.it", "roberto");
+        User user3 = new User("vittorio@scarano.it", "scarano");
+
+
+        LocalDate date1 = LocalDate.of(2020, 4, 20);
+        LocalDate date2 = LocalDate.of(2019, 12, 30);
+        LocalDate date3 = LocalDate.of(2021, 1, 5);
+
+        Persona persona1 = new Persona("Admin", "Admin", "Administrator");
+        Persona persona2 = new Persona("giovanni", "magi", "Administrator");
+        Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+
+        Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
+        Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
+        Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
+
+
+        Documento documento1 = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
+                "test.txt", false, "text/plain");
+        task1.setDocumento(documento1);
+        Documento documento2 = new Documento("src/main/resources/documents/test1.txt", LocalDate.now(),
+                "test1.txt", false, "text/plain");
+        task2.setDocumento(documento2);
+        Documento documento3 = new Documento("src/main/resources/documents/test2.txt", LocalDate.now(),
+                "test2.txt", false, "text/plain");
+        task3.setDocumento(documento3);
+
+        Consegna consegna = new Consegna();
+
+        return Stream.of(
+                Arguments.of(user1, persona1, gruppo1, task1),
+                Arguments.of(user2, persona2, gruppo2, task2),
+                Arguments.of(user3, persona3, gruppo3, task3)
         );
     }
 /*
