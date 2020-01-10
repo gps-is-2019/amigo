@@ -26,13 +26,13 @@ public class Commissione extends Supergruppo implements Serializable {
     @EqualsAndHashCode.Exclude
     private Gruppo gruppo;
 
-    public Commissione(final String name, final String type, final boolean state, final String descrizione) {
+    public Commissione(final String name, final String type, final boolean state, final String descr) {
         super(name, type, state);
-        this.descrizione = descrizione;
+        this.descrizione = descr;
     }
 
-    public void setGruppo(final Gruppo gruppo) {
-        gruppo.addCommissione(this);
-        this.gruppo = gruppo;
+    public void setGruppo(final Gruppo grup) {
+        grup.addCommissione(this);
+        this.gruppo = grup;
     }
 }
