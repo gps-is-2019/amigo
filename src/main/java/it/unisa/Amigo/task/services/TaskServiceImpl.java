@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Questa classe implementa i metodi  per la logica di Business del sottositema "Gruppo".
@@ -32,8 +33,8 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public Persona getAssegnatarioTask(final Integer id) {
-        Task task = taskDAO.findById(id).get();
-        return task.getPersona();
+        Optional<Task> task = taskDAO.findById(id);
+        return task.map(Task::getPersona).orElse(null);
     }
 
     /**

@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -303,21 +304,22 @@ class GruppoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideisResponsabile")
-    void isResponsabile(final Persona expectedPersona, final Supergruppo expectedSupergruppo) {
-        expectedSupergruppo.addPersona(expectedPersona);
-        expectedSupergruppo.setResponsabile(expectedPersona);
-        when(supergruppoDAO.findById(expectedSupergruppo.getId())).thenReturn(Optional.of(expectedSupergruppo));
-        boolean expectedValue = gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId());
-        assertEquals(true, expectedValue);
+    void isResponsabile(final Persona persona, final Supergruppo supergruppo) {
+        supergruppo.addPersona(persona);
+        supergruppo.setResponsabile(persona);
+        when(supergruppoDAO.findById(supergruppo.getId())).thenReturn(Optional.of(supergruppo));
+        assertTrue(gruppoService.isResponsabile(persona.getId(), supergruppo.getId()));
     }
 
     private static Stream<Arguments> provideisResponsabile() {
-        Persona expectedPersona = new Persona("Mario", "Rossi", "ciao");
-        Persona expectedPersona2 = new Persona("Luca", "Verdi", "ciao");
-        Supergruppo expectedSupergruppo = new Supergruppo("GAQD-Informatica", "gruppo", true);
+        Persona persona1 = new Persona("Mario", "Rossi", "ciao");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Luca", "Verdi", "ciao");
+        persona2.setId(2);
+        Supergruppo supergruppo = new Supergruppo("GAQD-Informatica", "gruppo", true);
         return Stream.of(
-                Arguments.of(expectedPersona, expectedSupergruppo),
-                Arguments.of(expectedPersona2, expectedSupergruppo)
+                Arguments.of(persona1, supergruppo),
+                Arguments.of(persona2, supergruppo)
         );
     }
 

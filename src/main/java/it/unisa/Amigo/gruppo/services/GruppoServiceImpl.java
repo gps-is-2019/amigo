@@ -5,19 +5,16 @@ import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
-import it.unisa.Amigo.gruppo.domain.Commissione;
-import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
-import it.unisa.Amigo.gruppo.domain.Dipartimento;
-import it.unisa.Amigo.gruppo.domain.Gruppo;
-import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.domain.Supergruppo;
+import it.unisa.Amigo.gruppo.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -180,8 +177,8 @@ public class GruppoServiceImpl implements GruppoService {
      */
     @Override
     public boolean isResponsabile(final Integer idPersona, final Integer idSupergruppo) {
-        Supergruppo supergruppo = supergruppoDAO.findById(idSupergruppo).get();
-        return idPersona == supergruppo.getResponsabile().getId();
+        Optional<Supergruppo> supergruppo = supergruppoDAO.findById(idSupergruppo);
+        return supergruppo.filter(value -> idPersona.equals(value.getResponsabile().getId())).isPresent();
     }
 
     /***
@@ -304,7 +301,7 @@ public class GruppoServiceImpl implements GruppoService {
     public List<String> findAllRoleOfPersona(final Integer idPersona) {
         List<String> r = new ArrayList<>();
         Set<Role> ruoli = personaDAO.findById(idPersona).get().getUser().getRoles();
-        for (Role ruolo :ruoli) {
+        for (Role ruolo : ruoli) {
             r.add(ruolo.getName());
         }
         return r;

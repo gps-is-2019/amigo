@@ -1,20 +1,9 @@
 package it.unisa.Amigo.autenticazione.domain;
 
 import it.unisa.Amigo.gruppo.domain.Persona;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
+import lombok.*;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Entity
-public  class User implements Serializable {
+public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -52,8 +41,5 @@ public  class User implements Serializable {
 
     public void addRole(final Role r) {
         roles.add(r);
-    }
-    public int getId() {
-        return this.id;
     }
 }

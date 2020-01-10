@@ -196,10 +196,10 @@ class TaskControllerIT {
         expectedSupergruppo.addTask(expectedTask);
         expectedTask.setPersona(expectedPersona);
 
-        personaDAO.save(expectedPersona);
-        supergruppoDAO.save(expectedSupergruppo);
+        // personaDAO.save(expectedPersona);
+        // supergruppoDAO.save(expectedSupergruppo);
         taskDAO.save(expectedTask);
-        userDAO.save(user);
+        // userDAO.save(user);
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}", expectedSupergruppo.getId(), expectedTask.getId())
                 .with(user(userDetails)))
@@ -412,6 +412,9 @@ class TaskControllerIT {
         task.setPersona(expectedPersona);
         task.setSupergruppo(expectedSupergruppo);
 
+        // personaDAO.save(expectedPersona);
+        // supergruppoDAO.save(expectedSupergruppo);
+        // userDAO.save(user);
         taskDAO.save(task);
 
         TaskForm taskForm = new TaskForm();
@@ -422,9 +425,7 @@ class TaskControllerIT {
         taskForm.setStato(task.getStato());
         taskForm.setIdPersona(expectedPersona.getId());
 
-        personaDAO.save(expectedPersona);
-        supergruppoDAO.save(expectedSupergruppo);
-        userDAO.save(user);
+
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modifica", expectedSupergruppo.getId(), task.getId())
                 .with(user(userDetails)))
@@ -447,22 +448,16 @@ class TaskControllerIT {
         LocalDate date3 = LocalDate.of(2021, 1, 5);
 
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
-        persona1.setId(1);
         Persona persona2 = new Persona("giovanni", "magi", "Administrator");
-        persona1.setId(2);
         Persona persona3 = new Persona("Vittorio", "Scarano", "user");
-        persona1.setId(3);
 
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
         Supergruppo gruppo2 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
         Supergruppo gruppo3 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
         Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
-        task1.setId(1);
         Task task2 = new Task("t1", date2, "task2", "incompleto");
-        task2.setId(2);
         Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
-        task3.setId(3);
 
         return Stream.of(
                 Arguments.of(user1, persona1, gruppo1, task1),
