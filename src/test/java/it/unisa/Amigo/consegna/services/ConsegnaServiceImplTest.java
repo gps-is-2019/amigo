@@ -79,23 +79,6 @@ class ConsegnaServiceImplTest {
         );
     }
 
-    private static Stream<Arguments> provideDownloadDocumento() throws MalformedURLException {
-        Documento doc1 = new Documento("src/main/resources/documents/file.txt", LocalDate.now(),
-                "file.txt", false, "application/txt");
-        doc1.setId(1);
-        Documento doc2 = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
-                "test.txt", false, "application/txt");
-        doc2.setId(2);
-
-        Resource res1 = new UrlResource(Paths.get(doc1.getPath()).toUri());
-        Resource res2 = new UrlResource(Paths.get(doc2.getPath()).toUri());
-
-        return Stream.of(
-                Arguments.of(doc1, res1),
-                Arguments.of(doc2, res2)
-        );
-    }
-
     private static Stream<Arguments> provideDocumenti() {
         Documento documento1 = new Documento();
         documento1.setNome("Documento1");
@@ -175,15 +158,6 @@ class ConsegnaServiceImplTest {
             expectedConsegne.add(consegna);
             assertEquals(expectedConsegne.size(), consegnaService.sendDocumento(idDestinatari, locazione, file).size());
         }
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideDownloadDocumento")
-    void downloadDocumento(Documento expectedDocumento, Resource expectedResource) {
-        when(documentoService.loadAsResource(expectedDocumento)).thenReturn(expectedResource);
-        when(documentoService.findDocumentoById(expectedDocumento.getId())).thenReturn(expectedDocumento);
-        Resource actualResource = consegnaService.downloadDocumento(expectedDocumento.getId()).getBody();
-        assertEquals(actualResource, expectedResource);
     }
 
     @Test

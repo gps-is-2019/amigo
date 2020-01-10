@@ -15,8 +15,6 @@ import java.util.Set;
 public interface ConsegnaService {
     List<Consegna> sendDocumento(int[] idDestinatari, String locazione, MultipartFile file);
 
-    ResponseEntity<Resource> downloadDocumento(int idDocument);
-
     List<Consegna> consegneInviate();
 
     List<Consegna> consegneRicevute();

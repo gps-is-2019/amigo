@@ -3,12 +3,16 @@ package it.unisa.Amigo.consegna.controller;
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.consegna.services.ConsegnaService;
+import it.unisa.Amigo.documento.domain.Documento;
+import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,12 +31,13 @@ import java.util.Set;
  * Questa classe si occupa della logica di controllo del sottosistema "Consegna"
  */
 @Controller
+@RequiredArgsConstructor
 public class ConsegnaController {
-    @Autowired
-    private ConsegnaService consegnaService;
+    private final ConsegnaService consegnaService;
 
-    @Autowired
-    private GruppoService gruppoService;
+    private final GruppoService gruppoService;
+
+    private final DocumentoService documentoService;
 
     /**
      * Mostra una pagina contenente tutti i possibili destinatari della consegna
@@ -174,7 +179,13 @@ public class ConsegnaController {
         }
 
         if (downloadConsentito) {
-            return consegnaService.downloadDocumento(idDocumento);
+            Documento documento = documentoService.findDocumentoById(idDocumento);
+            Resource resource = documentoService.loadAsResource(documento);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(documento.getFormat()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
+                    .body(resource);
         } else {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");

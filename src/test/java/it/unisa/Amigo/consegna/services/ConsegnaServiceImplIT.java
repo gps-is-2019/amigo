@@ -76,32 +76,6 @@ public class ConsegnaServiceImplIT {
         userDAO.deleteAll();
     }
 
-    @ParameterizedTest
-    @MethodSource("provideDownloadDocumento")
-    void downloadDocumento(Documento expectedDocumento, Resource expectedResource)  {
-
-        documentoDAO.save(expectedDocumento);
-        /*when(documentoService.loadAsResource(expectedDocumento)).thenReturn(expectedResource);
-        when(documentoService.findDocumento(expectedDocumento.getId())).thenReturn(expectedDocumento);*/
-        Resource actualResource = consegnaService.downloadDocumento(expectedDocumento.getId()).getBody();
-        assertEquals(actualResource, expectedResource);
-    }
-
-    private static Stream<Arguments> provideDownloadDocumento() throws MalformedURLException {
-        Documento doc1 = new Documento("src/main/resources/documents/test2.txt", LocalDate.now(),
-                "test2.txt", false, "application/txt");
-        Documento doc2 = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
-                "test.txt", false, "application/txt");
-
-        Resource res1 = new UrlResource(Paths.get(doc1.getPath()).toUri());
-        Resource res2 = new UrlResource(Paths.get(doc2.getPath()).toUri());
-
-        return Stream.of(
-                Arguments.of(doc1, res1),
-                Arguments.of(doc2, res2)
-        );
-    }
-
     @WithMockUser("ferrucci")
     @Test
     void consegneInviate() {

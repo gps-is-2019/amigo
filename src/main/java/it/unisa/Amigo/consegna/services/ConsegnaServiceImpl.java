@@ -73,23 +73,6 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     }
 
     /**
-     * Effettua il download di un documento
-     *
-     * @param idDocument il documento da scaricare
-     * @return la pagina di visualizzazione del documento scaricato
-     */
-    @Override
-    public ResponseEntity<Resource> downloadDocumento(int idDocument) {
-        Documento documento = documentoService.findDocumentoById(idDocument);
-        Resource resource = documentoService.loadAsResource(documento);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(documento.getFormat()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
-                .body(resource);
-    }
-
-    /**
      * Recupera la lista delle consegna inviate da una persona
      *
      * @return la lista delle consegne

@@ -5,6 +5,7 @@ import it.unisa.Amigo.gruppo.domain.Gruppo;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,9 +20,9 @@ import java.util.List;
  * Questa classe si occupa della logica di controllo del sottosistema gruppo
  */
 @Controller
+@RequiredArgsConstructor
 public class GruppoController {
-    @Autowired
-    private GruppoService gruppoService;
+    private final GruppoService gruppoService;
 
     /***
      * Ritorna ad una pagina i membri @{@link Persona} di un supergruppo @{@link Supergruppo}
