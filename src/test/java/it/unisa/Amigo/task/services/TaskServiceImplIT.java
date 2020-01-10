@@ -40,10 +40,10 @@ class TaskServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("provideGetAssegnatarioTask")
-    void getAssegnatarioTask(final Persona persona1, final Task task) {
+    void getAssegnatarioTask(final Persona persona, final Task task) {
         taskDAO.save(task);
         Persona actualPersona = taskService.getAssegnatarioTask(task.getId());
-        assertEquals(persona1, actualPersona);
+        assertEquals(persona, actualPersona);
     }
 
     private static Stream<Arguments> provideGetAssegnatarioTask() {
