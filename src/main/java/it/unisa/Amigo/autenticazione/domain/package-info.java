@@ -1,5 +1,4 @@
-package it.unisa.Amigo.autenticazione.domain;
 /**
- * Packege con le classi rappresentanti gli oggetto di dominio "Role" e"User".
+ * Classi di dominio "User" e "Role".
  */
-
+package it.unisa.Amigo.autenticazione.domain;

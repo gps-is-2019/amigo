@@ -1,8 +1,4 @@
-package it.unisa.Amigo.autenticazione.configuration;
 /**
- * Packege riguardante il sottosistema consegna.
+ * Classi riguardanti le configurazioni dell'autenticazione.
  */
-
-
-
-
+package it.unisa.Amigo.autenticazione.configuration;

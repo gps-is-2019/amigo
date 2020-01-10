@@ -1,5 +1,4 @@
-package it.unisa.Amigo.task.controller;
 /**
- * Questo packege si occupa della logica di controllo del sottosistema Task.
+ * Logica di controllo del sottosistema "Task".
  */
-
+package it.unisa.Amigo.task.controller;

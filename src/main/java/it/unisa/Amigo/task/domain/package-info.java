@@ -1,4 +1,4 @@
-package it.unisa.Amigo.task.domain;
 /**
- * Questo packege rappresenta l'oggetto di dominio "Task".
+ * Classe di dominio "Task".
  */
+package it.unisa.Amigo.task.domain;

@@ -1,5 +1,4 @@
-package it.unisa.Amigo.consegna.services;
 /**
- * Questo packege implementa la logica di Business del sottositema "Consegna".
+ * Servizi del sottositema "Consegna".
  */
-
+package it.unisa.Amigo.consegna.services;

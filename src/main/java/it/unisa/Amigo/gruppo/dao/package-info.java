@@ -1,6 +1,4 @@
-package it.unisa.Amigo.gruppo.dao;
 /**
- * Questa packege si occupa di fornire un accesso astratto  all'oggetto di dominio "Supergruppo", "Dipartimento", "Persona", "Consiglio".
+ * Interfacce DAO per l'accesso alle classi del sottosistema "Gruppo".
  */
-
-
+package it.unisa.Amigo.gruppo.dao;

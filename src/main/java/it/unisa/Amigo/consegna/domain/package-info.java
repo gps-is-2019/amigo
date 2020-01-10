@@ -1,5 +1,4 @@
-package it.unisa.Amigo.consegna.domain;
 /**
- * Il packege con la classe che rappresenta l'oggetto di dominio "Consegna".
+ * Classe di dominio "Consegna".
  */
-
+package it.unisa.Amigo.consegna.domain;
