@@ -1,7 +1,6 @@
 package it.unisa.Amigo.autenticazione.configuration;
 
 import it.unisa.Amigo.autenticazione.domanin.Role;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +29,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      * @throws Exception
      */
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
 
     }
@@ -67,9 +66,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/gruppi/?/tasks/create").hasRole(Role.CAPOGRUPPO_ROLE)
                 .antMatchers("/gruppi/**").authenticated()
                 .antMatchers("taskPersonali/**").authenticated()
-
 //                .anyRequest().authenticated()
-
                 .and()
                 .formLogin()
                 .loginPage("/login")
@@ -82,10 +79,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/index")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID");
-//                .and()
-//                .httpBasic();
 
     }
-
-
 }

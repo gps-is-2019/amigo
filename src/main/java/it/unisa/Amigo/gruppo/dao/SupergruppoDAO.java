@@ -1,6 +1,5 @@
 package it.unisa.Amigo.gruppo.dao;
 
-import com.sun.xml.bind.v2.model.core.ID;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

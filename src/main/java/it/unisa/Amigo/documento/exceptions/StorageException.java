@@ -1,11 +1,11 @@
 package it.unisa.Amigo.documento.exceptions;
 
 public class StorageException extends RuntimeException {
-    public StorageException(String message) {
+    public StorageException(final String message) {
         super(message);
     }
 
-    public StorageException(String message, Throwable cause) {
+    public StorageException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

@@ -30,11 +30,11 @@ public class Gruppo extends Supergruppo implements Serializable {
     @EqualsAndHashCode.Exclude
     private Set<Commissione> commissioni = new HashSet<>();
 
-    public Gruppo(String nome, String tipo, boolean attivo) {
+    public Gruppo(final String nome, final String tipo, final boolean attivo) {
         super(nome, tipo, attivo);
     }
 
-    public void addCommissione(Commissione commissione) {
+    public void addCommissione(final Commissione commissione) {
         if (!this.commissioni.contains(commissione)) {
             commissioni.add(commissione);
             commissione.setGruppo(this);

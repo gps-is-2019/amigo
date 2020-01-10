@@ -12,9 +12,7 @@ public interface DocumentoService {
     Documento findDocumentoById(Integer idDocumento);
     List<Documento> searchDocumenti(Documento example);
     Resource loadAsResource(Documento documento);
-
-
     //TODO comunicare l'agginta della funzione per visualizzare lista documenti approvati
     List<Documento> approvedDocuments(int idSupergruppo);
-
 }
+

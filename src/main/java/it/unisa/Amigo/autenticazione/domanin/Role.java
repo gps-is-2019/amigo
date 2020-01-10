@@ -1,8 +1,17 @@
 package it.unisa.Amigo.autenticazione.domanin;
 
-import lombok.*;
-
-import javax.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,13 +24,13 @@ import java.util.Set;
 @Entity
 public class Role {
 
-    private final static long serialVersionUID = 1L;
-    public final static  String ADMIN_ROLE = "ADMIN";
-    public final static  String CAPOGRUPPO_ROLE = "CAPOGRUPPO";
-    public final static  String USER_ROLE = "USER";
-    public final static  String PQA_ROLE = "PQA";
-    public final static  String CPDS_ROLE = "CPDS";
-    public final static  String NDV_ROLE = "NDV";
+    private static final long serialVersionUID = 1L;
+    public static final String ADMIN_ROLE = "ADMIN";
+    public static final String CAPOGRUPPO_ROLE = "CAPOGRUPPO";
+    public static final String USER_ROLE = "USER";
+    public static final String PQA_ROLE = "PQA";
+    public static final String CPDS_ROLE = "CPDS";
+    public static final  String NDV_ROLE = "NDV";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

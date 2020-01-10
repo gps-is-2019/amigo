@@ -34,7 +34,7 @@ public class DocumentoServiceImpl implements DocumentoService {
 
     private final DocumentoDAO documentoDAO;
 
-    private String storeFile(MultipartFile file, int idDoc) {
+    private String storeFile(final MultipartFile file, final int idDoc) {
         String filename = file.getOriginalFilename();
         try {
             if (file.isEmpty()) {
@@ -62,7 +62,7 @@ public class DocumentoServiceImpl implements DocumentoService {
      */
     @Override
     @Transactional
-    public Documento addDocumento(MultipartFile file) {
+    public Documento addDocumento(final MultipartFile file) {
         Documento doc = new Documento();
         doc.setDataInvio(LocalDate.now());
         doc.setNome(file.getOriginalFilename());
@@ -81,7 +81,7 @@ public class DocumentoServiceImpl implements DocumentoService {
      * @return il documento salvato nel database.
      */
     @Override
-    public Documento updateDocumento(Documento documento) {
+    public Documento updateDocumento(final Documento documento) {
         return documentoDAO.save(documento);
     }
 
@@ -91,7 +91,7 @@ public class DocumentoServiceImpl implements DocumentoService {
      * @param documento in cui è presente la path del file da scaricare.
      * @return resource contenente il file prelevato dal file system.
      */
-    public Resource loadAsResource(Documento documento) {
+    public Resource loadAsResource(final Documento documento) {
         try {
             Resource resource = new UrlResource(Paths.get(documento.getPath()).toUri());
             if (resource.exists() || resource.isReadable()) {
@@ -105,7 +105,7 @@ public class DocumentoServiceImpl implements DocumentoService {
     }
 
     @Override
-    public List<Documento> approvedDocuments(int idSupergruppo) {
+    public List<Documento> approvedDocuments(final int idSupergruppo) {
         return documentoDAO.findAllByTask_Supergruppo_IdAndTask_Stato(idSupergruppo, "approvato");
     }
 
@@ -117,23 +117,22 @@ public class DocumentoServiceImpl implements DocumentoService {
      * @return documento con id uguale a idDocumento.
      */
     @Override
-    public Documento findDocumentoById(Integer idDocumento) {
+    public Documento findDocumentoById(final Integer idDocumento) {
         return documentoDAO.findById(idDocumento).get();
 
     }
 
     /**
      * Ritorna una lista di documenti dato un documento di confronto.
-     *
-     * @param nameDocumento Documento da confrontare
+     *TODO
      * @return lista di documenti contenenti la stringa ricercata.
      */
     @Override
-    public List<Documento> searchDocumenti(Documento example) {
-        List <Documento> result = new ArrayList<>();
+    public List<Documento> searchDocumenti(final Documento example) {
+        List<Documento> result = new ArrayList<>();
         ExampleMatcher matcher = ExampleMatcher.matchingAll().withMatcher("nome", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
-        Iterable<Documento> iterable= documentoDAO.findAll(Example.of(example,matcher));
-        for (Documento documento: iterable){
+        Iterable<Documento> iterable = documentoDAO.findAll(Example.of(example, matcher));
+        for (Documento documento: iterable) {
             result.add(documento);
         }
         return result;

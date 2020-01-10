@@ -1,5 +1,4 @@
 package it.unisa.Amigo.repository.controller;
-
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.services.GruppoService;
@@ -16,16 +15,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
-import java.util.Set;
-
 
 @Controller
 public class RepositoryController {
     @Autowired
     private RepositoryService repositoryService;
-
     @Autowired
     private GruppoService gruppoService;
 
@@ -34,11 +29,8 @@ public class RepositoryController {
      *
      * @return true se l'utente è il Responsabile del PQA.
      */
-
     private boolean isResponsabilePQA() {
-
        return gruppoService.findAllRoleOfPersona(gruppoService.getAuthenticatedUser().getId()).contains(Role.PQA_ROLE);
-
     }
 
     /**
@@ -48,10 +40,8 @@ public class RepositoryController {
      * @param name  nome del documento da cercare.
      * @return il path della pagina su cui eseguire il redirect.
      */
-
-    //show form
     @GetMapping("/repository")
-    public String getRepository(Model model, @RequestParam(required = false) String name) {
+    public String getRepository(final Model model, @RequestParam(required = false) final String name) {
         if (isResponsabilePQA()) {
             model.addAttribute("flagPQA", 1);
         }
@@ -65,13 +55,13 @@ public class RepositoryController {
      *
      * @return il path della pagina su cui eseguire il redirect.
      */
-
     @GetMapping("/repository/uploadDocumento")
     public String uploadDocumento() {
-        if (gruppoService.getAuthenticatedUser() == null)
+        if (gruppoService.getAuthenticatedUser() == null) {
             return "redirect:/";
-        else if (!isResponsabilePQA())
+        } else if (!isResponsabilePQA()) {
             return "redirect:/dashboard";
+        }
         return "repository/aggiunta_documento_repository";
     }
 
@@ -82,10 +72,8 @@ public class RepositoryController {
      * @param file  file da caricare.
      * @return il path della pagina su cui eseguire il redirect
      */
-
-    //submit form
     @PostMapping("/repository/uploadDocumento")
-    public String uploadDocumento(Model model, @RequestParam("file") MultipartFile file) {
+    public String uploadDocumento(final Model model, @RequestParam("file") final MultipartFile file) {
         boolean addFlag = repositoryService.addDocumentoInRepository(file);
         model.addAttribute("addFlag", addFlag);
         if (addFlag) {
@@ -103,9 +91,8 @@ public class RepositoryController {
      * @param idDocument id del documento da scaricare.
      * @return documento.
      */
-
     @GetMapping("/repository/{idDocument}")
-    public ResponseEntity<Resource> downloadDocumento(@PathVariable("idDocument") int idDocument) {
+    public ResponseEntity<Resource> downloadDocumento(@PathVariable("idDocument") final int idDocument) {
 
         Documento documento = repositoryService.findDocumentoById(idDocument);
         Resource resource = repositoryService.downloadDocumento(documento);

@@ -1,6 +1,11 @@
 package it.unisa.Amigo.gruppo.services;
 
-import it.unisa.Amigo.gruppo.domain.*;
+import it.unisa.Amigo.gruppo.domain.Commissione;
+import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
+import it.unisa.Amigo.gruppo.domain.Dipartimento;
+import it.unisa.Amigo.gruppo.domain.Gruppo;
+import it.unisa.Amigo.gruppo.domain.Persona;
+import it.unisa.Amigo.gruppo.domain.Supergruppo;
 
 import java.util.List;
 
