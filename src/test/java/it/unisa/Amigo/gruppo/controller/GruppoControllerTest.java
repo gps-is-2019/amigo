@@ -2,6 +2,7 @@ package it.unisa.Amigo.gruppo.controller;
 
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
 import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.consegna.services.ConsegnaService;
 import it.unisa.Amigo.gruppo.domain.*;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.junit.Test;
@@ -33,7 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class GruppoControllerTest {
-
     @MockBean
     private GruppoService gruppoService;
 

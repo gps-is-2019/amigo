@@ -37,7 +37,7 @@ public class Documento implements Serializable {
     @NonNull
     private String format;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Consegna consegna;

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -29,10 +30,12 @@ class DocumentoServiceImplTest {
 
     @Test
     void addDocumentoStoreAndLoad() {
+        Documento doc = new Documento("src/main/resources/documents/1", LocalDate.now(), "test.txt", false, "text/plain");
+        doc.setId(1);
+        when(documentoDAO.save(any(Documento.class))).thenReturn(doc);
         documentoService.addDocumento(new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE,
                 "Hello World".getBytes()));
-        Documento documento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(), "test.txt", false, "text/plain");
-        assertThat((documentoService.loadAsResource(documento)).exists());
+        assertThat((documentoService.loadAsResource(doc)).exists());
     }
 
     @Test

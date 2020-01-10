@@ -277,6 +277,11 @@ public class GruppoServiceImpl implements GruppoService {
     }
 
     @Override
+    public List<Persona> findAllByRuolo(String ruolo){
+        return personaDAO.findAllByUser_Roles_Name(ruolo.toUpperCase());
+    }
+
+    @Override
     public List<String> findAllRoleOfPersona(Integer idPersona) {
         List<String> r = new ArrayList<>();
         Set<Role> ruoli = personaDAO.findById(idPersona).get().getUser().getRoles();
@@ -285,6 +290,4 @@ public class GruppoServiceImpl implements GruppoService {
         }
         return r;
     }
-
-
 }

@@ -48,5 +48,7 @@ public interface GruppoService {
 
     Gruppo findGruppoByCommissione(Integer idCommissione);
 
+    List<Persona> findAllByRuolo(String ruolo);
+
     List<String> findAllRoleOfPersona(Integer idPersona);
 }

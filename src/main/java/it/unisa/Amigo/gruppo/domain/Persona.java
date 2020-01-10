@@ -89,8 +89,8 @@ public class Persona implements Serializable {
     }
 
     public void addSupergruppoResponsabile(Supergruppo supergruppo) {
-        if (supergruppi.contains(supergruppo)) {
-            supergruppi.add(supergruppo);
+        if (!supergruppiResponsabile.contains(supergruppo)) {
+            supergruppiResponsabile.add(supergruppo);
             supergruppo.setResponsabile(this);
         }
     }
@@ -105,6 +105,4 @@ public class Persona implements Serializable {
     public void addTask(Task task){
         tasks.add(task);
     }
-
-
 }
