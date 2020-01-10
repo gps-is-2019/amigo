@@ -686,8 +686,6 @@ class TaskControllerIT {
                 "test2.txt", false, "text/plain");
         task3.setDocumento(documento3);
 
-        Consegna consegna = new Consegna();
-
         return Stream.of(
                 Arguments.of(user1, persona1, gruppo1, task1),
                 Arguments.of(user2, persona2, gruppo2, task2),

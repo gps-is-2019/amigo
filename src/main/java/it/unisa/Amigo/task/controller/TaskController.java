@@ -400,9 +400,9 @@ public class TaskController {
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/gruppi/{idSupergruppo}/tasks/{idTask}/inoltro")
-    public String inoltroPQA(@ModelAttribute final Model model,
-                             @PathVariable(name = "idSupergruppo") final int idSupergruppo,
-                             @PathVariable(name = "idTask") final int idTask) {
+    public String inoltroPQA(@ModelAttribute TaskForm taskForm, Model model,
+                             @PathVariable(name = "idSupergruppo") int idSupergruppo,
+                             @PathVariable(name = "idTask") int idTask) {
 
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
         Documento documento = taskService.getTaskById(idTask).getDocumento();
@@ -414,7 +414,7 @@ public class TaskController {
 
         List<Documento> listaDocumenti = documentoService.approvedDocuments(idSupergruppo);
         model.addAttribute("documenti", listaDocumenti);
-        model.addAttribute("flagInoltro", true);
+        model.addAttribute("flagInoltro", FLAG_APPROVA);
 
         return "task/tasks_supergruppo";
     }

@@ -674,7 +674,8 @@ class TaskControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideInoltroPQA")
-    void inoltroPQA(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task, Boolean isResponsible, Documento doc, Consegna consegna) throws Exception {
+    void inoltroPQA(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, Task task, Boolean isResponsible,
+                    Documento doc, Consegna consegna) throws Exception {
 
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
@@ -695,7 +696,7 @@ class TaskControllerTest {
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/{idTask}/inoltro", expectedSupergruppo.getId(), task.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
+                .andExpect(model().attribute("isResponsabile", isResponsible))
                 .andExpect(model().attribute("idSupergruppo", "" + expectedSupergruppo.getId()))
                 .andExpect(model().attribute("listaTask", expectedTask))
                 .andExpect(model().attribute("flagInoltro", 1))
