@@ -1,9 +1,20 @@
 package it.unisa.Amigo.gruppo.domain;
 
 
-import lombok.*;
-
-import javax.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +27,7 @@ import java.util.Set;
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class ConsiglioDidattico implements Serializable {
-    private final static long serialVersionUID = 40L;
+    private static final long serialVersionUID = 40L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -40,7 +51,7 @@ public class ConsiglioDidattico implements Serializable {
     @EqualsAndHashCode.Exclude
     private Set<Persona> persone = new HashSet<>();
 
-    public void addPersona(Persona persona) {
+    public void addPersona(final Persona persona) {
         if (!persone.contains(persona)) {
             persone.add(persona);
             persona.addConsiglioDidatttico(this);

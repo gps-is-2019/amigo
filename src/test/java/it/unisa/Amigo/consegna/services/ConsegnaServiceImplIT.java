@@ -1,39 +1,25 @@
 package it.unisa.Amigo.consegna.services;
 
-import aj.org.objectweb.asm.ConstantDynamic;
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
 import it.unisa.Amigo.autenticazione.dao.UserDAO;
-import it.unisa.Amigo.autenticazione.domanin.Role;
-import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.autenticazione.domain.Role;
+import it.unisa.Amigo.autenticazione.domain.User;
 import it.unisa.Amigo.consegna.dao.ConsegnaDAO;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoServiceImpl;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.services.GruppoServiceImpl;
+import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,22 +28,18 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class ConsegnaServiceImplIT {
 
     @Autowired
-    private DocumentoServiceImpl documentoService;
-
-    @Autowired
-    private GruppoServiceImpl gruppoService;
+    private GruppoService gruppoService;
 
     @Autowired
     private ConsegnaDAO consegnaDAO;
 
     @Autowired
-    private  ConsegnaServiceImpl consegnaService;
+    private ConsegnaService consegnaService;
 
     @Autowired
     private PersonaDAO personaDAO;
@@ -117,7 +99,7 @@ public class ConsegnaServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("provideDocumenti")
-    void findConsegnaByDocumento(Documento documento) {
+    void findConsegnaByDocumento(final Documento documento) {
         Documento doc = documento;
         doc.setDataInvio(LocalDate.now());
 
@@ -129,9 +111,6 @@ public class ConsegnaServiceImplIT {
         expectedConsegna.setDocumento(doc);
 
         consegnaDAO.save(expectedConsegna);
-
-
-       // when(consegnaDAO.findByDocumento_Id(doc.getId())). thenReturn(expectedConsegna);
         assertEquals(expectedConsegna, consegnaService.findConsegnaByDocumento(doc.getId()));
     }
 
@@ -153,7 +132,7 @@ public class ConsegnaServiceImplIT {
     @WithMockUser("ferrucci")
     @ParameterizedTest
     @MethodSource("providePossibiliDestinatari")
-    void possibiliDestinatari(Role role) {
+    void possibiliDestinatari(final Role role) {
         User user = new User("ferrucci", "admin");
         Set<Role> ruoli = new HashSet<Role>();
         ruoli.add(role);

@@ -12,9 +12,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -36,12 +38,12 @@ public class RepositoryServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("provideAddDocumentoInRepository")
-    void addDocumentoInRepository(MultipartFile file) {
-
+    void addDocumentoInRepository(final MultipartFile file) {
         Boolean expectedValue = repositoryService.addDocumentoInRepository(file);
         assertEquals(true, expectedValue);
 
     }
+
     private static Stream<Arguments> provideAddDocumentoInRepository() {
         MultipartFile file1 = new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes());
         MultipartFile file2 = new MockMultipartFile("testtestetst", "file.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes());
@@ -54,11 +56,12 @@ public class RepositoryServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("provideDownloadDocumento")
-    void downloadDocumento(Documento expectedDocumento) {
+    void downloadDocumento(final Documento expectedDocumento) {
         documentoDAO.save(expectedDocumento);
         Documento actualDocumento = documentoService.findDocumentoById(expectedDocumento.getId());
         assertEquals(expectedDocumento, actualDocumento);
     }
+
     private static Stream<Arguments> provideDownloadDocumento() {
         Documento documento1 = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
                 "test.txt", false, "text/plain");
@@ -73,19 +76,20 @@ public class RepositoryServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("provideSerarchDcoumentInRepository")
-    void serarchDcoumentInRepository( Documento documentoExample, String name) {
+    void serarchDcoumentInRepository(final Documento documentoExample, final String name) {
 
         List<Documento> expectedDocumenti = documentoService.searchDocumenti(documentoExample);
         List<Documento> actualDocumenti = repositoryService.searchDocumentInRepository(name);
-        assertEquals(actualDocumenti,expectedDocumenti);
+        assertEquals(actualDocumenti, expectedDocumenti);
     }
+
     private static Stream<Arguments> provideSerarchDcoumentInRepository() {
-        String nome1 ="test1";
+        String nome1 = "test1";
         Documento documento1 = new Documento();
         documento1.setInRepository(true);
         documento1.setNome(nome1);
 
-        String nome2 ="test2";
+        String nome2 = "test2";
         Documento documento2 = new Documento();
         documento2.setInRepository(true);
         documento2.setNome(nome2);

@@ -2,31 +2,22 @@ package it.unisa.Amigo.consegna.controller;
 
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
 import it.unisa.Amigo.autenticazione.dao.UserDAO;
-import it.unisa.Amigo.autenticazione.domanin.Role;
-import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.autenticazione.domain.Role;
+import it.unisa.Amigo.autenticazione.domain.User;
 import it.unisa.Amigo.consegna.dao.ConsegnaDAO;
 import it.unisa.Amigo.consegna.domain.Consegna;
-import it.unisa.Amigo.consegna.services.ConsegnaService;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,25 +25,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 class ConsegnaControllerIT {
 
     @Autowired
-    private ConsegnaService consegnaService;
-
-    @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private GruppoService gruppoService;
 
     @Autowired
     private PersonaDAO personaDAO;
@@ -76,11 +58,13 @@ class ConsegnaControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideDestinatari")
-    void viewConsegna(Set<String> possibiliDestinatari, List<Persona> destinatari, String ruoloDest, boolean flagRuolo, User userLoggato) throws Exception {
+    void viewConsegna(final Set<String> possibiliDestinatari, final List<Persona> destinatari, final String ruoloDest, final boolean flagRuolo, final User userLoggato) throws Exception {
 
-        for(int i = 0; i<destinatari.size(); i++)
-            if (!destinatari.get(i).getCognome().equals(Role.PQA_ROLE))
+        for (int i = 0; i < destinatari.size(); i++) {
+            if (!destinatari.get(i).getCognome().equals(Role.PQA_ROLE)) {
                 personaDAO.save(destinatari.get(i));
+            }
+        }
 
         UserDetailImpl userDetails = new UserDetailImpl(userLoggato);
         personaDAO.save(userLoggato.getPersona());
@@ -150,13 +134,13 @@ class ConsegnaControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideConsegneInviate")
-    void findConsegneInviate(List<Consegna> consegne, User userLoggato) throws Exception {
+    void findConsegneInviate(final List<Consegna> consegne, final User userLoggato) throws Exception {
 
         UserDetailImpl userDetails = new UserDetailImpl(userLoggato);
         personaDAO.save(userLoggato.getPersona());
         userDAO.save(userLoggato);
 
-        for(int i = 0; i<consegne.size(); i++) {
+        for (int i = 0; i < consegne.size(); i++) {
             documentoDAO.save(consegne.get(i).getDocumento());
             consegne.set(i, consegnaDAO.save(consegne.get(i)));
         }
@@ -169,7 +153,7 @@ class ConsegnaControllerIT {
                 .andExpect(view().name("consegna/documenti-inviati"));
     }
 
-    private static Stream<Arguments> provideConsegneInviate(){
+    private static Stream<Arguments> provideConsegneInviate() {
         //test1
         Persona persona1 = new Persona("Nome", "Cognome", "");
         User user1 = new User("admin", "admin");
@@ -223,13 +207,13 @@ class ConsegnaControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideConsegneRicevute")
-    void findConsegneRicevute(List<Consegna> consegne, User userLoggato) throws Exception {
+    void findConsegneRicevute(final List<Consegna> consegne, final User userLoggato) throws Exception {
 
         UserDetailImpl userDetails = new UserDetailImpl(userLoggato);
         personaDAO.save(userLoggato.getPersona());
         userDAO.save(userLoggato);
 
-        for(int i = 0; i<consegne.size(); i++) {
+        for (int i = 0; i < consegne.size(); i++) {
             documentoDAO.save(consegne.get(i).getDocumento());
             consegne.set(i, consegnaDAO.save(consegne.get(i)));
         }
@@ -242,7 +226,7 @@ class ConsegnaControllerIT {
                 .andExpect(view().name("consegna/documenti-ricevuti"));
     }
 
-    private static Stream<Arguments> provideConsegneRicevute(){
+    private static Stream<Arguments> provideConsegneRicevute() {
         Persona persona1 = new Persona("Nome", "Cognome", "");
         User user1 = new User("admin", "admin");
         user1.addRole(new Role(Role.CAPOGRUPPO_ROLE));
@@ -344,19 +328,19 @@ class ConsegnaControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideApprovaConsegna")
-    void approvaConsegna(List<Consegna> consegne, User userLoggato) throws Exception {
+    void approvaConsegna(final List<Consegna> consegne, final User userLoggato) throws Exception {
 
         UserDetailImpl userDetails = new UserDetailImpl(userLoggato);
         personaDAO.save(userLoggato.getPersona());
         userDAO.save(userLoggato);
         List<Consegna> consegneExpected = new ArrayList<>();
 
-        for(int i = 0; i<consegne.size(); i++) {
+        for (int i = 0; i < consegne.size(); i++) {
             documentoDAO.save(consegne.get(i).getDocumento());
             consegne.set(i, consegnaDAO.save(consegne.get(i)));
         }
 
-        for(int i = 0; i<consegne.size(); i++){
+        for (int i = 0; i < consegne.size(); i++) {
             consegneExpected.add(consegne.get(i));
             Consegna c = consegneExpected.get(i);
             c.setStato("APPROVATA");
@@ -371,7 +355,7 @@ class ConsegnaControllerIT {
                 .andExpect(view().name("consegna/documenti-ricevuti"));
     }
 
-    private static Stream<Arguments> provideApprovaConsegna(){
+    private static Stream<Arguments> provideApprovaConsegna() {
 
         Persona persona1 = new Persona("Nome", "Cognome", "");
         User user1 = new User("admin", "admin");
@@ -401,18 +385,18 @@ class ConsegnaControllerIT {
 
     @ParameterizedTest
     @MethodSource("provideRifiutaConsegna")
-    void rifiutaConsegna(List<Consegna> consegne, User userLoggato) throws Exception {
+    void rifiutaConsegna(final List<Consegna> consegne, final User userLoggato) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(userLoggato);
         personaDAO.save(userLoggato.getPersona());
         userDAO.save(userLoggato);
         List<Consegna> consegneExpected = new ArrayList<>();
 
-        for(int i = 0; i<consegne.size(); i++) {
+        for (int i = 0; i < consegne.size(); i++) {
             documentoDAO.save(consegne.get(i).getDocumento());
             consegne.set(i, consegnaDAO.save(consegne.get(i)));
         }
 
-        for(int i = 0; i<consegne.size(); i++){
+        for (int i = 0; i < consegne.size(); i++) {
             consegneExpected.add(consegne.get(i));
             Consegna c = consegneExpected.get(i);
             c.setStato("RIFIUTATA");
@@ -426,7 +410,7 @@ class ConsegnaControllerIT {
                 .andExpect(view().name("consegna/documenti-ricevuti"));
     }
 
-    private static Stream<Arguments> provideRifiutaConsegna(){
+    private static Stream<Arguments> provideRifiutaConsegna() {
 
 
         Persona persona1 = new Persona("Nome", "Cognome", "");

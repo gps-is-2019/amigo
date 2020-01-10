@@ -3,7 +3,6 @@ package it.unisa.Amigo.repository.services;
 import it.unisa.Amigo.documento.domain.Documento;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 
 public interface RepositoryService {

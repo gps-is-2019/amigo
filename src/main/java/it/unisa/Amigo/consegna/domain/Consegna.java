@@ -2,9 +2,17 @@ package it.unisa.Amigo.consegna.domain;
 
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.domain.Persona;
-import lombok.*;
-
-import javax.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -17,10 +25,10 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class Consegna implements Serializable {
 
-    private final static long serialVersionUID = 1L;
-    public final static String PQA_LOCAZIONE = "PQA";
-    public final static String NDV_LOCAZIONE = "NDV";
-    public final static String USER_LOCAZIONE = "USER";
+    private static final long serialVersionUID = 1L;
+    public static final String PQA_LOCAZIONE = "PQA";
+    public static final String NDV_LOCAZIONE = "NDV";
+    public static final String USER_LOCAZIONE = "USER";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

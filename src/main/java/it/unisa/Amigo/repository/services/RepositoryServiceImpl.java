@@ -22,12 +22,8 @@ public class RepositoryServiceImpl implements RepositoryService {
     private static final int MIN_SIZE_FILE = 0;
     private static final int MAX_SIZE_FILE = 10485760;
 
-    private boolean checkFile(MultipartFile file){
-        if(file.getSize()== MIN_SIZE_FILE || file.getSize()>MAX_SIZE_FILE){
-            return false;
-        }else {
-            return true;
-        }
+    private boolean checkFile(final MultipartFile file) {
+        return file.getSize() != MIN_SIZE_FILE && file.getSize() <= MAX_SIZE_FILE;
     }
     /**
      * Aggiunge un documento @{@link Documento} alla repository.
@@ -36,14 +32,15 @@ public class RepositoryServiceImpl implements RepositoryService {
      * @return true se il documento è stato aggiunto alla repository.
      */
     @Override
-    public boolean addDocumentoInRepository(MultipartFile file) {
-       if(checkFile(file)){
+    public boolean addDocumentoInRepository(final MultipartFile file) {
+       if (checkFile(file)) {
             Documento documento = documentoService.addDocumento(file);
             documento.setInRepository(true);
             documentoService.updateDocumento(documento);
             return true;
-       }else
+       } else {
            return false;
+       }
     }
 
     /**
@@ -53,7 +50,7 @@ public class RepositoryServiceImpl implements RepositoryService {
      * @return Resource del documento associato.
      */
     @Override
-    public Resource downloadDocumento(Documento documento) {
+    public Resource downloadDocumento(final Documento documento) {
         return documentoService.loadAsResource(documento);
 
     }
@@ -65,7 +62,7 @@ public class RepositoryServiceImpl implements RepositoryService {
      * @return Documento corrispondente all'id.
      */
     @Override
-    public Documento findDocumentoById(int idDocumento){
+    public Documento findDocumentoById(final int idDocumento) {
         return documentoService.findDocumentoById(idDocumento);
     }
 
@@ -77,7 +74,7 @@ public class RepositoryServiceImpl implements RepositoryService {
      */
 
     @Override
-    public List<Documento> searchDocumentInRepository(String nameDocumento) {
+    public List<Documento> searchDocumentInRepository(final String nameDocumento) {
         Documento documentoExample = new Documento();
         documentoExample.setInRepository(true);
         if (nameDocumento != null) {

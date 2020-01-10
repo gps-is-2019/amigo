@@ -6,7 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Classe che si occuppa del passaggio di parametri dal Form html alla classe TaskController
+ * Classe che si occuppa del passaggio di parametri dal Form html alla classe TaskController.
  */
 @Data
 @NoArgsConstructor
@@ -27,7 +27,6 @@ public class TaskForm {
     /**
      * Indica la data di scadenza del task che verrà creato o modificato.
      */
-    @NonNull
     private String dataScadenza;
 
     /**

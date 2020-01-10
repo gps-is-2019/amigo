@@ -30,7 +30,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class Task implements Serializable {
 
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Identificativo dell'oggetto Task.

@@ -1,8 +1,8 @@
 package it.unisa.Amigo.consegna.services;
 
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
-import it.unisa.Amigo.autenticazione.domanin.Role;
-import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.autenticazione.domain.Role;
+import it.unisa.Amigo.autenticazione.domain.User;
 import it.unisa.Amigo.consegna.dao.ConsegnaDAO;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.domain.Documento;
@@ -16,15 +16,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,7 +30,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
-
 
 @SpringBootTest
 class ConsegnaServiceImplTest {
@@ -110,7 +105,7 @@ class ConsegnaServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideDocumento")
-    void sendDocumento(int[] idDestinatari, String locazione, MultipartFile file) {
+    void sendDocumento(final int[] idDestinatari, final String locazione, final MultipartFile file) {
         Persona expectedPersona1 = new Persona("Admin", "123", "Administrator");
         Persona expectedPersona2 = new Persona("123", "null", "Administrator");
 
@@ -151,10 +146,12 @@ class ConsegnaServiceImplTest {
             consegna.setStato("da valutare");
             consegna.setDocumento(doc);
             consegna.setMittente(gruppoService.getAuthenticatedUser());
-            if (locazione.equalsIgnoreCase(Consegna.PQA_LOCAZIONE))
+            if (locazione.equalsIgnoreCase(Consegna.PQA_LOCAZIONE)) {
                 consegna.setLocazione(Consegna.PQA_LOCAZIONE);
-            if (locazione.equalsIgnoreCase(Consegna.NDV_LOCAZIONE))
+            }
+            if (locazione.equalsIgnoreCase(Consegna.NDV_LOCAZIONE)) {
                 consegna.setLocazione(Consegna.NDV_LOCAZIONE);
+            }
             expectedConsegne.add(consegna);
             assertEquals(expectedConsegne.size(), consegnaService.sendDocumento(idDestinatari, locazione, file).size());
         }
@@ -208,7 +205,7 @@ class ConsegnaServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideDocumenti")
-    void findConsegnaByDocumento(Documento documento) {
+    void findConsegnaByDocumento(final Documento documento) {
         Documento doc = documento;
         doc.setDataInvio(LocalDate.now());
 
@@ -224,7 +221,7 @@ class ConsegnaServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("providePossibiliDestinatari")
-    void possibiliDestinatari(Role role) {
+    void possibiliDestinatari(final Role role) {
 
         User user = new User("admin", "admin");
         Set<Role> ruoli = new HashSet<Role>();
@@ -271,5 +268,57 @@ class ConsegnaServiceImplTest {
         when(consegnaDAO.findById(consegna.getId())).thenReturn(java.util.Optional.of(consegna));
         consegnaService.rifiutaConsegna(consegna.getId());
         assertEquals(consegna.getStato(), "RIFIUTATA");
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInoltraPQAfromGruppo")
+    void inoltraPQAfromGruppo(final Documento doc, final Persona persona, final Consegna expectedConsegna) {
+
+        when(gruppoService.getAuthenticatedUser()).thenReturn(persona);
+        assertEquals(expectedConsegna, consegnaService.inoltraPQAfromGruppo(doc));
+    }
+
+    private static Stream<Arguments> provideInoltraPQAfromGruppo() {
+
+        Persona expectedPersona1 = new Persona("Admin", "123", "Administrator");
+        expectedPersona1.setId(1);
+        Persona expectedPersona2 = new Persona("123", "112", "Administrator");
+        expectedPersona2.setId(2);
+        Persona expectedPersona3 = new Persona("123", "Boh", "Administrator");
+        expectedPersona3.setId(3);
+
+        Documento documento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
+                "test.txt", false, "text/plain");
+        Documento documento1 = new Documento("src/main/resources/documents/test1.txt", LocalDate.now(),
+                "test1.txt", false, "text/plain");
+        Documento documento2 = new Documento("src/main/resources/documents/test2.txt", LocalDate.now(),
+                "test2.txt", false, "text/plain");
+
+        Consegna consegna1 = new Consegna();
+        consegna1.setDataConsegna(LocalDate.now());
+        consegna1.setStato("DA_VALUTARE");
+        consegna1.setDocumento(documento);
+        consegna1.setMittente(expectedPersona1);
+        consegna1.setLocazione(Consegna.PQA_LOCAZIONE);
+
+        Consegna consegna2 = new Consegna();
+        consegna2.setDataConsegna(LocalDate.now());
+        consegna2.setStato("DA_VALUTARE");
+        consegna2.setDocumento(documento1);
+        consegna2.setMittente(expectedPersona2);
+        consegna2.setLocazione(Consegna.PQA_LOCAZIONE);
+
+        Consegna consegna3 = new Consegna();
+        consegna3.setDataConsegna(LocalDate.now());
+        consegna3.setStato("DA_VALUTARE");
+        consegna3.setDocumento(documento2);
+        consegna3.setMittente(expectedPersona3);
+        consegna3.setLocazione(Consegna.PQA_LOCAZIONE);
+
+        return Stream.of(
+                Arguments.of(documento, expectedPersona1, consegna1),
+                Arguments.of(documento1, expectedPersona2, consegna2),
+                Arguments.of(documento2, expectedPersona3, consegna3)
+        );
     }
 }

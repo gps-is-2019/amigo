@@ -1,21 +1,17 @@
 package it.unisa.Amigo.gruppo.controller;
 
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
-import it.unisa.Amigo.autenticazione.domanin.User;
-import it.unisa.Amigo.consegna.services.ConsegnaService;
+import it.unisa.Amigo.autenticazione.domain.User;
 import it.unisa.Amigo.gruppo.domain.*;
 import it.unisa.Amigo.gruppo.services.GruppoService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.repository.query.Param;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -28,9 +24,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
-//@ContextConfiguration(classes = WebMvcAutoConfiguration.class)
-//@WebMvcTest(GruppoController.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class GruppoControllerTest {
@@ -42,8 +35,7 @@ public class GruppoControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideFindAllMembriInSupergruppi")
-    public void findAllMembriInSupergruppo(User userArg, Persona personaArg, Gruppo gruppo, ConsiglioDidattico consiglioDidattico) throws Exception {
-
+    public void findAllMembriInSupergruppo(final User userArg, final Persona personaArg, final Gruppo gruppo, final ConsiglioDidattico consiglioDidattico) throws Exception {
 
         User user = userArg;
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -62,7 +54,6 @@ public class GruppoControllerTest {
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedGruppo.getId())).thenReturn(true);
         when(gruppoService.findConsiglioBySupergruppo(expectedGruppo.getId())).thenReturn(expectedConsiglioDidattico);
 
-
         this.mockMvc.perform(get("/gruppi/{id}", expectedGruppo.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
@@ -73,7 +64,7 @@ public class GruppoControllerTest {
                 .andExpect(view().name("gruppo/gruppo_detail"));
     }
 
-    private static Stream<Arguments> provideFindAllMembriInSupergruppi(){
+    private static Stream<Arguments> provideFindAllMembriInSupergruppi() {
         Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
         ConsiglioDidattico consiglio1 = new ConsiglioDidattico("Informatica");
         Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
@@ -95,15 +86,14 @@ public class GruppoControllerTest {
 
         return Stream.of(
                 Arguments.of(user, persona1, gruppo1, consiglio1),
-                Arguments.of(user1, persona2 ,gruppo2, consiglio2)
+                Arguments.of(user1, persona2, gruppo2, consiglio2)
         );
     }
 
 
-
     @ParameterizedTest
     @MethodSource("provideAllSupergruppi")
-    public void findAllSupergruppi(User userArg, Persona personaArg, Gruppo gruppo1, Gruppo gruppo2) throws Exception {
+    public void findAllSupergruppi(final User userArg, final Persona personaArg, final Gruppo gruppo1, final Gruppo gruppo2) throws Exception {
 
         User user = userArg;
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -128,7 +118,7 @@ public class GruppoControllerTest {
                 .andExpect(view().name("gruppo/miei_gruppi"));
     }
 
-    private static Stream<Arguments> provideAllSupergruppi(){
+    private static Stream<Arguments> provideAllSupergruppi() {
         Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
         Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
         Gruppo gruppo3 = new Gruppo("GAQR- Ingegneria", "Gruppo", true);
@@ -150,8 +140,8 @@ public class GruppoControllerTest {
         persona2.setId(8);
 
         return Stream.of(
-                Arguments.of(user,persona1, gruppo1, gruppo2),
-                Arguments.of(user1, persona2 ,gruppo4 ,gruppo3)
+                Arguments.of(user, persona1, gruppo1, gruppo2),
+                Arguments.of(user1, persona2, gruppo4, gruppo3)
         );
     }
 /*
@@ -221,8 +211,7 @@ public class GruppoControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideAddMembro")
-    public void addMembro(User user, Persona persona, Supergruppo supergruppo) throws Exception {
-
+    public void addMembro(final User user, final Persona persona, final Supergruppo supergruppo) throws Exception {
 
         UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona expectedPersona = persona;
@@ -240,14 +229,14 @@ public class GruppoControllerTest {
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), expectedSupergruppo.getId())).thenReturn(true);
 
-        if(expectedSupergruppo.getType().equalsIgnoreCase("commissione")) {
+        if (expectedSupergruppo.getType().equalsIgnoreCase("commissione")) {
             this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", expectedSupergruppo.getId(), expectedPersona.getId())
                     .with(user(userDetails)))
                     .andExpect(status().isOk())
                     .andExpect(view().name("gruppo/aggiunta_membro_commissione"));
         }
 
-        if(expectedSupergruppo.getType().equalsIgnoreCase("gruppo")) {
+        if (expectedSupergruppo.getType().equalsIgnoreCase("gruppo")) {
             this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", expectedSupergruppo.getId(), expectedPersona.getId())
                     .with(user(userDetails)))
                     .andExpect(status().isOk())
@@ -256,7 +245,7 @@ public class GruppoControllerTest {
 
     }
 
-    private static Stream<Arguments> provideAddMembro(){
+    private static Stream<Arguments> provideAddMembro() {
         Persona persona1 = new Persona("persona1", "persona1", "persona");
         Persona persona2 = new Persona("persona2", "persona2", "persona");
 
@@ -279,11 +268,9 @@ public class GruppoControllerTest {
     }
 
 
-
-
     @ParameterizedTest
     @MethodSource("provideRemoveMembro")
-    public void removeMembro(User user, Persona persona, Supergruppo supergruppo) throws Exception {
+    public void removeMembro(final User user, final Persona persona, final Supergruppo supergruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona expectedPersona = persona;
         expectedPersona.setUser(user);
@@ -292,15 +279,14 @@ public class GruppoControllerTest {
         expectedPersona.addSupergruppo(expectedSupergruppo);
         Gruppo gruppo = new Gruppo("Gruppo", "gruppo", true);
 
-
         when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
         when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
         when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), expectedSupergruppo.getId())).thenReturn(true);
         when(gruppoService.findGruppoByCommissione(expectedSupergruppo.getId())).thenReturn(gruppo);
-        when( gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), gruppoService.findGruppoByCommissione(expectedSupergruppo.getId()).getId())).thenReturn(true);
+        when(gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), gruppoService.findGruppoByCommissione(expectedSupergruppo.getId()).getId())).thenReturn(true);
 
-        if(expectedSupergruppo.getType().equalsIgnoreCase("commissione")) {
+        if (expectedSupergruppo.getType().equalsIgnoreCase("commissione")) {
             Commissione commissione = (Commissione) expectedSupergruppo;
             commissione.setGruppo(gruppo);
             this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", expectedSupergruppo.getId(), expectedPersona.getId())
@@ -309,7 +295,7 @@ public class GruppoControllerTest {
                     .andDo(print())
                     .andExpect(view().name("gruppo/commissione_detail"));
         }
-        if(expectedSupergruppo.getType().equalsIgnoreCase("gruppo")) {
+        if (expectedSupergruppo.getType().equalsIgnoreCase("gruppo")) {
             this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", expectedSupergruppo.getId(), expectedPersona.getId())
                     .with(user(userDetails)))
                     .andExpect(status().isOk())
@@ -318,7 +304,7 @@ public class GruppoControllerTest {
         }
     }
 
-    private static Stream<Arguments> provideRemoveMembro(){
+    private static Stream<Arguments> provideRemoveMembro() {
         Persona persona1 = new Persona("persona1", "persona1", "persona");
         Persona persona2 = new Persona("persona2", "persona2", "persona");
 
@@ -342,7 +328,6 @@ public class GruppoControllerTest {
 
     @Test
     public void findAllMembriInCommissione() throws Exception {
-
         User user = new User("admin", "admin");
         user.setId(1);
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -367,7 +352,6 @@ public class GruppoControllerTest {
         when(gruppoService.findSupergruppo(expectedCommissione.getId())).thenReturn(expectedCommissione);
         when(gruppoService.findAllMembriInSupergruppo(expectedCommissione.getId())).thenReturn(persone);
 
-
         this.mockMvc.perform(get("/gruppi/{id}/commissione_detail/{id_commissione}", expectedGruppo.getId(), expectedCommissione.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
@@ -381,8 +365,7 @@ public class GruppoControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideCloseCommissione")
-    public void closeCommissione(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
-
+    public void closeCommissione(final User user, final Persona persona, final Commissione commissione, final Gruppo gruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona expectedPersona = persona;
         expectedPersona.setUser(user);
@@ -417,7 +400,7 @@ public class GruppoControllerTest {
                 .andExpect(view().name("gruppo/commissione_detail"));
     }
 
-    private static Stream<Arguments> provideCloseCommissione(){
+    private static Stream<Arguments> provideCloseCommissione() {
         Persona persona1 = new Persona("persona1", "persona1", "persona");
         Persona persona2 = new Persona("persona2", "persona2", "persona");
 
@@ -446,7 +429,7 @@ public class GruppoControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideCreateCommissioneForm")
-    public void createCommissioneForm(User user, Persona persona, Commissione commissione) throws Exception {
+    public void createCommissioneForm(final User user, final Persona persona, final Commissione commissione) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona expectedPersona = persona;
         expectedPersona.setUser(user);
@@ -465,7 +448,7 @@ public class GruppoControllerTest {
                 .andExpect(view().name("gruppo/crea_commissione"));
     }
 
-    private static Stream<Arguments> provideCreateCommissioneForm(){
+    private static Stream<Arguments> provideCreateCommissioneForm() {
         Persona persona1 = new Persona("persona1", "persona1", "persona");
         Persona persona2 = new Persona("persona2", "persona2", "persona");
 
@@ -558,7 +541,7 @@ public class GruppoControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideAddMembroCommissione")
-    public void addMembroCommissione(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
+    public void addMembroCommissione(final User user, final Persona persona, final Commissione commissione, final Gruppo gruppo) throws Exception {
 
 
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -595,7 +578,7 @@ public class GruppoControllerTest {
 
     }
 
-    private static Stream<Arguments> provideAddMembroCommissione(){
+    private static Stream<Arguments> provideAddMembroCommissione() {
         Persona persona1 = new Persona("persona1", "persona1", "persona");
         Persona persona2 = new Persona("persona2", "persona2", "persona");
 
@@ -605,8 +588,8 @@ public class GruppoControllerTest {
         Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
         Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
 
-        Commissione commissione1 = new Commissione("Commissione", "Commissione", true,"");
-        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true,"");
+        Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
+        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true, "");
 
         persona1.setId(1);
         persona2.setId(2);
@@ -617,7 +600,7 @@ public class GruppoControllerTest {
         commissione1.setId(7);
         commissione2.setId(8);
         return Stream.of(
-                Arguments.of(user,persona1, commissione1, gruppo1),
+                Arguments.of(user, persona1, commissione1, gruppo1),
                 Arguments.of(user1, persona2, commissione2, gruppo2)
         );
 

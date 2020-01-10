@@ -1,16 +1,27 @@
 package it.unisa.Amigo.gruppo.domain;
 
-import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.autenticazione.domain.User;
 import it.unisa.Amigo.task.domain.Task;
-import lombok.*;
-
-import javax.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Questa classe rappresenta l'oggetto di dominio "Persona"
+ * Questa classe rappresenta l'oggetto di dominio "Persona".
  */
 @Entity
 @Data
@@ -18,7 +29,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class Persona implements Serializable {
 
-    private final static long serialVersionUID = 48L;
+    private static final long serialVersionUID = 48L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -60,35 +71,35 @@ public class Persona implements Serializable {
     @EqualsAndHashCode.Exclude
     private Set<Supergruppo> supergruppiResponsabile = new HashSet<>();
 
-    public void addConsiglioDidatttico(ConsiglioDidattico consiglioDidattico) {
+    public void addConsiglioDidatttico(final ConsiglioDidattico consiglioDidattico) {
         if (!consigli.contains(consiglioDidattico)) {
             consigli.add(consiglioDidattico);
             consiglioDidattico.addPersona(this);
         }
     }
 
-    public void addSupergruppo(Supergruppo supergruppo) {
+    public void addSupergruppo(final Supergruppo supergruppo) {
         if (!supergruppi.contains(supergruppo)) {
             supergruppi.add(supergruppo);
             supergruppo.addPersona(this);
         }
     }
 
-    public void addDipartimento(Dipartimento dipartimento) {
+    public void addDipartimento(final Dipartimento dipartimento) {
         if (!dipartimenti.contains(dipartimento)) {
             dipartimenti.add(dipartimento);
             dipartimento.addPersona(this);
         }
     }
 
-    public void removeSupergruppo(Supergruppo supergruppo) {
+    public void removeSupergruppo(final Supergruppo supergruppo) {
         if (supergruppi.contains(supergruppo)) {
             supergruppi.remove(supergruppo);
             supergruppo.removePersona(this);
         }
     }
 
-    public void addSupergruppoResponsabile(Supergruppo supergruppo) {
+    public void addSupergruppoResponsabile(final Supergruppo supergruppo) {
         if (!supergruppiResponsabile.contains(supergruppo)) {
             supergruppiResponsabile.add(supergruppo);
             supergruppo.setResponsabile(this);
@@ -102,7 +113,7 @@ public class Persona implements Serializable {
     @EqualsAndHashCode.Exclude
     private Set<Task> tasks = new HashSet<>();
 
-    public void addTask(Task task){
+    public void addTask(final Task task) {
         tasks.add(task);
     }
 }

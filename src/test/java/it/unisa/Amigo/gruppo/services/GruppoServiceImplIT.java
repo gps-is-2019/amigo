@@ -5,7 +5,7 @@ import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.*;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -37,9 +37,17 @@ public class GruppoServiceImplIT {
     @Autowired
     private DipartimentoDAO dipartimentoDAO;
 
+    @AfterEach
+    void afterEach() {
+        personaDAO.deleteAll();
+        supergruppoDAO.deleteAll();
+        consiglioDidatticoDAO.deleteAll();
+        dipartimentoDAO.deleteAll();
+    }
+
     @ParameterizedTest
     @MethodSource("provideGetAssegnatarioTask")
-    void getAssegnatarioTask(Persona persona, Supergruppo supergruppo) {
+    void getAssegnatarioTask(final Persona persona, final Supergruppo supergruppo) {
         supergruppo.addPersona(persona);
         personaDAO.save(persona);
         supergruppoDAO.save(supergruppo);
@@ -62,7 +70,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providefindAllMembriInDipartimento")
-    void findAllMembriInDipartimento(Persona persona, Dipartimento dipartimento) {
+    void findAllMembriInDipartimento(final Persona persona, final Dipartimento dipartimento) {
         dipartimento.addPersona(persona);
         personaDAO.save(persona);
         dipartimentoDAO.save(dipartimento);
@@ -85,7 +93,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providefindAllSupergruppiOfPersona")
-    void findAllSupergruppiOfPersona(Persona persona1, Supergruppo supergruppo) {
+    void findAllSupergruppiOfPersona(final Persona persona1, final Supergruppo supergruppo) {
         supergruppo.addPersona(persona1);
         personaDAO.save(persona1);
         supergruppoDAO.save(supergruppo);
@@ -108,7 +116,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providefindAllConsigliDidatticiOfPersona")
-    void findAllConsigliDidatticiOfPersona(Persona persona1, ConsiglioDidattico consiglioDidattico) {
+    void findAllConsigliDidatticiOfPersona(final Persona persona1, final ConsiglioDidattico consiglioDidattico) {
         consiglioDidattico.addPersona(persona1);
         personaDAO.save(persona1);
         consiglioDidatticoDAO.save(consiglioDidattico);
@@ -131,7 +139,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providefindAllDipartimentiOfPersona")
-    void findAllDipartimentiOfPersona(Persona persona1, Dipartimento dipartimento) {
+    void findAllDipartimentiOfPersona(final Persona persona1, final Dipartimento dipartimento) {
         dipartimento.addPersona(persona1);
         personaDAO.save(persona1);
         dipartimentoDAO.save(dipartimento);
@@ -154,7 +162,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providefindAllMembriInConsiglioDidatticoNoSupergruppo")
-    void findAllMembriInConsiglioDidatticoNoSupergruppo(Persona persona1, Persona persona2, ConsiglioDidattico consiglioDidattico, Supergruppo supergruppo) {
+    void findAllMembriInConsiglioDidatticoNoSupergruppo(final Persona persona1, final Persona persona2, final ConsiglioDidattico consiglioDidattico, final Supergruppo supergruppo) {
         consiglioDidattico.addPersona(persona1);
         consiglioDidattico.addPersona(persona2);
         supergruppo.setConsiglio(consiglioDidattico);
@@ -195,7 +203,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providefindPersona")
-    void findPersona(Persona expectedPersona) {
+    void findPersona(final Persona expectedPersona) {
         personaDAO.save(expectedPersona);
         Persona actualPersona = gruppoService.findPersona(expectedPersona.getId());
         assertEquals(expectedPersona, actualPersona);
@@ -212,7 +220,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providefindSupergruppo")
-    void findSupergruppo(Supergruppo expectedSupergruppo) {
+    void findSupergruppo(final Supergruppo expectedSupergruppo) {
         supergruppoDAO.save(expectedSupergruppo);
         Supergruppo actualSupergruppo = gruppoService.findSupergruppo(expectedSupergruppo.getId());
         assertEquals(expectedSupergruppo, actualSupergruppo);
@@ -229,7 +237,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providefindConsiglioBySupergruppo")
-    void findConsiglioBySupergruppo(Supergruppo expectedSupergruppo, ConsiglioDidattico expectedConsiglio) {
+    void findConsiglioBySupergruppo(final Supergruppo expectedSupergruppo, final ConsiglioDidattico expectedConsiglio) {
         expectedSupergruppo.setConsiglio(expectedConsiglio);
         expectedConsiglio.setSupergruppo(expectedSupergruppo);
         consiglioDidatticoDAO.save(expectedConsiglio);
@@ -251,7 +259,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("provideisResponsabile")
-    void isResponsabile(Persona expectedPersona, Supergruppo expectedSupergruppo) {
+    void isResponsabile(final Persona expectedPersona, final Supergruppo expectedSupergruppo) {
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         personaDAO.save(expectedPersona);
@@ -273,7 +281,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providefindAllCommissioniByGruppo")
-    void findAllCommissioniByGruppo(Gruppo expectedGruppo, Commissione expectedCommissione) {
+    void findAllCommissioniByGruppo(final Gruppo expectedGruppo, final Commissione expectedCommissione) {
         List<Commissione> expectedCommissioni = new ArrayList<>();
         expectedCommissioni.add(expectedCommissione);
         expectedGruppo.addCommissione(expectedCommissione);
@@ -295,7 +303,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providefindAllMembriInGruppoNoCommissione")
-    void findAllMembriInGruppoNoCommissione(Persona persona1, Persona persona2, Commissione expectedCommissione, Gruppo expectedGruppo) {
+    void findAllMembriInGruppoNoCommissione(final Persona persona1, final Persona persona2, final Commissione expectedCommissione, final Gruppo expectedGruppo) {
         List<Persona> persone = new ArrayList<>();
         persone.add(persona1);
         persone.add(persona2);
@@ -333,7 +341,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providecloseCommissione")
-    void closeCommissione(Commissione expectedCommissione) {
+    void closeCommissione(final Commissione expectedCommissione) {
         supergruppoDAO.save(expectedCommissione);
         gruppoService.closeCommissione(expectedCommissione.getId());
         Commissione actualCommissione = (Commissione) supergruppoDAO.findById(expectedCommissione.getId()).get();
@@ -351,7 +359,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providecreateCommissione")
-    void createCommissione(Commissione expectedCommissione, Gruppo expectedGruppo) {
+    void createCommissione(final Commissione expectedCommissione, final Gruppo expectedGruppo) {
         supergruppoDAO.save(expectedGruppo);
         gruppoService.createCommissione(expectedCommissione, expectedGruppo.getId());
 
@@ -371,7 +379,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providenominaResponsabile")
-    void nominaResponsabile(Persona persona1, Commissione expectedCommissione, Commissione actualCommissione) {
+    void nominaResponsabile(final Persona persona1, final Commissione expectedCommissione, final Commissione actualCommissione) {
         personaDAO.save(persona1);
         supergruppoDAO.save(expectedCommissione);
         gruppoService.nominaResponsabile(persona1.getId(), expectedCommissione.getId());
@@ -396,7 +404,7 @@ public class GruppoServiceImplIT {
 
     @ParameterizedTest
     @MethodSource("providefindGruppoByCommissione")
-    void findGruppoByCommissione(Gruppo expectedGruppo, Commissione expectedCommissione) {
+    void findGruppoByCommissione(final Gruppo expectedGruppo, final Commissione expectedCommissione) {
         expectedGruppo.addCommissione(expectedCommissione);
         supergruppoDAO.save(expectedGruppo);
         supergruppoDAO.save(expectedCommissione);

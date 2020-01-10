@@ -10,7 +10,6 @@ import java.util.List;
  * Questa interfaccia si occupa di fornire un accesso astratto  all'oggetto di dominio "Documento"
  */
 @Repository
-public interface DocumentoDAO extends CrudRepository<Documento, Integer> , QueryByExampleExecutor<Documento> {
-    List<Documento> findAllByNomeContains(String nameDocumento);
-    List<Documento> findAllByTask_Supergruppo_IdAndTask_Stato(int idSupergruppo , String stato);
+public interface DocumentoDAO extends CrudRepository<Documento, Integer>, QueryByExampleExecutor<Documento> {
+    List<Documento> findAllByTask_Supergruppo_IdAndTask_Stato(int idSupergruppo, String stato);
 }

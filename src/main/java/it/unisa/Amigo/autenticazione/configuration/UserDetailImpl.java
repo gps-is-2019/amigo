@@ -1,14 +1,12 @@
 package it.unisa.Amigo.autenticazione.configuration;
 
 
-import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.autenticazione.domain.User;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +26,7 @@ public class UserDetailImpl implements UserDetails {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         user.getRoles().forEach(role -> {
-            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_"+role.getName()));
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
         });
 
         return grantedAuthorities;

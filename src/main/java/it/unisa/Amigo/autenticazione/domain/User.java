@@ -1,9 +1,20 @@
-package it.unisa.Amigo.autenticazione.domanin;
+package it.unisa.Amigo.autenticazione.domain;
 
 import it.unisa.Amigo.gruppo.domain.Persona;
-import lombok.*;
-
-import javax.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +28,7 @@ import java.util.Set;
 @Entity
 public  class User implements Serializable {
 
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -34,18 +45,15 @@ public  class User implements Serializable {
     @EqualsAndHashCode.Exclude
     private Set<Role> roles = new HashSet<>();
 
-
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Persona persona;
 
-    public void addRole(Role r){
+    public void addRole(final Role r) {
         roles.add(r);
     }
-    public int getId(){return this.id;}
-
-
-
-
+    public int getId() {
+        return this.id;
+    }
 }

@@ -1,8 +1,8 @@
 package it.unisa.Amigo.consegna.controller;
 
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
-import it.unisa.Amigo.autenticazione.domanin.Role;
-import it.unisa.Amigo.autenticazione.domanin.User;
+import it.unisa.Amigo.autenticazione.domain.Role;
+import it.unisa.Amigo.autenticazione.domain.User;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.consegna.services.ConsegnaService;
 import it.unisa.Amigo.documento.domain.Documento;
@@ -12,16 +12,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,13 +24,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 class ConsegnaControllerTest {
@@ -52,7 +45,7 @@ class ConsegnaControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideDestinatari")
-    void viewConsegna(Set<String> possibiliDestinatari, List<Persona> destinatari, String ruoloDest, boolean flagRuolo) throws Exception {
+    void viewConsegna(final Set<String> possibiliDestinatari, final List<Persona> destinatari, final String ruoloDest, final boolean flagRuolo) throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -94,7 +87,7 @@ class ConsegnaControllerTest {
         return Stream.of(
                 Arguments.of(possibiliDest1, destinatari1, pqaRole.getName(), true),
                 Arguments.of(possibiliDest2, destinatari2, capogruppoRole.getName(), false)
-                );
+        );
     }
 
     @Test
@@ -103,13 +96,12 @@ class ConsegnaControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideConsegneInviate")
-    void findConsegneInviate(List<Consegna> consegne) throws Exception {
+    void findConsegneInviate(final List<Consegna> consegne) throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
         expectedPersona.setUser(user);
-
 
         when(consegnaService.consegneInviate()).thenReturn(consegne);
         this.mockMvc.perform(get("/consegna/inviati")
@@ -120,10 +112,8 @@ class ConsegnaControllerTest {
                 .andExpect(view().name("consegna/documenti-inviati"));
     }
 
-    private static Stream<Arguments> provideConsegneInviate(){
-
+    private static Stream<Arguments> provideConsegneInviate() {
         Persona persona1 = new Persona("persona1", "persona1", "");
-
 
         Documento documento1 = new Documento();
         documento1.setNome("Ciao");
@@ -167,7 +157,7 @@ class ConsegnaControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideConsegneRicevute")
-    void findConsegneRicevute(List<Consegna> consegne) throws Exception {
+    void findConsegneRicevute(final List<Consegna> consegne) throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -185,7 +175,7 @@ class ConsegnaControllerTest {
                 .andExpect(view().name("consegna/documenti-ricevuti"));
     }
 
-    private static Stream<Arguments> provideConsegneRicevute(){
+    private static Stream<Arguments> provideConsegneRicevute() {
         User user = new User("admin", "admin");
         user.addRole(new Role(Role.PQA_ROLE));
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -312,7 +302,7 @@ class ConsegnaControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideApprovaConsegna")
-    void approvaConsegna(List<Consegna> consegne) throws Exception {
+    void approvaConsegna(final List<Consegna> consegne) throws Exception {
 
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -330,7 +320,7 @@ class ConsegnaControllerTest {
                 .andExpect(view().name("consegna/documenti-ricevuti"));
     }
 
-    private static Stream<Arguments> provideApprovaConsegna(){
+    private static Stream<Arguments> provideApprovaConsegna() {
 
         User user = new User("admin", "admin");
         user.addRole(new Role(Role.PQA_ROLE));
@@ -385,7 +375,7 @@ class ConsegnaControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideRifiutaConsegna")
-    void rifiutaConsegna(List<Consegna> consegne) throws Exception {
+    void rifiutaConsegna(final List<Consegna> consegne) throws Exception {
         User user = new User("admin", "admin");
         UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
@@ -401,7 +391,7 @@ class ConsegnaControllerTest {
                 .andExpect(view().name("consegna/documenti-ricevuti"));
     }
 
-    private static Stream<Arguments> provideRifiutaConsegna(){
+    private static Stream<Arguments> provideRifiutaConsegna() {
 
         User user = new User("admin", "admin");
         user.addRole(new Role(Role.PQA_ROLE));

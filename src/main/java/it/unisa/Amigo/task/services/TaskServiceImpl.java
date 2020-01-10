@@ -31,7 +31,7 @@ public class TaskServiceImpl implements TaskService {
      * @return la persona a cui quel task è assegnato
      */
     @Override
-    public Persona getAssegnatarioTask(Integer id) {
+    public Persona getAssegnatarioTask(final Integer id) {
         Task task = taskDAO.findById(id).get();
         return task.getPersona();
     }
@@ -67,7 +67,7 @@ public class TaskServiceImpl implements TaskService {
      * @return lista di task
      */
     @Override
-    public List<Task> visualizzaTaskUser(int idPersona) {
+    public List<Task> visualizzaTaskUser(final int idPersona) {
         return taskDAO.findAllByPersona_Id(idPersona);
     }
 
@@ -78,7 +78,7 @@ public class TaskServiceImpl implements TaskService {
      * @return lista di task
      */
     @Override
-    public List<Task> visualizzaTaskSuperGruppo(int idSupergruppo) {
+    public List<Task> visualizzaTaskSuperGruppo(final int idSupergruppo) {
         return taskDAO.findAllBySupergruppo_Id(idSupergruppo);
     }
 
@@ -88,7 +88,7 @@ public class TaskServiceImpl implements TaskService {
      * @return task
      */
     @Override
-    public Task getTaskById(Integer id) {
+    public Task getTaskById(final Integer id) {
         return taskDAO.findById(id).get();
     }
 
@@ -98,7 +98,7 @@ public class TaskServiceImpl implements TaskService {
      * @param idTask identifica univocamente un task
      */
     @Override
-    public void accettazioneTask(Integer idTask) {
+    public void accettazioneTask(final Integer idTask) {
         Task task = taskDAO.findById(idTask).get();
         task.setStato("approvato");
         taskDAO.save(task);
@@ -110,7 +110,7 @@ public class TaskServiceImpl implements TaskService {
      * @param idTask identifica univocamente un task
      */
     @Override
-    public void rifiutoTask(Integer idTask) {
+    public void rifiutoTask(final Integer idTask) {
         Task task = taskDAO.findById(idTask).get();
         task.setStato("respinto");
         taskDAO.save(task);
@@ -122,7 +122,7 @@ public class TaskServiceImpl implements TaskService {
      * @param idTask identifica univocamente un task
      */
     @Override
-    public void completaTask(Integer idTask) {
+    public void completaTask(final Integer idTask) {
         Task task = taskDAO.findById(idTask).get();
         task.setStato("in valutazione");
         taskDAO.save(task);
@@ -134,8 +134,7 @@ public class TaskServiceImpl implements TaskService {
      * @param taskToUpdate task aggiornato
      */
     @Override
-    public void updateTask(Task taskToUpdate) {
+    public void updateTask(final Task taskToUpdate) {
         taskDAO.save(taskToUpdate);
     }
-
 }
