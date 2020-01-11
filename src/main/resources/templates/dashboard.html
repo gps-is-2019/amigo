@@ -3,7 +3,207 @@
 <head th:include="/fragments/fragments.html :: head">
     <title id="pageTitle">Amigo|Dashboard</title>
 </head>
-<body>
+<body style="background-color: #f0f0f0">
 <div th:insert="fragments/fragments.html :: header"></div>
+
+
+<div class="ui padded grid" style="height: 100%">
+    <div
+            class="three wide tablet only three wide computer only column"
+            id="sidebar"
+    >
+        <div class="ui vertical borderless fluid text menu">
+            <div class="ui link cards">
+                <div class="card">
+                    <div class="image">
+                        <img th:src="@{'img/{img}.jpg'(img=${persona.getCognome()})}"/>
+                    </div>
+                    <div class="content">
+                        <div class="header">Matt Giampietro</div>
+                        <div class="meta">
+                            <a>Friends</a>
+                        </div>
+                        <div class="description">
+                            Matthew is an interior designer living in New York.
+                        </div>
+                    </div>
+                    <div class="extra content">
+                          <span class="right floated">
+                            Joined in 2013
+                          </span><span>
+                            <i class="user icon"></i>
+                            75 Friends
+                          </span>
+                    </div>
+
+                    <div class="image">
+                        <img src="img/logoUnisa.png"/>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="ui teal labeled icon button">
+                Create New Order
+                <i class="add icon"></i>
+            </div>
+
+        </div>
+
+
+
+    </div>
+    <div
+            class="sixteen wide mobile thirteen wide tablet thirteen wide computer right floated column"
+            id="content"
+    >
+        <!--        <div class="ui padded grid">-->
+        <!--            <div class="row">-->
+        <!--                <h1 class="ui huge dividing header">Dashboard</h1>-->
+        <!--            </div>-->
+        <!--            <div class="center aligned row">-->
+
+
+
+        <!--            </div>-->
+        <!--            <div class="ui hidden section divider"></div>-->
+        <!--            <div class="row">-->
+
+        <!--            </div>-->
+
+
+
+        <div class="ui stackable one column vertically divided grid container">
+
+
+            <div class="ui container">
+                <div class="ui relaxed divided items">
+                    <div class="item">
+                        <div class="ui small image">
+                            <img src="img/gruppi.png">
+                        </div>
+                        <div class="content">
+                            <a class="header">Content Header</a>
+                            <div class="meta">
+                                <a>Date</a>
+                                <a>Category</a>
+                            </div>
+                            <div class="description">
+                                A description which may flow for several lines and give context to the content.
+                            </div>
+                            <div class="extra">
+                                <img src="assets/images/wireframe/square-image.png" class="ui circular avatar image"> Username
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="ui small image">
+                            <img src="img/task.png">
+                        </div>
+                        <div class="content">
+                            <a class="header">Content Header</a>
+                            <div class="meta">
+                                <a>Date</a>
+                                <a>Category</a>
+                            </div>
+                            <div class="description">
+                                A description which may flow for several lines and give context to the content.
+                            </div>
+                            <div class="extra">
+                                <div class="ui right floated primary button">
+                                    Primary
+                                    <i class="right chevron icon"></i>
+                                </div>
+                                <div class="ui label">Limited</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="ui small image">
+                            <img src="img/commissioni.png">
+                        </div>
+                        <div class="content">
+                            <a class="header">Content Header</a>
+                            <div class="meta">
+                                <a>Date</a>
+                                <a>Category</a>
+                            </div>
+                            <div class="description">
+                                A description which may flow for several lines and give context to the content.
+                            </div>
+                            <div class="extra">
+                                <div class="ui right floated primary button">
+                                    Primary
+                                    <i class="right chevron icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!--                <div class="row">-->
+            <!--                    <div class="column">-->
+            <!--                        <div class="ui segment">Content</div>-->
+
+            <!--                        <img src="img/gruppi.png" height="100px" width="100px"/>-->
+
+            <!--                       -->
+
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--                <div class="row">-->
+            <!--                    <div class="column">-->
+            <!--                        <div class="ui segment">Content</div>-->
+            <!--&lt;!&ndash;                        <img th:src="@{'img/{img}.jpg'(img=${persona.getCognome()})}" height="100px" width="100px"/>&ndash;&gt;-->
+            <!--                        <img src="img/task.png" height="100px" width="100px"/>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--                <div class="row">-->
+            <!--                    <div class="column">-->
+            <!--                        <div class="ui segment">Content</div>-->
+            <!--&lt;!&ndash;                        <img th:src="@{'img/{img}.jpg'(img=${persona.getCognome()})}" height="100px" width="100px"/>&ndash;&gt;-->
+            <!--                        <img th:src="@{'img/commissioni.png'}" height="100px" width="100px"/>-->
+
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </div>-->
+
+
+
+
+        </div>
+    </div>
+</div>
+
+
+<table class="ui fixed table">
+    <thead>
+    <tr><th>Name</th>
+        <th>Status</th>
+        <th>Description</th>
+    </tr></thead>
+    <tbody>
+    <tr>
+        <td>John</td>
+        <td>Approved</td>
+        <td>John is an interesting boy but sometimes you don't really have enough room to describe everything you'd like</td>
+    </tr>
+    <tr>
+        <td>Jamie</td>
+        <td>Approved</td>
+        <td>Jamie is a kind girl but sometimes you don't really have enough room to describe everything you'd like</td>
+    </tr>
+    <tr>
+        <td>Jill</td>
+        <td>Denied</td>
+        <td>Jill is an alright girl but sometimes you don't really have enough room to describe everything you'd like</td>
+    </tr>
+    </tbody>
+</table>
+
+
 </body>
 </html>
