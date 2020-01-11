@@ -9,24 +9,32 @@
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
 <h1 class="ui header" align="center">Repository d'Ateneo</h1>
-    <div class="ui main text container">
+<div class="ui main text container">
+
+    <div class="row">
+
+
 
         <form action="/repository">
-        <div class="ui action input" style="float: right; margin-bottom:5px;">
-            <input type="text" placeholder="Search..." name="name">
+            <a th:if="${flagPQA==1}" class="ui teal right labeled icon button"
+               href="/repository/uploadDocumento">
+                Aggiungi <i class="plus icon"></i>
+            </a>
+            <div class="ui action input" style="float: right; margin-bottom:5px;">
+                <input type="text" placeholder="Search..." name="name">
                 <button class="ui teal icon button">
                     <i class="search icon"></i>
                 </button>
-        </div>
+            </div>
         </form>
-
+    </div>
         <table class="ui celled table striped">
             <tbody>
-                <tr class="center aligned">
-                    <td th:if="${#lists.isEmpty(documenti)}">
-                        <span>Non sono presenti documenti in repository.</span>
-                    </td>
-                </tr>
+            <tr class="center aligned">
+                <td th:if="${#lists.isEmpty(documenti)}">
+                    <span>Non sono presenti documenti in repository.</span>
+                </td>
+            </tr>
             </tbody>
         </table>
 
@@ -42,10 +50,6 @@
             </div>
         </div>
 
-        <a th:if="${flagPQA==1}" class="ui teal right labeled icon button"
-           href="/repository/uploadDocumento">
-            Aggiungi <i class="plus icon"></i>
-        </a>
         <div class="ui message green" th:if="${addFlag==true}">
             <i class="close icon"></i>
             <p>Documento <span th:text="${documentoNome}"></span> caricato con successo!</span></p>
@@ -58,7 +62,6 @@
     </div>
 
 
-
-<script type="text/javascript" th:src="@{/index.js}"></script>
+    <script type="text/javascript" th:src="@{/index.js}"></script>
 </body>
 </html>
