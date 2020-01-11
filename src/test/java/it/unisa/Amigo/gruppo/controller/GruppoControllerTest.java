@@ -144,7 +144,10 @@ public class GruppoControllerTest {
                 Arguments.of(user1, persona2, gruppo4, gruppo3)
         );
     }
-/*
+
+
+    /* Exception evaluating SpringEL expression: "supergruppo.name"
+
     @ParameterizedTest
     @MethodSource("provideGroupCandidatesList")
     public void groupCandidatesList(Persona persona1, Persona persona2, User user1, User user2) throws Exception{
@@ -165,11 +168,13 @@ public class GruppoControllerTest {
         ConsiglioDidattico expectedConsiglioDidattico = new ConsiglioDidattico("Informatica");
         expectedConsiglioDidattico.addPersona(expectedPersona1);
         expectedConsiglioDidattico.addPersona(expectedPersona2);
+        expectedConsiglioDidattico.setId(0);
 
 
         Supergruppo expectedSupergruppo = new Supergruppo("GAQR - Informatica", "Supergruppo", true);
         expectedSupergruppo.addPersona(expectedPersona2);
         expectedSupergruppo.setConsiglio(expectedConsiglioDidattico);
+        expectedSupergruppo.setId(0);
 
         when(gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(expectedPersona1.getId())).thenReturn(expectedPersone);
         when(gruppoService.findSupergruppo(expectedPersona2.getId())).thenReturn(expectedSupergruppo);
@@ -470,7 +475,10 @@ public class GruppoControllerTest {
         );
     }
 
-    /*@ParameterizedTest
+    /*
+    java.lang.AssertionError: Model attribute 'idCommissione' expected:<7> but was:<null>
+
+    @ParameterizedTest
     @MethodSource("provideNominaResponsabile")
     public void nominaResponsabile(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
 
@@ -606,7 +614,7 @@ public class GruppoControllerTest {
 
     }
 
-    /*@ParameterizedTest
+    @ParameterizedTest
     @MethodSource("provideRemoveMembroCommissione")
     public void removeMembroCommissione(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
 
@@ -638,6 +646,10 @@ public class GruppoControllerTest {
         when(gruppoService.findGruppoByCommissione(expectedCommissione.getId())).thenReturn(expectedGruppo);
         when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
         when(gruppoService.findAllCommissioniByGruppo(expectedGruppo.getId())).thenReturn(commissioni);
+        when( gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), expectedGruppo.getId())).thenReturn(true);
+        when(gruppoService.findSupergruppo(expectedCommissione.getId())).thenReturn(expectedCommissione);
+        when(gruppoService.findSupergruppo(expectedGruppo.getId())).thenReturn(expectedGruppo);
+
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", expectedGruppo.getId(), expectedPersona.getId())
                 .with(user(userDetails)))
@@ -647,7 +659,7 @@ public class GruppoControllerTest {
                 .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("flagRimozione", 1))
                 .andExpect(model().attribute("personaRimossa", expectedPersona))
-                .andExpect(view().name("gruppo/commissione_detail"));
+                .andExpect(view().name("gruppo/gruppo_detail"));
 
     }
 
@@ -677,5 +689,5 @@ public class GruppoControllerTest {
                 Arguments.of(user, persona1, commissione1, gruppo1),
                 Arguments.of(user1, persona2, commissione2, gruppo2)
         );
-    }*/
+    }
 }
