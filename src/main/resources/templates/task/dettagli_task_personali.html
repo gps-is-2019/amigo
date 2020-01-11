@@ -10,78 +10,252 @@
 <div th:insert="fragments/fragments.html :: header"></div>
 
 <h1 class="ui header" align="center"> Dettagli task : </h1>
-<div class="ui main text container">
-    <table class="ui celled table striped">
-        <thead>
-        <tr class="center aligned">
-            <th>Nome task</th>
-            <th>Data scadenza</th>
-            <th>Stato</th>
-        </tr>
-        </thead>
-        <tbody>
-        <th:block>
-            <tr class="center aligned">
-                <td th:text="${task.nome}"></td>
-                <td th:text="${task.dataScadenza}"></td>
-                <td th:text="${task.stato}"></td>
-            </tr>
+<!--<div class="ui main text container">-->
+<!--    <table class="ui celled table striped">-->
+<!--        <thead>-->
+<!--        <tr class="center aligned">-->
+<!--            <th>Nome task</th>-->
+<!--            <th>Data scadenza</th>-->
+<!--            <th>Stato</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <th:block>-->
+<!--            <tr class="center aligned">-->
+<!--                <td th:text="${task.nome}"></td>-->
+<!--                <td th:text="${task.dataScadenza}"></td>-->
+<!--                <td th:text="${task.stato}"></td>-->
+<!--            </tr>-->
 
-            <tr class="center aligned">
-                <th colspan="4" th:text="'Assegnatario'+' '+'task'"></th>
-            </tr>
+<!--            <tr class="center aligned">-->
+<!--                <th colspan="4" th:text="'Assegnatario'+' '+'task'"></th>-->
+<!--            </tr>-->
 
-            <tr class="center aligned">
-                <td colspan="4" th:text="${task.persona.getNome()} +' '+ ${task.persona.getCognome()}"></td>
-            </tr>
-            <tr class="center aligned">
-                <th colspan="4" th:text="Descrizione"></th>
-            </tr>
-            <tr class="center aligned">
-                <td colspan="4" th:text="${task.descrizione}"></td>
-            </tr>
-            <tr class="center aligned">
-                <th colspan="4" th:text="'Documento' + 'task'"></th>
-            </tr>
-            <tr th:if="${( ( task.stato.equals('incompleto') )==true ) or ( ( task.stato.equals('respinto') )==true )}"
-                class="center aligned">
-                <td colspan="3">
+<!--            <tr class="center aligned">-->
+<!--                <td colspan="4" th:text="${task.persona.getNome()} +' '+ ${task.persona.getCognome()}"></td>-->
+<!--            </tr>-->
+<!--            <tr class="center aligned">-->
+<!--                <th colspan="4" th:text="Descrizione"></th>-->
+<!--            </tr>-->
+<!--            <tr class="center aligned">-->
+<!--                <td colspan="4" th:text="${task.descrizione}"></td>-->
+<!--            </tr>-->
+<!--            <tr class="center aligned">-->
+<!--                <th colspan="4" th:text="'Documento' + 'task'"></th>-->
+<!--            </tr>-->
+<!--            <tr th:if="${( ( task.stato.equals('incompleto') )==true ) or ( ( task.stato.equals('respinto') )==true )}"-->
+<!--                class="center aligned">-->
+<!--                <td colspan="3">-->
 
+
+<!--                    <form th:action="@{'/taskPersonali/task_detail/{idTask}/uploadDocumento'(idTask=${task.id})}"-->
+<!--                          method="post" enctype="multipart/form-data">-->
+<!--                        <label>Filename:</label>-->
+<!--                        <input type="file" name="file"/>-->
+<!--                        <input type="submit" class="ui primary button" name="submit" value="Inserisci"/>-->
+<!--                    </form>-->
+<!--                </td>-->
+<!--            </tr>-->
+
+<!--            <tr>-->
+<!--                <td class="center aligned" colspan="3" th:if="${task.getDocumento()}!=null">-->
+<!--                    <a target="_blank" th:text="${task.documento.getNome()}"-->
+<!--                       th:href="@{'/documento/{idDocumento}' ( idDocumento=${task.documento.getId()})}"></a>-->
+<!--                </td>-->
+<!--                </td>-->
+<!--                <td class="center aligned" colspan="3" th:if="${task.getDocumento()}==null">-->
+<!--                    <span>Nessun documento presente</span>-->
+<!--                </td>-->
+
+<!--            </tr>-->
+
+<!--            <tr th:if="${( ( task.stato.equals('approvato') )==false ) and ( ( task.stato.equals('in valutazione') )==false )}"-->
+<!--                class="center aligned">-->
+<!--                <td colspan="3">-->
+<!--                    <a class="ui primary button"-->
+<!--                       th:href="@{'/taskPersonali/task_detail/{idTask}/completa' (idTask=${task.id}) }"-->
+<!--                    > Completa</a>-->
+<!--                </td>-->
+<!--            </tr>-->
+
+<!--        </th:block>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+
+
+
+
+<div class="ui form text container">
+
+    <div class="ui celled list">
+
+        <div class="item" style="padding-top: 3%;padding-bottom: 2.5%;">
+            <i class="file alternate icon"></i>
+            <div class="content">
+                <div class="header">Nome task</div>
+                <div th:text="${task.nome}"></div>
+            </div>
+        </div>
+
+        <div class="item" style="padding-top: 3%;padding-bottom: 2.5%;">
+            <i class="calendar alternate outline icon"></i>
+            <div class="content">
+                <div class="header">Data scadenza</div>
+                <div th:text="${task.dataScadenza}"></div>
+            </div>
+        </div>
+
+        <div class="item" style="padding-top: 3%;padding-bottom: 2.5%;">
+            <i class="address card icon"></i>
+            <div class="content">
+                <div class="header">Assegnatario task</div>
+                <div th:text="${task.persona.getNome()} +' '+ ${task.persona.getCognome()}"></div>
+            </div>
+        </div>
+
+        <div class="item" style="padding-top: 3%;padding-bottom: 2.5%;">
+            <i class="clipboard list icon"></i>
+            <div class="content">
+                <div class="header">Descrizione</div>
+                <div th:text="${task.descrizione}" style="word-wrap: break-word;"></div>
+            </div>
+        </div>
+
+        <div class="item" style="padding-top: 3%;padding-bottom: 2.5%;">
+<!--            <i class="clipboard list icon"></i>-->
+<!--            <i class="list alternate icon"></i>-->
+            <i class="eye icon"></i>
+            <div class="content">
+                <div class="header">Stato</div>
+                <div th:text="${task.stato}"></div>
+            </div>
+        </div>
+
+        <div class="item"  style="padding-top: 3%;padding-bottom: 2.5%;">
+            <i class="file icon"></i>
+            <div class="content">
+                <div class="header">Documento</div>
+                <div th:if="${task.getDocumento()}!=null" style="padding-top: 3%;padding-bottom: 2.5%;">
+                    <a target="_blank" th:text="${task.documento.getNome()}"
+                       th:href="@{'/documento/{idDocumento}' ( idDocumento=${task.documento.getId()})}">
+                    </a>
+                </div>
+                <div th:if="${task.getDocumento()}==null" style="padding-top: 3%;padding-bottom: 2.5%;">
+                    <span>Nessun documento presente</span>
+                </div>
+
+                <div th:if="${( ( task.stato.equals('incompleto') )==true ) or ( ( task.stato.equals('respinto') )==true )}"
+                     class="center aligned">
 
                     <form th:action="@{'/taskPersonali/task_detail/{idTask}/uploadDocumento'(idTask=${task.id})}"
                           method="post" enctype="multipart/form-data">
-                        <label>Filename:</label>
-                        <input type="file" name="file"/>
-                        <input type="submit" class="ui primary button" name="submit" value="Inserisci"/>
+
+                 <span>
+                    <label class="ui icon button" for="file-upload">
+                        <i class="file icon"></i>
+                        Carica file
+                    </label>
+                    <input id="file-upload" name="file" required style="display:none" type="file">
+                 </span>
+
+                        <input class="ui primary button" name="submit" type="submit" value="Invia"/>
                     </form>
-                </td>
-            </tr>
 
-            <tr>
-                <td class="center aligned" colspan="3" th:if="${task.getDocumento()}!=null">
-                    <a target="_blank" th:text="${task.documento.getNome()}"
-                       th:href="@{'/documento/{idDocumento}' ( idDocumento=${task.documento.getId()})}"></a>
-                </td>
-                </td>
-                <td class="center aligned" colspan="3" th:if="${task.getDocumento()}==null">
-                    <span>Nessun documento presente</span>
-                </td>
+                </div>
+            </div>
+        </div>
 
-            </tr>
+        <div class="field item" th:if="${( ( task.stato.equals('approvato') )==false ) and ( ( task.stato.equals('in valutazione') )==false )}" style="padding-top: 3%;padding-bottom: 2.5%;">
+            <table class="ui fixed table" style="border: 1px rgba(34, 36, 38, 0.15);">
+                    <tr class="center aligned">
+                        <td>
+                        <a class="ui positive button center aligned"
+                        th:href="@{'/taskPersonali/task_detail/{idTask}/completa' (idTask=${task.id}) }"
+                        > Completa</a>
+                        </td>
+                    </tr>
+            </table>
+        </div>
+    </div>
 
-            <tr th:if="${( ( task.stato.equals('approvato') )==false ) and ( ( task.stato.equals('in valutazione') )==false )}"
-                class="center aligned">
-                <td colspan="3">
-                    <a class="ui primary button"
-                       th:href="@{'/taskPersonali/task_detail/{idTask}/completa' (idTask=${task.id}) }"
-                    > Completa</a>
-                </td>
-            </tr>
+<!--<div class="field">-->
+<!--    <label>Nome task</label>-->
+<!--    <div th:text="${task.nome}"></div>-->
+<!--</div>-->
+<!--<div class="field">-->
+<!--    <label>Data scadenza</label>-->
+<!--    <div th:text="${task.dataScadenza}"></div>-->
+<!--</div>-->
 
-        </th:block>
-        </tbody>
-    </table>
+<!--    <div class="field">-->
+<!--        <label>Assegnatario task</label>-->
+<!--        <div th:text="${task.persona.getNome()} +' '+ ${task.persona.getCognome()}"></div>-->
+<!--    </div>-->
+
+
+<!--    <div class="field">-->
+<!--        <label>Descrizione</label>-->
+<!--        <div th:text="${task.descrizione}" style="word-wrap: break-word;"></div>-->
+<!--    </div>-->
+
+<!--    <div class="field">-->
+<!--        <label>Stato</label>-->
+<!--        <div th:text="${task.stato}"></div>-->
+<!--    </div>-->
+
+<!--    <div class="field">-->
+<!--        <label>Documento task</label>-->
+
+<!--        <div th:if="${task.getDocumento()}!=null">-->
+<!--            <a target="_blank" th:text="${task.documento.getNome()}"-->
+<!--               th:href="@{'/documento/{idDocumento}' ( idDocumento=${task.documento.getId()})}">-->
+<!--            </a>-->
+<!--        </div>-->
+<!--        <div th:if="${task.getDocumento()}==null">-->
+<!--            <span>Nessun documento presente</span>-->
+<!--        </div>-->
+
+<!--        <div th:if="${( ( task.stato.equals('incompleto') )==true ) or ( ( task.stato.equals('respinto') )==true )}"-->
+<!--             class="center aligned">-->
+
+<!--            <form th:action="@{'/taskPersonali/task_detail/{idTask}/uploadDocumento'(idTask=${task.id})}"-->
+<!--                  method="post" enctype="multipart/form-data">-->
+
+<!--                 <span>-->
+<!--                    <label class="ui icon button" for="file-upload">-->
+<!--                        <i class="file icon"></i>-->
+<!--                        Carica file-->
+<!--                    </label>-->
+<!--                    <input id="file-upload_" name="file" required style="display:none" type="file">-->
+<!--                 </span>-->
+
+<!--                <input class="ui primary button" name="submit" type="submit" value="Invia"/>-->
+<!--            </form>-->
+
+<!--        </div>-->
+
+<!--    </div>-->
+
+
+<!--    <div class="field" th:if="${( ( task.stato.equals('approvato') )==false ) and ( ( task.stato.equals('in valutazione') )==false )}">-->
+<!--        <a class="ui positive button"-->
+<!--           th:href="@{'/taskPersonali/task_detail/{idTask}/completa' (idTask=${task.id}) }"-->
+<!--        > Completa</a>-->
+<!--    </div>-->
+
+
 </div>
+
+
+
+</div>
+
+
+
+
+
+
 <div class="ui message green text container" th:if="${flagAzione==4}">
     <i class="close icon"></i>
     <p>Hai completato il Task </p>
@@ -95,13 +269,8 @@
     <i class="close icon"></i>
     <p><span>Errore caricamento documento</span></p>
 </div>
-<script>$('.message .close')
-    .on('click', function () {
-        $(this)
-            .closest('.message')
-            .transition('fade')
-        ;
-    })
-;</script>
+
+<script type="text/javascript" th:src="@{/dettagliTaskPersonali.js}"></script>
+
 </body>
 </html>
