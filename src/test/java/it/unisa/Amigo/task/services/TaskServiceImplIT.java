@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -292,7 +293,7 @@ class TaskServiceImplIT {
         taskDAO.save(task);
         taskService.accettazioneTask(task.getId());
         String expectedStato = "approvato";
-        assertEquals(expectedStato, taskDAO.findById(task.getId()).get().getStato());
+        assertEquals(expectedStato, Objects.requireNonNull(taskDAO.findById(task.getId()).orElse(null)).getStato());
     }
 
     private static Stream<Arguments> provideAccettazioneTask() {
@@ -326,7 +327,7 @@ class TaskServiceImplIT {
         taskService.rifiutoTask(task.getId());
 
         String expectedStato = "respinto";
-        assertEquals(expectedStato, taskDAO.findById(task.getId()).get().getStato());
+        assertEquals(expectedStato, Objects.requireNonNull(taskDAO.findById(task.getId()).orElse(null)).getStato());
     }
 
     private static Stream<Arguments> provideRifiutoTask() {
@@ -360,7 +361,7 @@ class TaskServiceImplIT {
         taskService.completaTask(task.getId());
 
         String expectedStato = "in valutazione";
-        assertEquals(expectedStato, taskDAO.findById(task.getId()).get().getStato());
+        assertEquals(expectedStato, Objects.requireNonNull(taskDAO.findById(task.getId()).orElse(null)).getStato());
     }
 
     private static Stream<Arguments> provideCompletaTask() {
