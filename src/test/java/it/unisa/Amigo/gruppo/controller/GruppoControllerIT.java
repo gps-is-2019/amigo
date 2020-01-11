@@ -17,10 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -132,7 +129,7 @@ public class GruppoControllerIT {
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
-                .andExpect(model().attribute("supergruppi", List.of(expectedSupergruppo1, expectedSupergruppo2)))
+                .andExpect(model().attribute("supergruppi", Arrays.asList(expectedSupergruppo1, expectedSupergruppo2)))
                 .andExpect(view().name("gruppo/miei_gruppi"));
     }
 
