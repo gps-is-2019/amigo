@@ -606,7 +606,7 @@ public class GruppoControllerTest {
 
     }
 
-    /*@ParameterizedTest
+    @ParameterizedTest
     @MethodSource("provideRemoveMembroCommissione")
     public void removeMembroCommissione(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
 
@@ -638,6 +638,10 @@ public class GruppoControllerTest {
         when(gruppoService.findGruppoByCommissione(expectedCommissione.getId())).thenReturn(expectedGruppo);
         when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
         when(gruppoService.findAllCommissioniByGruppo(expectedGruppo.getId())).thenReturn(commissioni);
+        when( gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), expectedGruppo.getId())).thenReturn(true);
+        when(gruppoService.findSupergruppo(expectedCommissione.getId())).thenReturn(expectedCommissione);
+        when(gruppoService.findSupergruppo(expectedGruppo.getId())).thenReturn(expectedGruppo);
+
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", expectedGruppo.getId(), expectedPersona.getId())
                 .with(user(userDetails)))
@@ -647,7 +651,7 @@ public class GruppoControllerTest {
                 .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("flagRimozione", 1))
                 .andExpect(model().attribute("personaRimossa", expectedPersona))
-                .andExpect(view().name("gruppo/commissione_detail"));
+                .andExpect(view().name("gruppo/gruppo_detail"));
 
     }
 
@@ -677,5 +681,5 @@ public class GruppoControllerTest {
                 Arguments.of(user, persona1, commissione1, gruppo1),
                 Arguments.of(user1, persona2, commissione2, gruppo2)
         );
-    }*/
+    }
 }
