@@ -12,9 +12,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -29,6 +31,45 @@ public class RepositoryServiceImplIT {
     @Autowired
     private DocumentoDAO documentoDAO;
 
+    private static Stream<Arguments> provideAddDocumentoInRepository() {
+        MultipartFile file1 = new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes());
+        MultipartFile file2 = new MockMultipartFile("testtestetst", "file.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes());
+
+        return Stream.of(
+                Arguments.of(file1),
+                Arguments.of(file2)
+        );
+    }
+
+    private static Stream<Arguments> provideDownloadDocumento() {
+        Documento documento1 = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
+                "test.txt", false, "text/plain");
+        Documento documento2 = new Documento("src/main/resources/documents/file.txt", LocalDate.now(),
+                "test.txt", false, "text/plain");
+
+        return Stream.of(
+                Arguments.of(documento1),
+                Arguments.of(documento2)
+        );
+    }
+
+    private static Stream<Arguments> provideSerarchDcoumentInRepository() {
+        String nome1 = "test1";
+        Documento documento1 = new Documento();
+        documento1.setInRepository(true);
+        documento1.setNome(nome1);
+
+        String nome2 = "test2";
+        Documento documento2 = new Documento();
+        documento2.setInRepository(true);
+        documento2.setNome(nome2);
+
+        return Stream.of(
+                Arguments.of(documento1, nome1),
+                Arguments.of(documento2, nome2)
+        );
+    }
+
     @AfterEach
     void afterEach() {
         documentoDAO.deleteAll();
@@ -42,15 +83,6 @@ public class RepositoryServiceImplIT {
         assertEquals(true, expectedValue);
 
     }
-    private static Stream<Arguments> provideAddDocumentoInRepository() {
-        MultipartFile file1 = new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes());
-        MultipartFile file2 = new MockMultipartFile("testtestetst", "file.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes());
-
-        return Stream.of(
-                Arguments.of(file1),
-                Arguments.of(file2)
-        );
-    }
 
     @ParameterizedTest
     @MethodSource("provideDownloadDocumento")
@@ -59,40 +91,13 @@ public class RepositoryServiceImplIT {
         Documento actualDocumento = documentoService.findDocumentoById(expectedDocumento.getId());
         assertEquals(expectedDocumento, actualDocumento);
     }
-    private static Stream<Arguments> provideDownloadDocumento() {
-        Documento documento1 = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
-                "test.txt", false, "text/plain");
-        Documento documento2 = new Documento("src/main/resources/documents/file.txt", LocalDate.now(),
-                "test.txt", false, "text/plain");
-
-        return Stream.of(
-                Arguments.of(documento1),
-                Arguments.of(documento2)
-        );
-    }
 
     @ParameterizedTest
     @MethodSource("provideSerarchDcoumentInRepository")
-    void serarchDcoumentInRepository( Documento documentoExample, String name) {
+    void serarchDcoumentInRepository(Documento documentoExample, String name) {
 
         List<Documento> expectedDocumenti = documentoService.searchDocumenti(documentoExample);
         List<Documento> actualDocumenti = repositoryService.searchDocumentInRepository(name);
-        assertEquals(actualDocumenti,expectedDocumenti);
-    }
-    private static Stream<Arguments> provideSerarchDcoumentInRepository() {
-        String nome1 ="test1";
-        Documento documento1 = new Documento();
-        documento1.setInRepository(true);
-        documento1.setNome(nome1);
-
-        String nome2 ="test2";
-        Documento documento2 = new Documento();
-        documento2.setInRepository(true);
-        documento2.setNome(nome2);
-
-        return Stream.of(
-                Arguments.of(documento1, nome1),
-                Arguments.of(documento2, nome2)
-        );
+        assertEquals(actualDocumenti, expectedDocumenti);
     }
 }
