@@ -7,7 +7,7 @@
     <div th:insert="fragments/fragments.html :: header"></div>
     <h1 align="center" class="ui header">Membri del <span th:text="${supergruppo.name}"></span></h1>
     <div class="ui main text container">
-        <table class="ui celled table">
+        <table class="ui teal table">
             <thead>
             <tr class="center aligned">
                 <th>Cognome</th>
@@ -42,11 +42,12 @@
         </div>
         <h1 class="ui header"  align="center">Commissioni del <span th:text="${supergruppo.name}"></span> </h1>
         <div class="ui main text container">
-            <table class="ui celled table">
+            <table class="ui teal table">
                 <thead>
                 <tr class="center aligned">
                     <th>Nome</th>
                     <th>Stato</th>
+                    <th></th>
                     <th></th>
                 </tr>
                 </thead>
