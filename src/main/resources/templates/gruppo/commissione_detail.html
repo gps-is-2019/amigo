@@ -24,13 +24,13 @@
                 <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.user.getEmail()}"></td>
                 <td th:if="${isResponsabile==true && supergruppo.state == true}"><a
-                        class="ui primary button"
+                        class="ui teal button"
                         th:href="@{'/gruppi/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}"
                         th:if="${isResponsabile==true and supergruppo.responsabile.getId()!=persona.id}">
                     Rimuovi
                 </a></td>
                 <td th:if="${supergruppo.state == true}">
-                    <a class="ui primary button"
+                    <a class="ui teal button"
                        th:href="@{'/gruppi/commissioni/{idCommissione}/nominaResponsabile/{idPersona}'(idCommissione=${supergruppo.id},idPersona=${persona.id})}"
                        th:if="${isCapogruppo==true && supergruppo.state == true && supergruppo.responsabile.getId()!=persona.id}">
                         Nomina responsabile
@@ -40,13 +40,13 @@
         </th:block>
         </tbody>
     </table>
-    <a class="ui primary button"
+    <a class="ui teal button"
        th:href="@{'/gruppi/commissioni/{id2}/candidati'( id2=${supergruppo.id})}"
        th:if="${isResponsabile==true && supergruppo.state == true}">
         Aggiungi
     </a>
 
-    <a class="ui primary button" th:if="${isCapogruppo==true && supergruppo.state == true}"
+    <a class="ui teal button" th:if="${isCapogruppo==true && supergruppo.state == true}"
        th:href="@{'/gruppi/{idSupergruppo}/tasks/create'( idSupergruppo=${supergruppo.id} ) }">Assegna nuovo
         task a commissione</a>
     <a class=" negative ui  button"

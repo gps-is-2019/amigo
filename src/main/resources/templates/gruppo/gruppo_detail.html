@@ -22,7 +22,7 @@
                     <td th:text="${persona.cognome}"></td>
                     <td th:text="${persona.nome}"></td>
                     <td th:text="${persona.user.getEmail()}"></td>
-                    <td th:if="${isCapogruppo==true}"><a th:if="${isCapogruppo==true and supergruppo.responsabile.getId()!=persona.id}"  th:href="@{'/gruppi/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
+                    <td th:if="${isCapogruppo==true}"><a th:if="${isCapogruppo==true and supergruppo.responsabile.getId()!=persona.id}"  th:href="@{'/gruppi/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui teal button">
                         Rimuovi
                     </a></td>
                 </tr>
@@ -30,7 +30,7 @@
             </tbody>
         </table>
 
-        <a th:if="${isCapogruppo==true}"th:href="@{'/gruppi/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
+        <a th:if="${isCapogruppo==true}"th:href="@{'/gruppi/{id2}/candidati'( id2=${supergruppo.id})}" class="ui teal button">
 
                 <i class="icon user"></i>
                 Aggiungi membro
@@ -58,12 +58,12 @@
                             <span th:if="${commissione.state == true}">Aperta</span>
                             <span th:if="${commissione.state == false}">Chiusa</span>
                         </td>
-                        <td ><a th:href="@{'/gruppi/{id2}/commissione_detail/{id_commissione}'( id2=${supergruppo.id}, id_commissione=${commissione.id})}" class="ui primary button">
+                        <td ><a th:href="@{'/gruppi/{id2}/commissione_detail/{id_commissione}'( id2=${supergruppo.id}, id_commissione=${commissione.id})}" class="ui teal button">
                             Visualizza dettagli
                         </a></td>
                         <td>
                             <a th:href="@{'/gruppi/{id_commissione}/tasks'  ( id_commissione=${commissione.id} )}"
-                               class="ui primary button">
+                               class="ui teal button">
                                 Lista task
                             </a>
                         </td>
@@ -71,7 +71,7 @@
                 </th:block>
                 </tbody>
             </table>
-            <a th:if="${isCapogruppo==true}"th:href="@{'/gruppi/{id}/commissioni/create'( id=${supergruppo.id})}" class="ui primary button">
+            <a th:if="${isCapogruppo==true}"th:href="@{'/gruppi/{id}/commissioni/create'( id=${supergruppo.id})}" class="ui teal button">
                 Crea Commissione
             </a>
         </div>
