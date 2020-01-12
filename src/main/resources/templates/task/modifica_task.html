@@ -10,6 +10,11 @@
 <div th:insert="fragments/fragments.html :: header"></div>
 <h1 class="ui header" align="center">Modifica <span th:text="${taskForm.nome}"></span>: </h1>
 
+<div class="ui message negative text container" th:if="${flagCreazione==false}">
+    <i class="close icon"></i>
+    <p>Non hai modificato correttamente il Task </p>
+</div>
+
 <form
         class="ui form text container"
         method="post"
