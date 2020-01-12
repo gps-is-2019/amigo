@@ -16,15 +16,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -144,7 +140,6 @@ class ConsegnaServiceImplTest {
                 consegna.setDestinatario(gruppoService.findPersona(id));
                 expectedConsegne.add(consegna);
             }
-            assertEquals(expectedConsegne.size(), consegnaService.sendDocumento(idDestinatari, locazione, file).size());
         } else {
             Consegna consegna = new Consegna();
             consegna.setDataConsegna(LocalDate.now());
@@ -156,8 +151,8 @@ class ConsegnaServiceImplTest {
             if (locazione.equalsIgnoreCase(Consegna.NDV_LOCAZIONE))
                 consegna.setLocazione(Consegna.NDV_LOCAZIONE);
             expectedConsegne.add(consegna);
-            assertEquals(expectedConsegne.size(), consegnaService.sendDocumento(idDestinatari, locazione, file).size());
         }
+        assertEquals(expectedConsegne.size(), consegnaService.sendDocumento(idDestinatari, locazione, file).size());
     }
 
     @Test
@@ -165,10 +160,9 @@ class ConsegnaServiceImplTest {
         Consegna consegna = new Consegna();
         Consegna consegna1 = new Consegna();
         User user = new User("admin", "admin");
-        Set<Role> ruoli = new HashSet<Role>();
+        Set<Role> ruoli = new HashSet<>();
         ruoli.add(new Role(Role.NDV_ROLE));
         user.setRoles(ruoli);
-        UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona persona = new Persona("persona", "persona", "PQA");
         consegna.setMittente(persona);
         consegna1.setMittente(persona);
@@ -186,10 +180,9 @@ class ConsegnaServiceImplTest {
         Consegna consegna = new Consegna();
         Consegna consegna1 = new Consegna();
         User user = new User("admin", "admin");
-        Set<Role> ruoli = new HashSet<Role>();
+        Set<Role> ruoli = new HashSet<>();
         ruoli.add(new Role(Role.PQA_ROLE));
         user.setRoles(ruoli);
-        UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona persona = new Persona("persona", "persona", "PQA");
         persona.setUser(user);
         consegna.setDestinatario(persona);
@@ -209,17 +202,16 @@ class ConsegnaServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideDocumenti")
     void findConsegnaByDocumento(Documento documento) {
-        Documento doc = documento;
-        doc.setDataInvio(LocalDate.now());
+        documento.setDataInvio(LocalDate.now());
 
 
         Consegna expectedConsegna = new Consegna();
         expectedConsegna.setDataConsegna(LocalDate.now());
         expectedConsegna.setStato("da valutare");
-        expectedConsegna.setDocumento(doc);
+        expectedConsegna.setDocumento(documento);
 
-        when(consegnaDAO.findByDocumento_Id(doc.getId())).thenReturn(expectedConsegna);
-        assertEquals(expectedConsegna, consegnaService.findConsegnaByDocumento(doc.getId()));
+        when(consegnaDAO.findByDocumento_Id(documento.getId())).thenReturn(expectedConsegna);
+        assertEquals(expectedConsegna, consegnaService.findConsegnaByDocumento(documento.getId()));
     }
 
     @ParameterizedTest
@@ -227,10 +219,9 @@ class ConsegnaServiceImplTest {
     void possibiliDestinatari(Role role) {
 
         User user = new User("admin", "admin");
-        Set<Role> ruoli = new HashSet<Role>();
+        Set<Role> ruoli = new HashSet<>();
         ruoli.add(role);
         user.setRoles(ruoli);
-        UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona persona = new Persona("persona", "persona", "PQA");
         persona.setUser(user);
 

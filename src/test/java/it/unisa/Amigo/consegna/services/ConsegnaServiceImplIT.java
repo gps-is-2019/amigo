@@ -1,7 +1,5 @@
 package it.unisa.Amigo.consegna.services;
 
-import aj.org.objectweb.asm.ConstantDynamic;
-import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
 import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.autenticazione.domanin.User;
@@ -9,7 +7,6 @@ import it.unisa.Amigo.consegna.dao.ConsegnaDAO;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoServiceImpl;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoServiceImpl;
@@ -18,37 +15,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class ConsegnaServiceImplIT {
 
-    @Autowired
-    private DocumentoServiceImpl documentoService;
 
     @Autowired
     private GruppoServiceImpl gruppoService;
@@ -57,7 +36,7 @@ public class ConsegnaServiceImplIT {
     private ConsegnaDAO consegnaDAO;
 
     @Autowired
-    private  ConsegnaServiceImpl consegnaService;
+    private ConsegnaServiceImpl consegnaService;
 
     @Autowired
     private PersonaDAO personaDAO;
@@ -67,6 +46,32 @@ public class ConsegnaServiceImplIT {
 
     @Autowired
     private UserDAO userDAO;
+
+    private static Stream<Arguments> provideDocumenti() {
+        Documento documento1 = new Documento();
+        documento1.setNome("Documento1");
+        Documento documento2 = new Documento();
+        documento1.setNome("Documento2");
+        Documento documento3 = new Documento();
+        documento1.setNome("Documento3");
+
+        return Stream.of(
+                Arguments.of(documento1),
+                Arguments.of(documento2),
+                Arguments.of(documento3)
+        );
+    }
+
+    private static Stream<Arguments> providePossibiliDestinatari() {
+        Role role = new Role(Role.NDV_ROLE);
+        Role role1 = new Role(Role.CAPOGRUPPO_ROLE);
+        Role role2 = new Role(Role.CPDS_ROLE);
+        return Stream.of(
+                Arguments.of(role),
+                Arguments.of(role1),
+                Arguments.of(role2)
+        );
+    }
 
     @AfterEach
     void afterEach() {
@@ -95,10 +100,9 @@ public class ConsegnaServiceImplIT {
     @Test
     void consegneRicevute() {
         User user = new User("ferrucci", "admin");
-        Set<Role> ruoli = new HashSet<Role>();
+        Set<Role> ruoli = new HashSet<>();
         ruoli.add(new Role(Role.CAPOGRUPPO_ROLE));
         user.setRoles(ruoli);
-        UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona persona = new Persona("persona", "persona", "PQA");
         persona.setUser(user);
         personaDAO.save(persona);
@@ -118,36 +122,15 @@ public class ConsegnaServiceImplIT {
     @ParameterizedTest
     @MethodSource("provideDocumenti")
     void findConsegnaByDocumento(Documento documento) {
-        Documento doc = documento;
-        doc.setDataInvio(LocalDate.now());
-
-        documentoDAO.save(doc);
-
+        documento.setDataInvio(LocalDate.now());
+        documentoDAO.save(documento);
         Consegna expectedConsegna = new Consegna();
         expectedConsegna.setDataConsegna(LocalDate.now());
         expectedConsegna.setStato("da valutare");
-        expectedConsegna.setDocumento(doc);
-
+        expectedConsegna.setDocumento(documento);
         consegnaDAO.save(expectedConsegna);
-
-
-       // when(consegnaDAO.findByDocumento_Id(doc.getId())). thenReturn(expectedConsegna);
-        assertEquals(expectedConsegna, consegnaService.findConsegnaByDocumento(doc.getId()));
-    }
-
-    private static Stream<Arguments> provideDocumenti() {
-        Documento documento1 = new Documento();
-        documento1.setNome("Documento1");
-        Documento documento2 = new Documento();
-        documento1.setNome("Documento2");
-        Documento documento3 = new Documento();
-        documento1.setNome("Documento3");
-
-        return Stream.of(
-                Arguments.of(documento1),
-                Arguments.of(documento2),
-                Arguments.of(documento3)
-        );
+        // when(consegnaDAO.findByDocumento_Id(doc.getId())). thenReturn(expectedConsegna);
+        assertEquals(expectedConsegna, consegnaService.findConsegnaByDocumento(documento.getId()));
     }
 
     @WithMockUser("ferrucci")
@@ -155,10 +138,9 @@ public class ConsegnaServiceImplIT {
     @MethodSource("providePossibiliDestinatari")
     void possibiliDestinatari(Role role) {
         User user = new User("ferrucci", "admin");
-        Set<Role> ruoli = new HashSet<Role>();
+        Set<Role> ruoli = new HashSet<>();
         ruoli.add(role);
         user.setRoles(ruoli);
-        UserDetailImpl userDetails = new UserDetailImpl(user);
         Persona persona = new Persona("persona", "persona", "PQA");
         persona.setUser(user);
         personaDAO.save(persona);
@@ -181,23 +163,13 @@ public class ConsegnaServiceImplIT {
         assertEquals(expectedRuoli, consegnaService.possibiliDestinatari());
     }
 
-    private static Stream<Arguments> providePossibiliDestinatari() {
-        Role role = new Role(Role.NDV_ROLE);
-        Role role1 = new Role(Role.CAPOGRUPPO_ROLE);
-        Role role2 = new Role(Role.CPDS_ROLE);
-        return Stream.of(
-                Arguments.of(role),
-                Arguments.of(role1),
-                Arguments.of(role2)
-        );
-    }
-
     @Test
     void approvaConsegna() {
         Consegna consegna = new Consegna();
         consegnaDAO.save(consegna);
         consegnaService.approvaConsegna(consegna.getId());
-        assertEquals(consegnaDAO.findById(consegna.getId()).get().getStato(), "APPROVATA");
+        assertEquals(Objects.requireNonNull(Objects.requireNonNull(consegnaDAO.findById(consegna.getId()).orElse(null)).getStato()), "APPROVATA");
+        //consegnaDAO.findById(consegna.getId()).get().getStato()
     }
 
     @Test
@@ -206,7 +178,7 @@ public class ConsegnaServiceImplIT {
         consegna.setStato("APPROVATA");
         consegnaDAO.save(consegna);
         consegnaService.rifiutaConsegna(consegna.getId());
-        assertEquals(consegnaDAO.findById(consegna.getId()).get().getStato(), "RIFIUTATA");
+        assertEquals(Objects.requireNonNull(Objects.requireNonNull(consegnaDAO.findById(consegna.getId()).orElse(null)).getStato()), "RIFIUTATA");
     }
 
      /*
