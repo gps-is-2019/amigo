@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,14 +31,6 @@ class TaskServiceImplIT {
     @Autowired
     private PersonaDAO personaDAO;
 
-    @ParameterizedTest
-    @MethodSource("provideGetAssegnatarioTask")
-    void getAssegnatarioTask(Persona persona1, Task task) {
-        taskDAO.save(task);
-        Persona actualPersona = taskService.getAssegnatarioTask(task.getId());
-        assertEquals(persona1, actualPersona);
-    }
-
     private static Stream<Arguments> provideGetAssegnatarioTask() {
         LocalDate tmpDate;
         tmpDate = LocalDate.of(2020, 4, 20);
@@ -46,11 +39,9 @@ class TaskServiceImplIT {
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
-
         Persona persona4 = new Persona("Admin", "Admin", "Administrator");
         Persona persona5 = new Persona("giovanni", "magi", "Administrator");
         Persona persona6 = new Persona("Vittorio", "Scarano", "user");
-
         Task task = new Task("t1", tmpDate, "task1", "in valutazione");
         Task task2 = new Task("t2", tmpDate, "task2", "approvato");
         Task task3 = new Task("t3", tmpDate, "task3", "respinto");
@@ -75,15 +66,6 @@ class TaskServiceImplIT {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("provideDefinizioneTaskSupergruppo")
-    void definizioneTaskSupergruppo(String descrizione, LocalDate dataScadenza, String nome, String stato,
-                                    Supergruppo s, Persona persona, Task expectedTask) {
-        Task actual = taskService.definizioneTaskSupergruppo(descrizione, dataScadenza, nome, stato, s, persona);
-        expectedTask.setId(actual.getId());
-        assertEquals(expectedTask, actual);
-    }
-
     private static Stream<Arguments> provideDefinizioneTaskSupergruppo() {
         LocalDate tmpDate;
         LocalDate tmpDate2;
@@ -103,7 +85,6 @@ class TaskServiceImplIT {
         Supergruppo supergruppo4 = new Supergruppo("GAQD- Informatica", "gruppo", true);
         Supergruppo supergruppo5 = new Supergruppo("accompagnamento al lavoro", "commissione", true);
         Supergruppo supergruppo6 = new Supergruppo("GAQR- Informatica", "gruppo", true);
-
         Task task1 = new Task("descrizione 1", tmpDate = LocalDate.of(2020, 4, 20), "Task 1", "incompleto");
         task1.setPersona(persona1);
         task1.setSupergruppo(supergruppo1);
@@ -130,18 +111,6 @@ class TaskServiceImplIT {
                 Arguments.of("t1", date2, "task2", "incompleto", supergruppo5, persona5, task5),
                 Arguments.of("t1", date3, "chiamare azienda", "incompleto", supergruppo6, persona6, task6)
         );
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideVisualizzaTaskUser")
-    void visualizzaTaskUser(Persona persona, List<Task> expectedTasks) {
-        for (Task expectedTask : expectedTasks) {
-            taskDAO.save(expectedTask);
-            expectedTask.setPersona(persona);
-        }
-        personaDAO.save(persona);
-
-        assertEquals(expectedTasks, taskService.visualizzaTaskUser(persona.getId()));
     }
 
     private static Stream<Arguments> provideVisualizzaTaskUser() {
@@ -178,7 +147,6 @@ class TaskServiceImplIT {
         persona5Tasks.add(task5);
         ArrayList<Task> persona6Tasks = new ArrayList<>();
         persona6Tasks.add(task6);
-
         return Stream.of(
                 Arguments.of(persona1, persona1Tasks),
                 Arguments.of(persona2, persona2Tasks),
@@ -187,14 +155,6 @@ class TaskServiceImplIT {
                 Arguments.of(persona5, persona5Tasks),
                 Arguments.of(persona6, persona6Tasks)
         );
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideVisualizzaTaskSuperGruppo")
-    void visualizzaTaskSuperGruppo(Supergruppo supergruppo, List<Task> expectedTasks) {
-        for (Task expectedTask : expectedTasks) taskDAO.save(expectedTask);
-
-        assertEquals(expectedTasks, taskService.visualizzaTaskSuperGruppo(supergruppo.getId()));
     }
 
     private static Stream<Arguments> provideVisualizzaTaskSuperGruppo() {
@@ -234,7 +194,6 @@ class TaskServiceImplIT {
         supergruppo5Tasks.add(task5);
         ArrayList<Task> supergruppo6Tasks = new ArrayList<>();
         supergruppo6Tasks.add(task6);
-
         return Stream.of(
                 Arguments.of(supergruppo1, supergruppo1Tasks),
                 Arguments.of(supergruppo2, supergruppo2Tasks),
@@ -243,13 +202,6 @@ class TaskServiceImplIT {
                 Arguments.of(supergruppo5, supergruppo5Tasks),
                 Arguments.of(supergruppo6, supergruppo6Tasks)
         );
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideGetTaskById")
-    void getTaskById(Task task) {
-        taskDAO.save(task);
-        assertEquals(task, taskService.getTaskById(task.getId()));
     }
 
     private static Stream<Arguments> provideGetTaskById() {
@@ -276,16 +228,6 @@ class TaskServiceImplIT {
         );
     }
 
-
-    @ParameterizedTest
-    @MethodSource("provideAccettazioneTask")
-    void accettazioneTask(Task task) {
-        taskDAO.save(task);
-        taskService.accettazioneTask(task.getId());
-        String expectedStato = "approvato";
-        assertEquals(expectedStato, taskDAO.findById(task.getId()).get().getStato());
-    }
-
     private static Stream<Arguments> provideAccettazioneTask() {
         LocalDate tmpDate = LocalDate.of(2020, 4, 20);
         LocalDate tmpDate2 = LocalDate.of(2029, 12, 31);
@@ -308,16 +250,6 @@ class TaskServiceImplIT {
                 Arguments.of(task5),
                 Arguments.of(task6)
         );
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideRifiutoTask")
-    void rifiutoTask(Task task) {
-        taskDAO.save(task);
-        taskService.rifiutoTask(task.getId());
-
-        String expectedStato = "respinto";
-        assertEquals(expectedStato, taskDAO.findById(task.getId()).get().getStato());
     }
 
     private static Stream<Arguments> provideRifiutoTask() {
@@ -344,16 +276,6 @@ class TaskServiceImplIT {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("provideCompletaTask")
-    void completaTask(Task task) {
-        taskDAO.save(task);
-        taskService.completaTask(task.getId());
-
-        String expectedStato = "in valutazione";
-        assertEquals(expectedStato, taskDAO.findById(task.getId()).get().getStato());
-    }
-
     private static Stream<Arguments> provideCompletaTask() {
         LocalDate tmpDate = LocalDate.of(2020, 4, 20);
         LocalDate tmpDate2 = LocalDate.of(2029, 12, 31);
@@ -376,5 +298,73 @@ class TaskServiceImplIT {
                 Arguments.of(task5),
                 Arguments.of(task6)
         );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideGetAssegnatarioTask")
+    void getAssegnatarioTask(Persona persona1, Task task) {
+        taskDAO.save(task);
+        Persona actualPersona = taskService.getAssegnatarioTask(task.getId());
+        assertEquals(persona1, actualPersona);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideDefinizioneTaskSupergruppo")
+    void definizioneTaskSupergruppo(String descrizione, LocalDate dataScadenza, String nome, String stato, Supergruppo s, Persona persona, Task expectedTask) {
+        Task actual = taskService.definizioneTaskSupergruppo(descrizione, dataScadenza, nome, stato, s, persona);
+        expectedTask.setId(actual.getId());
+        assertEquals(expectedTask, actual);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideVisualizzaTaskUser")
+    void visualizzaTaskUser(Persona persona, List<Task> expectedTasks) {
+        for (Task expectedTask : expectedTasks) {
+            taskDAO.save(expectedTask);
+            expectedTask.setPersona(persona);
+        }
+        personaDAO.save(persona);
+        assertEquals(expectedTasks, taskService.visualizzaTaskUser(persona.getId()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideVisualizzaTaskSuperGruppo")
+    void visualizzaTaskSuperGruppo(Supergruppo supergruppo, List<Task> expectedTasks) {
+        for (Task expectedTask : expectedTasks) taskDAO.save(expectedTask);
+        assertEquals(expectedTasks, taskService.visualizzaTaskSuperGruppo(supergruppo.getId()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideGetTaskById")
+    void getTaskById(Task task) {
+        taskDAO.save(task);
+        assertEquals(task, taskService.getTaskById(task.getId()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideAccettazioneTask")
+    void accettazioneTask(Task task) {
+        taskDAO.save(task);
+        taskService.accettazioneTask(task.getId());
+        String expectedStato = "approvato";
+        assertEquals(expectedStato, Objects.requireNonNull(taskDAO.findById(task.getId()).orElse(null)).getStato());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideRifiutoTask")
+    void rifiutoTask(Task task) {
+        taskDAO.save(task);
+        taskService.rifiutoTask(task.getId());
+        String expectedStato = "respinto";
+        assertEquals(expectedStato, Objects.requireNonNull(taskDAO.findById(task.getId()).orElse(null)).getStato());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideCompletaTask")
+    void completaTask(Task task) {
+        taskDAO.save(task);
+        taskService.completaTask(task.getId());
+        String expectedStato = "in valutazione";
+        assertEquals(expectedStato,Objects.requireNonNull(taskDAO.findById(task.getId()).orElse(null)).getStato());
     }
 }
