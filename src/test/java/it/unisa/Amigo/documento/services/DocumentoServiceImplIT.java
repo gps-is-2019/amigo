@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,7 +44,7 @@ public class DocumentoServiceImplIT {
         Documento expectedDocumento = documentoDAO.save(documento);
         expectedDocumento.setNome("testUpdate.txt");
         Documento actualDocumento = documentoService.updateDocumento(expectedDocumento);
-        assertEquals(expectedDocumento,actualDocumento);
+        assertEquals(expectedDocumento, actualDocumento);
     }
 
     @Test
@@ -52,7 +53,7 @@ public class DocumentoServiceImplIT {
                 "test.txt", false, "text/plain");
         documentoDAO.save(expectedDocumento);
         Documento actualDocumento = documentoService.findDocumentoById(expectedDocumento.getId());
-        assertEquals(expectedDocumento,actualDocumento);
+        assertEquals(expectedDocumento, actualDocumento);
     }
 /*
     //TODO
