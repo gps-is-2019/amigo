@@ -45,6 +45,10 @@
         Aggiungi
     </a>
 
+    <a class="ui primary button" th:if="${isCapogruppo==true && supergruppo.state == true}"
+       th:href="@{'/gruppi/{idSupergruppo}/tasks/create'( idSupergruppo=${supergruppo.id} ) }">Assegna nuovo
+        task a commissione</a>
+
     <a class="ui primary button"
        th:href="@{'/gruppi/commissioni/{id2}/chiusura'( id2=${supergruppo.id})}" th:if="${isCapogruppo==true && supergruppo.state == true}">
         Chiudi commissione
