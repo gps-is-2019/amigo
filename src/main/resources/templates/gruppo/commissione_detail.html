@@ -41,12 +41,13 @@
         </tbody>
     </table>
     <a class="ui teal button"
-       th:href="@{'/gruppi/commissioni/{id2}/candidati'( id2=${supergruppo.id})}"0
+       th:href="@{'/gruppi/commissioni/{id2}/candidati'( id2=${supergruppo.id})}"
        th:if="${isResponsabile==true && supergruppo.state == true}">
+        <i class="icon user"></i>
         Aggiungi
     </a>
 
-    <a class="ui teal button" th:if="${isCapogruppo==true && supergruppo.state == true || isResponsabile==true}"
+    <a class="ui teal button" th:if="${supergruppo.state == true && (isCapogruppo==true || isResponsabile==true)}"
        th:href="@{'/gruppi/{idSupergruppo}/tasks/create'( idSupergruppo=${supergruppo.id} ) }">Assegna nuovo
         task a commissione</a>
     <a class=" negative ui  button"
