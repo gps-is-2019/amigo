@@ -41,14 +41,19 @@
         </tbody>
     </table>
     <a class="ui primary button"
-       th:href="@{'/gruppi/commissioni/{id2}/candidati'( id2=${supergruppo.id})}" th:if="${isResponsabile==true && supergruppo.state == true}">
+       th:href="@{'/gruppi/commissioni/{id2}/candidati'( id2=${supergruppo.id})}"
+       th:if="${isResponsabile==true && supergruppo.state == true}">
         Aggiungi
     </a>
 
-    <a class="ui primary button"
+    <a class="ui primary button" th:if="${isCapogruppo==true && supergruppo.state == true}"
+       th:href="@{'/gruppi/{idSupergruppo}/tasks/create'( idSupergruppo=${supergruppo.id} ) }">Assegna nuovo
+        task a commissione</a>
+    <a class=" negative ui  button"
        th:href="@{'/gruppi/commissioni/{id2}/chiusura'( id2=${supergruppo.id})}" th:if="${isCapogruppo==true && supergruppo.state == true}">
         Chiudi commissione
     </a>
+
     <div class="ui message success" th:if="${flagRimozione==1}">
         <i class="close icon"></i>
         <p>Hai rimosso correttamente <span th:text="${personaRimossa.nome}"></span> <span

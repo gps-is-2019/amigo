@@ -29,8 +29,12 @@
             </th:block>
             </tbody>
         </table>
+
         <a th:if="${isCapogruppo==true}"th:href="@{'/gruppi/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
-            Aggiungi
+
+                <i class="icon user"></i>
+                Aggiungi membro
+
         </a>
         <div class="ui message success" th:if="${flagRimozione==1}">
             <i class="close icon"></i>
@@ -57,6 +61,12 @@
                         <td ><a th:href="@{'/gruppi/{id2}/commissione_detail/{id_commissione}'( id2=${supergruppo.id}, id_commissione=${commissione.id})}" class="ui primary button">
                             Visualizza dettagli
                         </a></td>
+                        <td>
+                            <a th:href="@{'/gruppi/{id_commissione}/tasks'  ( id_commissione=${commissione.id} )}"
+                               class="ui primary button">
+                                Lista task
+                            </a>
+                        </td>
                     </tr>
                 </th:block>
                 </tbody>
