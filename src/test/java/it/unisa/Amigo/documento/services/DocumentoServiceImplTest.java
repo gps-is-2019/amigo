@@ -71,7 +71,6 @@ class DocumentoServiceImplTest {
         Documento example = new Documento();
         example.setNome("test");
         ExampleMatcher matcher = ExampleMatcher.matchingAll().withMatcher("nome", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
-        Iterable<Documento> iterable = new ArrayList<>();
         when(documentoDAO.findAll(Example.of(example, matcher))).thenReturn(expectedDocumenti);
         List<Documento> actualDocumenti = documentoService.searchDocumenti(example);
         assertEquals(expectedDocumenti, actualDocumenti);

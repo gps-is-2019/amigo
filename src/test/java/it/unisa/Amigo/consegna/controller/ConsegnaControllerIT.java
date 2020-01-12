@@ -6,12 +6,10 @@ import it.unisa.Amigo.autenticazione.domanin.Role;
 import it.unisa.Amigo.autenticazione.domanin.User;
 import it.unisa.Amigo.consegna.dao.ConsegnaDAO;
 import it.unisa.Amigo.consegna.domain.Consegna;
-import it.unisa.Amigo.consegna.services.ConsegnaService;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -39,13 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ConsegnaControllerIT {
 
     @Autowired
-    private ConsegnaService consegnaService;
-
-    @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private GruppoService gruppoService;
 
     @Autowired
     private PersonaDAO personaDAO;
