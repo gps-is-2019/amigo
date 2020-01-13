@@ -100,8 +100,7 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public void accettazioneTask(final Integer idTask) {
-        Task task = taskDAO.findById(idTask).orElse(null);
-        assert task != null;
+        Task task = taskDAO.findById(idTask).get();
         task.setStato("approvato");
         taskDAO.save(task);
     }
@@ -113,8 +112,7 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public void rifiutoTask(final Integer idTask) {
-        Task task = taskDAO.findById(idTask).orElse(null);
-        assert task != null;
+        Task task = taskDAO.findById(idTask).get();
         task.setStato("respinto");
         taskDAO.save(task);
     }
@@ -126,8 +124,7 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public void completaTask(final Integer idTask) {
-        Task task = taskDAO.findById(idTask).orElse(null);
-        assert task != null;
+        Task task = taskDAO.findById(idTask).get();
         task.setStato("in valutazione");
         taskDAO.save(task);
     }
