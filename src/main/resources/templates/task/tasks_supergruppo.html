@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/html">
+<head>
+
+    <head th:include="/fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo|Lista task Supergruppo</title>
+    </head>
+</head>
+<body>
+<div th:insert="fragments/fragments.html :: header"></div>
+<h1 class="ui header" align="center">I task del gruppo : </h1>
+
+<div class="ui main text container">
+    <a th:if="${isResponsabile==true}" class="ui primary button"
+       th:href="@{'/gruppi/{idSupergruppo}/tasks/create'( idSupergruppo=${idSupergruppo} ) }">Assegna nuovo
+        task</a>
+    <table class="ui celled table striped">
+        <thead>
+        <tr class="center aligned">
+            <th>Nome</th>
+            <th>Data scadenza</th>
+            <th>Stato</th>
+            <th>Descrizione</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="task : ${listaTask}">
+            <tr class="center aligned">
+                <td th:text="${task.nome}"></td>
+                <td th:text="${task.dataScadenza}"></td>
+                <td th:text="${task.stato}"></td>
+                <td>
+                    <a class="ui primary button"
+                       th:href="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}'( idSupergruppo=${idSupergruppo} , idTask=${task.id} ) }">Dettagli</a>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+
+
+    <h1 class="ui header" align="center"> Documenti approvati : </h1>
+
+    <table class="ui celled table striped">
+        <thead>
+        <tr class="center aligned">
+            <th>Nome</th>
+            <th>Data invio</th>
+            <th>Task relativo</th>
+            <th>Download documento</th>
+            <th>Dettagli Task</th>
+            <th>Inoltra a PQA</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="documento : ${documenti}">
+            <tr class="center aligned">
+                <td th:text="${documento.nome}"></td>
+                <td th:text="${documento.dataInvio}"></td>
+                <td th:text="${documento.getTask().getNome()}"></td>
+                <td>
+                    <a class="ui primary button"
+                       th:href="@{'/documento/{idDocumento}' ( idDocumento=${documento.getId()})}">Download</a>
+                </td>
+                <td>
+                    <a class="ui primary button"
+                       th:href="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}'( idSupergruppo=${idSupergruppo} , idTask=${documento.getTask().getId()} ) }">Dettagli</a>
+                </td>
+                <td th:if="${documento.consegna==null}">
+                    <a class="ui secondary button"
+                       th:href="@{'/gruppi/{idSupergruppo}/tasks/{idTask}/inoltro'( idSupergruppo=${idSupergruppo} , idTask=${documento.getTask().getId()} ) }">Inoltra</a>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+
+
+
+</div>
+<div class="ui message green text container" th:if="${flagInoltro==1}">
+    <i class="close icon"></i>
+    <p>Hai creato correttamente il Task </p>
+</div>
+<script type="text/javascript" th:src="@{/index.js}"></script>
+</body>
+</html>

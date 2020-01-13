@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <title th:include=":: #pageTitle">Amigo</title>
+    <link rel="stylesheet" th:href="@{/webjars/Semantic-UI/semantic.css}">
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <script th:src="@{/webjars/jquery/jquery.js}"></script>
+    <script th:src="@{/webjars/Semantic-UI/semantic.js}"></script>
+    <script th:src="@{/index.js}"></script>
+</head>
+<body>
+
+<div class="ui inverted segment stackable"  th:fragment="header">
+    <div class="ui inverted secondary pointing menu">
+        <a class="active item" href="/dashboard">
+            Home
+        </a>
+        <a class="item" href="/gruppi">
+            I miei gruppi
+        </a>
+        <a class="item" href="/taskPersonali">
+            I miei task
+        </a>
+        <a class="item" href="/repository">
+            Repository d'Ateneo
+        </a>
+        <a class="item" href="/consegna/">
+            Consegna documento
+        </a>
+        <a class="item" href="/consegna/inviati?name=">
+            Documenti inviati
+        </a>
+        <a class="item" href="/consegna/ricevuti?name=">
+            Documenti ricevuti
+        </a>
+        <div class="right menu">
+            <a class="item" th:href="@{/logout}">Logout</a>
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+</html>

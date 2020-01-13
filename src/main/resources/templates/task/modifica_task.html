@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/xhtml">
+<head>
+
+    <head th:include="/fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo|Modifica Task</title>
+    </head>
+</head>
+<body>
+<div th:insert="fragments/fragments.html :: header"></div>
+<h1 class="ui header" align="center">Modifica <span th:text="${taskForm.nome}"></span>: </h1>
+
+<form
+        class="ui form text container"
+        method="post"
+        th:action="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modificaTask'( idSupergruppo=${idSupergruppo} , idTask=${idTask} )}"
+        th:object="${taskForm}">
+
+    <div class="field">
+        <input type="hidden" placeholder="${taskForm.id}" path="id" th:field="*{id}">
+    </div>
+    <div class="field">
+        <label>Nome task</label>
+        <input type="text" th:value="${taskForm.nome}" path="nome" th:field="*{nome}">
+    </div>
+    <div class="field">
+        <label>Data scadenza</label>
+        <input type="date" name="${taskForm.dataScadenza}" th:value="${taskForm.dataScadenza}" path="dataScadenza" th:field="*{dataScadenza}" >
+    </div>
+    <div class="field">
+        <div class="field">
+            <label>Descrizione</label>
+            <textarea placeholder="${taskForm.descrizione}" path="descrizione" th:field="*{descrizione}"></textarea>
+        </div>
+    </div>
+
+    <h3>Seleziona Delegato Task</h3>
+    <table class="ui celled table">
+        <thead>
+        <tr class="center aligned">
+            <th>Scelta</th>
+            <th>Nome</th>
+            <th>Cognome</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="persona : ${persone}">
+            <tr class="center aligned">
+                <td>
+                    <input type="radio" class="ui radio checkbox" th:name="idPersona" path="idPersona"
+                           id="${persona.id}" th:value="${persona.id}" th:checked="${persona.id==taskForm.idPersona}">
+                </td>
+                <td th:text="${persona.nome}"></td>
+                <td th:text="${persona.cognome}"></td>
+                <td th:text="${persona.user.getEmail()}"></td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+    <button class="ui primary button" type="submit">Aggiorna Task</button>
+</form>
+
+</table>
+
+</div>
+</body>
+</html>

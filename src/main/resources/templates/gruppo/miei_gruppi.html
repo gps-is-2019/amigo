@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+
+    <head th:include="/fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo|I miei gruppi</title>
+    </head>
+</head>
+<body>
+<div th:insert="fragments/fragments.html :: header"></div>
+
+<h1 align="center" class="ui header">I miei gruppi</h1>
+<div class="ui main text container">
+    <table class="ui celled table striped">
+        <thead>
+        <tr class="center aligned">
+            <th>Nome</th>
+            <th>Tipo</th>
+            <th>Stato</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="gruppo : ${supergruppi}">
+            <tr class="center aligned" th:if="${gruppo.type=='Gruppo'}">
+                <td th:text="${gruppo.name}"></td>
+                <td th:text="${gruppo.type}"></td>
+                <td>
+                    <span th:if="${gruppo.state==true}"> Attivo</span>
+                    <span th:if="${gruppo.state==false}"> Chiuso</span>
+                </td>
+                <td>
+                    <a class="ui primary button" th:href="@{/gruppi/} + ${gruppo.id}">
+                        Visualizza Dettagli
+                    </a>
+                </td>
+              <td>
+
+                  <a th:href="@{'/gruppi/{idSupergruppo}/tasks'  ( idSupergruppo=${gruppo.id} )}"
+                     class="ui primary button">
+                        Lista task
+                  </a>
+              </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>

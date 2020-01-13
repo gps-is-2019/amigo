@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    password: a520rdw2zn94oovb
+    url: mysql://j29btd1pilr4qbei:a520rdw2zn94oovb@cvktne7b4wbj4ks1.chr7pe7iynqr.eu-west-1.rds.amazonaws.com:3306/jz5eggtn687et1kp
+    username: j29btd1pilr4qbei
+  jpa:
+    hibernate:
+      ddl-auto: update

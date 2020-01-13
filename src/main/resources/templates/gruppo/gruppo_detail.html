@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/fragments/fragments.html :: head">
+    <title id="pageTitle">Amigo|Dettagli gruppo</title>
+</head>
+    <body>
+    <div th:insert="fragments/fragments.html :: header"></div>
+    <h1 align="center" class="ui header">Membri del <span th:text="${supergruppo.name}"></span></h1>
+    <div class="ui main text container">
+        <table class="ui celled table">
+            <thead>
+            <tr class="center aligned">
+                <th>Cognome</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th th:if="${isCapogruppo==true}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="persona : ${persone}">
+                <tr class="center aligned">
+                    <td th:text="${persona.cognome}"></td>
+                    <td th:text="${persona.nome}"></td>
+                    <td th:text="${persona.user.getEmail()}"></td>
+                    <td th:if="${isCapogruppo==true}"><a th:if="${isCapogruppo==true and supergruppo.responsabile.getId()!=persona.id}"  th:href="@{'/gruppi/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}" class="ui primary button">
+                        Rimuovi
+                    </a></td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+        <a th:if="${isCapogruppo==true}"th:href="@{'/gruppi/{id2}/candidati'( id2=${supergruppo.id})}" class="ui primary button">
+            Aggiungi
+        </a>
+        <div class="ui message success" th:if="${flagRimozione==1}">
+            <i class="close icon"></i>
+            <p>Hai rimosso correttamente <span th:text="${personaRimossa.nome}"></span> <span th:text="${personaRimossa.cognome}"></span></p>
+        </div>
+        <h1 class="ui header"  align="center">Commissioni del <span th:text="${supergruppo.name}"></span> </h1>
+        <div class="ui main text container">
+            <table class="ui celled table">
+                <thead>
+                <tr class="center aligned">
+                    <th>Nome</th>
+                    <th>Stato</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="commissione : ${commissioni}">
+                    <tr class="center aligned">
+                        <td th:text="${commissione.name}"></td>
+                        <td>
+                            <span th:if="${commissione.state == true}">Aperta</span>
+                            <span th:if="${commissione.state == false}">Chiusa</span>
+                        </td>
+                        <td ><a th:href="@{'/gruppi/{id2}/commissione_detail/{id_commissione}'( id2=${supergruppo.id}, id_commissione=${commissione.id})}" class="ui primary button">
+                            Visualizza dettagli
+                        </a></td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+            <a th:if="${isCapogruppo==true}"th:href="@{'/gruppi/{id}/commissioni/create'( id=${supergruppo.id})}" class="ui primary button">
+                Crea Commissione
+            </a>
+        </div>
+    </div>
+    <script type="text/javascript" th:src="@{/index.js}"></script>
+    </body>
+</html>

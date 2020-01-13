@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+
+    <head th:include="/fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo|Documenti inviati</title>
+    </head>
+</head>
+<body>
+<div th:insert="fragments/fragments.html :: header"></div>
+<h1 align="center" class="ui header">Documenti inviati</h1>
+<div class="ui main text container">
+
+    <form action="/consegna/inviati" method="get">
+        <div class="ui search">
+            <div class="ui icon input">
+                <input class="prompt" type="text" name="name" placeholder="Nome del documento">
+                <input type="submit" value="Cerca"> <i class="search icon"></i> </input>
+            </div>
+        </div>
+    </form>
+
+    <table class="ui celled table striped">
+        <thead>
+        <tr class="center aligned">
+            <th>Nome documento</th>
+            <th>Destinatario</th>
+            <th>Data invio</th>
+            <th>Stato</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="center aligned">
+            <td th:if="${#lists.isEmpty(consegne)}">
+                <span>Non sono presenti documenti inviati.</span>
+            </td>
+        </tr>
+        <th:block th:each="consegna : ${consegne}">
+            <tr class="center aligned">
+                <td>
+                    <a target=”_blank”
+                       th:href="@{'/consegna/miei-documenti/{idDocumento}' (idDocumento=${consegna.getDocumento().getId()})}">
+                        <span th:text="${consegna.documento.nome}"></span>
+                    </a>
+                </td>
+                <td>
+                    <span th:if="${consegna.locazione} != 'USER'" th:text="${consegna.locazione}"></span>
+                    <th:block th:if="${consegna.locazione} == 'USER'">
+                        <span th:text="${consegna.destinatario.cognome}"></span>
+                        <span th:text="${consegna.destinatario.nome}"></span>
+                    </th:block>
+                </td>
+                <td>
+                    <span th:text="${consegna.dataConsegna}"></span>
+                </td>
+                <td>
+                    <span th:if="${consegna.stato} == 'DA_VALUTARE'">In valutazione</span>
+                    <span th:if="${consegna.stato} == 'APPROVATA'">Approvato</span>
+                    <span th:if="${consegna.stato} == 'RIFIUTATA'">Rifiutata</span>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>
