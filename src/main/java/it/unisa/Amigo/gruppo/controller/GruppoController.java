@@ -1,5 +1,7 @@
 package it.unisa.Amigo.gruppo.controller;
 
+import it.unisa.Amigo.autenticazione.domain.Role;
+import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.Commissione;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
@@ -212,6 +214,15 @@ public class GruppoController {
     @PostMapping("/gruppi/{idGruppo}/commissioni/create")
     public String createCommissione(@ModelAttribute("command") final GruppoFormCommand gruppoFormCommand, final Model model, @PathVariable(name = "idGruppo") final int idGruppo) {
         Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        if((gruppoFormCommand.getName().equals("")) || (gruppoFormCommand.getDescrizione().equals("")) || (gruppoFormCommand.getIdPersona() == 0)
+            || (!gruppoFormCommand.getName().matches("[A-Z][a-zA-Z][^#&<>\\\"~;$^%{}?]{1,20}$")) || (!gruppoFormCommand.getDescrizione().matches("[A-Z][a-zA-Z][^#&<>\\\"~;$^%{}?]{1,100}$"))) {
+            model.addAttribute("idGruppo", idGruppo);
+            model.addAttribute("command", new GruppoFormCommand());
+            List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idGruppo);
+            model.addAttribute("persone", persone);
+            model.addAttribute("flagCreate", 1);
+            return "gruppo/crea_commissione";
+        }
         if (!gruppoService.isResponsabile(personaLoggata.getId(), idGruppo)) {
             return "unauthorized";
         }
