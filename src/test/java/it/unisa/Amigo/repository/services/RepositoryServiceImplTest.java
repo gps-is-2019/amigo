@@ -36,21 +36,27 @@ class RepositoryServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideAddDocumentoInRepository")
-    void addDocumentoInRepository(final MultipartFile file) {
+    void addDocumentoInRepository(final MultipartFile file, boolean expectedValue) {
         Documento expectedDocumento = new Documento();
         when(documentoService.addDocumento(file)).thenReturn(expectedDocumento);
         expectedDocumento.setInRepository(true);
         when(documentoService.updateDocumento(expectedDocumento)).thenReturn(expectedDocumento);
-        boolean expectedValue = repositoryService.addDocumentoInRepository(file);
-        assertEquals(true, expectedValue);
+        boolean actualValue = repositoryService.addDocumentoInRepository(file);
+        assertEquals(expectedValue, actualValue);
     }
 
     private static Stream<Arguments> provideAddDocumentoInRepository() {
         MultipartFile file1 = new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes());
-        MultipartFile file2 = new MockMultipartFile("testtestetst", "file.txt", MediaType.TEXT_PLAIN_VALUE, "ciao mondo ciao mondo".getBytes());
+        MultipartFile file2 = new MockMultipartFile("test2", "file.txt", MediaType.TEXT_PLAIN_VALUE, "ciao mondo ciao mondo".getBytes());
+        byte[] bytes = new byte[1024 * 1024 * 11];
+        MultipartFile file3 = new MockMultipartFile("test3", "file.txt", MediaType.TEXT_PLAIN_VALUE,bytes);
+        byte[] bytes1 = new byte[0];
+        MultipartFile file4 = new MockMultipartFile("test4", "file.txt", MediaType.TEXT_PLAIN_VALUE,bytes1);
         return Stream.of(
-                Arguments.of(file1),
-                Arguments.of(file2)
+                Arguments.of(file1, true),
+                Arguments.of(file2, true),
+                Arguments.of(file3, false),
+                Arguments.of(file4, false)
         );
     }
 
@@ -105,10 +111,10 @@ class RepositoryServiceImplTest {
     */
     @ParameterizedTest
     @MethodSource("provideSerarchDcoumentInRepository")
-    void serarchDcoumentInRepository(final Documento documentoExample) {
+    void serarchDcoumentInRepository(final Documento documentoExample, final String nameDocumento) {
         List<Documento> expectedDocumenti = new ArrayList<>();
         when(documentoService.searchDocumenti(documentoExample)).thenReturn(expectedDocumenti);
-        List<Documento> actualDocumenti = repositoryService.searchDocumentInRepository("test");
+        List<Documento> actualDocumenti = repositoryService.searchDocumentInRepository(nameDocumento);
         assertEquals(actualDocumenti, expectedDocumenti);
     }
 
@@ -122,9 +128,11 @@ class RepositoryServiceImplTest {
         Documento documento2 = new Documento();
         documento2.setInRepository(true);
         documento2.setNome(nome2);
+
+
         return Stream.of(
-                Arguments.of(documento1, nome1),
-                Arguments.of(documento2, nome2)
+                Arguments.of(documento1,nome1),
+                Arguments.of(documento2,null)
         );
     }
 }
