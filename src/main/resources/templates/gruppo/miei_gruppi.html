@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
 
-    <head th:include="/fragments/fragments.html :: head">
+    <head th:include="fragments/fragments.html :: head">
         <title id="pageTitle">Amigo|I miei gruppi</title>
     </head>
 </head>
@@ -11,7 +11,7 @@
 
 <h1 align="center" class="ui header">I miei gruppi</h1>
 <div class="ui main text container">
-    <table class="ui celled table striped">
+    <table class="ui teal table striped">
         <thead>
         <tr class="center aligned">
             <th>Nome</th>
@@ -31,14 +31,14 @@
                     <span th:if="${gruppo.state==false}"> Chiuso</span>
                 </td>
                 <td>
-                    <a class="ui primary button" th:href="@{/gruppi/} + ${gruppo.id}">
+                    <a class="ui teal button" th:href="@{/gruppi/} + ${gruppo.id}">
                         Visualizza Dettagli
                     </a>
                 </td>
               <td>
 
                   <a th:href="@{'/gruppi/{idSupergruppo}/tasks'  ( idSupergruppo=${gruppo.id} )}"
-                     class="ui primary button">
+                     class="ui teal button">
                         Lista task
                   </a>
               </td>

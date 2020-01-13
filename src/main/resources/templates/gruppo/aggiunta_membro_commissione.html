@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:include="/fragments/fragments.html :: head">
+<head th:include="fragments/fragments.html :: head">
     <title id="pageTitle">Amigo|Aggiunta membro commissione</title>
 </head>
 <body>
@@ -9,7 +9,7 @@
 <h1 align="center" class="ui header">Aggiungi membro alla commissione: <span th:text="${supergruppo.name}"></span></h1>
 
 <div class="ui main text container">
-    <table th:if="${persone.size()>0}" class="ui celled table striped">
+    <table th:if="${persone.size()>0}" class="ui teal table striped">
         <thead>
         <tr class="center aligned">
             <th>Cognome</th>
@@ -26,8 +26,9 @@
                 <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.user.getEmail()}"></td>
                 <td>
-                    <a class="ui primary button"
+                    <a class="ui teal button"
                        th:href="@{'/gruppi/{idSupergruppo}/add/{idPersona}'( idPersona=${persona.id},idSupergruppo=${supergruppo.id})}">
+                        <i class="icon user"></i>
                         Aggiungi
                     </a>
                 </td>
