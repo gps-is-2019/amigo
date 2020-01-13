@@ -67,7 +67,6 @@ class DocumentoServiceImplTest {
         List<Documento> expectedDocumenti = new ArrayList<>();
         expectedDocumenti.add(documento);
         expectedDocumenti.add(documento1);
-
         Documento example = new Documento();
         example.setNome("test");
         ExampleMatcher matcher = ExampleMatcher.matchingAll().withMatcher("nome", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());

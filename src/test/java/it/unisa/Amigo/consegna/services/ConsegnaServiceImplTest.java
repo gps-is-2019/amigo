@@ -246,6 +246,28 @@ class ConsegnaServiceImplTest {
     }
 
     @Test
+    void findByDocumentoAndDestinatario(){
+        Consegna expectedConsegna = new Consegna();
+        Documento documento = new Documento();
+        expectedConsegna.setDocumento(documento);
+        Persona mittente = new Persona("Francesco", "Schettino", "Capitano");
+        Persona destinatario = new Persona("Capitano", "Costiera", "Guardia");
+        expectedConsegna.setMittente(mittente);
+        expectedConsegna.setDestinatario(destinatario);
+        when(consegnaDAO.findByDocumento_IdAndDestinatario_Id(documento.getId(), destinatario.getId())).thenReturn(expectedConsegna);
+        assertEquals(consegnaDAO.findByDocumento_IdAndDestinatario_Id(documento.getId(), destinatario.getId()), expectedConsegna);
+    }
+
+    @Test
+    void findConsegnaByDocumento(){
+        Consegna expectedConsegna = new Consegna();
+        Documento documento = new Documento();
+        expectedConsegna.setDocumento(documento);
+        when(consegnaDAO.findByDocumento_Id(documento.getId())).thenReturn(expectedConsegna);
+        assertEquals(consegnaDAO.findByDocumento_Id(documento.getId()), expectedConsegna);
+    }
+
+    @Test
     void approvaConsegna() {
         Consegna consegna = new Consegna();
         consegna.setId(1);

@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class ConsegnaServiceImplIT {
@@ -179,6 +180,32 @@ public class ConsegnaServiceImplIT {
         consegnaDAO.save(consegna);
         consegnaService.rifiutaConsegna(consegna.getId());
         assertEquals(Objects.requireNonNull(Objects.requireNonNull(consegnaDAO.findById(consegna.getId()).orElse(null)).getStato()), "RIFIUTATA");
+    }
+
+    @Test
+    void findByDocumentoAndDestinatario(){
+        Consegna expectedConsegna = new Consegna();
+        Documento documento = new Documento();
+        expectedConsegna.setDocumento(documento);
+        Persona mittente = new Persona("Francesco", "Schettino", "Capitano");
+        Persona destinatario = new Persona("Capitano", "Costiera", "Guardia");
+        expectedConsegna.setMittente(mittente);
+        expectedConsegna.setDestinatario(destinatario);
+        personaDAO.save(mittente);
+        personaDAO.save(destinatario);
+        documentoDAO.save(documento);
+        consegnaDAO.save(expectedConsegna);
+        assertEquals(consegnaDAO.findByDocumento_IdAndDestinatario_Id(documento.getId(), destinatario.getId()), expectedConsegna);
+    }
+
+    @Test
+    void findConsegnaByDocumento(){
+        Consegna expectedConsegna = new Consegna();
+        Documento documento = new Documento();
+        expectedConsegna.setDocumento(documento);
+        documentoDAO.save(documento);
+        consegnaDAO.save(expectedConsegna);
+        assertEquals(consegnaDAO.findByDocumento_Id(documento.getId()), expectedConsegna);
     }
 
      /*
