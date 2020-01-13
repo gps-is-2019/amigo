@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/html">
 <head>
 
-    <head th:include="/fragments/fragments.html :: head">
+    <head th:include="fragments/fragments.html :: head">
         <title id="pageTitle">Amigo|Lista task Supergruppo</title>
     </head>
 </head>
@@ -11,10 +11,10 @@
 <h1 class="ui header" align="center">I task del gruppo : </h1>
 
 <div class="ui main text container">
-    <a th:if="${isResponsabile==true}" class="ui primary button"
+    <a th:if="${isResponsabile==true}" class="ui teal button"
        th:href="@{'/gruppi/{idSupergruppo}/tasks/create'( idSupergruppo=${idSupergruppo} ) }">Assegna nuovo
         task</a>
-    <table class="ui celled table striped">
+    <table class="ui teal celled table striped">
         <thead>
         <tr class="center aligned">
             <th>Nome</th>
@@ -30,7 +30,7 @@
                 <td th:text="${task.dataScadenza}"></td>
                 <td th:text="${task.stato}"></td>
                 <td>
-                    <a class="ui primary button"
+                    <a class="ui teal button"
                        th:href="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}'( idSupergruppo=${idSupergruppo} , idTask=${task.id} ) }">Dettagli</a>
                 </td>
             </tr>
@@ -41,7 +41,7 @@
 
     <h1 class="ui header" align="center"> Documenti approvati : </h1>
 
-    <table class="ui celled table striped">
+    <table class="ui teal celled table striped">
         <thead>
         <tr class="center aligned">
             <th>Nome</th>
@@ -59,11 +59,11 @@
                 <td th:text="${documento.dataInvio}"></td>
                 <td th:text="${documento.getTask().getNome()}"></td>
                 <td>
-                    <a class="ui primary button"
+                    <a class="ui teal button"
                        th:href="@{'/documento/{idDocumento}' ( idDocumento=${documento.getId()})}">Download</a>
                 </td>
                 <td>
-                    <a class="ui primary button"
+                    <a class="ui teal button"
                        th:href="@{'/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}'( idSupergruppo=${idSupergruppo} , idTask=${documento.getTask().getId()} ) }">Dettagli</a>
                 </td>
                 <td th:if="${documento.consegna==null}">
@@ -74,8 +74,6 @@
         </th:block>
         </tbody>
     </table>
-
-
 
 </div>
 <div class="ui message green text container" th:if="${flagInoltro==1}">

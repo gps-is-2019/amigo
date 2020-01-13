@@ -91,9 +91,12 @@ public class TaskController {
     @GetMapping("/gruppi/{idSupergruppo}/tasks/create")
     public String definizioneTaskSupergruppo(@ModelAttribute final Task taskForm, final Model model,
                                              @PathVariable(name = "idSupergruppo") final int idSupergruppo) {
+
+      /* Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        if (gruppoService.findSupergruppo(idSupergruppo).getResponsabile().getId()!=personaLoggata.getId())
+            return "error/403";*/
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("taskForm", taskForm);
-
         List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
         model.addAttribute("persone", persone);
 
