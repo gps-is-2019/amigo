@@ -119,7 +119,6 @@ public class TaskController {
             model.addAttribute("flagCreazione", false);
             return "task/crea_task";
         } else {
-
             Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
 
             LocalDate date = LocalDate.parse(taskForm.getDataScadenza());
@@ -142,18 +141,22 @@ public class TaskController {
      * @return boolean indicante l'esatezza
      */
     private boolean taskVerify(final TaskForm taskForm) {
+        boolean dateIsAfter = false;
+        boolean descrizioneMatch = false;
+        boolean nomeMatch = false;
 
-        LocalDate date = LocalDate.parse(taskForm.getDataScadenza());
-        boolean isBefore = date.isBefore(LocalDate.now());
+        if (!taskForm.getDataScadenza().equals("")) {
+            LocalDate date = LocalDate.parse(taskForm.getDataScadenza());
+            dateIsAfter = date.plusDays(1).isAfter(LocalDate.now());
+        }
 
+        if (taskForm.getDescrizione().matches("^(?!^.{255})^(.|\\s)*[a-zA-Z]+(.|\\s)*$"))
+            descrizioneMatch = true;
 
-        return ((taskForm.getNome() != null) && (!taskForm.getNome().equals("")))
-                && ((taskForm.getDataScadenza() != null) && (!taskForm.getDataScadenza().equals("")))
-                && ((taskForm.getDescrizione() != null) && (!taskForm.getDescrizione().equals(""))) //si può aggiungere il controllo sulla data < Data odierna
-                && ((taskForm.getIdPersona() != 0)
-                && !isBefore
-        );
+        if(taskForm.getNome().matches("^(?!^.{100})^(.|\\s)*[a-zA-Z]+(.|\\s)*$"))
+            nomeMatch = true;
 
+        return  nomeMatch && descrizioneMatch && dateIsAfter && (taskForm.getIdPersona() != null);
     }
 
     /**
