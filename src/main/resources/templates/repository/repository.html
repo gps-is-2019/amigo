@@ -2,15 +2,53 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
 
-    <head th:include="/fragments/fragments.html :: head">
+    <head th:include="fragments/fragments.html :: head">
         <title id="pageTitle">Amigo| Repository</title>
     </head>
 </head>
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
 <h1 class="ui header" align="center">Repository d'Ateneo</h1>
-    <div class="ui main text container">
-        <div class="ui message success" th:if="${addFlag==true}">
+<div class="ui main text container">
+
+    <div class="row">
+
+        <form action="/repository">
+            <a th:if="${flagPQA==1}" class="ui teal right labeled icon button"
+               href="/repository/uploadDocumento">
+                Aggiungi <i class="plus icon"></i>
+            </a>
+            <div class="ui action input" style="float: right; margin-bottom:5px;">
+                <input type="text" placeholder="Search..." name="name">
+                <button class="ui teal icon button">
+                    <i class="search icon"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+        <table class="ui celled table striped">
+            <tbody>
+            <tr class="center aligned">
+                <td th:if="${#lists.isEmpty(documenti)}">
+                    <span>Non sono presenti documenti in repository.</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="ui relaxed divided list">
+            <div class="item" th:each="documento : ${documenti}">
+                <i class="large file alternate middle aligned icon"></i>
+                <div class="content">
+                    <a target=”_blank” th:href="@{'/repository/{idDocumento}' ( idDocumento=${documento.id})}">
+                        <span th:text="${documento.nome}"></span>
+                    </a>
+                    <div class="description"><span th:text="${documento.dataInvio}"></span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui message green" th:if="${addFlag==true}">
             <i class="close icon"></i>
             <p>Documento <span th:text="${documentoNome}"></span> caricato con successo!</span></p>
         </div>
@@ -19,59 +57,9 @@
             <i class="close icon"></i>
             <p>Documento non caricato!</span></p>
         </div>
-
-        <div class="ui search">
-            <div class="ui icon input">
-                <form action="/repository">
-                    <input class="prompt" type="text" placeholder="Inserisci nome..." name="name">
-                    <button type="submit" name="submit" class="ui basic button">
-                        <i class="search icon"></i>
-                    </button>
-                </form>
-
-            </div>
-        </div>
-
-
-        <table class="ui celled table striped">
-            <tbody>
-                <tr class="center aligned">
-                    <td th:if="${#lists.isEmpty(documenti)}">
-                        <span>Non sono presenti documenti in repository.</span>
-                    </td>
-                </tr>
-                <tr class="center aligned" th:if="${#lists.isEmpty(documenti)==false}" >
-                    <th>Nome</th>
-                    <th>Data di caricamento</th>
-                </tr>
-                <th:block th:each="documento : ${documenti}">
-                    <tr class="center aligned">
-                        <td>
-                            <a target=”_blank” th:href="@{'/repository/{idDocumento}' ( idDocumento=${documento.id})}">
-                                <span th:text="${documento.nome}"></span>
-                            </a>
-                        </td>
-                        <td>
-                            <span th:text="${documento.dataInvio}"></span>
-                        </td>
-                    </tr>
-                </th:block>
-            </tbody>
-        </table>
-
-        <a th:if="${flagPQA==1}" class="ui primary button"
-           href="/repository/uploadDocumento">
-            Aggiungi
-        </a>
     </div>
 
-<script>$('.message .close')
-    .on('click', function () {
-        $(this)
-            .closest('.message')
-            .transition('fade')
-        ;
-    })
-;</script>
+
+    <script type="text/javascript" th:src="@{/index.js}"></script>
 </body>
 </html>

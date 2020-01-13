@@ -43,7 +43,7 @@ public class Documento implements Serializable {
     @EqualsAndHashCode.Exclude
     private Consegna consegna;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Task task;
