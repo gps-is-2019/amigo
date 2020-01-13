@@ -17,8 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -114,7 +113,7 @@ public class GruppoControllerIT {
         expectedPersona.setUser(user);
         Gruppo expectedSupergruppo1 = gruppo1;
         Gruppo expectedSupergruppo2 = gruppo2;
-        List<Gruppo> expectedSupergruppi = new ArrayList<>();
+        Set<Gruppo> expectedSupergruppi = new HashSet<>();
         expectedSupergruppi.add(expectedSupergruppo2);
         expectedSupergruppi.add(expectedSupergruppo1);
         expectedPersona.addSupergruppo(expectedSupergruppo2);
@@ -130,7 +129,7 @@ public class GruppoControllerIT {
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
-                .andExpect(model().attribute("supergruppi", expectedSupergruppi))
+                .andExpect(model().attribute("supergruppi", Arrays.asList(expectedSupergruppo1, expectedSupergruppo2)))
                 .andExpect(view().name("gruppo/miei_gruppi"));
     }
 
@@ -450,7 +449,7 @@ public class GruppoControllerIT {
                 .andExpect(model().attribute("isCapogruppo", true))
                 .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("persone", persone))
-                .andExpect(model().attribute("supergruppo", expectedCommissione))
+                .andExpect(model().attribute("supergruppo", commissione))
                 .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
                 .andExpect(view().name("gruppo/commissione_detail"));
     }
@@ -466,7 +465,7 @@ public class GruppoControllerIT {
         Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
 
         Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
-        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true, "");
+        Commissione commissione2 = new Commissione("Commissione2", "Commissione", true, "");
 
         return Stream.of(
                 Arguments.of(user, persona1, commissione1, gruppo1),
@@ -527,11 +526,12 @@ public class GruppoControllerIT {
         Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
 
         Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
-        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true, "");
+        Commissione commissione2 = new Commissione("Commissione2", "Commissione", true, "");
 
         return Stream.of(
-                Arguments.of(user, persona1, commissione1, gruppo1),
-                Arguments.of(user1, persona2, commissione2, gruppo2)
+                Arguments.of(user1, persona2, commissione2, gruppo2),
+                Arguments.of(user, persona1, commissione1, gruppo1)
+
         );
     }
 
@@ -563,7 +563,7 @@ public class GruppoControllerIT {
 
         Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
         commissione1.setId(1);
-        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true, "");
+        Commissione commissione2 = new Commissione("Commissione2", "Commissione", true, "");
         commissione2.setId(2);
 
         return Stream.of(
@@ -606,7 +606,7 @@ public class GruppoControllerIT {
                 .andExpect(model().attribute("isCapogruppo", true))
                 .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("persone", persone))
-                .andExpect(model().attribute("supergruppo", expectedCommissione))
+                .andExpect(model().attribute("supergruppo", commissione))
                 .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
                 .andExpect(model().attribute("flagNomina", 1))
                 .andExpect(model().attribute("responsabile", expectedPersona))
@@ -624,7 +624,7 @@ public class GruppoControllerIT {
         Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
 
         Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
-        Commissione commissione2 = new Commissione("Commissione2", "Commissione2", true, "");
+        Commissione commissione2 = new Commissione("Commissione2", "Commissione", true, "");
 
         return Stream.of(
                 Arguments.of(user, persona1, commissione1, gruppo1),
