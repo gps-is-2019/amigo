@@ -8,7 +8,6 @@ import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.annotation.ServletSecurity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -73,6 +71,7 @@ public class ConsegnaController {
         return "consegna/destinatari";
     }
 
+
     /**
      * Effettua delle consegne ai destinatari presi in input
      *
@@ -83,6 +82,14 @@ public class ConsegnaController {
      */
     @PostMapping("/consegna")
     public String sendDocumento(Model model, @RequestParam MultipartFile file, @RequestParam String destinatariPost) {
+        String fileExtentions = ".pdf,.txt,.zip,.rar";
+        String fileName = file.getOriginalFilename();
+        assert fileName != null;
+        int lastIndex = fileName.lastIndexOf('.');
+        String substring = fileName.substring(lastIndex);
+        if(file.getSize()>=10485760 || !fileExtentions.contains(substring)){
+            return "/unauthorized";
+        }
         if (!Character.isDigit(destinatariPost.charAt(0))) {
             consegnaService.sendDocumento(null, destinatariPost, file);
         } else {
@@ -166,14 +173,14 @@ public class ConsegnaController {
 
         boolean downloadConsentito = false;
 
-        if (consegna.getMittente().getId() == personaLoggata.getId()) {
+        if (consegna.getMittente().getId().equals(personaLoggata.getId())) {
             downloadConsentito = true;
         } else if (consegna.getLocazione().equals(Consegna.USER_LOCAZIONE)) {
-            if (consegna.getDestinatario().getId() == personaLoggata.getId())
+            if (consegna.getDestinatario().getId().equals(personaLoggata.getId()))
                 downloadConsentito = true;
         } else {
             if ((consegna.getLocazione().equalsIgnoreCase(Consegna.PQA_LOCAZIONE) && (ruoliString.contains(Role.PQA_ROLE))) ||
-                (consegna.getLocazione().equalsIgnoreCase(Consegna.NDV_LOCAZIONE) && (ruoliString.contains(Role.NDV_ROLE)))) {
+                    (consegna.getLocazione().equalsIgnoreCase(Consegna.NDV_LOCAZIONE) && (ruoliString.contains(Role.NDV_ROLE)))) {
                 downloadConsentito = true;
             }
         }
