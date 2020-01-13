@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GruppoController {
     private final GruppoService gruppoService;
-    private final SupergruppoDAO supergruppoDAO;
 
     /***
      * Ritorna ad una pagina i membri @{@link Persona} di un supergruppo
