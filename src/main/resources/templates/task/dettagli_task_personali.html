@@ -41,12 +41,6 @@
                 <td colspan="4" th:text="${task.descrizione}"></td>
             </tr>
             <tr class="center aligned">
-                <th colspan="4" th:text="'Gruppo' + ' ' + 'task'"></th>
-            </tr>
-            <tr class="center aligned">
-                <td colspan="4" th:text="${task.supergruppo.getName()}"></td>
-            </tr>
-            <tr class="center aligned">
                 <th colspan="4" th:text="'Documento' + ' '+ 'task'"></th>
             </tr>
             <tr th:if="${( ( task.stato.equals('incompleto') )==true ) or ( ( task.stato.equals('respinto') )==true )}"
