@@ -11,11 +11,11 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,6 +51,7 @@ class TaskServiceImplIT {
         tmpDate = LocalDate.of(2020, 4, 20);
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
         Persona persona2 = new Persona("Persona2", "2", "PQA");
+        Persona persona3 = new Persona("Admin", "Admin", "Administrator");
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
@@ -66,16 +67,16 @@ class TaskServiceImplIT {
         Task task5 = new Task("t1", date2, "task2", "incompleto");
         Task task6 = new Task("t1", date3, "chiamare azienda", "incompleto");
         task.setPersona(persona1);
-        task2.setPersona(persona1);
+        task2.setPersona(persona3);
         persona1.addTask(task);
-        persona1.addTask(task2);
+        persona3.addTask(task2);
         task3.setPersona(persona2);
         task4.setPersona(persona4);
         task5.setPersona(persona5);
         task6.setPersona(persona6);
         return Stream.of(
                 Arguments.of(persona1, task),
-                Arguments.of(persona1, task2),
+                Arguments.of(persona3, task2),
                 Arguments.of(persona2, task3),
                 Arguments.of(persona4, task4),
                 Arguments.of(persona5, task5),
@@ -292,7 +293,7 @@ class TaskServiceImplIT {
         taskDAO.save(task);
         taskService.accettazioneTask(task.getId());
         String expectedStato = "approvato";
-        assertEquals(expectedStato, taskDAO.findById(task.getId()).get().getStato());
+        assertEquals(expectedStato, Objects.requireNonNull(taskDAO.findById(task.getId()).orElse(null)).getStato());
     }
 
     private static Stream<Arguments> provideAccettazioneTask() {
@@ -326,7 +327,7 @@ class TaskServiceImplIT {
         taskService.rifiutoTask(task.getId());
 
         String expectedStato = "respinto";
-        assertEquals(expectedStato, taskDAO.findById(task.getId()).get().getStato());
+        assertEquals(expectedStato, Objects.requireNonNull(taskDAO.findById(task.getId()).orElse(null)).getStato());
     }
 
     private static Stream<Arguments> provideRifiutoTask() {
@@ -360,7 +361,7 @@ class TaskServiceImplIT {
         taskService.completaTask(task.getId());
 
         String expectedStato = "in valutazione";
-        assertEquals(expectedStato, taskDAO.findById(task.getId()).get().getStato());
+        assertEquals(expectedStato, Objects.requireNonNull(taskDAO.findById(task.getId()).orElse(null)).getStato());
     }
 
     private static Stream<Arguments> provideCompletaTask() {

@@ -36,31 +36,26 @@ public class GruppoControllerTest {
     @ParameterizedTest
     @MethodSource("provideFindAllMembriInSupergruppi")
     public void findAllMembriInSupergruppo(final User userArg, final Persona personaArg, final Gruppo gruppo, final ConsiglioDidattico consiglioDidattico) throws Exception {
-
-        User user = userArg;
-        UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = personaArg;
-        expectedPersona.setUser(user);
-        Gruppo expectedGruppo = gruppo;
-        ConsiglioDidattico expectedConsiglioDidattico = consiglioDidattico;
-        expectedGruppo.addPersona(expectedPersona);
-        expectedGruppo.setResponsabile(expectedPersona);
+        UserDetailImpl userDetails = new UserDetailImpl(userArg);
+        personaArg.setUser(userArg);
+        gruppo.addPersona(personaArg);
+        gruppo.setResponsabile(personaArg);
         List<Persona> expectedPersone = new ArrayList<>();
-        expectedPersone.add(expectedPersona);
+        expectedPersone.add(personaArg);
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
-        when(gruppoService.findSupergruppo(expectedGruppo.getId())).thenReturn(expectedGruppo);
-        when(gruppoService.findAllMembriInSupergruppo(expectedGruppo.getId())).thenReturn(expectedPersone);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedGruppo.getId())).thenReturn(true);
-        when(gruppoService.findConsiglioBySupergruppo(expectedGruppo.getId())).thenReturn(expectedConsiglioDidattico);
+        when(gruppoService.getAuthenticatedUser()).thenReturn(personaArg);
+        when(gruppoService.findSupergruppo(gruppo.getId())).thenReturn(gruppo);
+        when(gruppoService.findAllMembriInSupergruppo(gruppo.getId())).thenReturn(expectedPersone);
+        when(gruppoService.isResponsabile(personaArg.getId(), gruppo.getId())).thenReturn(true);
+        when(gruppoService.findConsiglioBySupergruppo(gruppo.getId())).thenReturn(consiglioDidattico);
 
-        this.mockMvc.perform(get("/gruppi/{id}", expectedGruppo.getId())
+        this.mockMvc.perform(get("/gruppi/{id}", gruppo.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
+                .andExpect(model().attribute("personaLoggata", personaArg.getId()))
                 .andExpect(model().attribute("persone", expectedPersone))
-                .andExpect(model().attribute("supergruppo", expectedGruppo))
-                .andExpect(model().attribute("isCapogruppo", gruppoService.isResponsabile(expectedPersona.getId(), expectedGruppo.getId())))
+                .andExpect(model().attribute("supergruppo", gruppo))
+                .andExpect(model().attribute("isCapogruppo", gruppoService.isResponsabile(personaArg.getId(), gruppo.getId())))
                 .andExpect(view().name("gruppo/gruppo_detail"));
     }
 
@@ -144,7 +139,10 @@ public class GruppoControllerTest {
                 Arguments.of(user1, persona2, gruppo4, gruppo3)
         );
     }
-/*
+
+
+    /* Exception evaluating SpringEL expression: "supergruppo.name"
+
     @ParameterizedTest
     @MethodSource("provideGroupCandidatesList")
     public void groupCandidatesList(Persona persona1, Persona persona2, User user1, User user2) throws Exception{
@@ -165,11 +163,13 @@ public class GruppoControllerTest {
         ConsiglioDidattico expectedConsiglioDidattico = new ConsiglioDidattico("Informatica");
         expectedConsiglioDidattico.addPersona(expectedPersona1);
         expectedConsiglioDidattico.addPersona(expectedPersona2);
+        expectedConsiglioDidattico.setId(0);
 
 
         Supergruppo expectedSupergruppo = new Supergruppo("GAQR - Informatica", "Supergruppo", true);
         expectedSupergruppo.addPersona(expectedPersona2);
         expectedSupergruppo.setConsiglio(expectedConsiglioDidattico);
+        expectedSupergruppo.setId(0);
 
         when(gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(expectedPersona1.getId())).thenReturn(expectedPersone);
         when(gruppoService.findSupergruppo(expectedPersona2.getId())).thenReturn(expectedSupergruppo);
@@ -470,7 +470,10 @@ public class GruppoControllerTest {
         );
     }
 
-    /*@ParameterizedTest
+    /*
+    java.lang.AssertionError: Model attribute 'idCommissione' expected:<7> but was:<null>
+
+    @ParameterizedTest
     @MethodSource("provideNominaResponsabile")
     public void nominaResponsabile(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
 
@@ -606,52 +609,45 @@ public class GruppoControllerTest {
 
     }
 
-    /*@ParameterizedTest
+    @ParameterizedTest
     @MethodSource("provideRemoveMembroCommissione")
-    public void removeMembroCommissione(User user, Persona persona, Commissione commissione, Gruppo gruppo) throws Exception {
-
-
+    public void removeMembroCommissione(final User user, final Persona persona, final Commissione commissione, final Gruppo gruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = persona;
-        expectedPersona.setUser(user);
-
-
-        Commissione expectedCommissione = commissione;
-        expectedCommissione.addPersona(expectedPersona);
-        expectedCommissione.setResponsabile(expectedPersona);
-
-
+        persona.setUser(user);
+        commissione.addPersona(persona);
+        commissione.setResponsabile(persona);
         List<Persona> persone = new ArrayList<>();
-        persone.add(expectedPersona);
-
-        Gruppo expectedGruppo = gruppo;
-        expectedCommissione.setGruppo(expectedGruppo);
-        expectedGruppo.addPersona(expectedPersona);
+        persone.add(persona);
+        commissione.setGruppo(gruppo);
+        gruppo.addPersona(persona);
 
         List<Commissione> commissioni = new ArrayList<>();
-        commissioni.add(expectedCommissione);
+        commissioni.add(commissione);
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedCommissione.getId())).thenReturn(true);
-        when(gruppoService.findSupergruppo(expectedCommissione.getId())).thenReturn(expectedCommissione);
-        when(gruppoService.findAllMembriInSupergruppo(expectedCommissione.getId())).thenReturn(persone);
-        when(gruppoService.findGruppoByCommissione(expectedCommissione.getId())).thenReturn(expectedGruppo);
-        when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
-        when(gruppoService.findAllCommissioniByGruppo(expectedGruppo.getId())).thenReturn(commissioni);
+        when(gruppoService.getAuthenticatedUser()).thenReturn(persona);
+        when(gruppoService.isResponsabile(persona.getId(), commissione.getId())).thenReturn(true);
+        when(gruppoService.findSupergruppo(commissione.getId())).thenReturn(commissione);
+        when(gruppoService.findAllMembriInSupergruppo(commissione.getId())).thenReturn(persone);
+        when(gruppoService.findGruppoByCommissione(commissione.getId())).thenReturn(gruppo);
+        when(gruppoService.findPersona(persona.getId())).thenReturn(persona);
+        when(gruppoService.findAllCommissioniByGruppo(gruppo.getId())).thenReturn(commissioni);
+        when(gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), gruppo.getId())).thenReturn(true);
+        when(gruppoService.findSupergruppo(commissione.getId())).thenReturn(commissione);
+        when(gruppoService.findSupergruppo(gruppo.getId())).thenReturn(gruppo);
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", expectedGruppo.getId(), expectedPersona.getId())
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", gruppo.getId(), persona.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(model().attribute("isCapogruppo", true))
                 .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("flagRimozione", 1))
-                .andExpect(model().attribute("personaRimossa", expectedPersona))
-                .andExpect(view().name("gruppo/commissione_detail"));
+                .andExpect(model().attribute("personaRimossa", persona))
+                .andExpect(view().name("gruppo/gruppo_detail"));
 
     }
 
-    private static Stream<Arguments> provideRemoveMembroCommissione(){
+    private static Stream<Arguments> provideRemoveMembroCommissione() {
 
         Persona persona1 = new Persona("persona1", "persona1", "persona");
         Persona persona2 = new Persona("persona2", "persona2", "persona");
@@ -677,5 +673,5 @@ public class GruppoControllerTest {
                 Arguments.of(user, persona1, commissione1, gruppo1),
                 Arguments.of(user1, persona2, commissione2, gruppo2)
         );
-    }*/
+    }
 }
