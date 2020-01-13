@@ -11,7 +11,6 @@ import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.task.domain.Task;
 import it.unisa.Amigo.task.services.TaskService;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -27,13 +26,18 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 class TaskControllerTest {
+
     @MockBean
     private TaskService taskService;
 
@@ -110,6 +114,7 @@ class TaskControllerTest {
     @ParameterizedTest
     @MethodSource("provideDefinizioneTaskSupergruppo")
     void definizioneTaskSupergruppo(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo) throws Exception {
+
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
@@ -122,7 +127,8 @@ class TaskControllerTest {
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/create", expectedSupergruppo.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("taskForm", task))
+
+                .andExpect(model().attribute("task", task))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("persone", expectedPersone))
                 .andExpect(view().name("task/crea_task"));
@@ -157,27 +163,144 @@ class TaskControllerTest {
         );
     }
 
-    @Test
-    void saveTaskPost() {
-//        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
-//        Supergruppo expectedSupergruppo = new Supergruppo("GAQD- Informatica", "gruppo", true);
-//        expectedSupergruppo.addPersona(expectedPersona);
-//        Task task = new Task("t1" , new Date(), "task1" , "incompleto");
-//        task.setSupergruppo(expectedSupergruppo);
-//        expectedSupergruppo.addTask(task);
-//        task.setPersona(expectedPersona);
-//        List<Persona> expectedPersone = new ArrayList<>();
-//        expectedPersone.add(expectedPersona);
-//
-//        when(gruppoService.visualizzaListaMembriSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
-//        when(taskService.definizioneTaskSupergruppo(task.getDescrizione(), task.getDataScadenza(), task.getNome(), task.getStato(), expectedSupergruppo, expectedPersona)).thenReturn(true);
-//
-//        this.mockMvc.perform(post("/gruppo/visualizzaListaTaskSupergruppo/{idSupergruppo}/creazioneTaskSupergruppo", expectedSupergruppo.getId())
-//                )
-//                .andExpect(status().isOk())
-//                .andExpect(model().attribute("flagCreazione", true))
-//                .andExpect(model().attribute("persone", expectedPersone))
-//                .andExpect(view().name("task/paginaDefinizioneTaskSupergruppo"));
+    @ParameterizedTest
+    @MethodSource("provideSaveTaskPost")
+    void saveTaskPost(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, TaskForm taskForm, Task task, Boolean isRespnsabile) throws Exception {
+        user.addRole(new Role(Role.CAPOGRUPPO_ROLE));
+        expectedPersona.setUser(user);
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedSupergruppo.addPersona(expectedPersona);
+        expectedSupergruppo.setResponsabile(expectedPersona);
+        task.setSupergruppo(expectedSupergruppo);
+        expectedSupergruppo.addTask(task);
+        task.setPersona(expectedPersona);
+
+        when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
+        when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
+        when(taskService.definizioneTaskSupergruppo(task.getDescrizione(), task.getDataScadenza(), task.getNome(), task.getStato(),
+                expectedSupergruppo, expectedPersona)).thenReturn(task);
+        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isRespnsabile);
+
+        this.mockMvc.perform(post("/gruppi/{idSupergruppo}/tasks/create", expectedSupergruppo.getId())
+                .with(csrf())
+                .sessionAttr("taskForm", taskForm)
+                .param("id", "" + taskForm.getId())
+                .param("descrizione", taskForm.getDescrizione())
+                .param("dataScadenza", taskForm.getDataScadenza())
+                .param("nome", taskForm.getNome())
+                .param("stato", taskForm.getStato())
+                .param("idPersona", "" + taskForm.getIdPersona())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("task", task))
+                .andExpect(model().attribute("isResponsabile", isRespnsabile))
+                .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
+                .andExpect(model().attribute("flagCreazione", true))
+                .andExpect(view().name("task/dettagli_task_supergruppo"));
+    }
+
+    private static Stream<Arguments> provideSaveTaskPost() {
+        LocalDate date1 = LocalDate.of(2020, 4, 20);
+        LocalDate date2 = LocalDate.of(2019, 12, 30);
+
+        User user1 = new User("admin", "admin");
+        User user2 = new User("rob@deprisco.it", "roberto");
+
+        Persona persona1 = new Persona("Admin", "Admin", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
+
+        Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+
+        TaskForm taskForm1 = new TaskForm(1, "t1", "2019-12-30", "task2", "incompleto", 0);
+        taskForm1.setIdPersona(persona1.getId());
+        Task task1 = new Task(taskForm1.getDescrizione(), date1, taskForm1.getNome(), taskForm1.getStato());
+        task1.setId(1);
+        TaskForm taskForm2 = new TaskForm(2, "t1", "2019-12-30", "task2", "incompleto", 0);
+        taskForm2.setIdPersona(persona2.getId());
+        Task task2 = new Task(taskForm2.getDescrizione(), date2, taskForm2.getNome(), taskForm2.getStato());
+        task2.setId(2);
+
+        return Stream.of(
+                Arguments.of(user1, persona1, gruppo1, taskForm1, task2, true),
+                Arguments.of(user2, persona2, gruppo2, taskForm2, task2, true)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideSaveTaskPosterror")
+    void saveTaskPostError(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, TaskForm taskForm) throws Exception {
+        user.addRole(new Role(Role.CAPOGRUPPO_ROLE));
+        expectedPersona.setUser(user);
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedSupergruppo.addPersona(expectedPersona);
+        expectedSupergruppo.setResponsabile(expectedPersona);
+        List<Persona> expectedPersone = new ArrayList<>();
+        expectedPersone.add(expectedPersona);
+
+        when(gruppoService.findAllMembriInSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
+
+        this.mockMvc.perform(post("/gruppi/{idSupergruppo}/tasks/create", expectedSupergruppo.getId())
+                .sessionAttr("taskForm", taskForm)
+                .param("id", "" + taskForm.getId())
+                .param("descrizione", taskForm.getDescrizione())
+                .param("dataScadenza", taskForm.getDataScadenza())
+                .param("nome", taskForm.getNome())
+                .param("stato", taskForm.getStato())
+                .param("idPersona", "" + taskForm.getIdPersona())
+                .with(user(userDetails))
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("flagCreazione", false))
+                .andExpect(model().attribute("persone", expectedPersone))
+                .andExpect(view().name("task/crea_task"));
+    }
+
+    private static Stream<Arguments> provideSaveTaskPosterror() {
+        User user1 = new User("admin", "admin");
+        User user2 = new User("rob@deprisco.it", "roberto");
+        User user3 = new User("vittorio@scarano.it", "scarano");
+
+        Persona persona1 = new Persona("Admin", "Admin", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
+        Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
+
+        Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
+
+        TaskForm taskForm1 = new TaskForm(1, "", "", "", "", 0);
+        TaskForm taskForm2 = new TaskForm(2, null, null, null, null, 0);
+        TaskForm taskForm3 = new TaskForm(3, "adsdd", "", "", "", 0);
+        TaskForm taskForm4 = new TaskForm(4, "null", null, null, null, 0);
+        TaskForm taskForm5 = new TaskForm(5, "adsdd", "2020-12-31", "", "", 0);
+        TaskForm taskForm6 = new TaskForm(6, "null", "2020-12-31", "null", null, 0);
+        TaskForm taskForm7 = new TaskForm(7, "adsdd", "2020-12-31", "dsdada", "", 0);
+        TaskForm taskForm8 = new TaskForm(8, "null", "2020-12-31", "null", "incompleto", 0);
+        TaskForm taskForm9 = new TaskForm(9, "adsdd", "2020-12-31", "dasdas", "in valutazione", 0);
+
+        return Stream.of(
+                Arguments.of(user1, persona1, gruppo1, taskForm1),
+                Arguments.of(user2, persona2, gruppo2, taskForm2),
+                Arguments.of(user3, persona3, gruppo3, taskForm3),
+                Arguments.of(user1, persona1, gruppo1, taskForm4),
+                Arguments.of(user2, persona2, gruppo2, taskForm5),
+                Arguments.of(user3, persona3, gruppo3, taskForm6),
+                Arguments.of(user1, persona1, gruppo1, taskForm7),
+                Arguments.of(user2, persona2, gruppo2, taskForm8),
+                Arguments.of(user3, persona3, gruppo3, taskForm9)
+        );
     }
 
     @ParameterizedTest
@@ -205,7 +328,34 @@ class TaskControllerTest {
                 .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
 
-    private static Stream<Arguments> provideVisualizzaDettagliTaskSupergruppo() {
+    @ParameterizedTest
+    @MethodSource("provideApprovazioneTask")
+    void approvazioneTask(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task expectedTask, final Boolean isResponsible) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedPersona.setUser(user);
+
+        expectedSupergruppo.addPersona(expectedPersona);
+        expectedSupergruppo.setResponsabile(expectedPersona);
+        expectedTask.setSupergruppo(expectedSupergruppo);
+        expectedSupergruppo.addTask(expectedTask);
+        expectedTask.setPersona(expectedPersona);
+        int flagAzione = 1;
+
+        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
+
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/approva", expectedSupergruppo.getId(), expectedTask.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
+                .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
+                .andExpect(model().attribute("task", expectedTask))
+                .andExpect(model().attribute("flagAzione", flagAzione))
+                .andExpect(view().name("task/dettagli_task_supergruppo"));
+    }
+
+    private static Stream<Arguments> provideApprovazioneTask() {
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
@@ -242,34 +392,7 @@ class TaskControllerTest {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("provideApprovazioneTask")
-    void approvazioneTask(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task expectedTask, final Boolean isResponsible) throws Exception {
-        UserDetailImpl userDetails = new UserDetailImpl(user);
-        expectedPersona.setUser(user);
-
-        expectedSupergruppo.addPersona(expectedPersona);
-        expectedSupergruppo.setResponsabile(expectedPersona);
-        expectedTask.setSupergruppo(expectedSupergruppo);
-        expectedSupergruppo.addTask(expectedTask);
-        expectedTask.setPersona(expectedPersona);
-        int flagAzione = 1;
-
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
-        when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
-
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/approva", expectedSupergruppo.getId(), expectedTask.getId())
-                .with(user(userDetails)))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
-                .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
-                .andExpect(model().attribute("task", expectedTask))
-                .andExpect(model().attribute("flagAzione", flagAzione))
-                .andExpect(view().name("task/dettagli_task_supergruppo"));
-    }
-
-    private static Stream<Arguments> provideApprovazioneTask() {
+    private static Stream<Arguments> provideVisualizzaDettagliTaskSupergruppo() {
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
@@ -507,9 +630,81 @@ class TaskControllerTest {
         );
     }
 
-    @Test
-    void saveModifyTask() {
+    @ParameterizedTest
+    @MethodSource("provideSaveModifyTask")
+    void saveModifyTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, TaskForm taskForm, Task task, Boolean isResponsabile) throws Exception {
+        user.addRole(new Role(Role.CAPOGRUPPO_ROLE));
+        expectedPersona.setUser(user);
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedSupergruppo.addPersona(expectedPersona);
+        expectedSupergruppo.setResponsabile(expectedPersona);
+        task.setSupergruppo(expectedSupergruppo);
+        expectedSupergruppo.addTask(task);
+        task.setPersona(expectedPersona);
 
+        when(taskService.getTaskById(task.getId())).thenReturn(task);
+        when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
+        when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
+        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsabile);
+
+        this.mockMvc.perform(post("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modificaTask", expectedSupergruppo.getId(), task.getId())
+                .with(csrf())
+                .sessionAttr("taskForm", taskForm)
+                .param("id", "" + taskForm.getId())
+                .param("descrizione", taskForm.getDescrizione())
+                .param("dataScadenza", taskForm.getDataScadenza())
+                .param("nome", taskForm.getNome())
+                .param("stato", taskForm.getStato())
+                .param("idPersona", "" + taskForm.getIdPersona())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("isResponsabile", isResponsabile))
+                .andExpect(model().attribute("flagAzione", 2))
+                .andExpect(model().attribute("task", task))
+                .andExpect(view().name("task/dettagli_task_supergruppo"));
+    }
+
+    private static Stream<Arguments> provideSaveModifyTask() {
+        User user1 = new User("admin", "admin");
+        User user2 = new User("rob@deprisco.it", "roberto");
+        User user3 = new User("vittorio@scarano.it", "scarano");
+
+        LocalDate date1 = LocalDate.of(2020, 4, 20);
+        LocalDate date2 = LocalDate.of(2019, 12, 30);
+        LocalDate date3 = LocalDate.of(2021, 1, 5);
+
+        Persona persona1 = new Persona("Admin", "Admin", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
+        Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
+
+        Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
+
+        TaskForm taskForm1 = new TaskForm(1, "t1", "2030-01-30", "task1", "incompleto", 1);
+        TaskForm taskForm2 = new TaskForm(2, "t1", "2029-12-30", "task2", "incompleto", 2);
+        TaskForm taskForm3 = new TaskForm(3, "t3", "2021-11-03", "task3", "incompleto", 3);
+
+
+        Task task1 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
+        task1.setId(1);
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
+        task2.setId(2);
+        Task task3 = new Task("t1", date3, "chiamare azienda", "incompleto");
+        task3.setId(3);
+
+        return Stream.of(
+                Arguments.of(user1, persona1, gruppo1, taskForm1, task1, true),
+                Arguments.of(user2, persona2, gruppo2, taskForm2, task2, true),
+                Arguments.of(user3, persona3, gruppo3, taskForm3, task3, false)
+        );
     }
 
     @ParameterizedTest

@@ -4,6 +4,7 @@ import it.unisa.Amigo.autenticazione.domain.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -63,10 +64,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .antMatchers("/dashboard/**").authenticated()
                 .antMatchers("/repository/uploadDocumento").hasRole(Role.PQA_ROLE)
-                .antMatchers("/gruppi/?/tasks/create").hasRole(Role.CAPOGRUPPO_ROLE)
+                //.antMatchers("/gruppi/?/tasks/create").hasRole(Role.CAPOGRUPPO_ROLE)
                 .antMatchers("/gruppi/**").authenticated()
                 .antMatchers("taskPersonali/**").authenticated()
-//                .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")

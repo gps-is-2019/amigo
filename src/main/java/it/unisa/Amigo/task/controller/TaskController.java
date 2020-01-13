@@ -111,14 +111,14 @@ public class TaskController {
     @PostMapping(value = "/gruppi/{idSupergruppo}/tasks/create")
     public String saveTaskPost(@ModelAttribute final TaskForm taskForm, final Model model,
                                @PathVariable(name = "idSupergruppo") final int idSupergruppo) {
-        Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
-        Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
         if (!taskVerify(taskForm)) {
             List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
             model.addAttribute("persone", persone);
             model.addAttribute("flagCreazione", false);
             return "task/crea_task";
         } else {
+            Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
+            Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
             LocalDate date = LocalDate.parse(taskForm.getDataScadenza());
             Task task = taskService.definizioneTaskSupergruppo(taskForm.getDescrizione(),
                     date, taskForm.getNome(), "incompleto", supergruppo, persona);
@@ -139,9 +139,9 @@ public class TaskController {
      * @return boolean indicante l'esatezza
      */
     private boolean taskVerify(final TaskForm taskForm) {
-        return ((taskForm.getNome() != null) && (!taskForm.getNome().equals("")))
+        return ((taskForm.getDescrizione() != null) && (!taskForm.getDescrizione().equals(""))) //si può aggiungere il controllo sulla data < Data odierna
                 && ((taskForm.getDataScadenza() != null) && (!taskForm.getDataScadenza().equals("")))
-                && ((taskForm.getDescrizione() != null) && (!taskForm.getDescrizione().equals(""))) //si può aggiungere il controllo sulla data < Data odierna
+                && ((taskForm.getNome() != null) && (!taskForm.getNome().equals("")))
                 && ((taskForm.getIdPersona() != 0));
 
     }
