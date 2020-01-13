@@ -31,7 +31,7 @@ class DocumentoServiceImplTest {
     private DocumentoDAO documentoDAO;
 
     @Test
-    void addDocumentoStoreAndLoad() {
+    void addDocumento() {
         Documento doc = new Documento("src/main/resources/documents/1", LocalDate.now(), "test.txt", false, "text/plain");
         doc.setId(1);
         when(documentoDAO.save(any(Documento.class))).thenReturn(doc);

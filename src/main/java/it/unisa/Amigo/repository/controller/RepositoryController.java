@@ -36,9 +36,7 @@ public class RepositoryController {
      */
 
     private boolean isResponsabilePQA() {
-
        return gruppoService.findAllRoleOfPersona(gruppoService.getAuthenticatedUser().getId()).contains(Role.PQA_ROLE);
-
     }
 
     /**
@@ -69,7 +67,7 @@ public class RepositoryController {
     @GetMapping("/repository/uploadDocumento")
     public String uploadDocumento() {
         if (gruppoService.getAuthenticatedUser() == null)
-            return "redirect:/";
+            return "redirect:/unauthorized";
         else if (!isResponsabilePQA())
             return "redirect:/dashboard";
         return "repository/aggiunta_documento_repository";

@@ -92,7 +92,7 @@ class RepositoryServiceImplTest {
     }
 
     @Test
-    void findDocumento() {
+    void findDocumentoById() {
         Documento expectedDocumento = new Documento();
         when(documentoService.findDocumentoById(0)).thenReturn(expectedDocumento);
         Documento actualDocumento = repositoryService.findDocumentoById(0);
@@ -121,7 +121,7 @@ class RepositoryServiceImplTest {
     */
     @ParameterizedTest
     @MethodSource("provideSerarchDcoumentInRepository")
-    void serarchDcoumentInRepository(Documento documentoExample) {
+    void searchDocumentiInRepository(Documento documentoExample) {
         List<Documento> expectedDocumenti = new ArrayList<>();
         when(documentoService.searchDocumenti(documentoExample)).thenReturn(expectedDocumenti);
         List<Documento> actualDocumenti = repositoryService.searchDocumentInRepository("test");

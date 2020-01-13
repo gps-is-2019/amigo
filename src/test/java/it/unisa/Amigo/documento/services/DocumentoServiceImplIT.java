@@ -30,7 +30,7 @@ public class DocumentoServiceImplIT {
     }
 
     @Test
-    void addDocumentoStoreAndLoad() {
+    void addDocumento() {
         documentoService.addDocumento(new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE,
                 "Hello World".getBytes()));
         Documento documento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(), "test.txt", false, "text/plain");
