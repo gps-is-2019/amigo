@@ -199,8 +199,8 @@ class TaskControllerIT {
     }
 
     private static Stream<Arguments> provideSaveTaskPost() {
-        LocalDate date1 = LocalDate.of(2020, 4, 20);
-        LocalDate date2 = LocalDate.of(2019, 12, 30);
+        LocalDate date1 = LocalDate.of(2055, 12, 30);
+        LocalDate date2 = LocalDate.of(2055, 12, 30);
 
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -211,9 +211,9 @@ class TaskControllerIT {
         Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
         Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
 
-        TaskForm taskForm1 = new TaskForm(1, "t1", "2019-12-30", "task2", "incompleto", 1);
+        TaskForm taskForm1 = new TaskForm(1, "t1", "2055-12-30", "task2", "incompleto", 1);
         Task task1 = new Task(taskForm1.getDescrizione(), date1, taskForm1.getNome(), taskForm1.getStato());
-        TaskForm taskForm2 = new TaskForm(2, "t1", "2019-12-30", "task2", "incompleto", 2);
+        TaskForm taskForm2 = new TaskForm(2, "t1", "2055-12-30", "task2", "incompleto", 2);
         Task task2 = new Task(taskForm2.getDescrizione(), date2, taskForm2.getNome(), taskForm2.getStato());
 
         return Stream.of(
@@ -271,7 +271,7 @@ class TaskControllerIT {
         gruppo3.setResponsabile(persona3);
 
         TaskForm taskForm1 = new TaskForm(1, "", "", "", "", 0);
-        TaskForm taskForm2 = new TaskForm(2, null, null, null, null, 0);
+        TaskForm taskForm2 = new TaskForm(2, "null", "", "", "null", 0);
         TaskForm taskForm3 = new TaskForm(3, "adsdd", "", "", "", 0);
 
         return Stream.of(
@@ -586,7 +586,7 @@ class TaskControllerIT {
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isResponsabile", isResponsabile))
-                .andExpect(model().attribute("flagAzione", 2))
+                .andExpect(model().attribute("flagAzione", 3))
                 .andExpect(model().attribute("task", task))
                 .andExpect(view().name("task/dettagli_task_supergruppo"));
     }

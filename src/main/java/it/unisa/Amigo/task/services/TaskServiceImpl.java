@@ -90,7 +90,7 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public Task getTaskById(final Integer id) {
-        return taskDAO.findById(id).get();
+        return taskDAO.findById(id).orElse(null);
     }
 
     /**

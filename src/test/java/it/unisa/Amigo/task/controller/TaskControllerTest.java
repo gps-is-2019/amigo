@@ -201,8 +201,8 @@ class TaskControllerTest {
     }
 
     private static Stream<Arguments> provideSaveTaskPost() {
-        LocalDate date1 = LocalDate.of(2020, 4, 20);
-        LocalDate date2 = LocalDate.of(2019, 12, 30);
+        LocalDate date1 = LocalDate.of(2026, 12, 30);
+        LocalDate date2 = LocalDate.of(2026, 12, 30);
 
         User user1 = new User("admin", "admin");
         User user2 = new User("rob@deprisco.it", "roberto");
@@ -217,11 +217,11 @@ class TaskControllerTest {
         Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
         gruppo2.setId(2);
 
-        TaskForm taskForm1 = new TaskForm(1, "t1", "2019-12-30", "task2", "incompleto", 0);
+        TaskForm taskForm1 = new TaskForm(1, "t1", "2026-12-30", "task2", "incompleto", 0);
         taskForm1.setIdPersona(persona1.getId());
         Task task1 = new Task(taskForm1.getDescrizione(), date1, taskForm1.getNome(), taskForm1.getStato());
         task1.setId(1);
-        TaskForm taskForm2 = new TaskForm(2, "t1", "2019-12-30", "task2", "incompleto", 0);
+        TaskForm taskForm2 = new TaskForm(2, "t1", "2026-12-30", "task2", "incompleto", 0);
         taskForm2.setIdPersona(persona2.getId());
         Task task2 = new Task(taskForm2.getDescrizione(), date2, taskForm2.getNome(), taskForm2.getStato());
         task2.setId(2);
@@ -281,25 +281,17 @@ class TaskControllerTest {
         gruppo3.setId(3);
 
         TaskForm taskForm1 = new TaskForm(1, "", "", "", "", 0);
-        TaskForm taskForm2 = new TaskForm(2, null, null, null, null, 0);
-        TaskForm taskForm3 = new TaskForm(3, "adsdd", "", "", "", 0);
-        TaskForm taskForm4 = new TaskForm(4, "null", null, null, null, 0);
-        TaskForm taskForm5 = new TaskForm(5, "adsdd", "2020-12-31", "", "", 0);
-        TaskForm taskForm6 = new TaskForm(6, "null", "2020-12-31", "null", null, 0);
-        TaskForm taskForm7 = new TaskForm(7, "adsdd", "2020-12-31", "dsdada", "", 0);
-        TaskForm taskForm8 = new TaskForm(8, "null", "2020-12-31", "null", "incompleto", 0);
-        TaskForm taskForm9 = new TaskForm(9, "adsdd", "2020-12-31", "dasdas", "in valutazione", 0);
+        TaskForm taskForm2 = new TaskForm(2, "$$$$", "2020-12-31", "null", "null", 0);
+        TaskForm taskForm3 = new TaskForm(3, "adsdd", "2021-12-12", "$$$", "In valutazione", 0);
+        TaskForm taskForm4 = new TaskForm(4, "adsdd", "2020-12-31", "", "", 0);
+        TaskForm taskForm5 = new TaskForm(5, "asdasda", "2040-12-12", "", "in valutazione", 0);
 
         return Stream.of(
                 Arguments.of(user1, persona1, gruppo1, taskForm1),
                 Arguments.of(user2, persona2, gruppo2, taskForm2),
                 Arguments.of(user3, persona3, gruppo3, taskForm3),
                 Arguments.of(user1, persona1, gruppo1, taskForm4),
-                Arguments.of(user2, persona2, gruppo2, taskForm5),
-                Arguments.of(user3, persona3, gruppo3, taskForm6),
-                Arguments.of(user1, persona1, gruppo1, taskForm7),
-                Arguments.of(user2, persona2, gruppo2, taskForm8),
-                Arguments.of(user3, persona3, gruppo3, taskForm9)
+                Arguments.of(user2, persona2, gruppo2, taskForm5)
         );
     }
 
@@ -660,7 +652,7 @@ class TaskControllerTest {
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isResponsabile", isResponsabile))
-                .andExpect(model().attribute("flagAzione", 2))
+                .andExpect(model().attribute("flagAzione", 3))
                 .andExpect(model().attribute("task", task))
                 .andExpect(view().name("task/dettagli_task_supergruppo"));
     }

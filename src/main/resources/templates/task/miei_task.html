@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/html">
 <head>
 
-    <head th:include="/fragments/fragments.html :: head">
+    <head th:include="fragments/fragments.html :: head">
         <title id="pageTitle">Amigo|Lista Task personali</title>
     </head>
 </head>
@@ -11,7 +11,7 @@
 <h1 class="ui header" align="center">I miei task : </h1>
 
 <div class="ui main text container">
-    <table class="ui celled table striped">
+    <table class="ui teal fixed table">
         <thead>
         <tr class="center aligned">
             <th>Nome</th>
@@ -23,11 +23,11 @@
         <tbody>
         <th:block th:each="task : ${listaTask}">
             <tr class="center aligned">
-                <td th:text="${task.nome}"></td>
+                <td style="word-wrap: break-word;" th:text="${task.nome}"></td>
                 <td th:text="${task.dataScadenza}"></td>
                 <td th:text="${task.stato}"></td>
                 <td>
-                    <a class="ui primary button"
+                    <a class="ui teal button"
                        th:href="@{'/taskPersonali/task_detail/{idTask}'(idTask=${task.id}) }"
                     >Dettagli</a>
                 </td>
@@ -36,7 +36,6 @@
         </tbody>
     </table>
 </div>
-
 
 </body>
 </html>
