@@ -19,20 +19,26 @@
                         <img th:src="@{'img/{img}.jpg'(img=${persona.getCognome()})}"/>
                     </div>
                     <div class="content">
-                        <div class="header">Matt Giampietro</div>
                         <div class="meta">
-                            <a>Friends</a>
+                            <a>Nome:</a>
                         </div>
-                        <div class="description">
-                            Matthew is an interior designer living in New York.
+                        <div class="header" th:text="${persona.getNome()}"></div>
+                        <div class="meta">
+                            <a>Cognome:</a>
                         </div>
+                        <div class="header" th:text="${persona.getCognome()}"></div>
+<!--                        <div class="description">-->
+<!--                            Matthew is an interior designer living in New York.-->
+<!--                        </div>-->
+                        <div class="meta">
+                            <a>Ruolo:</a>
+                        </div>
+                        <div class="header" th:text="${persona.getRuolo()}"></div>
                     </div>
                     <div class="extra content">
-                          <span class="right floated">
-                            Joined in 2013
-                          </span><span>
-                            <i class="user icon"></i>
-                            75 Friends
+
+                            <i class="user icon" th:text="${persona.getUser().getEmail()}"></i>
+
                           </span>
                     </div>
 
@@ -44,10 +50,10 @@
 
             </div>
 
-            <div class="ui teal labeled icon button">
-                Create New Order
-                <i class="add icon"></i>
-            </div>
+<!--            <div class="ui teal labeled icon button">-->
+<!--                Create New Order-->
+<!--                <i class="add icon"></i>-->
+<!--            </div>-->
 
         </div>
 
@@ -84,17 +90,23 @@
                             <img src="img/gruppi.png">
                         </div>
                         <div class="content">
-                            <a class="header">Content Header</a>
+                            <a class="header">I tuoi gruppi</a>
                             <div class="meta">
-                                <a>Date</a>
-                                <a>Category</a>
+                                <a></a>
+                                <a></a>
                             </div>
                             <div class="description">
-                                A description which may flow for several lines and give context to the content.
+                                In questa sezione puoi visualizzare i gruppi ai quali fai parte e vedere i relativi dettagli.
                             </div>
                             <div class="extra">
-                                <img src="assets/images/wireframe/square-image.png" class="ui circular avatar image"> Username
+                                <a class="ui right floated primary button" href="/gruppi">
+                                    spostati  in questa sezione
+                                    <i class="right chevron icon"></i>
+                                </a>
                             </div>
+<!--                            <div class="extra">-->
+<!--                                <img src="assets/images/wireframe/square-image.png" class="ui circular avatar image"> Username-->
+<!--                            </div>-->
                         </div>
                     </div>
                     <div class="item">
@@ -102,20 +114,20 @@
                             <img src="img/task.png">
                         </div>
                         <div class="content">
-                            <a class="header">Content Header</a>
+                            <a class="header">I tuoi task</a>
                             <div class="meta">
-                                <a>Date</a>
-                                <a>Category</a>
+                                <a></a>
+                                <a></a>
                             </div>
                             <div class="description">
-                                A description which may flow for several lines and give context to the content.
+                                In questa sezione puoi visualizzare i task che ti sono stati assegnati.
                             </div>
                             <div class="extra">
-                                <div class="ui right floated primary button">
-                                    Primary
+                                <a class="ui right floated primary button" href="/taskPersonali">
+                                    spostati  in questa sezione
                                     <i class="right chevron icon"></i>
-                                </div>
-                                <div class="ui label">Limited</div>
+                                </a>
+<!--                                <div class="ui label">Limited</div>-->
                             </div>
                         </div>
                     </div>
@@ -124,19 +136,19 @@
                             <img src="img/commissioni.png">
                         </div>
                         <div class="content">
-                            <a class="header">Content Header</a>
+                            <a class="header">Repository d'Ateneo</a>
                             <div class="meta">
-                                <a>Date</a>
-                                <a>Category</a>
+                                <a></a>
+                                <a></a>
                             </div>
                             <div class="description">
-                                A description which may flow for several lines and give context to the content.
+                                In questa sezione puoi accedere e consultare i documenti presenti nella repository d'ateneo.
                             </div>
                             <div class="extra">
-                                <div class="ui right floated primary button">
-                                    Primary
+                                <a class="ui right floated primary button" href="/repository">
+                                    spostati  in questa sezione
                                     <i class="right chevron icon"></i>
-                                </div>
+                                </a>
                             </div>
                         </div>
                     </div>
