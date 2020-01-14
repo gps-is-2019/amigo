@@ -81,7 +81,6 @@ class TaskControllerIT {
         List<Task> expectedTask = new ArrayList<>();
         expectedTask.add(task);
 
-        personaDAO.save(expectedPersona);
         supergruppoDAO.save(expectedSupergruppo);
         taskDAO.save(task);
         userDAO.save(user);
@@ -89,7 +88,7 @@ class TaskControllerIT {
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks", expectedSupergruppo.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
+                .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("idSupergruppo", "" + expectedSupergruppo.getId()))
                 .andExpect(model().attribute("listaTask", expectedTask))
                 .andExpect(view().name("task/tasks_supergruppo"));

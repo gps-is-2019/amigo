@@ -41,12 +41,6 @@ class TaskControllerTest {
     @MockBean
     private TaskService taskService;
 
-    @MockBean
-    private GruppoService gruppoService;
-
-    @MockBean
-    private ConsegnaService consegnaService;
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -64,14 +58,14 @@ class TaskControllerTest {
         List<Task> expectedTask = new ArrayList<>();
         expectedTask.add(task);
 
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(taskService.currentPersonaCanCreateTask(expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.visualizzaTaskSuperGruppo(expectedSupergruppo.getId())).thenReturn(expectedTask);
+        when(taskService.getApprovedDocumentiOfSupergruppo(expectedSupergruppo.getId())).thenReturn(null);
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks", expectedSupergruppo.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
+                .andExpect(model().attribute("isResponsabile", isResponsible))
                 .andExpect(model().attribute("idSupergruppo", "" + expectedSupergruppo.getId()))
                 .andExpect(model().attribute("listaTask", expectedTask))
                 .andExpect(view().name("task/tasks_supergruppo"));
@@ -123,9 +117,8 @@ class TaskControllerTest {
         expectedPersone.add(expectedPersona);
         Task task = new Task();
 
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
-        when(gruppoService.findAllMembriInSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
+        when(taskService.currentPersonaCanCreateTask(expectedSupergruppo.getId())).thenReturn(true);
+        when(taskService.getPossibleTaskAssegnees(expectedSupergruppo.getId())).thenReturn(expectedPersone);
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/create", expectedSupergruppo.getId())
                 .with(user(userDetails)))
@@ -178,12 +171,9 @@ class TaskControllerTest {
         expectedSupergruppo.addTask(task);
         task.setPersona(expectedPersona);
 
-        when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
-        when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
         when(taskService.definizioneTaskSupergruppo(task.getDescrizione(), task.getDataScadenza(), task.getNome(), task.getStato(),
                 expectedSupergruppo.getId(), expectedPersona.getId())).thenReturn(task);
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isRespnsabile);
+        when(taskService.currentPersonaCanCreateTask(expectedSupergruppo.getId())).thenReturn(true);
 
         this.mockMvc.perform(post("/gruppi/{idSupergruppo}/tasks/create", expectedSupergruppo.getId())
                 .with(csrf())
@@ -246,7 +236,7 @@ class TaskControllerTest {
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(expectedPersona);
 
-        when(gruppoService.findAllMembriInSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
+        when(taskService.getPossibleTaskAssegnees(expectedSupergruppo.getId())).thenReturn(expectedPersone);
 
         this.mockMvc.perform(post("/gruppi/{idSupergruppo}/tasks/create", expectedSupergruppo.getId())
                 .sessionAttr("taskForm", taskForm)
@@ -310,47 +300,19 @@ class TaskControllerTest {
         expectedSupergruppo.addTask(expectedTask);
         expectedTask.setPersona(expectedPersona);
 
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(taskService.currentPersonaCanCreateTask(expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}", expectedSupergruppo.getId(), expectedTask.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
+                .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(view().name("task/dettagli_task_supergruppo"));
     }
 
-    @ParameterizedTest
-    @MethodSource("provideApprovazioneTask")
-    void approvazioneTask(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task expectedTask, final Boolean isResponsible) throws Exception {
-        UserDetailImpl userDetails = new UserDetailImpl(user);
-        expectedPersona.setUser(user);
-
-        expectedSupergruppo.addPersona(expectedPersona);
-        expectedSupergruppo.setResponsabile(expectedPersona);
-        expectedTask.setSupergruppo(expectedSupergruppo);
-        expectedSupergruppo.addTask(expectedTask);
-        expectedTask.setPersona(expectedPersona);
-        int flagAzione = 1;
-
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
-        when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
-
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/approva", expectedSupergruppo.getId(), expectedTask.getId())
-                .with(user(userDetails)))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
-                .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
-                .andExpect(model().attribute("task", expectedTask))
-                .andExpect(model().attribute("flagAzione", flagAzione))
-                .andExpect(view().name("task/dettagli_task_supergruppo"));
-    }
-
-    private static Stream<Arguments> provideApprovazioneTask() {
+    private static Stream<Arguments> provideVisualizzaDettagliTaskSupergruppo() {
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
@@ -383,11 +345,37 @@ class TaskControllerTest {
         return Stream.of(
                 Arguments.of(user1, persona1, gruppo1, task1, true),
                 Arguments.of(user2, persona2, gruppo2, task2, true),
-                Arguments.of(user3, persona3, gruppo3, task3, false)
+                Arguments.of(user3, persona3, gruppo3, task3, true)
         );
     }
 
-    private static Stream<Arguments> provideVisualizzaDettagliTaskSupergruppo() {
+    @ParameterizedTest
+    @MethodSource("provideApprovazioneTask")
+    void approvazioneTask(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task expectedTask, final Boolean isResponsible) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedPersona.setUser(user);
+
+        expectedSupergruppo.addPersona(expectedPersona);
+        expectedSupergruppo.setResponsabile(expectedPersona);
+        expectedTask.setSupergruppo(expectedSupergruppo);
+        expectedSupergruppo.addTask(expectedTask);
+        expectedTask.setPersona(expectedPersona);
+        int flagAzione = 1;
+
+        when(taskService.currentPersonaCanCreateTask(expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
+
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/approva", expectedSupergruppo.getId(), expectedTask.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("isResponsabile", isResponsible))
+                .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
+                .andExpect(model().attribute("task", expectedTask))
+                .andExpect(model().attribute("flagAzione", flagAzione))
+                .andExpect(view().name("task/dettagli_task_supergruppo"));
+    }
+
+    private static Stream<Arguments> provideApprovazioneTask() {
         LocalDate date1 = LocalDate.of(2020, 4, 20);
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
@@ -437,14 +425,13 @@ class TaskControllerTest {
         expectedTask.setPersona(expectedPersona);
         int flagAzione = 2;
 
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(taskService.currentPersonaCanCreateTask(expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/rifiuta", expectedSupergruppo.getId(), expectedTask.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
+                .andExpect(model().attribute("isResponsabile", isResponsible))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(model().attribute("flagAzione", flagAzione))
@@ -488,7 +475,6 @@ class TaskControllerTest {
         );
     }
 
-
     @ParameterizedTest
     @MethodSource("provideCompletaTask")
     void completaTask(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task expectedTask, final Boolean isResponsible) throws Exception {
@@ -501,14 +487,13 @@ class TaskControllerTest {
         expectedSupergruppo.addTask(expectedTask);
         expectedTask.setPersona(expectedPersona);
 
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(taskService.currentPersonaCanCreateTask(expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/completa", expectedSupergruppo.getId(), expectedTask.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("isResponsabile", gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())))
+                .andExpect(model().attribute("isResponsabile", isResponsible))
                 .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
                 .andExpect(model().attribute("task", expectedTask))
                 .andExpect(view().name("task/dettagli_task_supergruppo"));
@@ -572,10 +557,9 @@ class TaskControllerTest {
         taskForm.setStato(task.getStato());
         taskForm.setIdPersona(expectedPersona.getId());
 
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
+        when(taskService.currentPersonaCanCreateTask(expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.getTaskById(task.getId())).thenReturn(task);
-        when(gruppoService.findAllMembriInSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(taskService.getPossibleTaskAssegnees(expectedSupergruppo.getId())).thenReturn(expectedPersone);
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modifica", expectedSupergruppo.getId(), task.getId())
                 .with(user(userDetails)))
@@ -637,11 +621,8 @@ class TaskControllerTest {
         expectedSupergruppo.addTask(task);
         task.setPersona(expectedPersona);
 
+        when(taskService.currentPersonaCanCreateTask(expectedSupergruppo.getId())).thenReturn(isResponsabile);
         when(taskService.getTaskById(task.getId())).thenReturn(task);
-        when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
-        when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsabile);
 
         this.mockMvc.perform(post("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modificaTask", expectedSupergruppo.getId(), task.getId())
                 .with(csrf())
@@ -703,6 +684,87 @@ class TaskControllerTest {
     }
 
     @ParameterizedTest
+    @MethodSource("provideSaveModifyTaskError")
+    void saveModifyTaskError(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task task, final Boolean isResponsible) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedPersona.setUser(user);
+
+        expectedSupergruppo.addPersona(expectedPersona);
+        expectedSupergruppo.setResponsabile(expectedPersona);
+        List<Persona> expectedPersone = new ArrayList<>();
+        expectedPersone.add(expectedPersona);
+        task.setPersona(expectedPersona);
+        task.setSupergruppo(expectedSupergruppo);
+        TaskForm taskForm = new TaskForm();
+        taskForm.setId(task.getId());
+        taskForm.setNome(task.getNome());
+        taskForm.setDataScadenza(task.getDataScadenza().toString().substring(0, 10));
+        taskForm.setDescrizione(task.getDescrizione());
+        taskForm.setStato(task.getStato());
+        taskForm.setIdPersona(expectedPersona.getId());
+
+        when(taskService.currentPersonaCanCreateTask(expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(taskService.getTaskById(task.getId())).thenReturn(task);
+        when(taskService.getPossibleTaskAssegnees(expectedSupergruppo.getId())).thenReturn(expectedPersone);
+
+        this.mockMvc.perform(post("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modificaTask", expectedSupergruppo.getId(), task.getId())
+                .with(csrf())
+                .sessionAttr("taskForm", taskForm)
+                .param("id", "" + taskForm.getId())
+                .param("descrizione", taskForm.getDescrizione())
+                .param("dataScadenza", taskForm.getDataScadenza())
+                .param("nome", taskForm.getNome())
+                .param("stato", taskForm.getStato())
+                .param("idPersona", "" + taskForm.getIdPersona())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("taskForm", taskForm))
+                .andExpect(model().attribute("idTask", task.getId()))
+                .andExpect(model().attribute("idSupergruppo", expectedSupergruppo.getId()))
+                .andExpect(model().attribute("isResponsabile", isResponsible))
+                .andExpect(model().attribute("persone", expectedPersone))
+                .andExpect(view().name("task/modifica_task"));
+    }
+
+    private static Stream<Arguments> provideSaveModifyTaskError() {
+        User user1 = new User("admin", "admin");
+        User user2 = new User("rob@deprisco.it", "roberto");
+        User user3 = new User("vittorio@scarano.it", "scarano");
+
+        LocalDate date1 = LocalDate.of(2020, 4, 20);
+        LocalDate date2 = LocalDate.of(2019, 12, 30);
+        LocalDate date3 = LocalDate.of(2021, 1, 5);
+
+        Persona persona1 = new Persona("Admin", "Admin", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
+        Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
+
+        Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
+
+        Task task1 = new Task("", date1, "task1", "completo");
+        task1.setId(1);
+        Task task2 = new Task("t1", date2, "task2", "incompleto");
+        task2.setId(2);
+        Task task3 = new Task("t1", date3, "", "incompleto");
+        task3.setId(3);
+
+        return Stream.of(
+                Arguments.of(user1, persona1, gruppo1, task1, true),
+                Arguments.of(user2, persona2, gruppo2, task2, true),
+                Arguments.of(user3, persona3, gruppo3, task3, false)
+        );
+    }
+
+
+    @ParameterizedTest
     @MethodSource("provideVisualizzaListaTaskPersonali")
     void visualizzaListaTaskPersonali(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task task) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
@@ -716,7 +778,6 @@ class TaskControllerTest {
         List<Task> expectedTasks = new ArrayList<>();
         expectedTasks.add(task);
 
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(taskService.visualizzaTaskUser()).thenReturn(expectedTasks);
 
         this.mockMvc.perform(get("/taskPersonali")
@@ -871,21 +932,22 @@ class TaskControllerTest {
 
         task.setSupergruppo(expectedSupergruppo);
         expectedSupergruppo.addTask(task);
-        List<Task> expectedTask = new ArrayList<>();
-        expectedTask.add(task);
+        List<Task> expectedTasks = new ArrayList<>();
+        expectedTasks.add(task);
+        List<Documento> expectedDocs = new ArrayList<>();
+        expectedDocs.add(doc);
 
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(taskService.getTaskById(task.getId())).thenReturn(task);
-        when(consegnaService.inoltraPQAfromGruppo(doc)).thenReturn(consegna);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
-        when(taskService.visualizzaTaskSuperGruppo(expectedSupergruppo.getId())).thenReturn(expectedTask);
+        when(taskService.currentPersonaCanCreateTask(expectedSupergruppo.getId())).thenReturn(isResponsible);
+        when(taskService.visualizzaTaskSuperGruppo(expectedSupergruppo.getId())).thenReturn(expectedTasks);
+        when(taskService.getApprovedDocumentiOfSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedDocs);
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/{idTask}/inoltro", expectedSupergruppo.getId(), task.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isResponsabile", isResponsible))
                 .andExpect(model().attribute("idSupergruppo", "" + expectedSupergruppo.getId()))
-                .andExpect(model().attribute("listaTask", expectedTask))
+                .andExpect(model().attribute("listaTask", expectedTasks))
+                .andExpect(model().attribute("documenti", expectedDocs))
                 .andExpect(model().attribute("flagInoltro", 1))
                 .andExpect(view().name("task/tasks_supergruppo"));
     }
@@ -920,12 +982,15 @@ class TaskControllerTest {
         Documento documento1 = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
                 "test.txt", false, "text/plain");
         task1.setDocumento(documento1);
+        documento1.setTask(task1);
         Documento documento2 = new Documento("src/main/resources/documents/test1.txt", LocalDate.now(),
                 "test1.txt", false, "text/plain");
         task2.setDocumento(documento2);
+        documento2.setTask(task2);
         Documento documento3 = new Documento("src/main/resources/documents/test2.txt", LocalDate.now(),
                 "test2.txt", false, "text/plain");
         task3.setDocumento(documento3);
+        documento3.setTask(task3);
 
         Consegna consegna = new Consegna();
 
