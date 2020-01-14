@@ -5,6 +5,7 @@ import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import org.springframework.core.io.Resource;
 
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Set;
 
@@ -14,7 +15,7 @@ import java.util.Set;
 public interface ConsegnaService {
 
 
-    Resource getResourceFromDocumentoWithId(Integer idDocumento);
+    Resource getResourceFromDocumentoWithId(Integer idDocumento) throws MalformedURLException;
 
     List<Consegna> sendDocumento(int[] idDestinatari, String locazione, String fileName, byte[] bytes, String mimeType);
 

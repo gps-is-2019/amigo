@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,10 +42,8 @@ public class ConsegnaServiceImpl implements ConsegnaService {
      * @return Resource del documento associato.
      */
     @Override
-    public Resource getResourceFromDocumentoWithId(final Integer idDocumento) {
-
+    public Resource getResourceFromDocumentoWithId(final Integer idDocumento) throws MalformedURLException {
         return documentoService.loadAsResource(documentoService.findDocumentoById(idDocumento));
-
     }
 
     /**
