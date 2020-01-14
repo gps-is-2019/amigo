@@ -31,6 +31,7 @@ public class TmpSiteController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         persona = personaDAO.findByUser_email(auth.getName());
         model.addAttribute("idPersona", persona.getId());
+        model.addAttribute("persona", persona);
         return "dashboard";
     }
 
