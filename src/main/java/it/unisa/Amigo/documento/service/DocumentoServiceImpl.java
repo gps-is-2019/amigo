@@ -80,12 +80,16 @@ public class DocumentoServiceImpl implements DocumentoService {
      * @param documento in cui è presente la path del file da scaricare.
      * @return resource contenente il file prelevato dal file system.
      */
-    public Resource loadAsResource(final Documento documento) throws MalformedURLException {
-        Resource resource = new UrlResource(Paths.get(documento.getPath()).toUri());
-        if (resource.exists() || resource.isReadable()) {
-            return resource;
-        } else {
-            throw new StorageFileNotFoundException("Could not read file: " + documento.getNome());
+    public Resource loadAsResource(final Documento documento) {
+        try {
+            Resource resource = new UrlResource(Paths.get(documento.getPath()).toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new StorageFileNotFoundException("Could not read file: " + documento.getNome());
+            }
+        } catch (MalformedURLException e) {
+            throw new StorageFileNotFoundException("Could not read file: " + documento.getNome(), e);
         }
     }
 

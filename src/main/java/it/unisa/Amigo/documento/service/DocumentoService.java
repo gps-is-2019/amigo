@@ -11,7 +11,7 @@ public interface DocumentoService {
     Documento updateDocumento(Documento documento);
     Documento findDocumentoById(Integer idDocumento);
     List<Documento> searchDocumenti(Documento example);
-    Resource loadAsResource(Documento documento) throws MalformedURLException;
+    Resource loadAsResource(Documento documento);
     //TODO comunicare l'agginta della funzione per visualizzare lista documenti approvati
     List<Documento> approvedDocuments(int idSupergruppo);
 }
