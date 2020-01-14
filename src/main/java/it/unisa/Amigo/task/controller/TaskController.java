@@ -40,11 +40,6 @@ public class TaskController {
      */
     private final TaskService taskService;
 
-    /**
-     * Gestisce la logica del sottosistema Gruppo.
-     */
-    private final GruppoService gruppoService;
-
     private static final int FLAG_APPROVA = 1;
     private static final int FLAG_RIFIUTA = 2;
     private static final int FLAG_MODIFICA = 3;
