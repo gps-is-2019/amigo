@@ -43,7 +43,7 @@ public class GruppoControllerTest {
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(personaArg);
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(personaArg);
+        when(gruppoService.getCurrentPersona()).thenReturn(personaArg);
         when(gruppoService.findSupergruppo(gruppo.getId())).thenReturn(gruppo);
         when(gruppoService.findAllMembriInSupergruppo(gruppo.getId())).thenReturn(expectedPersone);
         when(gruppoService.isResponsabile(personaArg.getId(), gruppo.getId())).thenReturn(true);
@@ -103,7 +103,7 @@ public class GruppoControllerTest {
         expectedPersona.addSupergruppo(expectedSupergruppo1);
 
         when(gruppoService.findAllSupergruppiOfPersona(expectedPersona.getId())).thenReturn(expectedSupergruppi);
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
 
         this.mockMvc.perform(get("/gruppi")
                 .with(user(userDetails)))
@@ -226,8 +226,8 @@ public class GruppoControllerTest {
         when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
         when(gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(expectedSupergruppo.getId())).thenReturn(persone);
         when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), expectedSupergruppo.getId())).thenReturn(true);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
+        when(gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(), expectedSupergruppo.getId())).thenReturn(true);
 
         if (expectedSupergruppo.getType().equalsIgnoreCase("commissione")) {
             this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", expectedSupergruppo.getId(), expectedPersona.getId())
@@ -281,10 +281,10 @@ public class GruppoControllerTest {
 
         when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
         when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), expectedSupergruppo.getId())).thenReturn(true);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
+        when(gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(), expectedSupergruppo.getId())).thenReturn(true);
         when(gruppoService.findGruppoByCommissione(expectedSupergruppo.getId())).thenReturn(gruppo);
-        when(gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), gruppoService.findGruppoByCommissione(expectedSupergruppo.getId()).getId())).thenReturn(true);
+        when(gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(), gruppoService.findGruppoByCommissione(expectedSupergruppo.getId()).getId())).thenReturn(true);
 
         if (expectedSupergruppo.getType().equalsIgnoreCase("commissione")) {
             Commissione commissione = (Commissione) expectedSupergruppo;
@@ -346,7 +346,7 @@ public class GruppoControllerTest {
         List<Persona> persone = new ArrayList<>();
         persone.add(expectedPersona);
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(gruppoService.findGruppoByCommissione(expectedCommissione.getId())).thenReturn(expectedGruppo);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedCommissione.getId())).thenReturn(true);
         when(gruppoService.findSupergruppo(expectedCommissione.getId())).thenReturn(expectedCommissione);
@@ -380,7 +380,7 @@ public class GruppoControllerTest {
         Gruppo expectedGruppo = gruppo;
         expectedCommissione.setGruppo(expectedGruppo);
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedCommissione.getId())).thenReturn(true);
         when(gruppoService.findGruppoByCommissione(expectedCommissione.getId())).thenReturn(expectedGruppo);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedGruppo.getId())).thenReturn(true);
@@ -562,7 +562,7 @@ public class GruppoControllerTest {
         expectedGruppo.addPersona(expectedPersona);
 
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedCommissione.getId())).thenReturn(true);
         when(gruppoService.findSupergruppo(expectedCommissione.getId())).thenReturn(expectedCommissione);
         when(gruppoService.findAllMembriInGruppoNoCommissione(expectedCommissione.getId())).thenReturn(persone);
@@ -624,14 +624,14 @@ public class GruppoControllerTest {
         List<Commissione> commissioni = new ArrayList<>();
         commissioni.add(commissione);
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(persona);
+        when(gruppoService.getCurrentPersona()).thenReturn(persona);
         when(gruppoService.isResponsabile(persona.getId(), commissione.getId())).thenReturn(true);
         when(gruppoService.findSupergruppo(commissione.getId())).thenReturn(commissione);
         when(gruppoService.findAllMembriInSupergruppo(commissione.getId())).thenReturn(persone);
         when(gruppoService.findGruppoByCommissione(commissione.getId())).thenReturn(gruppo);
         when(gruppoService.findPersona(persona.getId())).thenReturn(persona);
         when(gruppoService.findAllCommissioniByGruppo(gruppo.getId())).thenReturn(commissioni);
-        when(gruppoService.isResponsabile(gruppoService.getAuthenticatedUser().getId(), gruppo.getId())).thenReturn(true);
+        when(gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(), gruppo.getId())).thenReturn(true);
         when(gruppoService.findSupergruppo(commissione.getId())).thenReturn(commissione);
         when(gruppoService.findSupergruppo(gruppo.getId())).thenReturn(gruppo);
 

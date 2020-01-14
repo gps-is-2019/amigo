@@ -1,6 +1,7 @@
 package it.unisa.Amigo.consegna.services;
 
 import it.unisa.Amigo.autenticazione.domain.Role;
+import it.unisa.Amigo.autenticazione.services.AuthService;
 import it.unisa.Amigo.consegna.dao.ConsegnaDAO;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.domain.Documento;
@@ -8,6 +9,7 @@ import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,6 +31,22 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     private final GruppoService gruppoService;
 
+    private final AuthService authService;
+
+
+    /**
+     * Permette il download di un documento.
+     *
+     * @param idDocumento @{@Link Documento}da scaricare.
+     * @return Resource del documento associato.
+     */
+    @Override
+    public Resource getResourceFromDocumentoWithId(final Integer idDocumento) {
+
+        return documentoService.loadAsResource(documentoService.findDocumentoById(idDocumento));
+
+    }
+
     /**
      * Effettua la consegna di un documento ad uno o più destinatari
      *  @param idDestinatari gli id dei destinatari che riceveranno il documento
@@ -46,7 +64,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
                 consegna.setDataConsegna(LocalDate.now());
                 consegna.setStato("NO_VALUTARE");
                 consegna.setDocumento(doc);
-                consegna.setMittente(gruppoService.getAuthenticatedUser());
+                consegna.setMittente(gruppoService.getCurrentPersona());
                 consegna.setLocazione(Consegna.USER_LOCAZIONE);
                 consegna.setDestinatario(gruppoService.findPersona(id));
                 result.add(consegna);
@@ -57,7 +75,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
             consegna.setDataConsegna(LocalDate.now());
             consegna.setStato("DA_VALUTARE");
             consegna.setDocumento(doc);
-            consegna.setMittente(gruppoService.getAuthenticatedUser());
+            consegna.setMittente(gruppoService.getCurrentPersona());
             if (locazione.equalsIgnoreCase(Consegna.PQA_LOCAZIONE)) {
                 consegna.setLocazione(Consegna.PQA_LOCAZIONE);
             }
@@ -77,7 +95,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
      */
     @Override
     public List<Consegna> consegneInviate() {
-        return consegnaDAO.findAllByMittente(gruppoService.getAuthenticatedUser());
+        return consegnaDAO.findAllByMittente(gruppoService.getCurrentPersona());
     }
 
     /**
@@ -86,7 +104,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
      */
     @Override
     public List<Consegna> consegneRicevute() {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Persona personaLoggata = gruppoService.getCurrentPersona();
         Set<Role> ruoli = personaLoggata.getUser().getRoles();
         List<String> ruoliString = new ArrayList<>();
 
@@ -119,12 +137,21 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     /**
      * Recupera una consegna tramite l'id del documento ad esso associata
      *
-     * @param idDocumento l'id del documento
-     * @return la consegna
+     *
+     * @param consegna@return la consegna
      */
     @Override
-    public Consegna findConsegnaByDocumentoAndDestinatario(final int idDocumento, final int idDestinatario) {
-        return consegnaDAO.findByDocumento_IdAndDestinatario_Id(idDocumento, idDestinatario);
+    public boolean currentPersonaCanOpen(Consegna consegna) {
+        Persona currentPersona = gruppoService.getCurrentPersona();
+
+        Set<Role> role = authService.getCurrentUserRoles();
+
+        if (consegna.getMittente().equals(currentPersona) || ( consegna.getDestinatario() != null && currentPersona.equals(consegna.getDestinatario())) ) {
+            return true;
+        } else {
+            return (consegna.getLocazione().equalsIgnoreCase(Consegna.PQA_LOCAZIONE) && (role.contains(new Role(Role.PQA_ROLE)))) || (consegna.getLocazione().equalsIgnoreCase(Consegna.NDV_LOCAZIONE) && (role.contains(new Role(Role.NDV_ROLE))));
+        }
+
     }
 
     /**
@@ -133,7 +160,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
      * @return i destinatari
      */
     public Set<String> possibiliDestinatari() {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Persona personaLoggata = gruppoService.getCurrentPersona();
         Set<Role> ruoli = personaLoggata.getUser().getRoles();
         Set<String> ruoliString = new HashSet<>();
 
@@ -187,10 +214,15 @@ public class ConsegnaServiceImpl implements ConsegnaService {
         consegna.setDataConsegna(LocalDate.now());
         consegna.setStato("DA_VALUTARE");
         consegna.setDocumento(doc);
-        consegna.setMittente(gruppoService.getAuthenticatedUser());
+        consegna.setMittente(gruppoService.getCurrentPersona());
         consegna.setLocazione(Consegna.PQA_LOCAZIONE);
         consegnaDAO.save(consegna);
         doc.setConsegna(consegna);
         return consegna;
+    }
+
+    @Override
+    public List<Persona> getDestinatariByRoleString(String role){
+        return gruppoService.findAllByRuolo(role);
     }
 }

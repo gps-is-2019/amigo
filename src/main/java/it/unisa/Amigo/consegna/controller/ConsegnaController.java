@@ -3,10 +3,7 @@ package it.unisa.Amigo.consegna.controller;
 import it.unisa.Amigo.autenticazione.domain.Role;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.consegna.services.ConsegnaService;
-import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.services.GruppoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -32,11 +29,9 @@ import java.util.Set;
 @Controller
 @RequiredArgsConstructor
 public class ConsegnaController {
+    public static final int MAX_FILE_SIZE = 10485760;
     private final ConsegnaService consegnaService;
 
-    private final GruppoService gruppoService;
-
-    private final DocumentoService documentoService;
 
     /**
      * Mostra una pagina contenente tutti i possibili destinatari della consegna.
@@ -63,7 +58,7 @@ public class ConsegnaController {
             destinatari.add(new Persona("", ruoloDest, ""));
             flagRuolo = true;
         } else if (possibiliDestinatari.contains(ruoloDest)) {
-            destinatari = gruppoService.findAllByRuolo(ruoloDest);
+            destinatari = consegnaService.getDestinatariByRoleString(ruoloDest);
         }
 
         model.addAttribute("possibiliDestinatari", possibiliDestinatari);
@@ -84,6 +79,15 @@ public class ConsegnaController {
      */
     @PostMapping("/consegna")
     public String sendDocumento(final Model model, @RequestParam final MultipartFile file, @RequestParam final String destinatariPost) {
+
+        String fileExtentions = ".pdf,.txt,.zip,.rar";
+        String fileName = file.getOriginalFilename();
+        int lastIndex = fileName.lastIndexOf('.');
+        String substring = fileName.substring(lastIndex);
+        if(file.getSize()>= MAX_FILE_SIZE || !fileExtentions.contains(substring)){
+            return "/unauthorized";
+        }
+
         if (!Character.isDigit(destinatariPost.charAt(0))) {
             try {
                 consegnaService.sendDocumento(null, destinatariPost, file.getOriginalFilename(), file.getBytes(), file.getContentType());
@@ -155,46 +159,22 @@ public class ConsegnaController {
 
     /**
      * Esegue il downlaod del file allegato ad un documento.
-     *
-     * @param model       per salvare informazioni da recuperare nell'html
      * @param idDocumento l'id del documento
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/consegna/miei-documenti/{idDocumento}")
-    public ResponseEntity<Resource> downloadDocumento(final Model model, @PathVariable("idDocumento") final int idDocumento) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        Consegna consegna = consegnaService.findConsegnaByDocumentoAndDestinatario(idDocumento, personaLoggata.getId());
+    public ResponseEntity<Resource> downloadDocumento(@PathVariable("idDocumento") final int idDocumento) {
 
-        if (consegna == null) {
-            consegna = consegnaService.findConsegnaByDocumento(idDocumento);
-        }
-        Set<Role> role = personaLoggata.getUser().getRoles();
-        List<String> ruoliString = new ArrayList<>();
+        Consegna consegna = consegnaService.findConsegnaByDocumento(idDocumento);
 
-        for (Role r : role) {
-            ruoliString.add(r.getName());
-        }
-        boolean downloadConsentito = false;
-
-        if (consegna.getMittente().getId() == personaLoggata.getId()) {
-            downloadConsentito = true;
-        } else if (consegna.getLocazione().equals(Consegna.USER_LOCAZIONE)) {
-            if (consegna.getDestinatario().getId() == personaLoggata.getId()) {
-                downloadConsentito = true;
-            }
-        } else {
-            if ((consegna.getLocazione().equalsIgnoreCase(Consegna.PQA_LOCAZIONE) && (ruoliString.contains(Role.PQA_ROLE))) || (consegna.getLocazione().equalsIgnoreCase(Consegna.NDV_LOCAZIONE) && (ruoliString.contains(Role.NDV_ROLE)))) {
-                downloadConsentito = true;
-            }
-        }
+        boolean downloadConsentito = consegnaService.currentPersonaCanOpen(consegna);
 
         if (downloadConsentito) {
-            Documento documento = documentoService.findDocumentoById(idDocumento);
-            Resource resource = documentoService.loadAsResource(documento);
+            Resource resource = consegnaService.getResourceFromDocumentoWithId(idDocumento);
 
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(documento.getFormat()))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
+                    .contentType(MediaType.parseMediaType(consegna.getDocumento().getFormat()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + consegna.getDocumento().getNome() + "\"")
                     .body(resource);
         } else {
             HttpHeaders headers = new HttpHeaders();

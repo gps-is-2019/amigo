@@ -63,14 +63,14 @@ public class ConsegnaServiceImplIT {
     void consegneInviate() {
         Consegna consegna = new Consegna();
         Consegna consegna1 = new Consegna();
-        consegna.setMittente(gruppoService.getAuthenticatedUser());
-        consegna1.setMittente(gruppoService.getAuthenticatedUser());
+        consegna.setMittente(gruppoService.getCurrentPersona());
+        consegna1.setMittente(gruppoService.getCurrentPersona());
         List<Consegna> expectedConsegne = new ArrayList<>();
         expectedConsegne.add(consegna);
         expectedConsegne.add(consegna1);
         consegnaDAO.save(consegna);
         consegnaDAO.save(consegna1);
-        assertEquals(expectedConsegne, consegnaDAO.findAllByMittente(gruppoService.getAuthenticatedUser()));
+        assertEquals(expectedConsegne, consegnaDAO.findAllByMittente(gruppoService.getCurrentPersona()));
     }
 
     @WithMockUser("ferrucci")
