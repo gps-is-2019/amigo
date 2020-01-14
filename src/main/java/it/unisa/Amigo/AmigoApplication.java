@@ -127,10 +127,12 @@ public class AmigoApplication {
 
             commissioneAAL.addPersona(scarano);
             commissioneAAL.addPersona(malandrino);
-            commissioneAAL.setResponsabile(scarano);
             commissioneAAL.addPersona(dePrisco);
+            commissioneAAL.setResponsabile(scarano);
             commissioneEL.addPersona(dePrisco);
-            commissioneEL.setResponsabile(dePrisco);
+            commissioneEL.addPersona(scarano);
+            commissioneEL.addPersona(malandrino);
+            commissioneEL.setResponsabile(scarano);
 
             ConsiglioDidattico cd = new ConsiglioDidattico("Informatica");
             cd.setSupergruppo(GAQD);
@@ -189,6 +191,8 @@ public class AmigoApplication {
             userDAO.saveAll(Arrays.asList(userFerrucci, userScarano, userMalandrino, userDePrisco, userPolese, userGravino, userRossi, userVincenzi));
             taskDAO.saveAll(Arrays.asList(taskprova, taskprova2, taskprova3, taskprova4, taskprova5));
             documentoDAO.save(documento1);
+            System.out.println(commissioneAAL.getId());
+            System.out.println(commissioneEL.getId());
         };
     }
 }

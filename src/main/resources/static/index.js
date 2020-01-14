@@ -6,7 +6,7 @@ function fade(element) {
     var op = 0.1;  // initial opacity
     element.style.display = 'block';
     var timer = setInterval(function () {
-        if (op >= 1){
+        if (op >= 1) {
             clearInterval(timer);
         }
         element.style.opacity = op;
@@ -14,7 +14,8 @@ function fade(element) {
         op += op * 0.1;
     }, 10);
 }
-$('.message .close').on('click', function() {
+
+$('.message .close').on('click', function () {
     $(this).closest('.message').fadeOut();
 });
 // Variabili
@@ -25,3 +26,9 @@ var logo = document.querySelector("img");
 // Effetti
 fade(h1);
 fade(logo);
+
+function FromItemActiveToItem() {
+    var x = document.getElementsByClassName("item active");
+    x.classList.replace("item active", "item");
+}
+

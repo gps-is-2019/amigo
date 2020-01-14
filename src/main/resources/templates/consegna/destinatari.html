@@ -11,9 +11,9 @@
 <div th:if="${possibiliDestinatari.size()==0}">
     <h1>Ci dispiace :( attualmente non hai i permessi per inviare documenti!</h1>
 </div>
-
-<div th:if="${possibiliDestinatari.size()>1}">
-    <h1>Invia documento a:</h1>
+<div style="margin-top: 100px;">
+<div style="margin-bottom: 50px;" align="center" th:if="${possibiliDestinatari.size()>1}">
+    <h1 align="center" class="ui header">Invia documento a:</h1>
     <th:block th:each="ruolo : ${possibiliDestinatari}">
         <a class="ui button" th:classappend="${#strings.equals(ruolo, ruoloDest)}? 'active'"
            th:href="@{/consegna/} + ${ruolo}">
@@ -28,15 +28,15 @@
 
 <th:block th:if="${destinatari.size()>0}">
     <form enctype="multipart/form-data" method="post" th:action="@{/consegna}">
-        <div th:if="${destinatari.size()==1}">
+        <div align="center" th:if="${destinatari.size()==1}">
             <h2 th:text="${'Destinatario: ' + destinatari.get(0).getCognome()}"></h2>
-            <input name="destinatariPost" th:if="${flagRuolo}" th:value="${destinatari.get(0).getCognome()}"
+            <input  align="center" name="destinatariPost" th:if="${flagRuolo}" th:value="${destinatari.get(0).getCognome()}"
                    type="hidden"/>
-            <input name="destinatariPost" th:if="${!flagRuolo}" th:value="${destinatari.get(0).getId()}" type="hidden"/>
+            <input align="center" name="destinatariPost" th:if="${!flagRuolo}" th:value="${destinatari.get(0).getId()}" type="hidden"/>
         </div>
 
-        <div th:if="${destinatari.size()>1}">
-            <h2>Seleziona i destinatari:</h2>
+        <div align="center" th:if="${destinatari.size()>1}">
+            <h2 align="center" class="ui header">Seleziona i destinatari</h2>
             <div>
                 <select class="ui fluid dropdown" multiple name="destinatariPost" required>
                     <option th:each="persona : ${destinatari}" th:text="${persona.cognome}"
@@ -45,6 +45,7 @@
             </div>
         </div>
 
+        <div align="center">
         <span>
             <label class="ui icon button" for="file-upload">
                 <i class="file icon"></i>
@@ -52,9 +53,12 @@
             <input id="file-upload" name="file" required style="display:none" type="file">
         </span>
 
-        <input class="ui positive button" name="submit" type="submit" value="Invia"/>
+        <input class="ui teal button" name="submit" type="submit" value="Invia"/>
+        </div>
     </form>
+</th:block>>
 </th:block>
+</div>
     <script type="text/javascript" th:src="@{/destinatari.js}"></script>
 </body>
 </html>

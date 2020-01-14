@@ -3,7 +3,7 @@
 <head th:include="/fragments/fragments.html :: head">
     <title id="pageTitle">Amigo|Dashboard</title>
 </head>
-<body style="background-color: #f0f0f0">
+<body style="background-color: #ffffff">
 <div th:insert="fragments/fragments.html :: header"></div>
 
 
@@ -13,7 +13,7 @@
             id="sidebar"
     >
         <div class="ui vertical borderless fluid text menu">
-            <div class="ui link cards">
+            <div class="ui cards">
                 <div class="card">
                     <div class="image">
                         <img th:src="@{'img/{img}.jpg'(img=${persona.getCognome()})}"/>
@@ -90,7 +90,7 @@
                             <img src="img/gruppi.png">
                         </div>
                         <div class="content">
-                            <a class="header">I tuoi gruppi</a>
+                            <a class="header">I miei gruppi</a>
                             <div class="meta">
                                 <a></a>
                                 <a></a>
@@ -99,7 +99,7 @@
                                 In questa sezione puoi visualizzare i gruppi ai quali fai parte e vedere i relativi dettagli.
                             </div>
                             <div class="extra">
-                                <a class="ui right floated primary button" href="/gruppi">
+                                <a class="ui right floated teal button" href="/gruppi">
                                     spostati  in questa sezione
                                     <i class="right chevron icon"></i>
                                 </a>
@@ -114,7 +114,7 @@
                             <img src="img/task.png">
                         </div>
                         <div class="content">
-                            <a class="header">I tuoi task</a>
+                            <a class="header">I miei task</a>
                             <div class="meta">
                                 <a></a>
                                 <a></a>
@@ -123,7 +123,7 @@
                                 In questa sezione puoi visualizzare i task che ti sono stati assegnati.
                             </div>
                             <div class="extra">
-                                <a class="ui right floated primary button" href="/taskPersonali">
+                                <a class="ui right floated teal button" href="/taskPersonali">
                                     spostati  in questa sezione
                                     <i class="right chevron icon"></i>
                                 </a>
@@ -145,7 +145,7 @@
                                 In questa sezione puoi accedere e consultare i documenti presenti nella repository d'ateneo.
                             </div>
                             <div class="extra">
-                                <a class="ui right floated primary button" href="/repository">
+                                <a class="ui right floated teal button" href="/repository">
                                     spostati  in questa sezione
                                     <i class="right chevron icon"></i>
                                 </a>
