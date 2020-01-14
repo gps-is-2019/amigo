@@ -29,12 +29,10 @@ public class RepositoryServiceImpl implements RepositoryService {
      */
     @Override
     public boolean addDocumentoInRepository(final String fileName, final byte[] bytes, final String mimeType) {
-
-            Documento documento = documentoService.addDocumento(fileName, bytes, mimeType);
-            documento.setInRepository(true);
-            documentoService.updateDocumento(documento);
-            return true;
-
+        Documento documento = documentoService.addDocumento(fileName, bytes, mimeType);
+        documento.setInRepository(true);
+        documentoService.updateDocumento(documento);
+        return true;
     }
 
     /**

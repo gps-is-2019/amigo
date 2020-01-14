@@ -98,7 +98,6 @@ public class DocumentoServiceImpl implements DocumentoService {
         return documentoDAO.findAllByTask_Supergruppo_IdAndTask_Stato(idSupergruppo, "approvato");
     }
 
-
     /**
      * Ritorna il documento @{@link Documento} con id passato come parametro ricercandolo all'interno del database.
      *

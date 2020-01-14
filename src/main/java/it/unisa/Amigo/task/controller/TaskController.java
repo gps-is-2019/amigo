@@ -423,24 +423,6 @@ public class TaskController {
     }
 
     /**
-     * Permette il download di un documento @{@link Documento}.
-     *
-     * @param model      per salvare informazioni da recuperare nell'html
-     * @param idDocument identifica univocamente il documento da scaricare
-     * @return risorsa neccessaria per il download
-     */
-    @GetMapping("/documento/{idDocument}")
-    public ResponseEntity<Resource> downloadDocumento(final Model model, @PathVariable("idDocument") final int idDocument) {
-        Documento documento = documentoService.findDocumentoById(idDocument);
-        Resource resource = documentoService.loadAsResource(documento);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(documento.getFormat()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
-                .body(resource);
-    }
-
-    /**
      * Permette l'inoltro di un documento @{@link Documento} al responsabile PQA.
      *
      * @param model         per salvare informazioni da recuperare nell'html
