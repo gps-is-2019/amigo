@@ -180,7 +180,10 @@ public class GruppoServiceImpl implements GruppoService {
      */
     @Override
     public boolean isResponsabile(final Integer idPersona, final Integer idSupergruppo) {
+        System.out.println("idPersona: " + idPersona);
+        System.out.println("idSupergruppo: " + idSupergruppo);
         Optional<Supergruppo> supergruppo = supergruppoDAO.findById(idSupergruppo);
+        System.out.println("Er supergruppo : " + supergruppo.get().getId());
         return supergruppo.filter(value -> idPersona.equals(value.getResponsabile().getId())).isPresent();
     }
 

@@ -8,14 +8,19 @@ import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.*;
 import it.unisa.Amigo.gruppo.services.GruppoService;
+import org.hibernate.Session;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -28,6 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class GruppoControllerIT {
+
+
     @Autowired
     private GruppoService gruppoService;
 
@@ -453,6 +460,8 @@ public class GruppoControllerIT {
         Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
         Commissione commissione2 = new Commissione("Commissione2", "Commissione", true, "");
 
+
+
         return Stream.of(
                 Arguments.of(user, persona1, commissione1, gruppo1),
                 Arguments.of(user1, persona2, commissione2, gruppo2)
@@ -596,6 +605,7 @@ public class GruppoControllerIT {
                 .andExpect(view().name("gruppo/commissione_detail"));
     }
 
+
     private static Stream<Arguments> provideNominaResponsabile() {
         Persona persona1 = new Persona("persona1", "persona1", "persona");
         Persona persona2 = new Persona("persona2", "persona2", "persona");
@@ -615,5 +625,257 @@ public class GruppoControllerIT {
         );
     }
 
+    @Test
+    public void removeMembroGruppoWithoutPermissions() throws Exception {
+
+        Persona persona = new Persona("Persona", "Persona", "Persona");
+        User user = new User("ferrucci", "ferrucci");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        user.setPersona(persona);
+        persona.setUser(user);
+
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona2");
+        User user2 = new User("ferrucci2", "ferrucci2");
+        user2.setPersona(persona2);
+        persona2.setUser(user2);
+
+
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+
+        personaDAO.save(persona);
+        personaDAO.save(persona2);
+        supergruppoDAO.save(gruppo);
+        /*User user = new User("ferrucci@unisa.it", "ferrucci");
+        Persona persona = new Persona("Filomena", "Ferrucci", "Capogruppo");
+        user.setPersona(persona);
+        persona.setUser(user);
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        User userScar = new User("vitsca@unisa.it", "scarano");
+        Persona persona2 = new Persona("Vittorio", "Scarano", "Ruolo");
+        userScar.setPersona(persona2);
+        persona2.setUser(userScar);
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+        userDAO.save(user);
+        userDAO.save(userScar);
+        System.out.println(user.getId());
+        System.out.println(userScar.getId());
+        supergruppoDAO.save(gruppo);*/
+
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", gruppo.getId(), persona.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(view().name("unauthorized"));
+    }
+
+    @Test
+    public void addMembroGruppoWithoutPermissions() throws Exception {
+
+        Persona persona = new Persona("Persona", "Persona", "Persona");
+        User user = new User("ferrucci", "ferrucci");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        user.setPersona(persona);
+        persona.setUser(user);
+
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona2");
+        User user2 = new User("ferrucci2", "ferrucci2");
+        user2.setPersona(persona2);
+        persona2.setUser(user2);
+
+
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+
+        personaDAO.save(persona);
+        personaDAO.save(persona2);
+        supergruppoDAO.save(gruppo);
+        /*User user = new User("ferrucci@unisa.it", "ferrucci");
+        Persona persona = new Persona("Filomena", "Ferrucci", "Capogruppo");
+        user.setPersona(persona);
+        persona.setUser(user);
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        User userScar = new User("vitsca@unisa.it", "scarano");
+        Persona persona2 = new Persona("Vittorio", "Scarano", "Ruolo");
+        userScar.setPersona(persona2);
+        persona2.setUser(userScar);
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+        userDAO.save(user);
+        userDAO.save(userScar);
+        System.out.println(user.getId());
+        System.out.println(userScar.getId());
+        supergruppoDAO.save(gruppo);*/
+
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", gruppo.getId(), persona.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(view().name("unauthorized"));
+    }
+
+    @Test
+    public void closeCommissioneWithoutPermissions() throws Exception {
+
+        Persona persona = new Persona("Persona", "Persona", "Persona");
+        User user = new User("ferrucci", "ferrucci");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        user.setPersona(persona);
+        persona.setUser(user);
+
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona2");
+        User user2 = new User("ferrucci2", "ferrucci2");
+        user2.setPersona(persona2);
+        persona2.setUser(user2);
+
+
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+
+        Commissione commissione = new Commissione("Gruppo", "Gruppo", true, "");
+        commissione.addPersona(persona);
+        commissione.addPersona(persona2);
+        commissione.setResponsabile(persona2);
+        commissione.setGruppo(gruppo);
+        gruppo.addCommissione(commissione);
+
+        personaDAO.save(persona);
+        personaDAO.save(persona2);
+        supergruppoDAO.save(gruppo);
+        supergruppoDAO.save(commissione);
+        /*User user = new User("ferrucci@unisa.it", "ferrucci");
+        Persona persona = new Persona("Filomena", "Ferrucci", "Capogruppo");
+        user.setPersona(persona);
+        persona.setUser(user);
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        User userScar = new User("vitsca@unisa.it", "scarano");
+        Persona persona2 = new Persona("Vittorio", "Scarano", "Ruolo");
+        userScar.setPersona(persona2);
+        persona2.setUser(userScar);
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+        userDAO.save(user);
+        userDAO.save(userScar);
+        System.out.println(user.getId());
+        System.out.println(userScar.getId());
+        supergruppoDAO.save(gruppo);*/
+
+        this.mockMvc.perform(get("/gruppi/commissioni/{id2}/chiusura", commissione.getId(), persona.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(view().name("unauthorized"));
+    }
+
+
+
+    @Test
+    public void nominaResponsabileWithoutPermissions() throws Exception {
+
+        Persona persona = new Persona("Persona", "Persona", "Persona");
+        User user = new User("ferrucci", "ferrucci");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        user.setPersona(persona);
+        persona.setUser(user);
+
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona2");
+        User user2 = new User("ferrucci2", "ferrucci2");
+        user2.setPersona(persona2);
+        persona2.setUser(user2);
+
+
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+
+        Commissione commissione = new Commissione("Gruppo", "Gruppo", true, "");
+        commissione.addPersona(persona);
+        commissione.addPersona(persona2);
+        commissione.setResponsabile(persona2);
+        commissione.setGruppo(gruppo);
+        gruppo.addCommissione(commissione);
+
+        personaDAO.save(persona);
+        personaDAO.save(persona2);
+        supergruppoDAO.save(gruppo);
+        supergruppoDAO.save(commissione);
+        /*User user = new User("ferrucci@unisa.it", "ferrucci");
+        Persona persona = new Persona("Filomena", "Ferrucci", "Capogruppo");
+        user.setPersona(persona);
+        persona.setUser(user);
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        User userScar = new User("vitsca@unisa.it", "scarano");
+        Persona persona2 = new Persona("Vittorio", "Scarano", "Ruolo");
+        userScar.setPersona(persona2);
+        persona2.setUser(userScar);
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+        userDAO.save(user);
+        userDAO.save(userScar);
+        System.out.println(user.getId());
+        System.out.println(userScar.getId());
+        supergruppoDAO.save(gruppo);*/
+
+        this.mockMvc.perform(get("/gruppi/commissioni/{idCommissione}/nominaResponsabile/{idPersona}", commissione.getId(), persona.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(view().name("unauthorized"));
+    }
+
+    @Test
+    public void groupCandidatesList() throws Exception {
+        Persona persona = new Persona("Persona", "Persona", "Persona");
+        User user = new User("ferrucci", "ferrucci");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        user.setPersona(persona);
+        persona.setUser(user);
+
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona2");
+        User user2 = new User("ferrucci2", "ferrucci2");
+        user2.setPersona(persona2);
+        persona2.setUser(user2);
+
+
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+
+        Commissione commissione = new Commissione("Gruppo", "Gruppo", true, "");
+        commissione.addPersona(persona);
+        commissione.addPersona(persona2);
+        commissione.setResponsabile(persona2);
+        commissione.setGruppo(gruppo);
+        gruppo.addCommissione(commissione);
+
+        personaDAO.save(persona);
+        personaDAO.save(persona2);
+        supergruppoDAO.save(gruppo);
+        supergruppoDAO.save(commissione);
+
+        this.mockMvc.perform(get("/gruppi/commissioni/{idSupergruppo}/candidati", commissione.getId(), persona.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(view().name("gruppo/aggiunta_membro_commissione"));
+
+    }
 
 }

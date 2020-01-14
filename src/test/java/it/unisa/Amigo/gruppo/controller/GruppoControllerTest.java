@@ -14,6 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -674,4 +677,53 @@ public class GruppoControllerTest {
                 Arguments.of(user1, persona2, commissione2, gruppo2)
         );
     }
+
+    /*@ParameterizedTest
+    @MethodSource("provideCreaCommissione")
+    public void creaCommissione(GruppoFormCommand gruppoFormCommand, Gruppo gruppo, User user, List<Persona> persone, List<Commissione> commissioni) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        when(gruppoService.isResponsabile(user.getId(), gruppo.getId())).thenReturn(true);
+        when(gruppoService.findAllMembriInSupergruppo(gruppo.getId())).thenReturn(persone);
+        when(gruppoService.findAllCommissioniByGruppo(gruppo.getId())).thenReturn(commissioni);
+
+        this.mockMvc.perform(post("/gruppi/{idGruppo}/commissioni/create", gruppo.getId())
+                .with(user(userDetails))
+                .with(csrf())
+                .param("name", gruppoFormCommand.getName())
+                .param("descrizione", gruppoFormCommand.getDescrizione())
+                .param("idPersona", "" + gruppoFormCommand.getIdPersona()))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(model().attribute("isCapogruppo", true))
+                .andExpect(model().attribute("commissioni", commissioni))
+                .andExpect(view().name("gruppo/gruppo_detail"));
+    }
+
+    private static Stream<Arguments> provideCreaCommissione() {
+        Persona persona = new Persona("FF", "FF", "FF");
+        persona.setId(1);
+        User user = new User("z", "z");
+        user.setId(1);
+        persona.setUser(user);
+        user.setPersona(persona);
+        Gruppo gruppo = new Gruppo("ff", "Gruppo", true);
+        gruppo.setId(1);
+        gruppo.addPersona(persona);
+        gruppo.setResponsabile(persona);
+        GruppoFormCommand gruppoFormCommand = new GruppoFormCommand();
+        gruppoFormCommand.setName("Nome");
+        gruppoFormCommand.setDescrizione("Descrizione");
+        gruppoFormCommand.setIdPersona(1);
+        Commissione commissione = new Commissione("a", "Commissione", true, "b");
+
+        List<Persona> persone = new ArrayList<>();
+        persone.add(persona);
+
+        List<Commissione> commissioni = new ArrayList<>();
+        commissioni.add(commissione);
+
+        return Stream.of(
+            Arguments.of(gruppoFormCommand, gruppo, user, persone, commissioni)
+        );
+    }*/
 }
