@@ -124,13 +124,13 @@ class TaskControllerIT {
         );
     }
 
-    /*
     @ParameterizedTest
     @MethodSource("provideDefinizioneTaskSupergruppo")
     void definizioneTaskSupergruppo(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
+        expectedSupergruppo.setResponsabile(expectedPersona);
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(expectedPersona);
         Task task = new Task();
@@ -147,7 +147,6 @@ class TaskControllerIT {
                 .andExpect(model().attribute("persone", expectedPersone))
                 .andExpect(view().name("task/crea_task"));
     }
-     */
 
     private static Stream<Arguments> provideDefinizioneTaskSupergruppo() {
 

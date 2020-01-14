@@ -94,7 +94,7 @@ public class TaskController {
                                              @PathVariable(name = "idSupergruppo") final int idSupergruppo) {
 
       Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        if (gruppoService.findSupergruppo(idSupergruppo).getResponsabile().getId() != personaLoggata.getId()) {
+        if (!gruppoService.findSupergruppo(idSupergruppo).getResponsabile().getId().equals(personaLoggata.getId())) {
             return "error/403";
         }
         model.addAttribute("idSupergruppo", idSupergruppo);

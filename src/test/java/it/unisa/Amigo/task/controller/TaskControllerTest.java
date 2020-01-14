@@ -111,7 +111,6 @@ class TaskControllerTest {
         );
     }
 
-    /*
     @ParameterizedTest
     @MethodSource("provideDefinizioneTaskSupergruppo")
     void definizioneTaskSupergruppo(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo) throws Exception {
@@ -119,10 +118,13 @@ class TaskControllerTest {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
         expectedSupergruppo.addPersona(expectedPersona);
+        expectedSupergruppo.setResponsabile(expectedPersona);
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(expectedPersona);
         Task task = new Task();
 
+        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
         when(gruppoService.findAllMembriInSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/create", expectedSupergruppo.getId())
@@ -134,7 +136,6 @@ class TaskControllerTest {
                 .andExpect(model().attribute("persone", expectedPersone))
                 .andExpect(view().name("task/crea_task"));
     }
-    */
 
     private static Stream<Arguments> provideDefinizioneTaskSupergruppo() {
         User user1 = new User("admin", "admin");
