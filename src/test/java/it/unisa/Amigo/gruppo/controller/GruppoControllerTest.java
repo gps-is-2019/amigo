@@ -678,12 +678,27 @@ public class GruppoControllerTest {
         );
     }
 
-    /*@ParameterizedTest
+    @ParameterizedTest
     @MethodSource("provideCreaCommissione")
-    public void creaCommissione(GruppoFormCommand gruppoFormCommand, Gruppo gruppo, User user, List<Persona> persone, List<Commissione> commissioni) throws Exception {
+    public void creaCommissione(GruppoFormCommand gruppoFormCommand, Gruppo gruppo, User user, Persona persona, Commissione commissione) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        when(gruppoService.isResponsabile(user.getId(), gruppo.getId())).thenReturn(true);
+        persona.setUser(user);
+        user.setPersona(persona);
+        commissione.addPersona(persona);
+        commissione.setResponsabile(persona);
+        List<Persona> persone = new ArrayList<>();
+        persone.add(persona);
+        commissione.setGruppo(gruppo);
+        gruppo.addCommissione(commissione);
+        gruppo.addPersona(persona);
+        gruppo.setResponsabile(persona);
+        List<Commissione> commissioni = new ArrayList<>();
+        commissioni.add(commissione);
+
+        when(gruppoService.getCurrentPersona()).thenReturn(persona);
+        when(gruppoService.isResponsabile(persona.getId(), gruppo.getId())).thenReturn(true);
         when(gruppoService.findAllMembriInSupergruppo(gruppo.getId())).thenReturn(persone);
+        when(gruppoService.findSupergruppo(gruppo.getId())).thenReturn(gruppo);
         when(gruppoService.findAllCommissioniByGruppo(gruppo.getId())).thenReturn(commissioni);
 
         this.mockMvc.perform(post("/gruppi/{idGruppo}/commissioni/create", gruppo.getId())
@@ -696,34 +711,42 @@ public class GruppoControllerTest {
                 .andDo(print())
                 .andExpect(model().attribute("isCapogruppo", true))
                 .andExpect(model().attribute("commissioni", commissioni))
+                .andExpect(model().attribute("personaLoggata", persona.getId()))
+                .andExpect(model().attribute("persone", persone))
+                .andExpect(model().attribute("supergruppo", gruppo))
                 .andExpect(view().name("gruppo/gruppo_detail"));
     }
 
     private static Stream<Arguments> provideCreaCommissione() {
-        Persona persona = new Persona("FF", "FF", "FF");
-        persona.setId(1);
-        User user = new User("z", "z");
-        user.setId(1);
-        persona.setUser(user);
-        user.setPersona(persona);
-        Gruppo gruppo = new Gruppo("ff", "Gruppo", true);
-        gruppo.setId(1);
-        gruppo.addPersona(persona);
-        gruppo.setResponsabile(persona);
+        Persona persona1 = new Persona("persona1", "persona1", "persona");
+        Persona persona2 = new Persona("persona2", "persona2", "persona");
+
+        User user = new User("admin", "admin");
+        User user1 = new User("admin1", "admin1");
+
+        Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
+        Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
+
+        Commissione commissione1 = new Commissione("c1", "Commissione", true, "descr");
+        Commissione commissione2 = new Commissione("c2", "Commissione", true, "descr");
+
+        persona1.setId(1);
+        persona2.setId(2);
+        user.setId(3);
+        user1.setId(4);
+        gruppo1.setId(5);
+        gruppo2.setId(6);
+        commissione1.setId(7);
+        commissione2.setId(8);
+
         GruppoFormCommand gruppoFormCommand = new GruppoFormCommand();
         gruppoFormCommand.setName("Nome");
         gruppoFormCommand.setDescrizione("Descrizione");
-        gruppoFormCommand.setIdPersona(1);
-        Commissione commissione = new Commissione("a", "Commissione", true, "b");
-
-        List<Persona> persone = new ArrayList<>();
-        persone.add(persona);
-
-        List<Commissione> commissioni = new ArrayList<>();
-        commissioni.add(commissione);
+        gruppoFormCommand.setIdPersona(9);
 
         return Stream.of(
-            Arguments.of(gruppoFormCommand, gruppo, user, persone, commissioni)
+            Arguments.of(gruppoFormCommand, gruppo1, user, persona1, commissione1),
+            Arguments.of(gruppoFormCommand, gruppo2, user1, persona2, commissione2)
         );
-    }*/
+    }
 }
