@@ -3,8 +3,6 @@ package it.unisa.Amigo.consegna.controller;
 import it.unisa.Amigo.autenticazione.domain.Role;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.consegna.services.ConsegnaService;
-import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +34,6 @@ public class ConsegnaController {
 
     private final GruppoService gruppoService;
 
-    private final DocumentoService documentoService;
 
     /**
      * Mostra una pagina contenente tutti i possibili destinatari della consegna.
@@ -189,12 +186,11 @@ public class ConsegnaController {
         }
 
         if (downloadConsentito) {
-            Documento documento = documentoService.findDocumentoById(idDocumento);
-            Resource resource = documentoService.loadAsResource(documento);
+            Resource resource = consegnaService.getResourceFromDocumentoWithId(idDocumento);
 
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(documento.getFormat()))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
+                    .contentType(MediaType.parseMediaType(consegna.getDocumento().getFormat()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + consegna.getDocumento().getNome() + "\"")
                     .body(resource);
         } else {
             HttpHeaders headers = new HttpHeaders();

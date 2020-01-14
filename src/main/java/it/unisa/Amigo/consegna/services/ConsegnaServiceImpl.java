@@ -8,6 +8,7 @@ import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,6 +29,20 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     private final DocumentoService documentoService;
 
     private final GruppoService gruppoService;
+
+
+    /**
+     * Permette il download di un documento.
+     *
+     * @param idDocumento @{@Link Documento}da scaricare.
+     * @return Resource del documento associato.
+     */
+    @Override
+    public Resource getResourceFromDocumentoWithId(final Integer idDocumento) {
+
+        return documentoService.loadAsResource(documentoService.findDocumentoById(idDocumento));
+
+    }
 
     /**
      * Effettua la consegna di un documento ad uno o più destinatari
