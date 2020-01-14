@@ -11,4 +11,5 @@
     <suppress checks="DesignForExtension" files="/src"/>
     <suppress checks="AvoidStarImport" files="/src"/>
     <suppress checks="MagicNumber" files="/src/test"/>
+    <suppress checks="FinalParameters" files="/src/test"/>
 </suppressions>
