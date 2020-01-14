@@ -94,7 +94,7 @@ public class TaskController {
                                              @PathVariable(name = "idSupergruppo") final int idSupergruppo) {
 
       Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        if (gruppoService.findSupergruppo(idSupergruppo).getResponsabile().getId() != personaLoggata.getId()) {
+        if (!gruppoService.findSupergruppo(idSupergruppo).getResponsabile().getId().equals(personaLoggata.getId())) {
             return "error/403";
         }
         model.addAttribute("idSupergruppo", idSupergruppo);
@@ -116,16 +116,14 @@ public class TaskController {
     @PostMapping(value = "/gruppi/{idSupergruppo}/tasks/create")
     public String saveTaskPost(@ModelAttribute final TaskForm taskForm, final Model model,
                                @PathVariable(name = "idSupergruppo") final int idSupergruppo) {
-        Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
-
-        if (!taskVerify(taskForm)) {
+       if (!taskVerify(taskForm)) {
             List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
             model.addAttribute("persone", persone);
             model.addAttribute("flagCreazione", false);
             return "task/crea_task";
         } else {
+            Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
             Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
-
             LocalDate date = LocalDate.parse(taskForm.getDataScadenza());
             Task task = taskService.definizioneTaskSupergruppo(taskForm.getDescrizione(),
                     date, taskForm.getNome(), "incompleto", supergruppo, persona);
