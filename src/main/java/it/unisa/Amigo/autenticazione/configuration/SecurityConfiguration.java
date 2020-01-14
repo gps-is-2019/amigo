@@ -64,7 +64,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .antMatchers("/dashboard/**").authenticated()
                 .antMatchers("/repository/uploadDocumento").hasRole(Role.PQA_ROLE)
-                //.antMatchers("/gruppi/?/tasks/create").hasRole(Role.CAPOGRUPPO_ROLE)
                 .antMatchers("/gruppi/**").authenticated()
                 .antMatchers("taskPersonali/**").authenticated()
                 .and()

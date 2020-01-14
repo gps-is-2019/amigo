@@ -9,7 +9,7 @@ import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,13 +31,14 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     /**
      * Effettua la consegna di un documento ad uno o più destinatari
-     *
-     * @param idDestinatari gli id dei destinatari che riceveranno il documento
-     * @param file          il file allegato al documento
+     *  @param idDestinatari gli id dei destinatari che riceveranno il documento
+     * @param fileName          il file allegato al documento
+     * @param bytes
+     * @param mimeType
      */
     @Override
-    public List<Consegna> sendDocumento(final int[] idDestinatari, final String locazione, final MultipartFile file) {
-        Documento doc = documentoService.addDocumento(file);
+    public List<Consegna> sendDocumento(final int[] idDestinatari, final String locazione, final String fileName, final byte[] bytes, final String mimeType) {
+        Documento doc = documentoService.addDocumento(fileName, bytes, mimeType);
         List<Consegna> result = new ArrayList<>();
         if (idDestinatari != null) {
             for (int id : idDestinatari) {

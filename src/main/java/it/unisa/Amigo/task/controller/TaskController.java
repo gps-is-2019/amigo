@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -92,15 +93,16 @@ public class TaskController {
     public String definizioneTaskSupergruppo(@ModelAttribute final Task taskForm, final Model model,
                                              @PathVariable(name = "idSupergruppo") final int idSupergruppo) {
 
-      /* Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        if (gruppoService.findSupergruppo(idSupergruppo).getResponsabile().getId()!=personaLoggata.getId())
-            return "error/403";*/
+      Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        if (gruppoService.findSupergruppo(idSupergruppo).getResponsabile().getId() != personaLoggata.getId()) {
+            return "error/403";
+        }
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("taskForm", taskForm);
         List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
         model.addAttribute("persone", persone);
 
-        return "task/crea_task"; //pagina che usa il form (pagina corrente)
+        return "task/crea_task";
     }
 
     /**
@@ -396,11 +398,16 @@ public class TaskController {
         Task task = taskService.getTaskById(idTask);
         if (file.isEmpty()) {
             model.addAttribute("task", task);
-            model.addAttribute("flagAggiunta", 0); //cambiare
+            model.addAttribute("flagAggiunta", 0);
             return "task/dettagli_task_personali";
         }
 
-        Documento documento = documentoService.addDocumento(file);
+        Documento documento = null;
+        try {
+            documento = documentoService.addDocumento(file.getOriginalFilename(), file.getBytes(), file.getContentType());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         task.setDocumento(documento);
         taskService.updateTask(task);
         documento.setTask(task);

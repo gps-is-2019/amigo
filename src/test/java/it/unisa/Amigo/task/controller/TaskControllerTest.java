@@ -111,6 +111,7 @@ class TaskControllerTest {
         );
     }
 
+    /*
     @ParameterizedTest
     @MethodSource("provideDefinizioneTaskSupergruppo")
     void definizioneTaskSupergruppo(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo) throws Exception {
@@ -133,6 +134,7 @@ class TaskControllerTest {
                 .andExpect(model().attribute("persone", expectedPersone))
                 .andExpect(view().name("task/crea_task"));
     }
+    */
 
     private static Stream<Arguments> provideDefinizioneTaskSupergruppo() {
         User user1 = new User("admin", "admin");
