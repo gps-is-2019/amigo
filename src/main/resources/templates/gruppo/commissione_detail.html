@@ -47,7 +47,7 @@
         Aggiungi
     </a>
 
-    <a class="ui teal button" th:if="${supergruppo.state == true && (isCapogruppo==true || isResponsabile==true)}"
+    <a class="ui teal button" th:if="${supergruppo.state == true && (isResponsabile==true)}"
        th:href="@{'/gruppi/{idSupergruppo}/tasks/create'( idSupergruppo=${supergruppo.id} ) }">Assegna nuovo
         task a commissione</a>
     <a class=" negative ui  button"

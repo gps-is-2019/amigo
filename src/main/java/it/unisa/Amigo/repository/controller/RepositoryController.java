@@ -3,9 +3,15 @@ package it.unisa.Amigo.repository.controller;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.repository.services.RepositoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -99,6 +105,24 @@ public class RepositoryController {
         List<Documento> documenti = repositoryService.searchDocumentInRepository("");
         model.addAttribute("documenti", documenti);
         return "repository/repository";
+    }
+
+    @GetMapping("/documento/{idDocument}")
+    public ResponseEntity<Resource> downloadDocumento(@PathVariable("idDocument") final int idDocument) {
+
+        Documento documento = repositoryService.findDocumentoById(idDocument);
+
+        if (documento == null) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        }
+
+        Resource resource = repositoryService.getDocumentoAsResource(documento);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(documento.getFormat()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
+                .body(resource);
     }
 
 }

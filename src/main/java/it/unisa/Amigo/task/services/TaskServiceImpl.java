@@ -1,10 +1,15 @@
 package it.unisa.Amigo.task.services;
 
+import it.unisa.Amigo.consegna.services.ConsegnaService;
+import it.unisa.Amigo.documento.domain.Documento;
+import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
+import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.task.dao.TaskDAO;
 import it.unisa.Amigo.task.domain.Task;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,6 +30,10 @@ public class TaskServiceImpl implements TaskService {
      */
     private final TaskDAO taskDAO;
 
+    private final GruppoService gruppoService;
+    private final DocumentoService documentoService;
+    private final ConsegnaService consegnaService;
+
     /**
      * Ritorna l'user @{@link Persona} incaricato del Task @{@link Task}.
      *
@@ -44,18 +53,18 @@ public class TaskServiceImpl implements TaskService {
      * @param data        di scadenza del nuovo task
      * @param nome        del nuovo task
      * @param stato       del nuovo task
-     * @param supergruppo di appartenenza del task da definire
-     * @param persona     responsabile del task che si sta definendo
+     * @param supergruppoId di appartenenza del task da definire
+     * @param personaId     responsabile del task che si sta definendo
      * @return Task appena creato
      */
     @Override
     public Task definizioneTaskSupergruppo(final String descrizione, final LocalDate data, final String nome,
                                            final String stato,
-                                           final Supergruppo supergruppo,
-                                           final Persona persona) {
+                                           final Integer supergruppoId,
+                                           final Integer personaId) {
         Task task = new Task(descrizione, data, nome, stato);
-        task.setSupergruppo(supergruppo);
-        task.setPersona(persona);
+        task.setSupergruppo(gruppoService.findSupergruppo(supergruppoId));
+        task.setPersona(gruppoService.findPersona(personaId));
         taskDAO.save(task);
         return task;
     }
@@ -64,12 +73,12 @@ public class TaskServiceImpl implements TaskService {
     /**
      * Ritorna una lista di task @{@link Task} dell'utente passato.
      *
-     * @param idPersona id della persona di cui si vuole conosce la lista di task
      * @return lista di task
      */
     @Override
-    public List<Task> visualizzaTaskUser(final int idPersona) {
-        return taskDAO.findAllByPersona_Id(idPersona);
+    public List<Task> visualizzaTaskUser() {
+
+        return taskDAO.findAllByPersona_Id(gruppoService.getCurrentPersona().getId());
     }
 
     /**
@@ -131,11 +140,55 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * Metodo che permette di camiare le informazioni di un task@{@link Task}.
-     *
-     * @param taskToUpdate task aggiornato
+     *  @param taskToUpdate task aggiornato
+     * @param assegneeId
      */
     @Override
-    public void updateTask(final Task taskToUpdate) {
+    public void updateTask(final Task taskToUpdate, Integer assegneeId) {
+        Persona assegnee = gruppoService.findPersona(assegneeId);
+        taskToUpdate.setPersona(assegnee);
         taskDAO.save(taskToUpdate);
+    }
+
+    @Override
+    public Task attachDocumentToTask(Task t, String fileName, byte[] fileContent, String type){
+        Documento documento = documentoService.addDocumento(fileName, fileContent, type);
+        t.setDocumento(documento);
+        return taskDAO.save(t);
+    }
+
+    @Override
+    public boolean currentPersonaCanCreateTask(Integer idSupergruppo){
+        return gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(),idSupergruppo);
+    }
+
+    @Override
+    public List<Documento> getApprovedDocumentiOfSupergruppo(Integer idSupergruppo){
+        return documentoService.approvedDocuments(idSupergruppo);
+    }
+
+    @Override
+    public List<Persona> getPossibleTaskAssegnees(Integer idSupergruppo) {
+        return gruppoService.findAllMembriInSupergruppo(idSupergruppo);
+    }
+
+    @Override
+    public void forwardApprovedTaskToPqa(Integer taskId){
+        Documento documento = taskDAO.findById(taskId).get().getDocumento();
+        consegnaService.inoltraPQAfromGruppo(documento);
+    }
+
+    @Override
+    public boolean currentPersonaCanViewTask(Integer idTask) {
+        Persona currentPersona = gruppoService.getCurrentPersona();
+        Task currentTask = taskDAO.findById(idTask).get();
+
+        return  currentTask.getSupergruppo().getPersone().contains(currentPersona);
+
+    }
+
+    @Override
+    public Resource getResourceFromTask(Task t){
+        return documentoService.loadAsResource(t.getDocumento());
     }
 }
