@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -25,6 +26,29 @@ public class RepositoryController {
 
     private final RepositoryService repositoryService;
     private final GruppoService gruppoService;
+
+    private static final int MIN_SIZE_FILE = 0;
+    private static final int MAX_SIZE_FILE = 10485760;
+
+    private boolean checkFile(final MultipartFile file) {
+        return file.getSize() != MIN_SIZE_FILE && file.getSize() <= MAX_SIZE_FILE;
+    }
+
+    private boolean formatoFile(final MultipartFile file) {
+        if (file.getOriginalFilename().contains(".pdf")) {
+            return true;
+        }
+        if (file.getOriginalFilename().contains(".zip")) {
+            return true;
+        }
+        if (file.getOriginalFilename().contains(".txt")) {
+            return true;
+        }
+        if (file.getOriginalFilename().contains(".rar")) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Permette di verificare se l'utente il Responsabile del PQA.
@@ -76,10 +100,24 @@ public class RepositoryController {
      */
     @PostMapping("/repository/uploadDocumento")
     public String uploadDocumento(final Model model, @RequestParam("file") final MultipartFile file) {
-        boolean addFlag = repositoryService.addDocumentoInRepository(file);
+        boolean addFlag = false;
+        if (checkFile(file) && formatoFile(file)) {
+            try {
+                addFlag = repositoryService.addDocumentoInRepository(file.getOriginalFilename(), file.getBytes(), file.getContentType());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         model.addAttribute("addFlag", addFlag);
         if (addFlag) {
             model.addAttribute("documentoNome", file.getOriginalFilename());
+        } else {
+            if (!checkFile(file)) {
+                model.addAttribute("errorMessage", "Dimensioni del file non supportate");
+            } else {
+                model.addAttribute("errorMessage", "Formato del file non supportato");
+            }
         }
         model.addAttribute("flagPQA", 1);
         List<Documento> documenti = repositoryService.searchDocumentInRepository("");

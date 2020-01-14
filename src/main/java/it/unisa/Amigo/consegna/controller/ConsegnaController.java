@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -84,7 +85,11 @@ public class ConsegnaController {
     @PostMapping("/consegna")
     public String sendDocumento(final Model model, @RequestParam final MultipartFile file, @RequestParam final String destinatariPost) {
         if (!Character.isDigit(destinatariPost.charAt(0))) {
-            consegnaService.sendDocumento(null, destinatariPost, file);
+            try {
+                consegnaService.sendDocumento(null, destinatariPost, file.getOriginalFilename(), file.getBytes(), file.getContentType());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             String[] destinatariString = destinatariPost.split(",");
             int[] destinatariInt = new int[destinatariString.length];
@@ -93,7 +98,11 @@ public class ConsegnaController {
             for (String p : destinatariString) {
                 destinatariInt[i++] = Integer.parseInt(p);
             }
-            consegnaService.sendDocumento(destinatariInt, "", file);
+            try {
+                consegnaService.sendDocumento(destinatariInt, "", file.getOriginalFilename(), file.getBytes(), file.getContentType());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return "redirect:/consegna/inviati?name=";
     }

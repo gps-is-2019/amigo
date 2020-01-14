@@ -29,10 +29,10 @@
                         th:if="${isResponsabile==true and supergruppo.responsabile.getId()!=persona.id}">
                     Rimuovi
                 </a></td>
-                <td th:if="${supergruppo.state == true}">
+                <td th:if="${isCapogruppo==true && supergruppo.state == true}">
                     <a class="ui teal button"
                        th:href="@{'/gruppi/commissioni/{idCommissione}/nominaResponsabile/{idPersona}'(idCommissione=${supergruppo.id},idPersona=${persona.id})}"
-                       th:if="${isCapogruppo==true && supergruppo.state == true && supergruppo.responsabile.getId()!=persona.id}">
+                       th:if="${supergruppo.responsabile.getId()!=persona.id}">
                         Nomina responsabile
                     </a>
                 </td>
