@@ -1,11 +1,14 @@
 package it.unisa.Amigo.gruppo.services;
 
+import it.unisa.Amigo.autenticazione.domain.Role;
+import it.unisa.Amigo.autenticazione.domain.User;
 import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.*;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -183,12 +186,6 @@ class GruppoServiceImplTest {
         consiglioDidattico.setSupergruppo(supergruppo);
         supergruppo.addPersona(persona1);
 
-        List<Persona> expectedSupergruppoPersone = new ArrayList<>();
-        expectedSupergruppoPersone.add(persona1);
-
-        List<Persona> exptectedConsiglioPersone = new ArrayList<>();
-        exptectedConsiglioPersone.add(persona1);
-        exptectedConsiglioPersone.add(persona2);
 
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(persona2);
@@ -348,9 +345,7 @@ class GruppoServiceImplTest {
     @ParameterizedTest
     @MethodSource("providefindAllMembriInGruppoNoCommissione")
     void findAllMembriInGruppoNoCommissione(final Persona persona1, final Persona persona2, final Commissione expectedCommissione, final Gruppo expectedGruppo) {
-        List<Persona> persone = new ArrayList<>();
-        persone.add(persona1);
-        persone.add(persona2);
+
         expectedGruppo.addPersona(persona1);
         expectedGruppo.addPersona(persona2);
         expectedCommissione.addPersona(persona1);
@@ -455,5 +450,23 @@ class GruppoServiceImplTest {
                 Arguments.of(expectedGruppo, actualGruppo),
                 Arguments.of(expectedGruppo2, actualGruppo2)
         );
+    }
+
+    @Test
+    public void findAllByRuolo() {
+        User user = new User("user", "user");
+        User user1 = new User("user2", "user2");
+        String ruolo = "RESPONSABILE_PQA";
+        user.addRole(new Role(ruolo));
+        user1.addRole(new Role(ruolo));
+        Persona persona = new Persona("Persona1", "Persona1", "Persona1");
+        Persona persona1 = new Persona("Persona2", "Persona2", "Persona2");
+        user.setPersona(persona);
+        user1.setPersona(persona1);
+        List<Persona> persone = new ArrayList<>();
+        persone.add(persona);
+        persone.add(persona1);
+        when(personaDAO.findAllByUser_Roles_Name(ruolo.toUpperCase())).thenReturn(persone);
+        assertEquals(persone, personaDAO.findAllByUser_Roles_Name(ruolo.toUpperCase()));
     }
 }

@@ -31,6 +31,10 @@ public class GruppoController {
     @GetMapping("/gruppi/{id}")
     public String findAllMembriInSupergruppo(final Model model, @PathVariable(name = "id") final int idSupergruppo) {
         Persona personaLoggata = gruppoService.getCurrentPersona();
+        model.addAttribute("test", "test");
+        System.out.println("Model : " + model);
+        System.out.println(idSupergruppo);
+        System.out.println(personaLoggata.getId());
         model.addAttribute("isCapogruppo", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
         prepareCandidateList(idSupergruppo, model, gruppoService.findAllMembriInSupergruppo(idSupergruppo));
         model.addAttribute("commissioni", gruppoService.findAllCommissioniByGruppo(idSupergruppo));

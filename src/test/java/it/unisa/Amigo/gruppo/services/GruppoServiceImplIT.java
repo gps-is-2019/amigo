@@ -1,11 +1,14 @@
 package it.unisa.Amigo.gruppo.services;
 
+import it.unisa.Amigo.autenticazione.domain.Role;
+import it.unisa.Amigo.autenticazione.domain.User;
 import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.*;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -18,6 +21,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class GruppoServiceImplIT {
@@ -422,6 +426,19 @@ public class GruppoServiceImplIT {
                 Arguments.of(expectedGruppo, expectedCommissione),
                 Arguments.of(expectedGruppo2, expectedCommissione2)
         );
+    }
+
+    @Test
+    public void findAllByRuolo() {
+        User user = new User("ferrucci@unisa.it", "ferrucci");
+        user.addRole(new Role(Role.CAPOGRUPPO_ROLE));
+        Persona persona = new Persona("Filomena", "Ferrucci", "Professore Ordinario");
+        user.setPersona(persona);
+        persona.setUser(user);
+        List<Persona> persone = new ArrayList<>();
+        persone.add(persona);
+        personaDAO.save(persona);
+        assertEquals(persone, personaDAO.findAllByUser_Roles_Name(Role.CAPOGRUPPO_ROLE));
     }
 
 }
