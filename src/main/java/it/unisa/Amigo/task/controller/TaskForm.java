@@ -44,6 +44,6 @@ public class TaskForm {
     /**
      * Indica lo stato del task che verrà creato o modificato.
      */
-    private int idPersona;
+    private Integer idPersona;
 
 }

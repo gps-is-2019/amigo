@@ -56,7 +56,7 @@ public class TaskController {
 
     private static final int FLAG_APPROVA = 1;
     private static final int FLAG_RIFIUTA = 2;
-    private static final int FLAG_MODIFICA = 2;
+    private static final int FLAG_MODIFICA = 3;
     private static final int FLAG_COMPLETA = 4;
 
     /**
@@ -115,13 +115,15 @@ public class TaskController {
     public String saveTaskPost(@ModelAttribute final TaskForm taskForm, final Model model,
                                @PathVariable(name = "idSupergruppo") final int idSupergruppo) {
         Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
-        Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
+
         if (!taskVerify(taskForm)) {
             List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
             model.addAttribute("persone", persone);
             model.addAttribute("flagCreazione", false);
             return "task/crea_task";
         } else {
+            Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
+
             LocalDate date = LocalDate.parse(taskForm.getDataScadenza());
             Task task = taskService.definizioneTaskSupergruppo(taskForm.getDescrizione(),
                     date, taskForm.getNome(), "incompleto", supergruppo, persona);
@@ -142,11 +144,22 @@ public class TaskController {
      * @return boolean indicante l'esatezza
      */
     private boolean taskVerify(final TaskForm taskForm) {
-        return ((taskForm.getNome() != null) && (!taskForm.getNome().equals("")))
-                && ((taskForm.getDataScadenza() != null) && (!taskForm.getDataScadenza().equals("")))
-                && ((taskForm.getDescrizione() != null) && (!taskForm.getDescrizione().equals(""))) //si può aggiungere il controllo sulla data < Data odierna
-                && ((taskForm.getIdPersona() != 0));
+        boolean dateIsAfter = false;
+        boolean descrizioneMatch = false;
+        boolean nomeMatch = false;
 
+        if (!taskForm.getDataScadenza().equals("")) {
+            LocalDate date = LocalDate.parse(taskForm.getDataScadenza());
+            dateIsAfter = date.plusDays(1).isAfter(LocalDate.now());
+        }
+
+        if (taskForm.getDescrizione().matches("^(?!^.{255})^(.|\\s)*[a-zA-Z]+(.|\\s)*$"))
+            descrizioneMatch = true;
+
+        if(taskForm.getNome().matches("^(?!^.{100})^(.|\\s)*[a-zA-Z]+(.|\\s)*$"))
+            nomeMatch = true;
+
+        return  nomeMatch && descrizioneMatch && dateIsAfter && (taskForm.getIdPersona() != null);
     }
 
     /**
@@ -281,22 +294,48 @@ public class TaskController {
      */
     @RequestMapping(value = "/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modificaTask")
     public String saveModifyTask(@ModelAttribute final TaskForm taskForm, final Model model,
-                                 @PathVariable(name = "idSupergruppo") final int idSupergruppo) {
-        Task taskToUpdate = taskService.getTaskById(taskForm.getId());
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        LocalDate date = LocalDate.parse(taskForm.getDataScadenza());
-        taskToUpdate.setDataScadenza(date);
-        Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
-        taskToUpdate.setSupergruppo(supergruppo);
-        Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
-        taskToUpdate.setPersona(persona);
-        taskToUpdate.setNome(taskForm.getNome());
-        taskToUpdate.setDescrizione(taskForm.getDescrizione());
-        taskService.updateTask(taskToUpdate);
-        model.addAttribute("flagAzione", FLAG_MODIFICA);
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
-        model.addAttribute("task", taskToUpdate);
-        return "task/dettagli_task_supergruppo";
+                                 @PathVariable(name = "idSupergruppo") final int idSupergruppo,
+                                 @PathVariable(name = "idTask") final int idTask) {
+        if(taskVerify(taskForm)) {
+
+            Task taskToUpdate = taskService.getTaskById(taskForm.getId());
+            Persona personaLoggata = gruppoService.getAuthenticatedUser();
+            LocalDate date = LocalDate.parse(taskForm.getDataScadenza());
+            taskToUpdate.setDataScadenza(date);
+            Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
+            taskToUpdate.setSupergruppo(supergruppo);
+            Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
+            taskToUpdate.setPersona(persona);
+            taskToUpdate.setNome(taskForm.getNome());
+            taskToUpdate.setDescrizione(taskForm.getDescrizione());
+            taskService.updateTask(taskToUpdate);
+            model.addAttribute("flagAzione", FLAG_MODIFICA);
+            model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+            model.addAttribute("task", taskToUpdate);
+            return "task/dettagli_task_supergruppo";
+        }else{
+
+            model.addAttribute("flagCreazione", false);
+
+            Persona personaLoggata = gruppoService.getAuthenticatedUser();
+            Task task = taskService.getTaskById(idTask);
+            taskForm.setId(task.getId());
+            taskForm.setNome(task.getNome());
+            taskForm.setDataScadenza(task.getDataScadenza().toString());
+            taskForm.setDescrizione(task.getDescrizione());
+            taskForm.setStato(task.getStato());
+            Persona persona = task.getPersona();
+            taskForm.setIdPersona(persona.getId());
+            model.addAttribute("idTask", idTask);
+            model.addAttribute("idSupergruppo", idSupergruppo);
+            model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+            model.addAttribute("taskForm", taskForm);
+
+            List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
+            model.addAttribute("persone", persone);
+            return "task/modifica_task";
+        }
+
     }
 
     /**
