@@ -10,10 +10,6 @@ import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.task.domain.Task;
 import it.unisa.Amigo.task.services.TaskService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,7 +65,7 @@ public class TaskController {
      */
     @GetMapping("/gruppi/{idSupergruppo}/tasks")
     public String visualizzaListaTaskSupergruppo(final Model model, @PathVariable(name = "idSupergruppo") final int idSupergruppo) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Persona personaLoggata = gruppoService.getCurrentPersona();
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
 
         model.addAttribute("idSupergruppo", Integer.toString(idSupergruppo));
@@ -93,7 +89,7 @@ public class TaskController {
     public String definizioneTaskSupergruppo(@ModelAttribute final Task taskForm, final Model model,
                                              @PathVariable(name = "idSupergruppo") final int idSupergruppo) {
 
-      Persona personaLoggata = gruppoService.getAuthenticatedUser();
+      Persona personaLoggata = gruppoService.getCurrentPersona();
         if (!gruppoService.findSupergruppo(idSupergruppo).getResponsabile().getId().equals(personaLoggata.getId())) {
             return "error/403";
         }
@@ -128,7 +124,7 @@ public class TaskController {
             Task task = taskService.definizioneTaskSupergruppo(taskForm.getDescrizione(),
                     date, taskForm.getNome(), "incompleto", supergruppo, persona);
 
-            Persona personaLoggata = gruppoService.getAuthenticatedUser();
+            Persona personaLoggata = gruppoService.getCurrentPersona();
             model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
             model.addAttribute("idSupergruppo", idSupergruppo);
             model.addAttribute("task", task);
@@ -174,7 +170,7 @@ public class TaskController {
     public String visualizzaDettagliTaskSupergruppo(final Model model,
                                                     @PathVariable(name = "idSupergruppo") final int idSupergruppo,
                                                     @PathVariable(name = "idTask") final int idTask) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Persona personaLoggata = gruppoService.getCurrentPersona();
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
 
         model.addAttribute("idSupergruppo", idSupergruppo);
@@ -195,7 +191,7 @@ public class TaskController {
     public String approvazioneTask(final Model model,
                                    @PathVariable(name = "idSupergruppo") final int idSupergruppo,
                                    @PathVariable(name = "idTask") final int idTask) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Persona personaLoggata = gruppoService.getCurrentPersona();
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("task", taskService.getTaskById(idTask));
@@ -217,7 +213,7 @@ public class TaskController {
     public String rifiutoTask(final Model model,
                               @PathVariable(name = "idSupergruppo") final int idSupergruppo,
                               @PathVariable(name = "idTask") final int idTask) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Persona personaLoggata = gruppoService.getCurrentPersona();
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("task", taskService.getTaskById(idTask));
@@ -239,7 +235,7 @@ public class TaskController {
     public String completaTask(final Model model,
                                @PathVariable(name = "idSupergruppo") final int idSupergruppo,
                                @PathVariable(name = "idTask") final int idTask) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Persona personaLoggata = gruppoService.getCurrentPersona();
 
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
         model.addAttribute("idSupergruppo", idSupergruppo);
@@ -265,7 +261,7 @@ public class TaskController {
                                @PathVariable(name = "idSupergruppo") final int idSupergruppo,
                                @PathVariable(name = "idTask") final int idTask) {
 
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Persona personaLoggata = gruppoService.getCurrentPersona();
         Task task = taskService.getTaskById(idTask);
         taskForm.setId(task.getId());
         taskForm.setNome(task.getNome());
@@ -299,7 +295,7 @@ public class TaskController {
         if(taskVerify(taskForm)) {
 
             Task taskToUpdate = taskService.getTaskById(taskForm.getId());
-            Persona personaLoggata = gruppoService.getAuthenticatedUser();
+            Persona personaLoggata = gruppoService.getCurrentPersona();
             LocalDate date = LocalDate.parse(taskForm.getDataScadenza());
             taskToUpdate.setDataScadenza(date);
             Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
@@ -317,7 +313,7 @@ public class TaskController {
 
             model.addAttribute("flagCreazione", false);
 
-            Persona personaLoggata = gruppoService.getAuthenticatedUser();
+            Persona personaLoggata = gruppoService.getCurrentPersona();
             Task task = taskService.getTaskById(idTask);
             taskForm.setId(task.getId());
             taskForm.setNome(task.getNome());
@@ -346,7 +342,7 @@ public class TaskController {
      */
     @GetMapping("/taskPersonali")
     public String visualizzaListaTaskPersonali(final Model model) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Persona personaLoggata = gruppoService.getCurrentPersona();
         List<Task> ris = taskService.visualizzaTaskUser(personaLoggata.getId());
         model.addAttribute("listaTask", ris);
 
@@ -433,7 +429,7 @@ public class TaskController {
                              @PathVariable(name = "idSupergruppo") final int idSupergruppo,
                              @PathVariable(name = "idTask") final int idTask) {
 
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
+        Persona personaLoggata = gruppoService.getCurrentPersona();
         Documento documento = taskService.getTaskById(idTask).getDocumento();
         Consegna consegna = consegnaService.inoltraPQAfromGruppo(documento);
         model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));

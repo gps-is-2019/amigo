@@ -25,7 +25,7 @@ public interface GruppoService {
 
     Persona findPersona(Integer id);
 
-    Persona getAuthenticatedUser();
+    Persona getCurrentPersona();
 
     void addMembro(Persona persona, Supergruppo supergruppo);
 
@@ -55,5 +55,4 @@ public interface GruppoService {
 
     List<Persona> findAllByRuolo(String ruolo);
 
-    List<String> findAllRoleOfPersona(Integer idPersona);
 }

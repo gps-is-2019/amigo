@@ -64,7 +64,7 @@ class TaskControllerTest {
         List<Task> expectedTask = new ArrayList<>();
         expectedTask.add(task);
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.visualizzaTaskSuperGruppo(expectedSupergruppo.getId())).thenReturn(expectedTask);
 
@@ -123,7 +123,7 @@ class TaskControllerTest {
         expectedPersone.add(expectedPersona);
         Task task = new Task();
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
         when(gruppoService.findAllMembriInSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
 
@@ -182,7 +182,7 @@ class TaskControllerTest {
         when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
         when(taskService.definizioneTaskSupergruppo(task.getDescrizione(), task.getDataScadenza(), task.getNome(), task.getStato(),
                 expectedSupergruppo, expectedPersona)).thenReturn(task);
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isRespnsabile);
 
         this.mockMvc.perform(post("/gruppi/{idSupergruppo}/tasks/create", expectedSupergruppo.getId())
@@ -310,7 +310,7 @@ class TaskControllerTest {
         expectedSupergruppo.addTask(expectedTask);
         expectedTask.setPersona(expectedPersona);
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
@@ -336,7 +336,7 @@ class TaskControllerTest {
         expectedTask.setPersona(expectedPersona);
         int flagAzione = 1;
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
@@ -437,7 +437,7 @@ class TaskControllerTest {
         expectedTask.setPersona(expectedPersona);
         int flagAzione = 2;
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
@@ -501,7 +501,7 @@ class TaskControllerTest {
         expectedSupergruppo.addTask(expectedTask);
         expectedTask.setPersona(expectedPersona);
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
         when(taskService.getTaskById(expectedTask.getId())).thenReturn(expectedTask);
 
@@ -572,7 +572,7 @@ class TaskControllerTest {
         taskForm.setStato(task.getStato());
         taskForm.setIdPersona(expectedPersona.getId());
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(taskService.getTaskById(task.getId())).thenReturn(task);
         when(gruppoService.findAllMembriInSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedPersone);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
@@ -640,7 +640,7 @@ class TaskControllerTest {
         when(taskService.getTaskById(task.getId())).thenReturn(task);
         when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
         when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsabile);
 
         this.mockMvc.perform(post("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modificaTask", expectedSupergruppo.getId(), task.getId())
@@ -716,7 +716,7 @@ class TaskControllerTest {
         List<Task> expectedTasks = new ArrayList<>();
         expectedTasks.add(task);
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(taskService.visualizzaTaskUser(expectedPersona.getId())).thenReturn(expectedTasks);
 
         this.mockMvc.perform(get("/taskPersonali")
@@ -874,7 +874,7 @@ class TaskControllerTest {
         List<Task> expectedTask = new ArrayList<>();
         expectedTask.add(task);
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(taskService.getTaskById(task.getId())).thenReturn(task);
         when(consegnaService.inoltraPQAfromGruppo(doc)).thenReturn(consegna);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isResponsible);
