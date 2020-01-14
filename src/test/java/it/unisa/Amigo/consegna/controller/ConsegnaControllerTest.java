@@ -51,7 +51,7 @@ class ConsegnaControllerTest {
         UserDetailImpl userDetails = new UserDetailImpl(user);
 
         when(consegnaService.possibiliDestinatari()).thenReturn(possibiliDestinatari);
-        when(gruppoService.findAllByRuolo(ruoloDest)).thenReturn(destinatari);
+        when(consegnaService.getDestinatariByRoleString(ruoloDest)).thenReturn(destinatari);
 
         this.mockMvc.perform(get("/consegna/{ruolo}", ruoloDest)
                 .with(user(userDetails)))
