@@ -12,15 +12,23 @@
 <div class="ui main text container">
 
     <form action="/consegna/ricevuti" method="get">
-        <div class="ui search">
-            <div class="ui icon input">
-                <input class="prompt" name="name" placeholder="Nome del documento" type="text">
-                <input type="submit" value="Cerca"> <i class="search icon"></i> </input>
+<!--        <div class="ui search">-->
+<!--            <div class="ui icon input">-->
+<!--                <input class="prompt" name="name" placeholder="Nome del documento" type="text">-->
+<!--                <input type="submit" value="Cerca"> <i class="search icon"></i> </input>-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="row">
+            <div class="ui action input" style="float: right; margin-bottom:5px;">
+                <input type="text" placeholder="Nome del documento" name="name">
+                <button class="ui teal icon button">
+                    <i class="search icon"></i>
+                </button>
             </div>
         </div>
     </form>
 
-    <table class="ui celled table striped">
+    <table class="ui  table striped">
         <thead>
         <tr class="center aligned">
             <th>Nome documento</th>
@@ -39,6 +47,7 @@
         <th:block th:each="consegna : ${consegne}">
             <tr class="center aligned">
                 <td>
+                    <i class="file outline icon"></i>
                     <a target=”_blank”
                        th:href="@{'/consegna/miei-documenti/{idDocumento}' (idDocumento=${consegna.getDocumento().getId()})}">
                         <span th:text="${consegna.documento.nome}"></span>
