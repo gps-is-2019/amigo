@@ -1,8 +1,6 @@
 package it.unisa.Amigo.repository.controller;
 
-import it.unisa.Amigo.autenticazione.domain.Role;
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.repository.services.RepositoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -20,7 +18,6 @@ import java.util.List;
 public class RepositoryController {
 
     private final RepositoryService repositoryService;
-    private final GruppoService gruppoService;
 
     private static final int MIN_SIZE_FILE = 0;
     private static final int MAX_SIZE_FILE = 10485760;
@@ -54,9 +51,7 @@ public class RepositoryController {
      */
     @GetMapping("/repository")
     public String getRepository(final Model model, @RequestParam(required = false) final String name) {
-        //if (isResponsabilePQA()) {
-            model.addAttribute("flagPQA", 1);
-        //}
+        model.addAttribute("flagPQA", 1);
         List<Documento> documenti = repositoryService.searchDocumentInRepository(name);
         model.addAttribute("documenti", documenti);
         return "repository/repository";
@@ -69,9 +64,6 @@ public class RepositoryController {
      */
     @GetMapping("/repository/uploadDocumento")
     public String uploadDocumento() {
-        if (gruppoService.getAuthenticatedUser() == null) {
-            return "redirect:/";
-        }
         return "repository/aggiunta_documento_repository";
     }
 
