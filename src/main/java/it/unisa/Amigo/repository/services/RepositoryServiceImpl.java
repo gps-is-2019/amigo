@@ -7,6 +7,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.net.MalformedURLException;
 import java.util.List;
 
 /**
@@ -42,9 +43,8 @@ public class RepositoryServiceImpl implements RepositoryService {
      * @return Resource del documento associato.
      */
     @Override
-    public Resource downloadDocumento(final Documento documento) {
+    public Resource downloadDocumento(final Documento documento) throws MalformedURLException {
         return documentoService.loadAsResource(documento);
-
     }
 
     /**
