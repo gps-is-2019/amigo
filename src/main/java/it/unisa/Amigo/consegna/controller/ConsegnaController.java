@@ -3,6 +3,7 @@ package it.unisa.Amigo.consegna.controller;
 import it.unisa.Amigo.autenticazione.domain.Role;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.consegna.services.ConsegnaService;
+import it.unisa.Amigo.documento.exceptions.StorageFileNotFoundException;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -84,7 +86,7 @@ public class ConsegnaController {
         String fileName = file.getOriginalFilename();
         int lastIndex = fileName.lastIndexOf('.');
         String substring = fileName.substring(lastIndex);
-        if(file.getSize()>= MAX_FILE_SIZE || !fileExtentions.contains(substring)){
+        if (file.getSize() >= MAX_FILE_SIZE || !fileExtentions.contains(substring)) {
             return "/unauthorized";
         }
 
@@ -159,23 +161,24 @@ public class ConsegnaController {
 
     /**
      * Esegue il downlaod del file allegato ad un documento.
+     *
      * @param idDocumento l'id del documento
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/consegna/miei-documenti/{idDocumento}")
     public ResponseEntity<Resource> downloadDocumento(@PathVariable("idDocumento") final int idDocumento) {
-
         Consegna consegna = consegnaService.findConsegnaByDocumento(idDocumento);
-
         boolean downloadConsentito = consegnaService.currentPersonaCanOpen(consegna);
-
         if (downloadConsentito) {
-            Resource resource = consegnaService.getResourceFromDocumentoWithId(idDocumento);
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(consegna.getDocumento().getFormat()))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + consegna.getDocumento().getNome() + "\"")
-                    .body(resource);
+            try {
+                Resource resource = consegnaService.getResourceFromDocumentoWithId(idDocumento);
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(consegna.getDocumento().getFormat()))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + consegna.getDocumento().getNome() + "\"")
+                        .body(resource);
+            } catch (MalformedURLException | StorageFileNotFoundException e) {
+                return (ResponseEntity<Resource>) ResponseEntity.notFound();
+            }
         } else {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");

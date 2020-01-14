@@ -3,6 +3,7 @@ package it.unisa.Amigo.documento.service;
 import it.unisa.Amigo.documento.domain.Documento;
 import org.springframework.core.io.Resource;
 
+import java.net.MalformedURLException;
 import java.util.List;
 
 public interface DocumentoService {
@@ -10,7 +11,7 @@ public interface DocumentoService {
     Documento updateDocumento(Documento documento);
     Documento findDocumentoById(Integer idDocumento);
     List<Documento> searchDocumenti(Documento example);
-    Resource loadAsResource(Documento documento);
+    Resource loadAsResource(Documento documento) throws MalformedURLException;
     //TODO comunicare l'agginta della funzione per visualizzare lista documenti approvati
     List<Documento> approvedDocuments(int idSupergruppo);
 }
