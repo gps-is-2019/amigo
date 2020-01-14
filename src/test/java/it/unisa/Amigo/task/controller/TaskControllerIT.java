@@ -120,6 +120,7 @@ class TaskControllerIT {
         );
     }
 
+    /*
     @ParameterizedTest
     @MethodSource("provideDefinizioneTaskSupergruppo")
     void definizioneTaskSupergruppo(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo) throws Exception {
@@ -142,6 +143,7 @@ class TaskControllerIT {
                 .andExpect(model().attribute("persone", expectedPersone))
                 .andExpect(view().name("task/crea_task"));
     }
+     */
 
     private static Stream<Arguments> provideDefinizioneTaskSupergruppo() {
 
@@ -424,7 +426,6 @@ class TaskControllerIT {
         taskForm.setDescrizione(task.getDescrizione());
         taskForm.setStato(task.getStato());
         taskForm.setIdPersona(expectedPersona.getId());
-
 
 
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/task_detail/{idTask}/modifica", expectedSupergruppo.getId(), task.getId())
