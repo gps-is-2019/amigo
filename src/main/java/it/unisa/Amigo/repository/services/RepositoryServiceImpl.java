@@ -55,7 +55,16 @@ public class RepositoryServiceImpl implements RepositoryService {
      */
     @Override
     public Documento findDocumentoById(final int idDocumento) {
-        return documentoService.findDocumentoById(idDocumento);
+        Documento example = new Documento();
+        example.setId(idDocumento);
+        example.setInRepository(true);
+        List<Documento> documenti = documentoService.searchDocumenti(example);
+        return documenti.size() > 0 ? documenti.get(0): null;
+    }
+
+    @Override
+    public Resource getDocumentoAsResource(Documento documento){
+        return documentoService.loadAsResource(documento);
     }
 
     /**

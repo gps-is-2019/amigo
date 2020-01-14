@@ -88,7 +88,7 @@ class TaskServiceImplIT {
     @MethodSource("provideDefinizioneTaskSupergruppo")
     void definizioneTaskSupergruppo(final String descrizione, final LocalDate dataScadenza, final String nome, final String stato,
                                     final Supergruppo s, final Persona persona, final Task expectedTask) {
-        Task actual = taskService.definizioneTaskSupergruppo(descrizione, dataScadenza, nome, stato, s, persona);
+        Task actual = taskService.definizioneTaskSupergruppo(descrizione, dataScadenza, nome, stato, s.getId(), persona.getId());
         expectedTask.setId(actual.getId());
         assertEquals(expectedTask, actual);
     }
@@ -150,7 +150,7 @@ class TaskServiceImplIT {
         }
         personaDAO.save(persona);
 
-        assertEquals(expectedTasks, taskService.visualizzaTaskUser(persona.getId()));
+        assertEquals(expectedTasks, taskService.visualizzaTaskUser());
     }
 
     private static Stream<Arguments> provideVisualizzaTaskUser() {

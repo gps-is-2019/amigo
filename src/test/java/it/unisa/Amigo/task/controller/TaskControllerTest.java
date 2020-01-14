@@ -181,7 +181,7 @@ class TaskControllerTest {
         when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
         when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
         when(taskService.definizioneTaskSupergruppo(task.getDescrizione(), task.getDataScadenza(), task.getNome(), task.getStato(),
-                expectedSupergruppo, expectedPersona)).thenReturn(task);
+                expectedSupergruppo.getId(), expectedPersona.getId())).thenReturn(task);
         when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
         when(gruppoService.isResponsabile(expectedPersona.getId(), expectedSupergruppo.getId())).thenReturn(isRespnsabile);
 
@@ -717,7 +717,7 @@ class TaskControllerTest {
         expectedTasks.add(task);
 
         when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(taskService.visualizzaTaskUser(expectedPersona.getId())).thenReturn(expectedTasks);
+        when(taskService.visualizzaTaskUser()).thenReturn(expectedTasks);
 
         this.mockMvc.perform(get("/taskPersonali")
                 .with(user(userDetails)))

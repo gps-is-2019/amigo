@@ -83,7 +83,7 @@ class TaskServiceImplTest {
     @MethodSource("provideDefinizioneTaskSupergruppo")
     void definizioneTaskSupergruppo(final String descrizione, final LocalDate dataScadenza, final String nome, final String stato,
                                     final Supergruppo s, final Persona persona, final Task expectedTask) {
-        Task actual = taskService.definizioneTaskSupergruppo(descrizione, dataScadenza, nome, stato, s, persona);
+        Task actual = taskService.definizioneTaskSupergruppo(descrizione, dataScadenza, nome, stato, s.getId(), persona.getId());
         assertEquals(expectedTask, actual);
     }
 
@@ -140,7 +140,7 @@ class TaskServiceImplTest {
     void visualizzaTaskUser(final Persona persona, final List<Task> expectedTasks) {
         when(taskDAO.findAllByPersona_Id(persona.getId())).thenReturn(expectedTasks);
 
-        assertEquals(expectedTasks, taskService.visualizzaTaskUser(persona.getId()));
+        assertEquals(expectedTasks, taskService.visualizzaTaskUser());
     }
 
     private static Stream<Arguments> provideVisualizzaTaskUser() {

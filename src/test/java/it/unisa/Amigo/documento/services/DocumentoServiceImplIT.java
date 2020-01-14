@@ -96,11 +96,7 @@ class DocumentoServiceImplIT {
     void loadAsResource(final Documento expectedDocumento, final Resource expectedResouce) {
         documentoDAO.save(expectedDocumento);
         Resource actualResource = null;
-        try {
-            actualResource = documentoService.loadAsResource(expectedDocumento);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        actualResource = documentoService.loadAsResource(expectedDocumento);
         assertEquals(expectedResouce, actualResource);
     }
 
