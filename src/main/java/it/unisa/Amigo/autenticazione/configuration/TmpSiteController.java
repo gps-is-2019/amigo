@@ -32,14 +32,14 @@ public class TmpSiteController {
         persona = personaDAO.findByUser_email(auth.getName());
         model.addAttribute("idPersona", persona.getId());
         model.addAttribute("persona", persona);
-        return "/dashboard";
+        return "dashboard";
     }
 
     @GetMapping("/login")
     public String getLogin() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         persona = personaDAO.findByUser_email(auth.getName());
-        return "/login_page";
+        return "login_page";
     }
 
     @GetMapping("/logout")

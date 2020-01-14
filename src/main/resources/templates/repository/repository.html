@@ -55,7 +55,7 @@
 
         <div class="ui error message" th:if="${addFlag==false}">
             <i class="close icon"></i>
-            <p>Documento non caricato!</span></p>
+            <p><span th:text="${errorMessage}"></span></p>
         </div>
     </div>
 

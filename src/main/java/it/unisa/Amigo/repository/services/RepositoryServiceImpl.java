@@ -5,7 +5,6 @@ import it.unisa.Amigo.documento.service.DocumentoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -19,28 +18,23 @@ import java.util.List;
 public class RepositoryServiceImpl implements RepositoryService {
 
     private final DocumentoService documentoService;
-    private static final int MIN_SIZE_FILE = 0;
-    private static final int MAX_SIZE_FILE = 10485760;
 
-    private boolean checkFile(final MultipartFile file) {
-        return file.getSize() != MIN_SIZE_FILE && file.getSize() <= MAX_SIZE_FILE;
-    }
     /**
      * Aggiunge un documento @{@link Documento} alla repository.
      *
-     * @param file da aggiungere alla repository.
+     * @param fileName da aggiungere alla repository.
+     * @param bytes
+     * @param mimeType
      * @return true se il documento è stato aggiunto alla repository.
      */
     @Override
-    public boolean addDocumentoInRepository(final MultipartFile file) {
-       if (checkFile(file)) {
-            Documento documento = documentoService.addDocumento(file);
+    public boolean addDocumentoInRepository(final String fileName, final byte[] bytes, final String mimeType) {
+
+            Documento documento = documentoService.addDocumento(fileName, bytes, mimeType);
             documento.setInRepository(true);
             documentoService.updateDocumento(documento);
             return true;
-       } else {
-           return false;
-       }
+
     }
 
     /**

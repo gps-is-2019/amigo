@@ -2,7 +2,6 @@ package it.unisa.Amigo.consegna.services;
 
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.domain.Documento;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
@@ -11,7 +10,7 @@ import java.util.Set;
  * Questa interfaccia definisce i metodi  per la logica di Business del sottositema "Consegna"
  */
 public interface ConsegnaService {
-    List<Consegna> sendDocumento(int[] idDestinatari, String locazione, MultipartFile file);
+    List<Consegna> sendDocumento(int[] idDestinatari, String locazione, String fileName, byte[] bytes, String mimeType);
 
     List<Consegna> consegneInviate();
 

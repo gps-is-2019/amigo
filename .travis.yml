@@ -1,5 +1,8 @@
 language: java
 notifications:
   email:
+    recipients:
+      - e.iannone16@studenti.unisa.it
     on_success: never # default: change
     on_failure: always # default: always
+script: "mvn verify"
