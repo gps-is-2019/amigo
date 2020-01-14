@@ -749,4 +749,67 @@ public class GruppoControllerTest {
             Arguments.of(gruppoFormCommand, gruppo2, user1, persona2, commissione2)
         );
     }
+
+    @ParameterizedTest
+    @MethodSource("provideCreaCommissioneUnauthorized")
+    public void creaCommissioneUnauthorized(GruppoFormCommand gruppoFormCommand, Gruppo gruppo, User user, Persona persona, Commissione commissione) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        persona.setUser(user);
+        user.setPersona(persona);
+        commissione.addPersona(persona);
+        commissione.setResponsabile(persona);
+        List<Persona> persone = new ArrayList<>();
+        persone.add(persona);
+        commissione.setGruppo(gruppo);
+        gruppo.addCommissione(commissione);
+        gruppo.addPersona(persona);
+        List<Commissione> commissioni = new ArrayList<>();
+        commissioni.add(commissione);
+
+        when(gruppoService.getCurrentPersona()).thenReturn(persona);
+        when(gruppoService.isResponsabile(persona.getId(), gruppo.getId())).thenReturn(false);
+
+        this.mockMvc.perform(post("/gruppi/{idGruppo}/commissioni/create", gruppo.getId())
+                .with(user(userDetails))
+                .with(csrf())
+                .param("name", gruppoFormCommand.getName())
+                .param("descrizione", gruppoFormCommand.getDescrizione())
+                .param("idPersona", "" + gruppoFormCommand.getIdPersona()))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(view().name("unauthorized"));
+    }
+
+    private static Stream<Arguments> provideCreaCommissioneUnauthorized() {
+        Persona persona1 = new Persona("persona1", "persona1", "persona");
+        Persona persona2 = new Persona("persona2", "persona2", "persona");
+
+        User user = new User("admin", "admin");
+        User user1 = new User("admin1", "admin1");
+
+        Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
+        Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
+
+        Commissione commissione1 = new Commissione("c1", "Commissione", true, "descr");
+        Commissione commissione2 = new Commissione("c2", "Commissione", true, "descr");
+
+        persona1.setId(1);
+        persona2.setId(2);
+        user.setId(3);
+        user1.setId(4);
+        gruppo1.setId(5);
+        gruppo2.setId(6);
+        commissione1.setId(7);
+        commissione2.setId(8);
+
+        GruppoFormCommand gruppoFormCommand = new GruppoFormCommand();
+        gruppoFormCommand.setName("Nome");
+        gruppoFormCommand.setDescrizione("Descrizione");
+        gruppoFormCommand.setIdPersona(9);
+
+        return Stream.of(
+                Arguments.of(gruppoFormCommand, gruppo1, user, persona1, commissione1),
+                Arguments.of(gruppoFormCommand, gruppo2, user1, persona2, commissione2)
+        );
+    }
 }
