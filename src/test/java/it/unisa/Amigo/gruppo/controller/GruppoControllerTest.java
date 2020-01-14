@@ -93,25 +93,21 @@ public class GruppoControllerTest {
     @MethodSource("provideAllSupergruppi")
     public void findAllSupergruppi(final User userArg, final Persona personaArg, final Gruppo gruppo1, final Gruppo gruppo2) throws Exception {
 
-        User user = userArg;
-        UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = personaArg;
-        expectedPersona.setUser(user);
-        Supergruppo expectedSupergruppo1 = gruppo1;
-        Supergruppo expectedSupergruppo2 = gruppo2;
+        UserDetailImpl userDetails = new UserDetailImpl(userArg);
+        personaArg.setUser(userArg);
         List<Supergruppo> expectedSupergruppi = new ArrayList<>();
-        expectedSupergruppi.add(expectedSupergruppo2);
-        expectedSupergruppi.add(expectedSupergruppo1);
-        expectedPersona.addSupergruppo(expectedSupergruppo2);
-        expectedPersona.addSupergruppo(expectedSupergruppo1);
+        expectedSupergruppi.add(gruppo2);
+        expectedSupergruppi.add(gruppo1);
+        personaArg.addSupergruppo(gruppo2);
+        personaArg.addSupergruppo(gruppo1);
 
-        when(gruppoService.findAllSupergruppiOfPersona(expectedPersona.getId())).thenReturn(expectedSupergruppi);
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
+        when(gruppoService.findAllSupergruppiOfPersona(personaArg.getId())).thenReturn(expectedSupergruppi);
+        when(gruppoService.getCurrentPersona()).thenReturn(personaArg);
 
         this.mockMvc.perform(get("/gruppi")
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
+                .andExpect(model().attribute("personaLoggata", personaArg.getId()))
                 .andExpect(model().attribute("supergruppi", expectedSupergruppi))
                 .andExpect(view().name("gruppo/miei_gruppi"));
     }
@@ -217,30 +213,28 @@ public class GruppoControllerTest {
     public void addMembro(final User user, final Persona persona, final Supergruppo supergruppo) throws Exception {
 
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = persona;
-        expectedPersona.setUser(user);
-        Supergruppo expectedSupergruppo = supergruppo;
-        expectedPersona.addSupergruppo(expectedSupergruppo);
+        persona.setUser(user);
+        persona.addSupergruppo(supergruppo);
 
         List<Persona> persone = new ArrayList<>();
-        persone.add(expectedPersona);
+        persone.add(persona);
 
-        when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
-        when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
-        when(gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(expectedSupergruppo.getId())).thenReturn(persone);
-        when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(), expectedSupergruppo.getId())).thenReturn(true);
+        when(gruppoService.findPersona(persona.getId())).thenReturn(persona);
+        when(gruppoService.findSupergruppo(supergruppo.getId())).thenReturn(supergruppo);
+        when(gruppoService.findAllMembriInConsiglioDidatticoNoSupergruppo(supergruppo.getId())).thenReturn(persone);
+        when(gruppoService.findPersona(persona.getId())).thenReturn(persona);
+        when(gruppoService.getCurrentPersona()).thenReturn(persona);
+        when(gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(), supergruppo.getId())).thenReturn(true);
 
-        if (expectedSupergruppo.getType().equalsIgnoreCase("commissione")) {
-            this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", expectedSupergruppo.getId(), expectedPersona.getId())
+        if (supergruppo.getType().equalsIgnoreCase("commissione")) {
+            this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", supergruppo.getId(), persona.getId())
                     .with(user(userDetails)))
                     .andExpect(status().isOk())
                     .andExpect(view().name("gruppo/aggiunta_membro_commissione"));
         }
 
-        if (expectedSupergruppo.getType().equalsIgnoreCase("gruppo")) {
-            this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", expectedSupergruppo.getId(), expectedPersona.getId())
+        if (supergruppo.getType().equalsIgnoreCase("gruppo")) {
+            this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", supergruppo.getId(), persona.getId())
                     .with(user(userDetails)))
                     .andExpect(status().isOk())
                     .andExpect(view().name("gruppo/aggiunta_membro"));
@@ -275,31 +269,29 @@ public class GruppoControllerTest {
     @MethodSource("provideRemoveMembro")
     public void removeMembro(final User user, final Persona persona, final Supergruppo supergruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = persona;
-        expectedPersona.setUser(user);
-        Supergruppo expectedSupergruppo = supergruppo;
-        expectedSupergruppo.setResponsabile(expectedPersona);
-        expectedPersona.addSupergruppo(expectedSupergruppo);
+        persona.setUser(user);
+        supergruppo.setResponsabile(persona);
+        persona.addSupergruppo(supergruppo);
         Gruppo gruppo = new Gruppo("Gruppo", "gruppo", true);
 
-        when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
-        when(gruppoService.findSupergruppo(expectedSupergruppo.getId())).thenReturn(expectedSupergruppo);
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(), expectedSupergruppo.getId())).thenReturn(true);
-        when(gruppoService.findGruppoByCommissione(expectedSupergruppo.getId())).thenReturn(gruppo);
-        when(gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(), gruppoService.findGruppoByCommissione(expectedSupergruppo.getId()).getId())).thenReturn(true);
+        when(gruppoService.findPersona(persona.getId())).thenReturn(persona);
+        when(gruppoService.findSupergruppo(supergruppo.getId())).thenReturn(supergruppo);
+        when(gruppoService.getCurrentPersona()).thenReturn(persona);
+        when(gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(), supergruppo.getId())).thenReturn(true);
+        when(gruppoService.findGruppoByCommissione(supergruppo.getId())).thenReturn(gruppo);
+        when(gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(), gruppoService.findGruppoByCommissione(supergruppo.getId()).getId())).thenReturn(true);
 
-        if (expectedSupergruppo.getType().equalsIgnoreCase("commissione")) {
-            Commissione commissione = (Commissione) expectedSupergruppo;
+        if (supergruppo.getType().equalsIgnoreCase("commissione")) {
+            Commissione commissione = (Commissione) supergruppo;
             commissione.setGruppo(gruppo);
-            this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", expectedSupergruppo.getId(), expectedPersona.getId())
+            this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", supergruppo.getId(), persona.getId())
                     .with(user(userDetails)))
                     .andExpect(status().isOk())
                     .andDo(print())
                     .andExpect(view().name("gruppo/commissione_detail"));
         }
-        if (expectedSupergruppo.getType().equalsIgnoreCase("gruppo")) {
-            this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", expectedSupergruppo.getId(), expectedPersona.getId())
+        if (supergruppo.getType().equalsIgnoreCase("gruppo")) {
+            this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", supergruppo.getId(), persona.getId())
                     .with(user(userDetails)))
                     .andExpect(status().isOk())
                     .andDo(print())
@@ -370,35 +362,32 @@ public class GruppoControllerTest {
     @MethodSource("provideCloseCommissione")
     public void closeCommissione(final User user, final Persona persona, final Commissione commissione, final Gruppo gruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = persona;
-        expectedPersona.setUser(user);
+        persona.setUser(user);
 
-        Commissione expectedCommissione = commissione;
-        expectedCommissione.addPersona(expectedPersona);
-        expectedCommissione.setResponsabile(expectedPersona);
+        commissione.addPersona(persona);
+        commissione.setResponsabile(persona);
 
         List<Persona> persone = new ArrayList<>();
-        persone.add(expectedPersona);
+        persone.add(persona);
 
-        Gruppo expectedGruppo = gruppo;
-        expectedCommissione.setGruppo(expectedGruppo);
+        commissione.setGruppo(gruppo);
 
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedCommissione.getId())).thenReturn(true);
-        when(gruppoService.findGruppoByCommissione(expectedCommissione.getId())).thenReturn(expectedGruppo);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedGruppo.getId())).thenReturn(true);
-        when(gruppoService.findSupergruppo(expectedCommissione.getId())).thenReturn(expectedCommissione);
-        when(gruppoService.findAllMembriInSupergruppo(expectedCommissione.getId())).thenReturn(persone);
-        when(gruppoService.findGruppoByCommissione(expectedCommissione.getId())).thenReturn(expectedGruppo);
+        when(gruppoService.getCurrentPersona()).thenReturn(persona);
+        when(gruppoService.isResponsabile(persona.getId(), commissione.getId())).thenReturn(true);
+        when(gruppoService.findGruppoByCommissione(commissione.getId())).thenReturn(gruppo);
+        when(gruppoService.isResponsabile(persona.getId(), gruppo.getId())).thenReturn(true);
+        when(gruppoService.findSupergruppo(commissione.getId())).thenReturn(commissione);
+        when(gruppoService.findAllMembriInSupergruppo(commissione.getId())).thenReturn(persone);
+        when(gruppoService.findGruppoByCommissione(commissione.getId())).thenReturn(gruppo);
 
-        this.mockMvc.perform(get("/gruppi/commissioni/{id2}/chiusura", expectedCommissione.getId())
+        this.mockMvc.perform(get("/gruppi/commissioni/{id2}/chiusura", commissione.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isCapogruppo", true))
                 .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("persone", persone))
-                .andExpect(model().attribute("supergruppo", expectedCommissione))
-                .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
+                .andExpect(model().attribute("supergruppo", commissione))
+                .andExpect(model().attribute("personaLoggata", persona.getId()))
                 .andExpect(model().attribute("flagChiusura", 1))
                 .andExpect(view().name("gruppo/commissione_detail"));
     }
@@ -434,19 +423,17 @@ public class GruppoControllerTest {
     @MethodSource("provideCreateCommissioneForm")
     public void createCommissioneForm(final User user, final Persona persona, final Commissione commissione) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = persona;
-        expectedPersona.setUser(user);
+        persona.setUser(user);
 
-        Commissione expectedCommissione = commissione;
-        expectedCommissione.addPersona(expectedPersona);
-        expectedCommissione.setResponsabile(expectedPersona);
+        commissione.addPersona(persona);
+        commissione.setResponsabile(persona);
 
         GruppoFormCommand gruppoFormCommand = new GruppoFormCommand();
 
-        this.mockMvc.perform(get("/gruppi/{id}/commissioni/create", expectedCommissione.getId())
+        this.mockMvc.perform(get("/gruppi/{id}/commissioni/create", commissione.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("idGruppo", expectedCommissione.getId()))
+                .andExpect(model().attribute("idGruppo", commissione.getId()))
                 .andExpect(model().attribute("command", gruppoFormCommand))
                 .andExpect(view().name("gruppo/crea_commissione"));
     }
@@ -551,35 +538,31 @@ public class GruppoControllerTest {
 
 
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = persona;
-        expectedPersona.setUser(user);
-
-        Commissione expectedCommissione = commissione;
+        persona.setUser(user);
 
 
         List<Persona> persone = new ArrayList<>();
-        persone.add(expectedPersona);
+        persone.add(persona);
 
-        Gruppo expectedGruppo = gruppo;
-        expectedCommissione.setGruppo(expectedGruppo);
-        expectedGruppo.addPersona(expectedPersona);
+        commissione.setGruppo(gruppo);
+        gruppo.addPersona(persona);
 
 
-        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona);
-        when(gruppoService.isResponsabile(expectedPersona.getId(), expectedCommissione.getId())).thenReturn(true);
-        when(gruppoService.findSupergruppo(expectedCommissione.getId())).thenReturn(expectedCommissione);
-        when(gruppoService.findAllMembriInGruppoNoCommissione(expectedCommissione.getId())).thenReturn(persone);
-        when(gruppoService.findGruppoByCommissione(expectedCommissione.getId())).thenReturn(expectedGruppo);
-        when(gruppoService.findPersona(expectedPersona.getId())).thenReturn(expectedPersona);
+        when(gruppoService.getCurrentPersona()).thenReturn(persona);
+        when(gruppoService.isResponsabile(persona.getId(), commissione.getId())).thenReturn(true);
+        when(gruppoService.findSupergruppo(commissione.getId())).thenReturn(commissione);
+        when(gruppoService.findAllMembriInGruppoNoCommissione(commissione.getId())).thenReturn(persone);
+        when(gruppoService.findGruppoByCommissione(commissione.getId())).thenReturn(gruppo);
+        when(gruppoService.findPersona(persona.getId())).thenReturn(persona);
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", expectedCommissione.getId(), expectedPersona.getId())
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", commissione.getId(), persona.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("flagAggiunta", 1))
-                .andExpect(model().attribute("personaAggiunta", expectedPersona))
+                .andExpect(model().attribute("personaAggiunta", persona))
                 .andExpect(model().attribute("persone", persone))
-                .andExpect(model().attribute("supergruppo", expectedCommissione))
-                .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
+                .andExpect(model().attribute("supergruppo", commissione))
+                .andExpect(model().attribute("personaLoggata", persona.getId()))
                 .andExpect(view().name("gruppo/aggiunta_membro_commissione"));
 
     }
@@ -758,13 +741,10 @@ public class GruppoControllerTest {
         user.setPersona(persona);
         commissione.addPersona(persona);
         commissione.setResponsabile(persona);
-        List<Persona> persone = new ArrayList<>();
-        persone.add(persona);
         commissione.setGruppo(gruppo);
         gruppo.addCommissione(commissione);
         gruppo.addPersona(persona);
-        List<Commissione> commissioni = new ArrayList<>();
-        commissioni.add(commissione);
+
 
         when(gruppoService.getCurrentPersona()).thenReturn(persona);
         when(gruppoService.isResponsabile(persona.getId(), gruppo.getId())).thenReturn(false);
@@ -826,8 +806,7 @@ public class GruppoControllerTest {
         commissione.setGruppo(gruppo);
         gruppo.addCommissione(commissione);
         gruppo.addPersona(persona);
-        List<Commissione> commissioni = new ArrayList<>();
-        commissioni.add(commissione);
+
 
         when(gruppoService.getCurrentPersona()).thenReturn(persona);
         when(gruppoService.findAllMembriInSupergruppo(gruppo.getId())).thenReturn(persone);
@@ -874,10 +853,6 @@ public class GruppoControllerTest {
         gruppoFormCommand.setDescrizione("Descrizione");
         gruppoFormCommand.setIdPersona(9);
 
-        GruppoFormCommand gruppoFormCommand2 = new GruppoFormCommand();
-        gruppoFormCommand.setName("Nome");
-        gruppoFormCommand.setDescrizione("");
-        gruppoFormCommand.setIdPersona(10);
 
         return Stream.of(
                 Arguments.of(gruppoFormCommand, gruppo1, user, persona1, commissione1)

@@ -186,12 +186,6 @@ class GruppoServiceImplTest {
         consiglioDidattico.setSupergruppo(supergruppo);
         supergruppo.addPersona(persona1);
 
-        List<Persona> expectedSupergruppoPersone = new ArrayList<>();
-        expectedSupergruppoPersone.add(persona1);
-
-        List<Persona> exptectedConsiglioPersone = new ArrayList<>();
-        exptectedConsiglioPersone.add(persona1);
-        exptectedConsiglioPersone.add(persona2);
 
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(persona2);
@@ -351,9 +345,7 @@ class GruppoServiceImplTest {
     @ParameterizedTest
     @MethodSource("providefindAllMembriInGruppoNoCommissione")
     void findAllMembriInGruppoNoCommissione(final Persona persona1, final Persona persona2, final Commissione expectedCommissione, final Gruppo expectedGruppo) {
-        List<Persona> persone = new ArrayList<>();
-        persone.add(persona1);
-        persone.add(persona2);
+
         expectedGruppo.addPersona(persona1);
         expectedGruppo.addPersona(persona2);
         expectedCommissione.addPersona(persona1);
