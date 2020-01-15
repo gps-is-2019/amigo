@@ -16,10 +16,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static it.unisa.Amigo.consegna.domain.Consegna.PQA_LOCAZIONE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -70,7 +74,8 @@ class ConsegnaServiceImplTest {
 
         return Stream.of(
                 Arguments.of(ids, NDV_LOCAZIONE, file.getOriginalFilename(), file.getBytes(), file.getContentType()),
-                Arguments.of(ids2, USER_LOCAZIONE, file.getOriginalFilename(), file.getBytes(), file.getContentType())
+                Arguments.of(null, PQA_LOCAZIONE, file.getOriginalFilename(), file.getBytes(), file.getContentType()),
+                Arguments.of(null, NDV_LOCAZIONE, file.getOriginalFilename(), file.getBytes(), file.getContentType())
         );
     }
 
@@ -96,10 +101,12 @@ class ConsegnaServiceImplTest {
         Role role = new Role(Role.NDV_ROLE);
         Role role1 = new Role(Role.CAPOGRUPPO_ROLE);
         Role role2 = new Role(Role.CPDS_ROLE);
+        Role role3 = new Role(Role.PQA_ROLE);
         return Stream.of(
                 Arguments.of(role),
                 Arguments.of(role1),
-                Arguments.of(role2)
+                Arguments.of(role2),
+                Arguments.of(role3)
         );
     }
 
@@ -146,8 +153,8 @@ class ConsegnaServiceImplTest {
             consegna.setStato("da valutare");
             consegna.setDocumento(doc);
             consegna.setMittente(gruppoService.getCurrentPersona());
-            if (locazione.equalsIgnoreCase(Consegna.PQA_LOCAZIONE)) {
-                consegna.setLocazione(Consegna.PQA_LOCAZIONE);
+            if (locazione.equalsIgnoreCase(PQA_LOCAZIONE)) {
+                consegna.setLocazione(PQA_LOCAZIONE);
             }
             if (locazione.equalsIgnoreCase(Consegna.NDV_LOCAZIONE)) {
                 consegna.setLocazione(Consegna.NDV_LOCAZIONE);
@@ -197,7 +204,7 @@ class ConsegnaServiceImplTest {
 
         when(gruppoService.getCurrentPersona()).thenReturn(persona);
         when(consegnaDAO.findAllByMittente(gruppoService.getCurrentPersona())).thenReturn(expectedConsegne);
-        when(consegnaDAO.findAllByLocazione(Consegna.PQA_LOCAZIONE)).thenReturn(expectedConsegne);
+        when(consegnaDAO.findAllByLocazione(PQA_LOCAZIONE)).thenReturn(expectedConsegne);
         when(consegnaDAO.findAllByLocazione(Consegna.NDV_LOCAZIONE)).thenReturn(expectedConsegne);
 
         assertEquals(expectedConsegne, consegnaService.consegneRicevute());
@@ -299,26 +306,48 @@ class ConsegnaServiceImplTest {
         consegna1.setStato("DA_VALUTARE");
         consegna1.setDocumento(documento);
         consegna1.setMittente(expectedPersona1);
-        consegna1.setLocazione(Consegna.PQA_LOCAZIONE);
+        consegna1.setLocazione(PQA_LOCAZIONE);
 
         Consegna consegna2 = new Consegna();
         consegna2.setDataConsegna(LocalDate.now());
         consegna2.setStato("DA_VALUTARE");
         consegna2.setDocumento(documento1);
         consegna2.setMittente(expectedPersona2);
-        consegna2.setLocazione(Consegna.PQA_LOCAZIONE);
+        consegna2.setLocazione(PQA_LOCAZIONE);
 
         Consegna consegna3 = new Consegna();
         consegna3.setDataConsegna(LocalDate.now());
         consegna3.setStato("DA_VALUTARE");
         consegna3.setDocumento(documento2);
         consegna3.setMittente(expectedPersona3);
-        consegna3.setLocazione(Consegna.PQA_LOCAZIONE);
+        consegna3.setLocazione(PQA_LOCAZIONE);
 
         return Stream.of(
                 Arguments.of(documento, expectedPersona1, consegna1),
                 Arguments.of(documento1, expectedPersona2, consegna2),
                 Arguments.of(documento2, expectedPersona3, consegna3)
         );
+    }
+
+    @Test
+    public void getResourceFromDocumentoWithId() throws MalformedURLException {
+        Documento documento = new Documento();
+        documento.setPath("file:src/test/resources/documents/test.txt");
+        Resource resource = new UrlResource(documento.getPath());
+        when(documentoService.loadAsResource(documentoService.findDocumentoById(documento.getId()))).thenReturn(resource);
+        assertEquals(resource, consegnaService.getResourceFromDocumentoWithId(documento.getId()));
+    }
+
+    @Test
+    public void getDestinatariByRoleString(){
+        User user = new User("ferrucci@unisa.it", "ferrucci");
+        user.addRole(new Role(Role.CAPOGRUPPO_ROLE));
+        Persona persona = new Persona("Filomena", "Ferrucci", "Professore Associato");
+        persona.setUser(user);
+        user.setPersona(persona);
+        List<Persona> persone = new ArrayList<>();
+        persone.add(persona);
+        when(gruppoService.findAllByRuolo(Role.CAPOGRUPPO_ROLE)).thenReturn(persone);
+        assertEquals(persone, consegnaService.getDestinatariByRoleString(Role.CAPOGRUPPO_ROLE));
     }
 }

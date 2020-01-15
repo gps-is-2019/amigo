@@ -6,6 +6,7 @@ import it.unisa.Amigo.autenticazione.domain.User;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.consegna.services.ConsegnaService;
 import it.unisa.Amigo.documento.domain.Documento;
+import it.unisa.Amigo.documento.service.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.junit.jupiter.api.Test;
@@ -16,8 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +45,9 @@ class ConsegnaControllerTest {
 
     @MockBean
     private GruppoService gruppoService;
+
+    @MockBean
+    private DocumentoService documentoService;
 
 
     @ParameterizedTest
@@ -443,4 +450,6 @@ class ConsegnaControllerTest {
         );
 
     }
+
+
 }
