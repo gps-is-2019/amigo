@@ -159,6 +159,50 @@ class TaskControllerTest {
         );
     }
 
+    /*@ParameterizedTest
+    @MethodSource("provideDefinizioneTaskSupergruppoError")
+    void definizioneTaskSupergruppoError(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
+
+        when(taskService.currentPersonaCanCreateTask(expectedSupergruppo.getId())).thenReturn(false);
+
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/tasks/create", expectedSupergruppo.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("redirect:/403"));
+    }
+
+    private static Stream<Arguments> provideDefinizioneTaskSupergruppoError() {
+        User user1 = new User("admin", "admin");
+        user1.addRole(new Role(Role.CAPOGRUPPO_ROLE));
+        User user2 = new User("rob@deprisco.it", "roberto");
+        user2.addRole(new Role(Role.CAPOGRUPPO_ROLE));
+        User user3 = new User("vittorio@scarano.it", "scarano");
+        user3.addRole(new Role(Role.CAPOGRUPPO_ROLE));
+
+        Persona persona1 = new Persona("Admin", "Admin", "Administrator");
+        persona1.setId(1);
+        Persona persona2 = new Persona("Roberto", "De Prisco", "user");
+        persona2.setId(2);
+        Persona persona3 = new Persona("Vittorio", "Scarano", "user");
+        persona3.setId(3);
+
+        Supergruppo gruppo1 = new Supergruppo("GAQD- Informatica", "gruppo", true);
+        gruppo1.setId(1);
+        Supergruppo gruppo2 = new Supergruppo("GAQR- Informatica", "gruppo", true);
+        gruppo2.setId(2);
+        Supergruppo gruppo3 = new Supergruppo("Accompaganmento al lavoro", "commissione", true);
+        gruppo3.setId(3);
+
+        return Stream.of(
+                Arguments.of(user2, persona2, gruppo2),
+                Arguments.of(user1, persona1, gruppo1),
+                Arguments.of(user3, persona3, gruppo3)
+        );
+    }*/
+
     @ParameterizedTest
     @MethodSource("provideSaveTaskPost")
     void saveTaskPost(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, TaskForm taskForm, Task task, Boolean isRespnsabile) throws Exception {
