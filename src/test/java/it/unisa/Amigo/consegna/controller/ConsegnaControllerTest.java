@@ -538,10 +538,10 @@ class ConsegnaControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideSendDocumentoUnauthorized")
-    public void sendDocumentoUnauthorized(User user, MockMultipartFile multipartFile) throws Exception {
+    public void sendDocumentoUnauthorized(User user, MockMultipartFile multipartFile, String destinatariPost) throws Exception {
 
         UserDetailImpl userDetail = new UserDetailImpl(user);
-        this.mockMvc.perform(multipart("/consegna").file(multipartFile).param("destinatariPost", "h2")
+        this.mockMvc.perform(multipart("/consegna").file(multipartFile).param("destinatariPost", destinatariPost)
                 .with(csrf())
                 .with(user(userDetail)))
                 .andExpect(status().isOk())
@@ -549,11 +549,16 @@ class ConsegnaControllerTest {
     }
 
     private static Stream<Arguments> provideSendDocumentoUnauthorized(){
-        User user = new User("admin", "admin");
-        user.addRole(new Role(Role.PQA_ROLE));
-        MockMultipartFile file = new MockMultipartFile("file", "test.side", "application/pdf", new byte[1]);
+        User user1 = new User("admin", "admin");
+        User user2 = new User("fferucci.unisa.it", "ferrucci");
+        user1.addRole(new Role(Role.PQA_ROLE));
+        user2.addRole(new Role(Role.CAPOGRUPPO_ROLE));
+        MockMultipartFile file1 = new MockMultipartFile("file", "test.side", "application/pdf", new byte[1]);
         return Stream.of(
-                Arguments.of(user, file)
+                Arguments.of(user1, file1, "h2"),
+                Arguments.of(user1, file1, "2"),
+                Arguments.of(user2, file1, "h2"),
+                Arguments.of(user2, file1, "2")
         );
 
     }
