@@ -3,10 +3,12 @@ package it.unisa.Amigo.consegna.services;
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
 import it.unisa.Amigo.autenticazione.domain.Role;
 import it.unisa.Amigo.autenticazione.domain.User;
+import it.unisa.Amigo.autenticazione.services.AuthService;
 import it.unisa.Amigo.consegna.dao.ConsegnaDAO;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.service.DocumentoServiceImpl;
+import it.unisa.Amigo.gruppo.domain.Commissione;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,7 @@ import java.util.stream.Stream;
 
 import static it.unisa.Amigo.consegna.domain.Consegna.PQA_LOCAZIONE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -49,6 +52,9 @@ class ConsegnaServiceImplTest {
 
     @InjectMocks
     private ConsegnaServiceImpl consegnaService;
+
+    @Mock
+    private AuthService authService;
 
     private static Stream<Arguments> provideDocumento() throws IOException {
 
@@ -349,5 +355,42 @@ class ConsegnaServiceImplTest {
         persone.add(persona);
         when(gruppoService.findAllByRuolo(Role.CAPOGRUPPO_ROLE)).thenReturn(persone);
         assertEquals(persone, consegnaService.getDestinatariByRoleString(Role.CAPOGRUPPO_ROLE));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideCurrentPersona")
+    public void currentPersonaCanOpen(Persona persona, Consegna consegna) {
+        User user  = new User("user", "user");
+        Set<Role> roles = new HashSet<>();
+        roles.add(new Role(Role.PQA_ROLE));
+        user.setRoles(roles);
+        user.setPersona(persona);
+        persona.setUser(user);
+        when( gruppoService.getCurrentPersona()).thenReturn(persona);
+        when(authService.getCurrentUserRoles()).thenReturn(roles);
+        assertTrue(consegnaService.currentPersonaCanOpen(consegna));
+
+    }
+
+    private static Stream<Arguments> provideCurrentPersona(){
+
+        Persona persona = new Persona("Filomena", "Ferrucci", "Professore Ordinario");
+        Persona persona2 = new Persona("Vittorio", "Scarano", "Professore Ordianrio");
+        Persona persona3 = new Persona("Roberto", "De Prisco", "Professore Ordinario");
+        Consegna consegna = new Consegna();
+        consegna.setMittente(persona);
+        consegna.setDestinatario(persona2);
+        consegna.setLocazione(PQA_LOCAZIONE);
+
+        Consegna consegna1 = new Consegna();
+        consegna1.setMittente(persona2);
+        consegna1.setDestinatario(persona);
+        consegna1.setLocazione(PQA_LOCAZIONE);
+
+        return Stream.of(
+                Arguments.of(persona2,consegna),
+                Arguments.of(persona, consegna1),
+                Arguments.of(persona3, consegna)
+        );
     }
 }
