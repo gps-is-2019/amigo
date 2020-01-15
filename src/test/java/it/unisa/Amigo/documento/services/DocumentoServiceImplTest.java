@@ -17,6 +17,8 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -24,9 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -40,19 +40,22 @@ class DocumentoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideAddDocumento")
-    void addDocumento(final Documento doc, final String fileName, final byte[] bytes, final String mimeType) throws MalformedURLException {
+    void addDocumento(final Documento doc, final String fileName, final byte[] bytes, final String mimeType) throws NoSuchFieldException, IllegalAccessException {
+        Field path = documentoService.getClass().getDeclaredField("BASE_PATH");
+        path.setAccessible(true);
+        path.set(documentoService, "src/test/resources/documents/");
         when(documentoDAO.save(any(Documento.class))).thenReturn(doc);
         documentoService.addDocumento(fileName, bytes, mimeType);
-        assertThat((documentoService.loadAsResource(doc)).exists());
+        assertTrue(documentoService.loadAsResource(doc).exists());
     }
 
     private static Stream<Arguments> provideAddDocumento() {
 
-        Documento doc1 = new Documento("src/main/resources/documents/1", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc1 = new Documento("src/test/resources/documents/1", LocalDate.now(), "1", false, "text/plain");
         doc1.setId(1);
-        Documento doc2 = new Documento("src/main/resources/documents/2", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc2 = new Documento("src/test/resources/documents/2", LocalDate.now(), "2", false, "text/plain");
         doc2.setId(2);
-        Documento doc3 = new Documento("src/main/resources/documents/3", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc3 = new Documento("src/test/resources/documents/3", LocalDate.now(), "3", false, "text/plain");
         doc3.setId(3);
 
         return Stream.of(
@@ -72,11 +75,11 @@ class DocumentoServiceImplTest {
 
     private static Stream<Arguments> provideUpdateDocumento() {
 
-        Documento doc1 = new Documento("src/main/resources/documents/1", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc1 = new Documento("src/test/resources/documents/1", LocalDate.now(), "1", false, "text/plain");
         doc1.setId(1);
-        Documento doc2 = new Documento("src/main/resources/documents/2", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc2 = new Documento("src/test/resources/documents/2", LocalDate.now(), "2", false, "text/plain");
         doc2.setId(2);
-        Documento doc3 = new Documento("src/main/resources/documents/3", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc3 = new Documento("src/test/resources/documents/3", LocalDate.now(), "3", false, "text/plain");
         doc3.setId(3);
 
         return Stream.of(
@@ -97,11 +100,11 @@ class DocumentoServiceImplTest {
 
     private static Stream<Arguments> provideLoadAsResource() throws MalformedURLException {
 
-        Documento doc1 = new Documento("src/main/resources/documents/1", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc1 = new Documento("src/test/resources/documents/1", LocalDate.now(), "1", false, "text/plain");
         doc1.setId(1);
-        Documento doc2 = new Documento("src/main/resources/documents/2", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc2 = new Documento("src/test/resources/documents/2", LocalDate.now(), "2", false, "text/plain");
         doc2.setId(2);
-        Documento doc3 = new Documento("src/main/resources/documents/3", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc3 = new Documento("src/test/resources/documents/3", LocalDate.now(), "3", false, "text/plain");
         doc3.setId(3);
 
         Resource resource1 = new UrlResource(Paths.get(doc1.getPath()).toUri());
@@ -127,11 +130,11 @@ class DocumentoServiceImplTest {
 
     private static Stream<Arguments> provideLoadAsResourceError1() throws MalformedURLException {
 
-        Documento doc1 = new Documento("src/main/resources/documents/4", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc1 = new Documento("src/test/resources/documents/4", LocalDate.now(), "4", false, "text/plain");
         doc1.setId(1);
-        Documento doc2 = new Documento("src/main/resources/documents/5", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc2 = new Documento("src/test/resources/documents/5", LocalDate.now(), "5", false, "text/plain");
         doc2.setId(2);
-        Documento doc3 = new Documento("src/main/resources/documents/6", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc3 = new Documento("src/test/resources/documents/6", LocalDate.now(), "6", false, "text/plain");
         doc3.setId(3);
 
         Resource resource1 = new UrlResource(Paths.get(doc1.getPath()).toUri());
@@ -163,11 +166,11 @@ class DocumentoServiceImplTest {
         Supergruppo supergruppo3 = new Supergruppo("Boh", "gruppo", true);
         supergruppo3.setId(3);
 
-        Documento doc1 = new Documento("src/main/resources/documents/4", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc1 = new Documento("src/test/resources/documents/4", LocalDate.now(), "4", false, "text/plain");
         doc1.setId(1);
-        Documento doc2 = new Documento("src/main/resources/documents/5", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc2 = new Documento("src/test/resources/documents/5", LocalDate.now(), "5", false, "text/plain");
         doc2.setId(2);
-        Documento doc3 = new Documento("src/main/resources/documents/6", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc3 = new Documento("src/test/resources/documents/6", LocalDate.now(), "6", false, "text/plain");
         doc3.setId(3);
 
         Task task1 = new Task("descrizione 1", tmpDate, "Task 1", "approvato");
@@ -205,11 +208,11 @@ class DocumentoServiceImplTest {
     }
 
     private static Stream<Arguments> provideSearchDocumenti() throws MalformedURLException {
-        Documento doc1 = new Documento("src/main/resources/documents/4", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc1 = new Documento("src/test/resources/documents/4", LocalDate.now(), "4", false, "text/plain");
         doc1.setId(1);
-        Documento doc2 = new Documento("src/main/resources/documents/5", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc2 = new Documento("src/test/resources/documents/5", LocalDate.now(), "5", false, "text/plain");
         doc2.setId(2);
-        Documento doc3 = new Documento("src/main/resources/documents/6", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc3 = new Documento("src/test/resources/documents/6", LocalDate.now(), "6", false, "text/plain");
         doc3.setId(3);
 
         ArrayList<Documento> documenti1 = new ArrayList<>();

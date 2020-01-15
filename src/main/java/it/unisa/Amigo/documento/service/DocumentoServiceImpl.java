@@ -27,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DocumentoServiceImpl implements DocumentoService {
 
-    private static final String BASE_PATH = "src/main/resources/documents/";
+    private static String BASE_PATH = "src/main/resources/documents/";
 
     private final DocumentoDAO documentoDAO;
 
