@@ -14,4 +14,5 @@ public interface RepositoryService {
     Resource getDocumentoAsResource(Documento documento);
     List<Documento> searchDocumentInRepository(String nameDocumento);
     Documento findDocumentoById(int idDocumento);
+    boolean isPQA();
 }

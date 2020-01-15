@@ -420,7 +420,6 @@ public class TaskController {
 
             Task currentTask = taskService.getTaskById(idTask);
             Resource resource = taskService.getResourceFromTask(currentTask);
-
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(currentTask.getDocumento().getFormat()))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + currentTask.getDocumento().getNome() + "\"")

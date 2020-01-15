@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 @SpringBootApplication
@@ -132,7 +133,7 @@ public class AmigoApplication {
             commissioneEL.addPersona(dePrisco);
             commissioneEL.addPersona(scarano);
             commissioneEL.addPersona(malandrino);
-            commissioneEL.setResponsabile(scarano);
+            commissioneEL.setResponsabile(dePrisco);
 
             ConsiglioDidattico cd = new ConsiglioDidattico("Informatica");
             cd.setSupergruppo(GAQD);
@@ -149,48 +150,43 @@ public class AmigoApplication {
             LocalDate tmpDate;
             tmpDate = LocalDate.now();
 
-            Task taskprova = new Task("t1", tmpDate, "task1", "in valutazione");
+            Task taskprova = new Task("t1", tmpDate, "Approvare piani di studio", "in valutazione");
             taskprova.setPersona(ferrucci);
             ferrucci.addTask(taskprova);
             taskprova.setSupergruppo(GAQD);
             GAQD.addTask(taskprova);
 
-            Task taskprova2 = new Task("t2", tmpDate, "task2", "approvato");
+            Task taskprova2 = new Task("t2", tmpDate, "Approvare richieste cambio classe", "approvato");
             taskprova2.setPersona(scarano);
             scarano.addTask(taskprova2);
             taskprova2.setSupergruppo(GAQD);
             GAQD.addTask(taskprova2);
 
-            Task taskprova3 = new Task("t3", tmpDate, "task3", "incompleto");
+            Task taskprova3 = new Task("t3", tmpDate, "Definire date di esame", "incompleto");
             taskprova3.setPersona(ferrucci);
             ferrucci.addTask(taskprova3);
             taskprova3.setSupergruppo(GAQD);
             GAQD.addTask(taskprova3);
 
-            Task taskprova4 = new Task("task approvato 1", tmpDate, "task approvato1", "approvato");
+            Task taskprova4 = new Task("task approvato 1", tmpDate, "Convalidare esami di inglese", "approvato");
             taskprova4.setPersona(ferrucci);
             ferrucci.addTask(taskprova4);
             taskprova4.setSupergruppo(GAQD);
             GAQD.addTask(taskprova4);
 
-            Task taskprova5 = new Task("task approvato 2", tmpDate, "taskapprovato2", "approvato");
-            taskprova5.setPersona(ferrucci);
-            ferrucci.addTask(taskprova5);
-            taskprova5.setSupergruppo(GAQD);
-            GAQD.addTask(taskprova5);
+            Documento documento = new Documento("src/main/resources/inputFile/modulocambioclasse.pdf", tmpDate, "modulocambioclasse.pdf", false, "application/pdf");
+            documento.setTask(taskprova2);
+            taskprova2.setDocumento(documento);
 
-            Documento documento1 = new Documento("src/main/resources/documents/test.txt", tmpDate, "test.txt", false, "text/txt");
-            documento1.setTask(taskprova2);
-            taskprova2.setDocumento(documento1);
-
+            Documento documento2 = new Documento("src/main/resources/inputFile/Sistema-AQ.pdf", tmpDate, "Sistema-AQ.pdf", true, "application/pdf");
             supergruppoDAO.save(GAQD);
             supergruppoDAO.save(commissioneAAL);
             supergruppoDAO.save(commissioneEL);
             consiglioDidatticoDAO.save(cd);
             personaDAO.saveAll(Arrays.asList(ferrucci, scarano, malandrino, dePrisco, polese, gravino, rossi, vincenzi));
             userDAO.saveAll(Arrays.asList(userFerrucci, userScarano, userMalandrino, userDePrisco, userPolese, userGravino, userRossi, userVincenzi));
-            taskDAO.saveAll(Arrays.asList(taskprova, taskprova2, taskprova3, taskprova4, taskprova5));
-            documentoDAO.save(documento1);
+            taskDAO.saveAll(Arrays.asList(taskprova, taskprova2, taskprova3, taskprova4));
+            documentoDAO.saveAll(Arrays.asList(documento,documento2));
             System.out.println(commissioneAAL.getId());
             System.out.println(commissioneEL.getId());
         };

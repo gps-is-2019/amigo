@@ -232,7 +232,7 @@ public class TaskServiceImpl implements TaskService {
      * @return file sotto forma di resource
      */
     @Override
-    public Resource getResourceFromTask(Task t){
-        return documentoService.loadAsResource(t.getDocumento());
+    public Resource getResourceFromTask(Task task){
+        return documentoService.loadAsResource(task.getDocumento());
     }
 }

@@ -70,7 +70,8 @@ public class RepositoryController {
      */
     @GetMapping("/repository")
     public String getRepository(final Model model, @RequestParam(required = false) final String name) {
-        model.addAttribute("flagPQA", 1);
+
+        model.addAttribute("flagPQA",repositoryService.isPQA());
         List<Documento> documenti = repositoryService.searchDocumentInRepository(name);
         model.addAttribute("documenti", documenti);
         return "repository/repository";
@@ -113,7 +114,7 @@ public class RepositoryController {
                 model.addAttribute("errorMessage", "Formato del file non supportato");
             }
         }
-        model.addAttribute("flagPQA", 1);
+        model.addAttribute("flagPQA", true);
         List<Documento> documenti = repositoryService.searchDocumentInRepository("");
         model.addAttribute("documenti", documenti);
         return "repository/repository";
