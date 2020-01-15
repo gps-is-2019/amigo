@@ -48,11 +48,11 @@ class DocumentoServiceImplTest {
 
     private static Stream<Arguments> provideAddDocumento() {
 
-        Documento doc1 = new Documento("src/main/resources/documents/1", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc1 = new Documento("src/test/resources/documents/1", LocalDate.now(), "test.txt", false, "text/plain");
         doc1.setId(1);
-        Documento doc2 = new Documento("src/main/resources/documents/2", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc2 = new Documento("src/test/resources/documents/2", LocalDate.now(), "test.txt", false, "text/plain");
         doc2.setId(2);
-        Documento doc3 = new Documento("src/main/resources/documents/3", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc3 = new Documento("src/test/resources/documents/3", LocalDate.now(), "test.txt", false, "text/plain");
         doc3.setId(3);
 
         return Stream.of(
@@ -72,11 +72,11 @@ class DocumentoServiceImplTest {
 
     private static Stream<Arguments> provideUpdateDocumento() {
 
-        Documento doc1 = new Documento("src/main/resources/documents/1", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc1 = new Documento("src/test/resources/documents/1", LocalDate.now(), "test.txt", false, "text/plain");
         doc1.setId(1);
-        Documento doc2 = new Documento("src/main/resources/documents/2", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc2 = new Documento("src/test/resources/documents/2", LocalDate.now(), "test.txt", false, "text/plain");
         doc2.setId(2);
-        Documento doc3 = new Documento("src/main/resources/documents/3", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc3 = new Documento("src/test/resources/documents/3", LocalDate.now(), "test.txt", false, "text/plain");
         doc3.setId(3);
 
         return Stream.of(
@@ -97,11 +97,11 @@ class DocumentoServiceImplTest {
 
     private static Stream<Arguments> provideLoadAsResource() throws MalformedURLException {
 
-        Documento doc1 = new Documento("src/main/resources/documents/1", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc1 = new Documento("src/test/resources/documents/1", LocalDate.now(), "test.txt", false, "text/plain");
         doc1.setId(1);
-        Documento doc2 = new Documento("src/main/resources/documents/2", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc2 = new Documento("src/test/resources/documents/2", LocalDate.now(), "test.txt", false, "text/plain");
         doc2.setId(2);
-        Documento doc3 = new Documento("src/main/resources/documents/3", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc3 = new Documento("src/test/resources/documents/3", LocalDate.now(), "test.txt", false, "text/plain");
         doc3.setId(3);
 
         Resource resource1 = new UrlResource(Paths.get(doc1.getPath()).toUri());
@@ -127,11 +127,11 @@ class DocumentoServiceImplTest {
 
     private static Stream<Arguments> provideLoadAsResourceError1() throws MalformedURLException {
 
-        Documento doc1 = new Documento("src/main/resources/documents/4", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc1 = new Documento("src/test/resources/documents/4", LocalDate.now(), "test.txt", false, "text/plain");
         doc1.setId(1);
-        Documento doc2 = new Documento("src/main/resources/documents/5", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc2 = new Documento("src/test/resources/documents/5", LocalDate.now(), "test.txt", false, "text/plain");
         doc2.setId(2);
-        Documento doc3 = new Documento("src/main/resources/documents/6", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc3 = new Documento("src/test/resources/documents/6", LocalDate.now(), "test.txt", false, "text/plain");
         doc3.setId(3);
 
         Resource resource1 = new UrlResource(Paths.get(doc1.getPath()).toUri());
@@ -163,11 +163,11 @@ class DocumentoServiceImplTest {
         Supergruppo supergruppo3 = new Supergruppo("Boh", "gruppo", true);
         supergruppo3.setId(3);
 
-        Documento doc1 = new Documento("src/main/resources/documents/4", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc1 = new Documento("src/test/resources/documents/4", LocalDate.now(), "test.txt", false, "text/plain");
         doc1.setId(1);
-        Documento doc2 = new Documento("src/main/resources/documents/5", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc2 = new Documento("src/test/resources/documents/5", LocalDate.now(), "test.txt", false, "text/plain");
         doc2.setId(2);
-        Documento doc3 = new Documento("src/main/resources/documents/6", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc3 = new Documento("src/test/resources/documents/6", LocalDate.now(), "test.txt", false, "text/plain");
         doc3.setId(3);
 
         Task task1 = new Task("descrizione 1", tmpDate, "Task 1", "approvato");
@@ -205,11 +205,11 @@ class DocumentoServiceImplTest {
     }
 
     private static Stream<Arguments> provideSearchDocumenti() throws MalformedURLException {
-        Documento doc1 = new Documento("src/main/resources/documents/4", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc1 = new Documento("src/test/resources/documents/4", LocalDate.now(), "test.txt", false, "text/plain");
         doc1.setId(1);
-        Documento doc2 = new Documento("src/main/resources/documents/5", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc2 = new Documento("src/test/resources/documents/5", LocalDate.now(), "test.txt", false, "text/plain");
         doc2.setId(2);
-        Documento doc3 = new Documento("src/main/resources/documents/6", LocalDate.now(), "test.txt", false, "text/plain");
+        Documento doc3 = new Documento("src/test/resources/documents/6", LocalDate.now(), "test.txt", false, "text/plain");
         doc3.setId(3);
 
         ArrayList<Documento> documenti1 = new ArrayList<>();
