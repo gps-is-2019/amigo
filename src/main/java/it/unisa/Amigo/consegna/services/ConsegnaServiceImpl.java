@@ -38,7 +38,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     /**
      * Permette il download di un documento.
      *
-     * @param idDocumento @{@Link Documento}da scaricare.
+     * @param idDocumento @{@Link Documento} da scaricare.
      * @return Resource del documento associato.
      */
     @Override
@@ -48,10 +48,11 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     /**
      * Effettua la consegna di un documento ad uno o più destinatari
-     *  @param idDestinatari gli id dei destinatari che riceveranno il documento
-     * @param fileName          il file allegato al documento
-     * @param bytes
-     * @param mimeType
+     *
+     * @param idDestinatari gli id dei destinatari che riceveranno il documento
+     * @param fileName      il nome del file
+     * @param bytes         il file da allegare alla consegna
+     * @param mimeType      il formato del file
      */
     @Override
     public List<Consegna> sendDocumento(final int[] idDestinatari, final String locazione, final String fileName, final byte[] bytes, final String mimeType) {
@@ -88,9 +89,9 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     }
 
     /**
-     * Recupera la lista delle consegna inviate da una persona
+     * Recupera la lista delle consegne inviate dall'utente loggato
      *
-     * @return la lista delle consegne
+     * @return la lista delle consegne inviate
      */
     @Override
     public List<Consegna> consegneInviate() {
@@ -98,8 +99,9 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     }
 
     /**
-     * Recupera la lista delle consegna ricevute da una persona
-     * @return la lista delle consegne
+     * Recupera la lista delle consegna ricevute dall'utente loggato
+     *
+     * @return la lista delle consegne ricevute
      */
     @Override
     public List<Consegna> consegneRicevute() {
@@ -134,10 +136,10 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     }
 
     /**
-     * Recupera una consegna tramite l'id del documento ad esso associata
+     * Controlla se l'utente loggato ha il permesso di visualizzare il documento richiesto
      *
-     *
-     * @param consegna@return la consegna
+     * @param consegna la consegna alla quale si vuole accedere
+     * @return true se l'utente loggato ha il permesso di accedere, false altrimenti
      */
     @Override
     public boolean currentPersonaCanOpen(Consegna consegna) {
@@ -145,7 +147,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
         Set<Role> role = authService.getCurrentUserRoles();
 
-        if (consegna.getMittente().equals(currentPersona) || ( consegna.getDestinatario() != null && currentPersona.equals(consegna.getDestinatario())) ) {
+        if (consegna.getMittente().equals(currentPersona) || (consegna.getDestinatario() != null && currentPersona.equals(consegna.getDestinatario()))) {
             return true;
         } else {
             return (consegna.getLocazione().equalsIgnoreCase(Consegna.PQA_LOCAZIONE) && (role.contains(new Role(Role.PQA_ROLE)))) || (consegna.getLocazione().equalsIgnoreCase(Consegna.NDV_LOCAZIONE) && (role.contains(new Role(Role.NDV_ROLE))));
@@ -154,7 +156,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     }
 
     /**
-     * Recupera tutti i possibili ruoli destinatari a cui effettuare una consegna
+     * Recupera tutti i possibili ruoli destinatari a cui effettuare una consegna, in base ai permessi dell'utente loggato
      *
      * @return i destinatari
      */
@@ -182,6 +184,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     /**
      * Modifica lo stato di una consegna in APPROVATA tramite il suo id
+     *
      * @param idConsegna
      */
     @Override
@@ -193,6 +196,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     /**
      * Modifica lo stato di una consegna in RIFIUTATA tramite il suo id
+     *
      * @param idConsegna
      */
     @Override
@@ -203,9 +207,10 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     }
 
     /**
+     * Inoltra un documento da un supergruppo al PQA
      *
-     * @param doc
-     * @return
+     * @param doc il documento da inoltrare
+     * @return la consegna relativa al documento inoltrato
      */
     @Override
     public Consegna inoltraPQAfromGruppo(final Documento doc) {
@@ -220,8 +225,14 @@ public class ConsegnaServiceImpl implements ConsegnaService {
         return consegna;
     }
 
+    /**
+     * Recupera tutte le persone aventi uno specifico ruolo
+     *
+     * @param role il ruolo delle persone da recuperare
+     * @return le persone con il ruolo richiesto
+     */
     @Override
-    public List<Persona> getDestinatariByRoleString(String role){
+    public List<Persona> getDestinatariByRoleString(String role) {
         return gruppoService.findAllByRuolo(role);
     }
 }

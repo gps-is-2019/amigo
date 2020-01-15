@@ -1,3 +1,7 @@
+/**
+ * Script js per la pagina destinatari.html
+ */
+
 $('.ui.fluid.dropdown')
   .dropdown({placeholder:'Destinatari'});
 

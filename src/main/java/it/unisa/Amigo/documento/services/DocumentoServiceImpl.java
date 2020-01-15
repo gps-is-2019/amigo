@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Questa classe implementa i metodi  per la logica di Business del sottosistema "Documento"
+ * Questa classe implementa i metodi  per la logica di business del sottosistema "Documento"
  */
 @Service
 @RequiredArgsConstructor
@@ -31,22 +31,23 @@ public class DocumentoServiceImpl implements DocumentoService {
 
     private final DocumentoDAO documentoDAO;
 
-    private String storeFile(final byte[] bytes, final int idDoc) {
-        Path path = Paths.get(BASE_PATH + idDoc);
+    private String storeFile(final byte[] bytes, String fileName) {
+        String first = BASE_PATH + System.currentTimeMillis() + "-" + fileName;
+        Path path = Paths.get(first);
         try {
             Files.write(path, bytes);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return BASE_PATH + idDoc;
+        return first;
     }
 
     /**
      * Esegue il salvataggio di un file su file system, crea un documento @{@link Documento} e lo salva all'interno del database.
      *
-     * @param fileName
-     * @param bytes
-     * @param mimeType
+     * @param fileName nome del file da salvare
+     * @param bytes    file da salvare
+     * @param mimeType formato del file da salvare
      * @return il documento salvato nel database contenente la path del file salvato.
      */
     @Override
@@ -57,8 +58,7 @@ public class DocumentoServiceImpl implements DocumentoService {
         doc.setNome(fileName);
         doc.setInRepository(false);
         doc.setFormat(mimeType);
-        doc = documentoDAO.save(doc);
-        String path = storeFile(bytes, doc.getId());
+        String path = storeFile(bytes, fileName);
         doc.setPath(path);
         return updateDocumento(doc);
     }
@@ -93,6 +93,12 @@ public class DocumentoServiceImpl implements DocumentoService {
         }
     }
 
+    /**
+     * Recupera la lista dei documenti approvati all'interno del supergruppo passato come parametro
+     *
+     * @param idSupergruppo id del supergruppo dal quale prelevare i documenti
+     * @return listq dei documenti approvati
+     */
     @Override
     public List<Documento> approvedDocuments(final int idSupergruppo) {
         return documentoDAO.findAllByTask_Supergruppo_IdAndTask_Stato(idSupergruppo, "approvato");
@@ -111,10 +117,10 @@ public class DocumentoServiceImpl implements DocumentoService {
     }
 
     /**
-     * Ritorna una lista di documenti dato un documento di confronto.
-     * TODO
+     * Ritorna una lista di documenti dato un documento di confronto
+     * @param example documento da utilizzare come criterio di ricerca
      *
-     * @return lista di documenti contenenti la stringa ricercata.
+     * @return lista di documenti che matchano la ricerca
      */
     @Override
     public List<Documento> searchDocumenti(final Documento example) {
