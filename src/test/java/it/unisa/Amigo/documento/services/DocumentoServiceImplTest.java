@@ -17,6 +17,8 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -40,7 +42,14 @@ class DocumentoServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideAddDocumento")
-    void addDocumento(final Documento doc, final String fileName, final byte[] bytes, final String mimeType) throws MalformedURLException {
+    void addDocumento(final Documento doc, final String fileName, final byte[] bytes, final String mimeType) throws NoSuchFieldException, IllegalAccessException {
+        final String TEST_PATH = "src/test/resources/documents/";
+        Field path = documentoService.getClass().getDeclaredField("BASE_PATH");
+        path.setAccessible(true);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(path, path.getModifiers() & ~Modifier.FINAL);
+        path.set(documentoService, TEST_PATH);
         when(documentoDAO.save(any(Documento.class))).thenReturn(doc);
         documentoService.addDocumento(fileName, bytes, mimeType);
         assertThat(documentoService.loadAsResource(doc).exists());
