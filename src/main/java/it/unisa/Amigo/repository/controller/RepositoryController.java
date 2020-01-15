@@ -31,6 +31,7 @@ public class RepositoryController {
 
     /**
      * Controlla se il file rispetta i limiti di dimensione imposti dal sistema
+     *
      * @param file da caricare
      * @return true se il file rispetta i limiti, false altrimenti
      */
@@ -55,14 +56,11 @@ public class RepositoryController {
         if (file.getOriginalFilename().contains(".txt")) {
             return true;
         }
-        if (file.getOriginalFilename().contains(".rar")) {
-            return true;
-        }
-        return false;
+        return file.getOriginalFilename().contains(".rar");
     }
 
     /**
-     * Permette la ricerca di un documento @{@Link Documento} nella repository.
+     * Permette la ricerca di un documento @{@link Documento} nella repository.
      *
      * @param model per salvare le informazioni da recuperare nell'html.
      * @param name  nome del documento da cercare.
@@ -71,14 +69,14 @@ public class RepositoryController {
     @GetMapping("/repository")
     public String getRepository(final Model model, @RequestParam(required = false) final String name) {
 
-        model.addAttribute("flagPQA",repositoryService.isPQA());
+        model.addAttribute("flagPQA", repositoryService.isPQA());
         List<Documento> documenti = repositoryService.searchDocumentInRepository(name);
         model.addAttribute("documenti", documenti);
         return "repository/repository";
     }
 
     /**
-     * Permette di caricare il documento @{@Link Documento} nella repository.
+     * Permette di caricare il documento @{@link Documento} nella repository.
      *
      * @return il path della pagina su cui eseguire il redirect.
      */
@@ -88,7 +86,7 @@ public class RepositoryController {
     }
 
     /**
-     * Permette di caricare il documento @{@Link Documento} nella repository.
+     * Permette di caricare il documento @{@link Documento} nella repository.
      *
      * @param model per salvare le informazioni da recuperare nell'html.
      * @param file  file da caricare.

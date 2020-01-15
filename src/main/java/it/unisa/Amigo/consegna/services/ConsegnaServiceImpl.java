@@ -34,11 +34,10 @@ public class ConsegnaServiceImpl implements ConsegnaService {
 
     private final AuthService authService;
 
-
     /**
      * Permette il download di un documento.
      *
-     * @param idDocumento @{@Link Documento} da scaricare.
+     * @param idDocumento @{@link Documento} da scaricare.
      * @return Resource del documento associato.
      */
     @Override
@@ -142,7 +141,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
      * @return true se l'utente loggato ha il permesso di accedere, false altrimenti
      */
     @Override
-    public boolean currentPersonaCanOpen(Consegna consegna) {
+    public boolean currentPersonaCanOpen(final Consegna consegna) {
         Persona currentPersona = gruppoService.getCurrentPersona();
 
         Set<Role> role = authService.getCurrentUserRoles();
@@ -185,7 +184,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     /**
      * Modifica lo stato di una consegna in APPROVATA tramite il suo id
      *
-     * @param idConsegna
+     * @param idConsegna id della consegna
      */
     @Override
     public void approvaConsegna(final int idConsegna) {
@@ -197,7 +196,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
     /**
      * Modifica lo stato di una consegna in RIFIUTATA tramite il suo id
      *
-     * @param idConsegna
+     * @param idConsegna id della consegna
      */
     @Override
     public void rifiutaConsegna(final int idConsegna) {
@@ -232,7 +231,7 @@ public class ConsegnaServiceImpl implements ConsegnaService {
      * @return le persone con il ruolo richiesto
      */
     @Override
-    public List<Persona> getDestinatariByRoleString(String role) {
+    public List<Persona> getDestinatariByRoleString(final String role) {
         return gruppoService.findAllByRuolo(role);
     }
 }

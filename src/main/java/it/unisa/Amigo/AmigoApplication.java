@@ -8,8 +8,8 @@ import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
-import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
 import it.unisa.Amigo.gruppo.domain.Commissione;
+import it.unisa.Amigo.gruppo.domain.ConsiglioDidattico;
 import it.unisa.Amigo.gruppo.domain.Gruppo;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.task.dao.TaskDAO;
@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 @SpringBootApplication
@@ -186,12 +185,7 @@ public class AmigoApplication {
             personaDAO.saveAll(Arrays.asList(ferrucci, scarano, malandrino, dePrisco, polese, gravino, rossi, vincenzi));
             userDAO.saveAll(Arrays.asList(userFerrucci, userScarano, userMalandrino, userDePrisco, userPolese, userGravino, userRossi, userVincenzi));
             taskDAO.saveAll(Arrays.asList(taskprova, taskprova2, taskprova3, taskprova4));
-            documentoDAO.saveAll(Arrays.asList(documento,documento2));
-            System.out.println(commissioneAAL.getId());
-            System.out.println(commissioneEL.getId());
+            documentoDAO.saveAll(Arrays.asList(documento, documento2));
         };
     }
 }
-
-
-

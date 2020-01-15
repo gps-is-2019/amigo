@@ -2,7 +2,6 @@ package it.unisa.Amigo.task.controller;
 
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.task.domain.Task;
 import it.unisa.Amigo.task.services.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -43,7 +37,7 @@ public class TaskController {
     private static final int FLAG_COMPLETA = 4;
 
     /**
-     * Ritorna ad una pagina i task @{@link Task} di un supergruppo @{@link Supergruppo}.
+     * Ritorna ad una pagina i task @{@link Task} di un supergruppo.
      *
      * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui i task da visualizzare appartengono
@@ -119,25 +113,19 @@ public class TaskController {
      */
     private boolean taskVerify(final TaskForm taskForm) {
         boolean dateIsAfter = false;
-        boolean descrizioneMatch = false;
-        boolean nomeMatch = false;
 
         if (!taskForm.getDataScadenza().equals("")) {
             LocalDate date = LocalDate.parse(taskForm.getDataScadenza());
             dateIsAfter = date.plusDays(1).isAfter(LocalDate.now());
         }
-
-        if (taskForm.getDescrizione().matches("^(?!^.{255})^(.|\\s)*[a-zA-Z]+(.|\\s)*$"))
-            descrizioneMatch = true;
-
-        if (taskForm.getNome().matches("^(?!^.{100})^(.|\\s)*[a-zA-Z]+(.|\\s)*$"))
-            nomeMatch = true;
+        boolean descrizioneMatch = taskForm.getDescrizione().matches("^(?!^.{255})^(.|\\s)*[a-zA-Z]+(.|\\s)*$");
+        boolean nomeMatch = taskForm.getNome().matches("^(?!^.{100})^(.|\\s)*[a-zA-Z]+(.|\\s)*$");
 
         return nomeMatch && descrizioneMatch && dateIsAfter && (taskForm.getIdPersona() != null);
     }
 
     /**
-     * Ritorna ad una pagina i dettagli di uno specifico  task @{@link Task} di un supergruppo @{@link Supergruppo}.
+     * Ritorna ad una pagina i dettagli di uno specifico  task @{@link Task} di un supergruppo.
      *
      * @param model         per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo a cui il task di cui si vogliono visualizzare i dettagli appartine
@@ -312,7 +300,6 @@ public class TaskController {
     public String visualizzaListaTaskPersonali(final Model model) {
         List<Task> ris = taskService.visualizzaTaskUser();
         model.addAttribute("listaTask", ris);
-
         return "task/miei_task";
     }
 
@@ -343,7 +330,6 @@ public class TaskController {
         model.addAttribute("task", taskService.getTaskById(idTask));
         taskService.completaTask(idTask);
         model.addAttribute("flagAzione", FLAG_COMPLETA);
-
         return "task/dettagli_task_personali";
     }
 
@@ -364,7 +350,6 @@ public class TaskController {
             model.addAttribute("flagAggiunta", 0);
             return "task/dettagli_task_personali";
         }
-
         try {
             task = taskService.attachDocumentToTask(task, file.getOriginalFilename(), file.getBytes(), file.getContentType());
         } catch (IOException e) {
@@ -414,7 +399,6 @@ public class TaskController {
     public ResponseEntity<Resource> downloadDocumento(@PathVariable("idTask") final int idTask) {
 
         if (taskService.currentPersonaCanViewTask(idTask)) {
-
             Task currentTask = taskService.getTaskById(idTask);
             Resource resource = taskService.getResourceFromTask(currentTask);
             return ResponseEntity.ok()

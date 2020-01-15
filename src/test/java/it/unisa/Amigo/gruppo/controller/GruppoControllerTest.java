@@ -14,16 +14,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -728,8 +727,8 @@ public class GruppoControllerTest {
         gruppoFormCommand.setIdPersona(9);
 
         return Stream.of(
-            Arguments.of(gruppoFormCommand, gruppo1, user, persona1, commissione1),
-            Arguments.of(gruppoFormCommand, gruppo2, user1, persona2, commissione2)
+                Arguments.of(gruppoFormCommand, gruppo1, user, persona1, commissione1),
+                Arguments.of(gruppoFormCommand, gruppo2, user1, persona2, commissione2)
         );
     }
 

@@ -21,7 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class ConsegnaServiceImplIT {
 
     @Autowired
     private UserDAO userDAO;
-    
+
     @AfterEach
     void afterEach() {
         consegnaDAO.deleteAll();
