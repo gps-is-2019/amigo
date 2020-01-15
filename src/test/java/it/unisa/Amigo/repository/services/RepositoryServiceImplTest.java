@@ -44,7 +44,7 @@ class RepositoryServiceImplTest {
     private static Stream<Arguments> provideAddDocumentoInRepository() {
 
         return Stream.of(
-                Arguments.of("test.txt","ciao mondo".getBytes(),"text/plain")
+                Arguments.of("test.txt", "ciao mondo".getBytes(), "text/plain")
         );
     }
 
@@ -114,8 +114,8 @@ class RepositoryServiceImplTest {
 
 
         return Stream.of(
-                Arguments.of(documento1,nome1),
-                Arguments.of(documento2,null)
+                Arguments.of(documento1, nome1),
+                Arguments.of(documento2, null)
         );
     }
 }

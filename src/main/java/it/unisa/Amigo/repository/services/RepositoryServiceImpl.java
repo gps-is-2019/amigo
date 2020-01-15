@@ -25,8 +25,8 @@ public class RepositoryServiceImpl implements RepositoryService {
      * Aggiunge un documento @{@link Documento} alla repository.
      *
      * @param fileName da aggiungere alla repository.
-     * @param bytes
-     * @param mimeType
+     * @param bytes array of byte of files
+     * @param mimeType mimeType of the file
      * @return true se il documento è stato aggiunto alla repository.
      */
     @Override
@@ -40,7 +40,7 @@ public class RepositoryServiceImpl implements RepositoryService {
     /**
      * Permette il download di un documento.
      *
-     * @param documento @{@Link Documento}da scaricare.
+     * @param documento @{@link Documento}da scaricare.
      * @return Resource del documento associato.
      */
     @Override
@@ -49,9 +49,9 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
     /**
-     * Permette la ricerca di un documento @{@Link Documento}.
+     * Permette la ricerca di un documento @{@link Documento}.
      *
-     * @param idDocumento id del documento @{@Link Documento} da cercare.
+     * @param idDocumento id del documento @{@link Documento} da cercare.
      * @return Documento corrispondente all'id.
      */
     @Override
@@ -64,7 +64,7 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
     /**
-     * Permette la ricerca di un documento @{@Link Documento} nella repository.
+     * Permette la ricerca di un documento @{@link Documento} nella repository.
      *
      * @param nameDocumento nome del documento da ricercare.
      * @return lista di documenti il cui nome contiene il nome passato come parametro.
@@ -77,16 +77,16 @@ public class RepositoryServiceImpl implements RepositoryService {
         if (nameDocumento != null) {
             documentoExample.setNome(nameDocumento);
         }
-        List<Documento> documenti = documentoService.searchDocumenti(documentoExample);
-        return documenti;
+        return documentoService.searchDocumenti(documentoExample);
     }
 
     /**
      * Permette di controllare se l'utente loggato è il responsabile del PQA
+     *
      * @return true se è il responsabile del PQA altrimenti false
      */
     @Override
-    public boolean isPQA(){
+    public boolean isPQA() {
         return gruppoService.findAllByRuolo("PQA").contains(gruppoService.getCurrentPersona());
     }
 }

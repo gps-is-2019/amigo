@@ -43,31 +43,27 @@ public class ConsegnaController {
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping({"/consegna/{ruolo}", "/consegna"})
-    public String viewConsegna(final Model model, @PathVariable(name = "ruolo", required = false) String ruoloDest) {
+    public String viewConsegna(final Model model, @PathVariable(name = "ruolo", required = false) final String ruoloDest) {
         Set<String> possibiliDestinatari = consegnaService.possibiliDestinatari();
-
-        if (ruoloDest == null) {
-            ruoloDest = "";
+        String ruolo = ruoloDest;
+        if (ruolo == null) {
+            ruolo = "";
         }
-
-        if (possibiliDestinatari.size() == 1 && ruoloDest.equals("")) {
-            ruoloDest = possibiliDestinatari.iterator().next();
+        if (possibiliDestinatari.size() == 1 && ruolo.equals("")) {
+            ruolo = possibiliDestinatari.iterator().next();
         }
-
         List<Persona> destinatari = new ArrayList<>();
         boolean flagRuolo = false;
-        if (ruoloDest.equalsIgnoreCase(Role.PQA_ROLE) || ruoloDest.equalsIgnoreCase(Role.NDV_ROLE)) {
-            destinatari.add(new Persona("", ruoloDest, ""));
+        if (ruolo.equalsIgnoreCase(Role.PQA_ROLE) || ruolo.equalsIgnoreCase(Role.NDV_ROLE)) {
+            destinatari.add(new Persona("", ruolo, ""));
             flagRuolo = true;
-        } else if (possibiliDestinatari.contains(ruoloDest)) {
-            destinatari = consegnaService.getDestinatariByRoleString(ruoloDest);
+        } else if (possibiliDestinatari.contains(ruolo)) {
+            destinatari = consegnaService.getDestinatariByRoleString(ruolo);
         }
-
         model.addAttribute("possibiliDestinatari", possibiliDestinatari);
         model.addAttribute("destinatari", destinatari);
-        model.addAttribute("ruoloDest", ruoloDest);
+        model.addAttribute("ruoloDest", ruolo);
         model.addAttribute("flagRuolo", flagRuolo);
-
         return "consegna/destinatari";
     }
 

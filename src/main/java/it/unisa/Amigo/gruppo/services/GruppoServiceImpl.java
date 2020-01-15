@@ -1,6 +1,5 @@
 package it.unisa.Amigo.gruppo.services;
 
-import it.unisa.Amigo.autenticazione.domain.Role;
 import it.unisa.Amigo.autenticazione.services.AuthService;
 import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
@@ -8,8 +7,6 @@ import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -44,8 +41,7 @@ public class GruppoServiceImpl implements GruppoService {
      */
     @Override
     public List<Persona> findAllMembriInSupergruppo(final Integer idSupergruppo) {
-        List<Persona> result = personaDAO.findBySupergruppi_id(idSupergruppo);
-        return result;
+        return personaDAO.findBySupergruppi_id(idSupergruppo);
     }
 
     /***
@@ -180,10 +176,7 @@ public class GruppoServiceImpl implements GruppoService {
      */
     @Override
     public boolean isResponsabile(final Integer idPersona, final Integer idSupergruppo) {
-        System.out.println("idPersona: " + idPersona);
-        System.out.println("idSupergruppo: " + idSupergruppo);
         Optional<Supergruppo> supergruppo = supergruppoDAO.findById(idSupergruppo);
-        System.out.println("Er supergruppo : " + supergruppo.get().getId());
         return supergruppo.filter(value -> idPersona.equals(value.getResponsabile().getId())).isPresent();
     }
 
@@ -206,9 +199,7 @@ public class GruppoServiceImpl implements GruppoService {
     @Override
     public List<Commissione> findAllCommissioniByGruppo(final Integer idGruppo) {
         Gruppo gruppo = (Gruppo) supergruppoDAO.findById(idGruppo).get();
-        List<Commissione> result = new ArrayList<>();
-        result.addAll(gruppo.getCommissioni());
-        return result;
+        return new ArrayList<>(gruppo.getCommissioni());
     }
 
     /**

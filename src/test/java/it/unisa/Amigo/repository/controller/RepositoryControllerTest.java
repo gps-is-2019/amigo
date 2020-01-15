@@ -9,7 +9,6 @@ import it.unisa.Amigo.repository.services.RepositoryService;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,9 +27,9 @@ import java.util.stream.Stream;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -39,12 +38,8 @@ public class RepositoryControllerTest {
     @MockBean
     private RepositoryService repositoryService;
 
-    @Mock
-    private Resource resource;
-
     @Autowired
     private MockMvc mockMvc;
-
 
     @ParameterizedTest
     @MethodSource("provideRepository")
@@ -141,9 +136,9 @@ public class RepositoryControllerTest {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
         ResponseEntity<Resource> expectedResponse = new ResponseEntity<>(headers, HttpStatus.FOUND);
-        when( repositoryService.findDocumentoById(documento.getId())).thenReturn(null);
+        when(repositoryService.findDocumentoById(documento.getId())).thenReturn(null);
 
-        this.mockMvc.perform(get("/documento/{idDocument}",documento.getId())
+        this.mockMvc.perform(get("/documento/{idDocument}", documento.getId())
                 .with(csrf())
                 .with(user(userDetails)))
                 .andExpect(status().is(302))
@@ -151,7 +146,7 @@ public class RepositoryControllerTest {
 
     }
 
-    private static Stream<Arguments> provideDownloadDocumento(){
+    private static Stream<Arguments> provideDownloadDocumento() {
         User user1 = new User("ferrucci@unista.it", "ferrucci");
         Documento documento = new Documento();
         documento.setPath("/src/test/resources/documents/file.txt");
@@ -170,13 +165,12 @@ public class RepositoryControllerTest {
 
         UserDetailImpl userDetails = new UserDetailImpl(user);
 
-        when( repositoryService.findDocumentoById(documento.getId())).thenReturn(documento);
-        this.mockMvc.perform(get("/documento/{idDocument}",documento.getId())
+        when(repositoryService.findDocumentoById(documento.getId())).thenReturn(documento);
+        this.mockMvc.perform(get("/documento/{idDocument}", documento.getId())
                 .with(csrf())
                 .with(user(userDetails)))
                 .andExpect(status().is(200))
                 .andExpect(header().exists("Content-Disposition"));
 
     }
-
 }

@@ -19,6 +19,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * Questa classe implementa i metodi  per la logica di business del sottosistema "Documento"
  */
@@ -30,7 +31,7 @@ public class DocumentoServiceImpl implements DocumentoService {
 
     private final DocumentoDAO documentoDAO;
 
-    private String storeFile(final byte[] bytes, String fileName) {
+    private String storeFile(final byte[] bytes, final String fileName) {
         String first = BASE_PATH + System.currentTimeMillis() + "-" + fileName;
         Path path = Paths.get(first);
         try {
@@ -117,8 +118,8 @@ public class DocumentoServiceImpl implements DocumentoService {
 
     /**
      * Ritorna una lista di documenti dato un documento di confronto
-     * @param example documento da utilizzare come criterio di ricerca
      *
+     * @param example documento da utilizzare come criterio di ricerca
      * @return lista di documenti che matchano la ricerca
      */
     @Override

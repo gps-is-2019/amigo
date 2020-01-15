@@ -466,7 +466,7 @@ class ConsegnaControllerTest {
         when(consegnaService.findConsegnaByDocumento(documento.getId())).thenReturn(consegna);
         when(consegnaService.currentPersonaCanOpen(consegna)).thenReturn(consentito);
 
-        this.mockMvc.perform(get("/consegna/miei-documenti/{idDocumento}",documento.getId())
+        this.mockMvc.perform(get("/consegna/miei-documenti/{idDocumento}", documento.getId())
                 .with(csrf())
                 .with(user(userDetails)))
                 .andExpect(status().is(302))
@@ -474,7 +474,7 @@ class ConsegnaControllerTest {
 
     }
 
-    private static Stream<Arguments> provideDownloadDocumentoFalse(){
+    private static Stream<Arguments> provideDownloadDocumentoFalse() {
         User user1 = new User("ferrucci@unista.it", "ferrucci");
         Documento documento = new Documento();
         documento.setPath("/src/test/resources/documents/file.txt");
@@ -492,7 +492,7 @@ class ConsegnaControllerTest {
 
         return Stream.of(
                 Arguments.of(user1, documento, consegna, false)
-                );
+        );
     }
 
     @ParameterizedTest
@@ -506,14 +506,14 @@ class ConsegnaControllerTest {
         when(consegnaService.findConsegnaByDocumento(documento.getId())).thenReturn(consegna);
         when(consegnaService.currentPersonaCanOpen(consegna)).thenReturn(consentito);
 
-        this.mockMvc.perform(get("/consegna/miei-documenti/{idDocumento}",documento.getId())
+        this.mockMvc.perform(get("/consegna/miei-documenti/{idDocumento}", documento.getId())
                 .with(csrf())
                 .with(user(userDetails)))
                 .andExpect(status().is(200))
                 .andExpect(header().exists("Content-Disposition"));
     }
 
-    private static Stream<Arguments> provideDownloadDocumentoTrue(){
+    private static Stream<Arguments> provideDownloadDocumentoTrue() {
         User user1 = new User("ferrucci@unista.it", "ferrucci");
         Documento documento = new Documento();
         documento.setPath("/src/test/resources/documents/file.txt");
@@ -548,7 +548,7 @@ class ConsegnaControllerTest {
                 .andExpect(view().name("/unauthorized"));
     }
 
-    private static Stream<Arguments> provideSendDocumentoUnauthorized(){
+    private static Stream<Arguments> provideSendDocumentoUnauthorized() {
         User user1 = new User("admin", "admin");
         User user2 = new User("fferucci.unisa.it", "ferrucci");
         user1.addRole(new Role(Role.PQA_ROLE));

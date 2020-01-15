@@ -4,7 +4,6 @@ import it.unisa.Amigo.consegna.services.ConsegnaService;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.services.DocumentoService;
 import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.task.dao.TaskDAO;
 import it.unisa.Amigo.task.domain.Task;
@@ -49,10 +48,10 @@ public class TaskServiceImpl implements TaskService {
     /**
      * Definisce un nuovo Task @{@link Task}.
      *
-     * @param descrizione del nuovo task
-     * @param data        di scadenza del nuovo task
-     * @param nome        del nuovo task
-     * @param stato       del nuovo task
+     * @param descrizione   del nuovo task
+     * @param data          di scadenza del nuovo task
+     * @param nome          del nuovo task
+     * @param stato         del nuovo task
      * @param supergruppoId di appartenenza del task da definire
      * @param personaId     responsabile del task che si sta definendo
      * @return Task appena creato
@@ -82,7 +81,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * Ritorna la lista di task @{@link Task} del supergruppo @{@link Supergruppo} del supergruppo passato.
+     * Ritorna la lista di task @{@link Task} del supergruppo passato.
      *
      * @param idSupergruppo di cui si vogliono visualizzare i task
      * @return lista di task
@@ -111,7 +110,6 @@ public class TaskServiceImpl implements TaskService {
     public void accettazioneTask(final Integer idTask) {
         Task task = taskDAO.findById(idTask).get();
         task.setStato("approvato");
-        System.out.println(task.getDocumento());
         taskDAO.save(task);
     }
 
@@ -142,11 +140,11 @@ public class TaskServiceImpl implements TaskService {
     /**
      * Metodo che permette di cambiare le informazioni di un task@{@link Task}.
      *
-     *  @param taskToUpdate task aggiornato
-     * @param assegneeId
+     * @param taskToUpdate task aggiornato
+     * @param assegneeId   id dell'assegnatario
      */
     @Override
-    public void updateTask(final Task taskToUpdate, Integer assegneeId) {
+    public void updateTask(final Task taskToUpdate, final Integer assegneeId) {
         Persona assegnee = gruppoService.findPersona(assegneeId);
         taskToUpdate.setPersona(assegnee);
         taskDAO.save(taskToUpdate);
@@ -155,14 +153,14 @@ public class TaskServiceImpl implements TaskService {
     /**
      * Allega un documento @{@link Documento} ad un task @{@link Task}
      *
-     * @param t task a cui allegare il documento
-     * @param fileName nome del file
+     * @param t           task a cui allegare il documento
+     * @param fileName    nome del file
      * @param fileContent file da allegare
-     * @param type formato del file
+     * @param type        formato del file
      * @return task
      */
     @Override
-    public Task attachDocumentToTask(Task t, String fileName, byte[] fileContent, String type){
+    public Task attachDocumentToTask(final Task t, final String fileName, final byte[] fileContent, final String type) {
         Documento documento = documentoService.addDocumento(fileName, fileContent, type);
         t.setDocumento(documento);
         documento.setTask(t);
@@ -176,8 +174,8 @@ public class TaskServiceImpl implements TaskService {
      * @return true se l'utente loggato ha i permessi, false altrimenti
      */
     @Override
-    public boolean currentPersonaCanCreateTask(Integer idSupergruppo){
-        return gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(),idSupergruppo);
+    public boolean currentPersonaCanCreateTask(final Integer idSupergruppo) {
+        return gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(), idSupergruppo);
     }
 
     /**
@@ -187,7 +185,7 @@ public class TaskServiceImpl implements TaskService {
      * @return lista di documenti approvati
      */
     @Override
-    public List<Documento> getApprovedDocumentiOfSupergruppo(Integer idSupergruppo){
+    public List<Documento> getApprovedDocumentiOfSupergruppo(final Integer idSupergruppo) {
         return documentoService.approvedDocuments(idSupergruppo);
     }
 
@@ -198,7 +196,7 @@ public class TaskServiceImpl implements TaskService {
      * @return lista di possibili assegnatari
      */
     @Override
-    public List<Persona> getPossibleTaskAssegnees(Integer idSupergruppo) {
+    public List<Persona> getPossibleTaskAssegnees(final Integer idSupergruppo) {
         return gruppoService.findAllMembriInSupergruppo(idSupergruppo);
     }
 
@@ -208,7 +206,7 @@ public class TaskServiceImpl implements TaskService {
      * @param taskId task contenente il documento da inoltrare al PQA
      */
     @Override
-    public void forwardApprovedTaskToPqa(Integer taskId){
+    public void forwardApprovedTaskToPqa(final Integer taskId) {
         Documento documento = taskDAO.findById(taskId).get().getDocumento();
         consegnaService.inoltraPQAfromGruppo(documento);
     }
@@ -220,21 +218,21 @@ public class TaskServiceImpl implements TaskService {
      * @return true se l'utente loggato ha i permessi, false altrimenti
      */
     @Override
-    public boolean currentPersonaCanViewTask(Integer idTask) {
+    public boolean currentPersonaCanViewTask(final Integer idTask) {
         Persona currentPersona = gruppoService.getCurrentPersona();
         Task currentTask = taskDAO.findById(idTask).get();
 
-        return  currentTask.getSupergruppo().getPersone().contains(currentPersona);
+        return currentTask.getSupergruppo().getPersone().contains(currentPersona);
     }
 
     /**
      * Ottiene il documento allegato al task
      *
-     * @param t dal quale prelevare il documento
+     * @param task dal quale prelevare il documento
      * @return file sotto forma di resource
      */
     @Override
-    public Resource getResourceFromTask(Task task){
+    public Resource getResourceFromTask(final Task task) {
         return documentoService.loadAsResource(task.getDocumento());
     }
 }
