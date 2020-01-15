@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/gps-is-2019/amigo.svg?branch=develop)](https://travis-ci.com/gps-is-2019/amigo)
+[![Build Status](https://travis-ci.com/gps-is-2019/amigo.svg?branch=master)](https://travis-ci.com/gps-is-2019/amigo)
 
 # Amigo
 
