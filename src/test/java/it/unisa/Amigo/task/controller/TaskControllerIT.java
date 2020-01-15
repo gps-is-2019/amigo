@@ -23,19 +23,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -869,10 +865,12 @@ class TaskControllerIT {
         );
     }
 
-    /*@ParameterizedTest
+@ParameterizedTest
     @MethodSource("provideUploadDocumentoPost")
     void uploadDocumento(User user, Task task, MockMultipartFile file, int flag, String nameModel, String contentModel) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
+
+        userDAO.save(user);
         taskDAO.save(task);
 
         if (flag == 1) {
@@ -880,7 +878,6 @@ class TaskControllerIT {
                     .with(csrf())
                     .with(user(userDetails)))
                     .andExpect(status().isOk())
-                    .andExpect(model().attribute("documento", task.getDocumento()))
                     .andExpect(model().attribute("flagAggiunta", flag))
                     .andExpect(model().attribute("task", task))
                     .andExpect(view().name("task/dettagli_task_personali"));
@@ -901,33 +898,17 @@ class TaskControllerIT {
         Persona persona1 = new Persona("Admin", "Admin", "Administrator");
         Task task1 = new Task("adsfafsa", LocalDate.now(), "dadeqewdq", "incompleto");
         task1.setPersona(persona1);
-        Task task2 = new Task("adsfafsa", LocalDate.now(), "dadeqewdq", "incompleto");
-        task1.setPersona(persona1);
-
         MockMultipartFile file = new MockMultipartFile("file", "test.pdf", "application/pdf", new byte[1]);
-        MockMultipartFile file2 = new MockMultipartFile("file", "test.txt", "application/pdf", new byte[1]);
-        MockMultipartFile file3 = new MockMultipartFile("file", "test.zip", "application/pdf", new byte[1]);
-        MockMultipartFile file4 = new MockMultipartFile("file", "test.rar", "application/pdf", new byte[1]);
-        MockMultipartFile file5 = new MockMultipartFile("file", "test.exe", "application/pdf", new byte[1]);
-        MockMultipartFile file6 = new MockMultipartFile("file", "test.pdf", "application/pdf", new byte[0]);
-        MockMultipartFile file7 = new MockMultipartFile("file", "test.pdf", "application/pdf", new byte[10485761]);
 
         return Stream.of(
-                Arguments.of(user, task1, file, 1, "documentoNome", file.getOriginalFilename()),
-                Arguments.of(user, task2, file2, 1, "documentoNome", file2.getOriginalFilename()),
-                Arguments.of(user, task1, file3, 1, "documentoNome", file3.getOriginalFilename()),
-                Arguments.of(user, task1, file4, 1, "documentoNome", file4.getOriginalFilename()),
-                Arguments.of(user, task1, file5, 1, "errorMessage", "Formato del file non supportato"),
-                Arguments.of(user, task1, file6, 0, "errorMessage", "Dimensioni del file non supportate"),
-                Arguments.of(user, task1, file7, 1, "errorMessage", "Dimensioni del file non supportate")
-
+                Arguments.of(user, task1, file, 1, "documentoNome", file.getOriginalFilename())
         );
-    }*/
+    }
 
-/*
+
     @ParameterizedTest
     @MethodSource("provideDownloadDocumento")
-    void downloadDocumentoNull(User user, Task task, Documento documento) throws Exception {
+    void downloadDocumento(User user, Task task, Documento documento) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         user.addRole(new Role(Role.PQA_ROLE));
 
@@ -937,7 +918,6 @@ class TaskControllerIT {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
-        ResponseEntity<Resource> expectedResponse = new ResponseEntity<>(headers, HttpStatus.FOUND);
 
         this.mockMvc.perform(get("/task/{idTask}/attachment", task.getId())
                 .with(csrf())
@@ -954,8 +934,12 @@ class TaskControllerIT {
         persona1.setUser(user1);
         user1.setPersona(persona1);
 
+        Supergruppo supergruppo = new Supergruppo("QAQD", "Commissione", true);
         Task task = new Task("t1", LocalDate.now(), "task1", "incompleto");
         task.setPersona(persona1);
+        persona1.addTask(task);
+        task.setSupergruppo(supergruppo);
+        supergruppo.addTask(task);
 
         Documento documento = new Documento();
         documento.setPath("src/test/resources/documents/file.txt");
@@ -972,17 +956,5 @@ class TaskControllerIT {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("provideDownloadDocumento")
-    void downloadDocumento(User user, Task task, Documento documento) throws Exception {
-        UserDetailImpl userDetails = new UserDetailImpl(user);
-        documento = documentoDAO.save(documento);
-        taskDAO.save(task);
-        this.mockMvc.perform(get("/task/{idTask}/attachment", task.getId())
-                .with(csrf())
-                .with(user(userDetails)))
-                .andExpect(status().is(200))
-                .andExpect(header().exists("Content-Disposition"));
 
-    }*/
 }

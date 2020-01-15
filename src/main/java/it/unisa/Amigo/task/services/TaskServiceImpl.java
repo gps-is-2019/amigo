@@ -230,7 +230,7 @@ public class TaskServiceImpl implements TaskService {
     /**
      * Ottiene il documento allegato al task
      *
-     * @param task dal quale prelevare il documento
+     * @param t dal quale prelevare il documento
      * @return file sotto forma di resource
      */
     @Override
