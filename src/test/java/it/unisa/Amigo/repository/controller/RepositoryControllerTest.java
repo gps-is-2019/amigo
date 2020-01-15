@@ -87,7 +87,7 @@ public class RepositoryControllerTest {
         User user2 = new User("admin1", "admin1");
 
         return Stream.of(
-                Arguments.of(user1, 200,"repository/aggiunta_documento_repository"),
+                Arguments.of(user1, 200,"repository/aggiunta_documento_repository")
                // Arguments.of(user2, 403,"403")
         );
     }
