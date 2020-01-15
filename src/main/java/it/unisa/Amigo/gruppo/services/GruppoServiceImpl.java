@@ -297,6 +297,12 @@ public class GruppoServiceImpl implements GruppoService {
         return result;
     }
 
+    /**
+     * Ritorna una lista di persone @{@link Persona} con un determinato ruolo
+     *
+     * @param ruolo delle persone che si stanno ricercando
+     * @return persone con ruolo richiesto
+     */
     @Override
     public List<Persona> findAllByRuolo(final String ruolo) {
         return personaDAO.findAllByUser_Roles_Name(ruolo.toUpperCase());

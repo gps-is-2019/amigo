@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Questa classe rappresenta l'oggetto di dominio "SuperGruppo"
+ * Questa classe rappresenta l'oggetto di dominio "Supergruppo"
  */
 @Entity
 @Data
