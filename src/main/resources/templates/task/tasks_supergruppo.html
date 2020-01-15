@@ -60,7 +60,7 @@
                 <td th:text="${documento.getTask().getNome()}"></td>
                 <td>
                     <a class="ui teal button"
-                       th:href="@{'/documento/{idDocumento}' ( idDocumento=${documento.getId()})}">Download</a>
+                       th:href="@{'/task/{idTask}/attachment' ( idTask=${documento.task.getId()})}">Download</a>
                 </td>
                 <td>
                     <a class="ui teal button"
