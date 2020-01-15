@@ -1,4 +1,4 @@
-package it.unisa.Amigo.documento.service;
+package it.unisa.Amigo.documento.services;
 
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;

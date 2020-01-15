@@ -1,9 +1,8 @@
-package it.unisa.Amigo.documento.service;
+package it.unisa.Amigo.documento.services;
 
 import it.unisa.Amigo.documento.domain.Documento;
 import org.springframework.core.io.Resource;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
 public interface DocumentoService {
