@@ -3,10 +3,8 @@ package it.unisa.Amigo.consegna.controller;
 import it.unisa.Amigo.autenticazione.domain.Role;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.consegna.services.ConsegnaService;
-import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoService;
+import it.unisa.Amigo.documento.exceptions.StorageFileNotFoundException;
 import it.unisa.Amigo.gruppo.domain.Persona;
-import it.unisa.Amigo.gruppo.services.GruppoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,11 +31,9 @@ import java.util.Set;
 @Controller
 @RequiredArgsConstructor
 public class ConsegnaController {
+    public static final int MAX_FILE_SIZE = 10485760;
     private final ConsegnaService consegnaService;
 
-    private final GruppoService gruppoService;
-
-    private final DocumentoService documentoService;
 
     /**
      * Mostra una pagina contenente tutti i possibili destinatari della consegna.
@@ -45,31 +43,27 @@ public class ConsegnaController {
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping({"/consegna/{ruolo}", "/consegna"})
-    public String viewConsegna(final Model model, @PathVariable(name = "ruolo", required = false) String ruoloDest) {
+    public String viewConsegna(final Model model, @PathVariable(name = "ruolo", required = false) final String ruoloDest) {
         Set<String> possibiliDestinatari = consegnaService.possibiliDestinatari();
-
-        if (ruoloDest == null) {
-            ruoloDest = "";
+        String ruolo = ruoloDest;
+        if (ruolo == null) {
+            ruolo = "";
         }
-
-        if (possibiliDestinatari.size() == 1 && ruoloDest.equals("")) {
-            ruoloDest = possibiliDestinatari.iterator().next();
+        if (possibiliDestinatari.size() == 1 && ruolo.equals("")) {
+            ruolo = possibiliDestinatari.iterator().next();
         }
-
         List<Persona> destinatari = new ArrayList<>();
         boolean flagRuolo = false;
-        if (ruoloDest.equalsIgnoreCase(Role.PQA_ROLE) || ruoloDest.equalsIgnoreCase(Role.NDV_ROLE)) {
-            destinatari.add(new Persona("", ruoloDest, ""));
+        if (ruolo.equalsIgnoreCase(Role.PQA_ROLE) || ruolo.equalsIgnoreCase(Role.NDV_ROLE)) {
+            destinatari.add(new Persona("", ruolo, ""));
             flagRuolo = true;
-        } else if (possibiliDestinatari.contains(ruoloDest)) {
-            destinatari = gruppoService.findAllByRuolo(ruoloDest);
+        } else if (possibiliDestinatari.contains(ruolo)) {
+            destinatari = consegnaService.getDestinatariByRoleString(ruolo);
         }
-
         model.addAttribute("possibiliDestinatari", possibiliDestinatari);
         model.addAttribute("destinatari", destinatari);
-        model.addAttribute("ruoloDest", ruoloDest);
+        model.addAttribute("ruoloDest", ruolo);
         model.addAttribute("flagRuolo", flagRuolo);
-
         return "consegna/destinatari";
     }
 
@@ -83,8 +77,21 @@ public class ConsegnaController {
      */
     @PostMapping("/consegna")
     public String sendDocumento(final Model model, @RequestParam final MultipartFile file, @RequestParam final String destinatariPost) {
+
+        String fileExtentions = ".pdf,.txt,.zip,.rar";
+        String fileName = file.getOriginalFilename();
+        int lastIndex = fileName.lastIndexOf('.');
+        String substring = fileName.substring(lastIndex);
+        if (file.getSize() >= MAX_FILE_SIZE || !fileExtentions.contains(substring)) {
+            return "/unauthorized";
+        }
+
         if (!Character.isDigit(destinatariPost.charAt(0))) {
-            consegnaService.sendDocumento(null, destinatariPost, file);
+            try {
+                consegnaService.sendDocumento(null, destinatariPost, file.getOriginalFilename(), file.getBytes(), file.getContentType());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             String[] destinatariString = destinatariPost.split(",");
             int[] destinatariInt = new int[destinatariString.length];
@@ -93,7 +100,11 @@ public class ConsegnaController {
             for (String p : destinatariString) {
                 destinatariInt[i++] = Integer.parseInt(p);
             }
-            consegnaService.sendDocumento(destinatariInt, "", file);
+            try {
+                consegnaService.sendDocumento(destinatariInt, "", file.getOriginalFilename(), file.getBytes(), file.getContentType());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return "redirect:/consegna/inviati?name=";
     }
@@ -147,46 +158,23 @@ public class ConsegnaController {
     /**
      * Esegue il downlaod del file allegato ad un documento.
      *
-     * @param model       per salvare informazioni da recuperare nell'html
      * @param idDocumento l'id del documento
      * @return il path della pagina su cui eseguire il redirect
      */
     @GetMapping("/consegna/miei-documenti/{idDocumento}")
-    public ResponseEntity<Resource> downloadDocumento(final Model model, @PathVariable("idDocumento") final int idDocumento) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        Consegna consegna = consegnaService.findConsegnaByDocumentoAndDestinatario(idDocumento, personaLoggata.getId());
-
-        if (consegna == null) {
-            consegna = consegnaService.findConsegnaByDocumento(idDocumento);
-        }
-        Set<Role> role = personaLoggata.getUser().getRoles();
-        List<String> ruoliString = new ArrayList<>();
-
-        for (Role r : role) {
-            ruoliString.add(r.getName());
-        }
-        boolean downloadConsentito = false;
-
-        if (consegna.getMittente().getId() == personaLoggata.getId()) {
-            downloadConsentito = true;
-        } else if (consegna.getLocazione().equals(Consegna.USER_LOCAZIONE)) {
-            if (consegna.getDestinatario().getId() == personaLoggata.getId()) {
-                downloadConsentito = true;
-            }
-        } else {
-            if ((consegna.getLocazione().equalsIgnoreCase(Consegna.PQA_LOCAZIONE) && (ruoliString.contains(Role.PQA_ROLE))) || (consegna.getLocazione().equalsIgnoreCase(Consegna.NDV_LOCAZIONE) && (ruoliString.contains(Role.NDV_ROLE)))) {
-                downloadConsentito = true;
-            }
-        }
-
+    public ResponseEntity<Resource> downloadDocumento(@PathVariable("idDocumento") final int idDocumento) {
+        Consegna consegna = consegnaService.findConsegnaByDocumento(idDocumento);
+        boolean downloadConsentito = consegnaService.currentPersonaCanOpen(consegna);
         if (downloadConsentito) {
-            Documento documento = documentoService.findDocumentoById(idDocumento);
-            Resource resource = documentoService.loadAsResource(documento);
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(documento.getFormat()))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
-                    .body(resource);
+            try {
+                Resource resource = consegnaService.getResourceFromDocumentoWithId(idDocumento);
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(consegna.getDocumento().getFormat()))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + consegna.getDocumento().getNome() + "\"")
+                        .body(resource);
+            } catch (MalformedURLException | StorageFileNotFoundException e) {
+                return (ResponseEntity<Resource>) ResponseEntity.notFound();
+            }
         } else {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");

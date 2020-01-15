@@ -1,8 +1,7 @@
-package it.unisa.Amigo.documento.service;
+package it.unisa.Amigo.documento.services;
 
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.exceptions.StorageException;
 import it.unisa.Amigo.documento.exceptions.StorageFileNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -10,66 +9,56 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Questa classe implementa i metodi  per la logica di Business del sottosistema "Documento"
+ * Questa classe implementa i metodi  per la logica di business del sottosistema "Documento"
  */
 @Service
 @RequiredArgsConstructor
 public class DocumentoServiceImpl implements DocumentoService {
 
-    private static final String BASE_PATH = "src/main/resources/documents/";
+    private static String BASE_PATH = "src/main/resources/documents/";
 
     private final DocumentoDAO documentoDAO;
 
-    private String storeFile(final MultipartFile file, final int idDoc) {
-        String filename = file.getOriginalFilename();
+    private String storeFile(final byte[] bytes, final String fileName) {
+        String first = BASE_PATH + System.currentTimeMillis() + "-" + fileName;
+        Path path = Paths.get(first);
         try {
-            if (file.isEmpty()) {
-                throw new StorageException("Failed to store empty file " + filename);
-            }
-            if (filename.contains("..")) {
-                throw new StorageException(
-                        "Cannot store file with relative path outside current directory "
-                                + filename);
-            }
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, Paths.get(BASE_PATH).resolve(idDoc + ""), StandardCopyOption.REPLACE_EXISTING);
-            }
+            Files.write(path, bytes);
         } catch (IOException e) {
-            throw new StorageException("Failed to store file " + filename, e);
+            e.printStackTrace();
         }
-        return BASE_PATH + idDoc;
+        return first;
     }
 
     /**
      * Esegue il salvataggio di un file su file system, crea un documento @{@link Documento} e lo salva all'interno del database.
      *
-     * @param file da salvare su file system.
+     * @param fileName nome del file da salvare
+     * @param bytes    file da salvare
+     * @param mimeType formato del file da salvare
      * @return il documento salvato nel database contenente la path del file salvato.
      */
     @Override
     @Transactional
-    public Documento addDocumento(final MultipartFile file) {
+    public Documento addDocumento(final String fileName, final byte[] bytes, final String mimeType) {
         Documento doc = new Documento();
         doc.setDataInvio(LocalDate.now());
-        doc.setNome(file.getOriginalFilename());
+        doc.setNome(fileName);
         doc.setInRepository(false);
-        doc.setFormat(file.getContentType());
-        doc = documentoDAO.save(doc);
-        String path = storeFile(file, doc.getId());
+        doc.setFormat(mimeType);
+        String path = storeFile(bytes, fileName);
         doc.setPath(path);
         return updateDocumento(doc);
     }
@@ -104,11 +93,16 @@ public class DocumentoServiceImpl implements DocumentoService {
         }
     }
 
+    /**
+     * Recupera la lista dei documenti approvati all'interno del supergruppo passato come parametro
+     *
+     * @param idSupergruppo id del supergruppo dal quale prelevare i documenti
+     * @return listq dei documenti approvati
+     */
     @Override
     public List<Documento> approvedDocuments(final int idSupergruppo) {
         return documentoDAO.findAllByTask_Supergruppo_IdAndTask_Stato(idSupergruppo, "approvato");
     }
-
 
     /**
      * Ritorna il documento @{@link Documento} con id passato come parametro ricercandolo all'interno del database.
@@ -123,16 +117,17 @@ public class DocumentoServiceImpl implements DocumentoService {
     }
 
     /**
-     * Ritorna una lista di documenti dato un documento di confronto.
-     *TODO
-     * @return lista di documenti contenenti la stringa ricercata.
+     * Ritorna una lista di documenti dato un documento di confronto
+     *
+     * @param example documento da utilizzare come criterio di ricerca
+     * @return lista di documenti che matchano la ricerca
      */
     @Override
     public List<Documento> searchDocumenti(final Documento example) {
         List<Documento> result = new ArrayList<>();
         ExampleMatcher matcher = ExampleMatcher.matchingAll().withMatcher("nome", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
         Iterable<Documento> iterable = documentoDAO.findAll(Example.of(example, matcher));
-        for (Documento documento: iterable) {
+        for (Documento documento : iterable) {
             result.add(documento);
         }
         return result;

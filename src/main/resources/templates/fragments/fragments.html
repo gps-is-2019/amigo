@@ -8,12 +8,13 @@
     <script th:src="@{/webjars/jquery/jquery.js}"></script>
     <script th:src="@{/webjars/Semantic-UI/semantic.js}"></script>
     <script th:src="@{/index.js}"></script>
+    <script th:src="@{/navbar.js}"></script>
 </head>
 <body>
 
-<div class="ui inverted segment stackable"  th:fragment="header">
+<div class="ui inverted segment" th:fragment="header">
     <div class="ui inverted secondary pointing menu">
-        <a class="active item" href="/dashboard">
+        <a class="item" href="/dashboard">
             Home
         </a>
         <a class="item" href="/gruppi">
@@ -39,8 +40,6 @@
         </div>
     </div>
 </div>
-
-
 
 </body>
 </html>

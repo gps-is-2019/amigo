@@ -1,8 +1,7 @@
 package it.unisa.Amigo.repository.services;
 
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoService;
-import org.junit.jupiter.api.Test;
+import it.unisa.Amigo.documento.services.DocumentoService;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,9 +10,6 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
@@ -36,29 +32,27 @@ class RepositoryServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideAddDocumentoInRepository")
-    void addDocumentoInRepository(final MultipartFile file) {
+    void addDocumentoInRepository(String fileName, final byte[] bytes, final String mimeTypee) {
         Documento expectedDocumento = new Documento();
-        when(documentoService.addDocumento(file)).thenReturn(expectedDocumento);
+        when(documentoService.addDocumento(fileName, bytes, mimeTypee)).thenReturn(expectedDocumento);
         expectedDocumento.setInRepository(true);
         when(documentoService.updateDocumento(expectedDocumento)).thenReturn(expectedDocumento);
-        boolean expectedValue = repositoryService.addDocumentoInRepository(file);
-        assertEquals(true, expectedValue);
+        boolean actualValue = repositoryService.addDocumentoInRepository(fileName, bytes, mimeTypee);
+        assertEquals(true, actualValue);
     }
 
     private static Stream<Arguments> provideAddDocumentoInRepository() {
-        MultipartFile file1 = new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE, "Hello World".getBytes());
-        MultipartFile file2 = new MockMultipartFile("testtestetst", "file.txt", MediaType.TEXT_PLAIN_VALUE, "ciao mondo ciao mondo".getBytes());
+
         return Stream.of(
-                Arguments.of(file1),
-                Arguments.of(file2)
+                Arguments.of("test.txt", "ciao mondo".getBytes(), "text/plain")
         );
     }
 
     @ParameterizedTest
     @MethodSource("provideDownloadDocumento")
-    void downloadDocumento(final Documento expectedDocumento, final Resource expectedResource) {
+    void getDocumentoAsResource(final Documento expectedDocumento, final Resource expectedResource) {
         when(documentoService.loadAsResource(expectedDocumento)).thenReturn(expectedResource);
-        Resource actualResource = repositoryService.downloadDocumento(expectedDocumento);
+        Resource actualResource = repositoryService.getDocumentoAsResource(expectedDocumento);
         assertEquals(actualResource, expectedResource);
     }
 
@@ -75,40 +69,35 @@ class RepositoryServiceImplTest {
         );
     }
 
-    @Test
-    void findDocumento() {
-        Documento expectedDocumento = new Documento();
-        when(documentoService.findDocumentoById(0)).thenReturn(expectedDocumento);
-        Documento actualDocumento = repositoryService.findDocumentoById(0);
+    @ParameterizedTest
+    @MethodSource("provideFindDocumento")
+    void findDocumento(Documento documento, Documento expectedDocumento) {
+        List<Documento> documenti = new ArrayList<>();
+        documenti.add(documento);
+        when(documentoService.searchDocumenti(documento)).thenReturn(documenti);
+        Documento actualDocumento = repositoryService.findDocumentoById(documento.getId());
         assertEquals(actualDocumento, expectedDocumento);
     }
 
-    /*
-        @SneakyThrows
-        @Test
-        void downloadDocumento() {
-            Documento documento = new Documento();
-            when(documentoService.findDocumento(0)).thenReturn(documento);
-            Resource resource = new ClassPathResource("");
-            when(documentoService.loadAsResource(documento)).thenReturn(resource);
-            ResponseEntity<Resource> expectedValue = new ResponseEntity<Resource>(HttpStatus.MULTI_STATUS);
-            when(responseEntity.ok().
-                    contentType(MediaType.parseMediaType(documento.getFormat())).
-                    header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"").
-                    body(resource)).
-                    thenReturn(expectedValue);
+    private static Stream<Arguments> provideFindDocumento() {
+        Documento documento1 = new Documento();
+        Documento documento2 = new Documento();
+        documento1.setId(1);
+        documento1.setInRepository(true);
+        documento2.setId(2);
+        documento2.setInRepository(false);
+        return Stream.of(
+                Arguments.of(documento1, documento1),
+                Arguments.of(documento2, null)
+        );
+    }
 
-            ResponseEntity<Resource> actualValue = repositoryService.downloadDocumento(0);
-            assertEquals(actualValue,expectedValue);
-
-        }
-    */
     @ParameterizedTest
     @MethodSource("provideSerarchDcoumentInRepository")
-    void serarchDcoumentInRepository(final Documento documentoExample) {
+    void serarchDcoumentInRepository(final Documento documentoExample, final String nameDocumento) {
         List<Documento> expectedDocumenti = new ArrayList<>();
         when(documentoService.searchDocumenti(documentoExample)).thenReturn(expectedDocumenti);
-        List<Documento> actualDocumenti = repositoryService.searchDocumentInRepository("test");
+        List<Documento> actualDocumenti = repositoryService.searchDocumentInRepository(nameDocumento);
         assertEquals(actualDocumenti, expectedDocumenti);
     }
 
@@ -122,9 +111,11 @@ class RepositoryServiceImplTest {
         Documento documento2 = new Documento();
         documento2.setInRepository(true);
         documento2.setNome(nome2);
+
+
         return Stream.of(
                 Arguments.of(documento1, nome1),
-                Arguments.of(documento2, nome2)
+                Arguments.of(documento2, null)
         );
     }
 }

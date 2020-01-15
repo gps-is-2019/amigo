@@ -1,11 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/fragments.html :: head">
+    <title id="pageTitle">Error 500</title>
 </head>
 <body>
-500
-500
+<div class="ui grid middle aligned segment blue inverted" style="height: 100%; margin: 0;">
+    <div class="ui column center aligned">
+        <div class="ui inverted statistic">
+            <div class="value">500</div>
+            <div class="label">Error</div>
+        </div>
+
+        <div class="ui message red inverted">
+            <div class="header">Description</div>
+            <p>Internal server error</p>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

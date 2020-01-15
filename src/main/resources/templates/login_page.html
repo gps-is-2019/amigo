@@ -1,197 +1,46 @@
-<!--<!DOCTYPE html>-->
-
-<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--    <head th:include="/fragments/fragments.html :: head">-->
-<!--        <title id="pageTitle">Amigo|Login</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--    <form-->
-<!--            class="ui form text container"-->
-<!--            method="post"-->
-<!--            th:action="@{/authentication}"-->
-<!--            th:object="${authenticationForm}"-->
-<!--    >-->
-<!--    &lt;!&ndash;        th:action="@{'/gruppi/{idSupergruppo}/tasks/creazioneTask'( idSupergruppo=${idSupergruppo})}"&ndash;&gt;-->
-<!--    &lt;!&ndash;        th:object="${taskForm}"&ndash;&gt;-->
-<!--        <input type="email" placeholder="email">-->
-<!--        <input type="password" placeholder="password">-->
-<!--        <input type="submit">-->
-<!--    </form>-->
-
-<!--</body>-->
-<!--</html>-->
-
-
-
-
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
-    <head th:include="/fragments/fragments.html :: head">
-    <title id="pageTitle">Amigo|Login</title>
-</head>
-<!--<body>-->
-<!--<div th:fragment="content">-->
-<!--    <form name="f" th:action="@{/login}" method="post">-->
-<!--        <fieldset>-->
-<!--            <legend>Please Login</legend>-->
-<!--            <div th:if="${param.error}" class="alert alert-error">-->
-<!--                Invalid username and password.-->
-<!--            </div>-->
-<!--            <div th:if="${param.logout}" class="alert alert-success">-->
-<!--                You have been logged out.-->
-<!--            </div>-->
-<!--            <label for="username">Username</label>-->
-<!--&lt;!&ndash;            <input type="text" id="username" name="username"/>&ndash;&gt;-->
-<!--            <label for="password">Password</label>-->
-<!--&lt;!&ndash;            <input type="password" id="password" name="password"/>&ndash;&gt;-->
-<!--            <div class="form-actions">-->
-<!--                <button type="submit" class="btn">Log in</button>-->
-<!--            </div>-->
-<!--        </fieldset>-->
-<!--    </form>-->
-
-
-
+    <head th:include="fragments/fragments.html :: head">
+        <title id="pageTitle">Amigo|Login</title>
+    </head>
 
 
 <body>
-<div class="middle aligned content">
-
-
-        <h1 class="ui header" align="center">Login</h1>
-
-
+<div class="ui middle aligned center aligned grid text container">
+    <div class="column">
+        <h2 class="ui image teal header">
+            <img src="img/logo_amigo_trasparente.png" class="image" alt="amigo.png" style="height: 100px; width: 100px;">
+            <div class="content">
+                Log-in
+            </div>
+        </h2>
         <form name="f" th:action="@{/login}"
-          method="post"
-          class="ui form text container"
-    >
-        <div th:if="${param.error}" class="alert alert-error">
-            Invalid username and password.
+              method="post" class="ui large form">
+            <div class="ui stacked segment">
+                <div class="field">
+                    <div class="ui left icon input">
+                        <i class="user icon"></i>
+                        <input type="text" id="username" name="username" placeholder="E-mail address">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input type="password" id="password" name="password" placeholder="password">
+                    </div>
+                </div>
+                <button class="ui fluid large teal button" type="submit">Login</button>
+            </div>
+
+        </form>
+        <div th:if="${param.error}" class="ui error message">
+            Invalid username and password
         </div>
-        <div th:if="${param.logout}" class="alert alert-success">
+        <div th:if="${param.logout}" class="ui error message">
             You have been logged out.
         </div>
-
-        <div class="field">
-            <label>Email</label>
-
-            <div class="ui left icon input">
-                <input type="text" id="username" name="username" placeholder="em@il.com">
-                <i class="user icon"></i>
-            </div>
-
-        </div>
-
-        <div class="field">
-            <label>Password</label>
-
-            <div class="ui left icon input">
-                <input type="password" id="password" name="password" placeholder="password">
-                <i class="lock icon"></i>
-            </div>
-
-        </div>
-
-        <div class="field">
-            <div class="field , btn">
-                <button class="ui primary button" type="submit">Enter</button>
-            </div>
-        </div>
-
-
-    </form>
-
+    </div>
 </div>
-
-
-</div>
+<script type="text/javascript" th:src="@{/login.js}"></script>
 </body>
-
-
-
-
-
-<!--<body>-->
-
-
-<!--<div class="ui middle aligned center aligned grid">-->
-<!--    <div class="column">-->
-<!--        <h2 class="ui teal image header">-->
-<!--            <img src="assets/images/logo.png" class="image">-->
-<!--            <div class="content">-->
-<!--                Log-in to your account-->
-<!--            </div>-->
-<!--        </h2>-->
-<!--        <form class="ui large form">-->
-<!--            <div class="ui stacked segment">-->
-<!--                <div class="field">-->
-<!--                    <div class="ui left icon input">-->
-<!--                        <i class="user icon"></i>-->
-<!--                        <input type="text" name="email" placeholder="E-mail address">-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="field">-->
-<!--                    <div class="ui left icon input">-->
-<!--                        <i class="lock icon"></i>-->
-<!--                        <input type="password" name="password" placeholder="Password">-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="ui fluid large teal submit button">Login</div>-->
-<!--            </div>-->
-
-<!--            <div class="ui error message"></div>-->
-
-<!--        </form>-->
-
-<!--    </div>-->
-<!--</div>-->
-
-<!--<script>-->
-<!--    $(document)-->
-<!--        .ready(function() {-->
-<!--            $('.ui.form')-->
-<!--                .form({-->
-<!--                    fields: {-->
-<!--                        email: {-->
-<!--                            identifier  : 'email',-->
-<!--                            rules: [-->
-<!--                                {-->
-<!--                                    type   : 'empty',-->
-<!--                                    prompt : 'Please enter your e-mail'-->
-<!--                                },-->
-<!--                                {-->
-<!--                                    type   : 'email',-->
-<!--                                    prompt : 'Please enter a valid e-mail'-->
-<!--                                }-->
-<!--                            ]-->
-<!--                        },-->
-<!--                        password: {-->
-<!--                            identifier  : 'password',-->
-<!--                            rules: [-->
-<!--                                {-->
-<!--                                    type   : 'empty',-->
-<!--                                    prompt : 'Please enter your password'-->
-<!--                                },-->
-<!--                                {-->
-<!--                                    type   : 'length[6]',-->
-<!--                                    prompt : 'Your password must be at least 6 characters'-->
-<!--                                }-->
-<!--                            ]-->
-<!--                        }-->
-<!--                    }-->
-<!--                })-->
-<!--            ;-->
-<!--        })-->
-<!--    ;-->
-<!--</script>-->
-
-</body>
-
-
-
-
-
-
-
 </html>

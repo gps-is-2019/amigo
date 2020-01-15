@@ -1,14 +1,12 @@
 package it.unisa.Amigo.gruppo.services;
 
-import it.unisa.Amigo.autenticazione.domain.Role;
+import it.unisa.Amigo.autenticazione.services.AuthService;
 import it.unisa.Amigo.gruppo.dao.ConsiglioDidatticoDAO;
 import it.unisa.Amigo.gruppo.dao.DipartimentoDAO;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -33,6 +31,8 @@ public class GruppoServiceImpl implements GruppoService {
 
     private final DipartimentoDAO dipartimentoDAO;
 
+    private final AuthService authService;
+
     /***
      * Ritorna la lista di persone @{@link Persona} presenti nel supergruppo @{@link Supergruppo}.
      *
@@ -41,8 +41,7 @@ public class GruppoServiceImpl implements GruppoService {
      */
     @Override
     public List<Persona> findAllMembriInSupergruppo(final Integer idSupergruppo) {
-        List<Persona> result = personaDAO.findBySupergruppi_id(idSupergruppo);
-        return result;
+        return personaDAO.findBySupergruppi_id(idSupergruppo);
     }
 
     /***
@@ -187,9 +186,8 @@ public class GruppoServiceImpl implements GruppoService {
      * @return persona
      */
     @Override
-    public Persona getAuthenticatedUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return personaDAO.findByUser_email(auth.getName());
+    public Persona getCurrentPersona() {
+        return authService.getCurrentUser().getPersona();
     }
 
     /**
@@ -201,9 +199,7 @@ public class GruppoServiceImpl implements GruppoService {
     @Override
     public List<Commissione> findAllCommissioniByGruppo(final Integer idGruppo) {
         Gruppo gruppo = (Gruppo) supergruppoDAO.findById(idGruppo).get();
-        List<Commissione> result = new ArrayList<>();
-        result.addAll(gruppo.getCommissioni());
-        return result;
+        return new ArrayList<>(gruppo.getCommissioni());
     }
 
     /**
@@ -292,18 +288,15 @@ public class GruppoServiceImpl implements GruppoService {
         return result;
     }
 
+    /**
+     * Ritorna una lista di persone @{@link Persona} con un determinato ruolo
+     *
+     * @param ruolo delle persone che si stanno ricercando
+     * @return persone con ruolo richiesto
+     */
     @Override
     public List<Persona> findAllByRuolo(final String ruolo) {
         return personaDAO.findAllByUser_Roles_Name(ruolo.toUpperCase());
     }
 
-    @Override
-    public List<String> findAllRoleOfPersona(final Integer idPersona) {
-        List<String> r = new ArrayList<>();
-        Set<Role> ruoli = personaDAO.findById(idPersona).get().getUser().getRoles();
-        for (Role ruolo : ruoli) {
-            r.add(ruolo.getName());
-        }
-        return r;
-    }
 }

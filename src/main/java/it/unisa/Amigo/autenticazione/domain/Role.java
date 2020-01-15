@@ -34,6 +34,7 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @EqualsAndHashCode.Exclude
     private Long id;
 
     @NonNull

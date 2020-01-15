@@ -2,13 +2,18 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/xhtml">
 <head>
 
-    <head th:include="/fragments/fragments.html :: head">
+    <head th:include="fragments/fragments.html :: head">
         <title id="pageTitle">Amigo|Modifica Task</title>
     </head>
 </head>
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
 <h1 class="ui header" align="center">Modifica <span th:text="${taskForm.nome}"></span>: </h1>
+
+<div class="ui message negative text container" th:if="${flagCreazione==false}">
+    <i class="close icon"></i>
+    <p>Non hai modificato correttamente il Task </p>
+</div>
 
 <form
         class="ui form text container"
@@ -58,7 +63,7 @@
         </th:block>
         </tbody>
     </table>
-    <button class="ui primary button" type="submit">Aggiorna Task</button>
+    <button class="ui teal button" type="submit">Aggiorna Task</button>
 </form>
 
 </table>

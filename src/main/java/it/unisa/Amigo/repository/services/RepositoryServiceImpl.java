@@ -1,11 +1,11 @@
 package it.unisa.Amigo.repository.services;
 
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoService;
+import it.unisa.Amigo.documento.services.DocumentoService;
+import it.unisa.Amigo.gruppo.services.GruppoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -19,55 +19,52 @@ import java.util.List;
 public class RepositoryServiceImpl implements RepositoryService {
 
     private final DocumentoService documentoService;
-    private static final int MIN_SIZE_FILE = 0;
-    private static final int MAX_SIZE_FILE = 10485760;
+    private final GruppoService gruppoService;
 
-    private boolean checkFile(final MultipartFile file) {
-        return file.getSize() != MIN_SIZE_FILE && file.getSize() <= MAX_SIZE_FILE;
-    }
     /**
      * Aggiunge un documento @{@link Documento} alla repository.
      *
-     * @param file da aggiungere alla repository.
+     * @param fileName da aggiungere alla repository.
+     * @param bytes array of byte of files
+     * @param mimeType mimeType of the file
      * @return true se il documento è stato aggiunto alla repository.
      */
     @Override
-    public boolean addDocumentoInRepository(final MultipartFile file) {
-       if (checkFile(file)) {
-            Documento documento = documentoService.addDocumento(file);
-            documento.setInRepository(true);
-            documentoService.updateDocumento(documento);
-            return true;
-       } else {
-           return false;
-       }
+    public boolean addDocumentoInRepository(final String fileName, final byte[] bytes, final String mimeType) {
+        Documento documento = documentoService.addDocumento(fileName, bytes, mimeType);
+        documento.setInRepository(true);
+        documentoService.updateDocumento(documento);
+        return true;
     }
 
     /**
      * Permette il download di un documento.
      *
-     * @param documento @{@Link Documento}da scaricare.
+     * @param documento @{@link Documento}da scaricare.
      * @return Resource del documento associato.
      */
     @Override
-    public Resource downloadDocumento(final Documento documento) {
+    public Resource getDocumentoAsResource(final Documento documento) {
         return documentoService.loadAsResource(documento);
-
     }
 
     /**
-     * Permette la ricerca di un documento @{@Link Documento}.
+     * Permette la ricerca di un documento @{@link Documento}.
      *
-     * @param idDocumento id del documento @{@Link Documento} da cercare.
+     * @param idDocumento id del documento @{@link Documento} da cercare.
      * @return Documento corrispondente all'id.
      */
     @Override
     public Documento findDocumentoById(final int idDocumento) {
-        return documentoService.findDocumentoById(idDocumento);
+        Documento example = new Documento();
+        example.setId(idDocumento);
+        example.setInRepository(true);
+        List<Documento> documenti = documentoService.searchDocumenti(example);
+        return documenti.size() > 0 ? documenti.get(0) : null;
     }
 
     /**
-     * Permette la ricerca di un documento @{@Link Documento} nella repository.
+     * Permette la ricerca di un documento @{@link Documento} nella repository.
      *
      * @param nameDocumento nome del documento da ricercare.
      * @return lista di documenti il cui nome contiene il nome passato come parametro.
@@ -80,7 +77,16 @@ public class RepositoryServiceImpl implements RepositoryService {
         if (nameDocumento != null) {
             documentoExample.setNome(nameDocumento);
         }
-        List<Documento> documenti = documentoService.searchDocumenti(documentoExample);
-        return documenti;
+        return documentoService.searchDocumenti(documentoExample);
+    }
+
+    /**
+     * Permette di controllare se l'utente loggato è il responsabile del PQA
+     *
+     * @return true se è il responsabile del PQA altrimenti false
+     */
+    @Override
+    public boolean isPQA() {
+        return gruppoService.findAllByRuolo("PQA").contains(gruppoService.getCurrentPersona());
     }
 }

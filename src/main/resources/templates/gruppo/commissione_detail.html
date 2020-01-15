@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:include="/fragments/fragments.html :: head">
+<head th:include="fragments/fragments.html :: head">
     <title id="pageTitle">Amigo|Commissioni</title>
 </head>
 <body>
 <div th:insert="fragments/fragments.html :: header"></div>
 <h1 align="center" class="ui header">Membri del <span th:text="${supergruppo.name}"></span></h1>
 <div class="ui main text container">
-    <table class="ui celled table">
+    <table class="ui teal table">
         <thead>
         <tr class="center aligned">
             <th>Cognome</th>
@@ -24,15 +24,15 @@
                 <td th:text="${persona.nome}"></td>
                 <td th:text="${persona.user.getEmail()}"></td>
                 <td th:if="${isResponsabile==true && supergruppo.state == true}"><a
-                        class="ui primary button"
+                        class="ui teal button"
                         th:href="@{'/gruppi/{id2}/remove/{id1}'( id1=${persona.id},id2=${supergruppo.id})}"
                         th:if="${isResponsabile==true and supergruppo.responsabile.getId()!=persona.id}">
                     Rimuovi
                 </a></td>
-                <td th:if="${supergruppo.state == true}">
-                    <a class="ui primary button"
+                <td th:if="${isCapogruppo==true && supergruppo.state == true}">
+                    <a class="ui teal button"
                        th:href="@{'/gruppi/commissioni/{idCommissione}/nominaResponsabile/{idPersona}'(idCommissione=${supergruppo.id},idPersona=${persona.id})}"
-                       th:if="${isCapogruppo==true && supergruppo.state == true && supergruppo.responsabile.getId()!=persona.id}">
+                       th:if="${supergruppo.responsabile.getId()!=persona.id}">
                         Nomina responsabile
                     </a>
                 </td>
@@ -40,15 +40,21 @@
         </th:block>
         </tbody>
     </table>
-    <a class="ui primary button"
-       th:href="@{'/gruppi/commissioni/{id2}/candidati'( id2=${supergruppo.id})}" th:if="${isResponsabile==true && supergruppo.state == true}">
+    <a class="ui teal button"
+       th:href="@{'/gruppi/commissioni/{id2}/candidati'( id2=${supergruppo.id})}"
+       th:if="${isResponsabile==true && supergruppo.state == true}">
+        <i class="icon user"></i>
         Aggiungi
     </a>
 
-    <a class="ui primary button"
+    <a class="ui teal button" th:if="${supergruppo.state == true && (isResponsabile==true)}"
+       th:href="@{'/gruppi/{idSupergruppo}/tasks/create'( idSupergruppo=${supergruppo.id} ) }">Assegna nuovo
+        task a commissione</a>
+    <a class=" negative ui  button"
        th:href="@{'/gruppi/commissioni/{id2}/chiusura'( id2=${supergruppo.id})}" th:if="${isCapogruppo==true && supergruppo.state == true}">
         Chiudi commissione
     </a>
+
     <div class="ui message success" th:if="${flagRimozione==1}">
         <i class="close icon"></i>
         <p>Hai rimosso correttamente <span th:text="${personaRimossa.nome}"></span> <span

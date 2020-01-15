@@ -17,10 +17,6 @@ public class UserDetailImpl implements UserDetails {
     @NonNull
     private User user;
 
-    /**
-     *
-     * @return
-     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
@@ -42,10 +38,6 @@ public class UserDetailImpl implements UserDetails {
         return this.user.getEmail();
     }
 
-    /**
-     *
-     * @return
-     */
     @Override
     public boolean isAccountNonExpired() {
         return true;

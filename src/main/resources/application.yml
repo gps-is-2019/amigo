@@ -10,5 +10,3 @@ spring:
       max-request-size: 50MB
   profiles:
       active: "dev"
-  main:
-    banner-mode: "off"

@@ -5,4 +5,4 @@ spring:
     username: j29btd1pilr4qbei
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop

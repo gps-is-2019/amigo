@@ -21,30 +21,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-
     private final UserDetailsService userDetailsService;
 
-    /**
-     * @param auth
-     * @throws Exception
-     */
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
 
     }
 
-    /**
-     * @return
-     */
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * @return
-     */
     @Bean
     DaoAuthenticationProvider authenticationProvider() {
 
@@ -63,10 +52,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .antMatchers("/dashboard/**").authenticated()
                 .antMatchers("/repository/uploadDocumento").hasRole(Role.PQA_ROLE)
-                .antMatchers("/gruppi/?/tasks/create").hasRole(Role.CAPOGRUPPO_ROLE)
                 .antMatchers("/gruppi/**").authenticated()
                 .antMatchers("taskPersonali/**").authenticated()
-//                .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")

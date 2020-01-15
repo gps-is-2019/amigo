@@ -9,6 +9,7 @@ import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.*;
 import it.unisa.Amigo.gruppo.services.GruppoService;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,7 +18,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -28,6 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class GruppoControllerIT {
+
+
     @Autowired
     private GruppoService gruppoService;
 
@@ -58,30 +63,26 @@ public class GruppoControllerIT {
     @MethodSource("provideFindAllMembriInSupergruppi")
     public void findAllMembriInSupergruppo(final User userArg, final Persona personaArg, final Gruppo gruppo, final ConsiglioDidattico consiglioDidattico) throws Exception {
 
-        User user = userArg;
-        UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = personaArg;
-        expectedPersona.setUser(user);
-        Gruppo expectedGruppo = gruppo;
-        ConsiglioDidattico expectedConsiglioDidattico = consiglioDidattico;
-        expectedGruppo.addPersona(expectedPersona);
-        expectedGruppo.setResponsabile(expectedPersona);
+        UserDetailImpl userDetails = new UserDetailImpl(userArg);
+        personaArg.setUser(userArg);
+        userArg.setPersona(personaArg);
+        gruppo.addPersona(personaArg);
+        gruppo.setResponsabile(personaArg);
+        gruppo.setConsiglio(consiglioDidattico);
+        consiglioDidattico.addPersona(personaArg);
         List<Persona> expectedPersone = new ArrayList<>();
-        expectedPersone.add(expectedPersona);
-
-        personaDAO.save(expectedPersona);
-        userDAO.save(user);
-
-        consiglioDidatticoDAO.save(expectedConsiglioDidattico);
-        supergruppoDAO.save(expectedGruppo);
-
-        this.mockMvc.perform(get("/gruppi/{id}", expectedGruppo.getId())
+        expectedPersone.add(personaArg);
+        personaDAO.save(personaArg);
+        userDAO.save(userArg);
+        supergruppoDAO.save(gruppo);
+        consiglioDidatticoDAO.save(consiglioDidattico);
+        this.mockMvc.perform(get("/gruppi/{id}", gruppo.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
+                .andExpect(model().attribute("personaLoggata", personaArg.getId()))
                 .andExpect(model().attribute("persone", expectedPersone))
-                .andExpect(model().attribute("supergruppo", expectedGruppo))
-                .andExpect(model().attribute("isCapogruppo", gruppoService.isResponsabile(expectedPersona.getId(), expectedGruppo.getId())))
+                .andExpect(model().attribute("supergruppo", gruppo))
+                .andExpect(model().attribute("isCapogruppo", gruppoService.isResponsabile(personaArg.getId(), gruppo.getId())))
                 .andExpect(view().name("gruppo/gruppo_detail"));
     }
 
@@ -107,29 +108,23 @@ public class GruppoControllerIT {
     @MethodSource("provideAllSupergruppi")
     public void findAllSupergruppi(final User userArg, final Persona personaArg, final Gruppo gruppo1, final Gruppo gruppo2) throws Exception {
 
-        User user = userArg;
-        UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = personaArg;
-        expectedPersona.setUser(user);
-        Gruppo expectedSupergruppo1 = gruppo1;
-        Gruppo expectedSupergruppo2 = gruppo2;
-        Set<Gruppo> expectedSupergruppi = new HashSet<>();
-        expectedSupergruppi.add(expectedSupergruppo2);
-        expectedSupergruppi.add(expectedSupergruppo1);
-        expectedPersona.addSupergruppo(expectedSupergruppo2);
-        expectedPersona.addSupergruppo(expectedSupergruppo1);
+        UserDetailImpl userDetails = new UserDetailImpl(userArg);
+        userArg.setPersona(personaArg);
+        personaArg.setUser(userArg);
+        personaArg.addSupergruppo(gruppo2);
+        personaArg.addSupergruppo(gruppo1);
 
-        supergruppoDAO.save(expectedSupergruppo1);
-        supergruppoDAO.save(expectedSupergruppo2);
-        personaDAO.save(expectedPersona);
-        userDAO.save(user);
+        supergruppoDAO.save(gruppo1);
+        supergruppoDAO.save(gruppo2);
+        personaDAO.save(personaArg);
+        userDAO.save(userArg);
 
 
         this.mockMvc.perform(get("/gruppi")
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
-                .andExpect(model().attribute("supergruppi", Arrays.asList(expectedSupergruppo1, expectedSupergruppo2)))
+                .andExpect(model().attribute("personaLoggata", personaArg.getId()))
+                .andExpect(model().attribute("supergruppi", Arrays.asList(gruppo1, gruppo2)))
                 .andExpect(view().name("gruppo/miei_gruppi"));
     }
 
@@ -158,24 +153,24 @@ public class GruppoControllerIT {
 
         UserDetailImpl userDetails1 = new UserDetailImpl(user1);
 
-        Persona expectedPersona1 = persona1;
-        Persona expectedPersona2 = persona2;
-        expectedPersona1.setUser(user1);
-        expectedPersona2.setUser(user2);
+        persona1.setUser(user1);
+        persona2.setUser(user2);
+        user1.setPersona(persona1);
+        user2.setPersona(persona2);
 
         List<Persona> expectedPersone = new ArrayList<>();
-        expectedPersone.add(expectedPersona1);
+        expectedPersone.add(persona1);
 
         ConsiglioDidattico expectedConsiglioDidattico = new ConsiglioDidattico("Informatica");
-        expectedConsiglioDidattico.addPersona(expectedPersona1);
-        expectedConsiglioDidattico.addPersona(expectedPersona2);
+        expectedConsiglioDidattico.addPersona(persona1);
+        expectedConsiglioDidattico.addPersona(persona2);
 
         Supergruppo expectedSupergruppo = new Supergruppo("GAQR - Informatica", "Supergruppo", true);
-        expectedSupergruppo.addPersona(expectedPersona2);
+        expectedSupergruppo.addPersona(persona2);
         expectedSupergruppo.setConsiglio(expectedConsiglioDidattico);
 
-        personaDAO.save(expectedPersona1);
-        personaDAO.save(expectedPersona2);
+        personaDAO.save(persona1);
+        personaDAO.save(persona2);
         userDAO.save(user1);
         userDAO.save(user2);
         consiglioDidatticoDAO.save(expectedConsiglioDidattico);
@@ -184,7 +179,7 @@ public class GruppoControllerIT {
         this.mockMvc.perform(get("/gruppi/{idSupergruppo}/candidati", expectedSupergruppo.getId())
                 .with(user(userDetails1)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("personaLoggata", expectedPersona1.getId()))
+                .andExpect(model().attribute("personaLoggata", persona1.getId()))
                 .andExpect(model().attribute("supergruppo", expectedSupergruppo))
                 .andExpect(model().attribute("persone", expectedPersone))
                 .andExpect(view().name("gruppo/aggiunta_membro"));
@@ -212,22 +207,20 @@ public class GruppoControllerIT {
     public void addMembroCommissione(final User user, final Persona persona, final Commissione commissione, final Gruppo gruppo) throws Exception {
 
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = persona;
-        expectedPersona.setUser(user);
+        persona.setUser(user);
+        user.setPersona(persona);
 
-        Commissione expectedCommissione = commissione;
-        Gruppo expectedGruppo = gruppo;
-        expectedGruppo.addPersona(expectedPersona);
-        expectedCommissione.addPersona(expectedPersona);
-        expectedCommissione.setResponsabile(persona);
-        expectedGruppo.addCommissione(expectedCommissione);
+        gruppo.addPersona(persona);
+        commissione.addPersona(persona);
+        commissione.setResponsabile(persona);
+        gruppo.addCommissione(commissione);
 
-        personaDAO.save(expectedPersona);
+        personaDAO.save(persona);
         userDAO.save(user);
-        supergruppoDAO.save(expectedGruppo);
-        supergruppoDAO.save(expectedCommissione);
+        supergruppoDAO.save(gruppo);
+        supergruppoDAO.save(commissione);
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", expectedCommissione.getId(), expectedPersona.getId())
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", commissione.getId(), persona.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("gruppo/aggiunta_membro_commissione"));
@@ -259,27 +252,25 @@ public class GruppoControllerIT {
     public void addMembroGruppo(final User user, final Persona persona, final Commissione commissione, final Gruppo gruppo) throws Exception {
 
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = persona;
-        expectedPersona.setUser(user);
+        persona.setUser(user);
+        user.setPersona(persona);
 
         ConsiglioDidattico expectedConsiglioDidattico = new ConsiglioDidattico("Informatica");
-        expectedConsiglioDidattico.addPersona(expectedPersona);
+        expectedConsiglioDidattico.addPersona(persona);
 
-        Commissione expectedCommissione = commissione;
-        Gruppo expectedGruppo = gruppo;
-        expectedGruppo.setConsiglio(expectedConsiglioDidattico);
-        expectedGruppo.addPersona(expectedPersona);
-        expectedGruppo.setResponsabile(expectedPersona);
-        expectedCommissione.addPersona(expectedPersona);
-        expectedGruppo.addCommissione(expectedCommissione);
+        gruppo.setConsiglio(expectedConsiglioDidattico);
+        gruppo.addPersona(persona);
+        gruppo.setResponsabile(persona);
+        commissione.addPersona(persona);
+        gruppo.addCommissione(commissione);
 
-        personaDAO.save(expectedPersona);
+        personaDAO.save(persona);
         userDAO.save(user);
-        supergruppoDAO.save(expectedGruppo);
-        supergruppoDAO.save(expectedCommissione);
+        supergruppoDAO.save(gruppo);
+        supergruppoDAO.save(commissione);
 
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", expectedGruppo.getId(), expectedPersona.getId())
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", gruppo.getId(), persona.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("gruppo/aggiunta_membro"));
@@ -311,24 +302,22 @@ public class GruppoControllerIT {
     @MethodSource("provideRemoveMembroCommissione")
     public void removeMembroCommissione(final User user, final Persona persona, final Commissione commissione, final Gruppo gruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = persona;
-        expectedPersona.setUser(user);
-        Commissione expectedCommissione = commissione;
-        expectedCommissione.addPersona(expectedPersona);
-        expectedCommissione.setResponsabile(expectedPersona);
-        expectedPersona.addSupergruppo(expectedCommissione);
-        Gruppo expectedGruppo = gruppo;
-        expectedGruppo.addCommissione(expectedCommissione);
-        expectedGruppo.addPersona(expectedPersona);
-        expectedGruppo.setResponsabile(expectedPersona);
+        persona.setUser(user);
+        user.setPersona(persona);
+        commissione.addPersona(persona);
+        commissione.setResponsabile(persona);
+        persona.addSupergruppo(commissione);
+        gruppo.addCommissione(commissione);
+        gruppo.addPersona(persona);
+        gruppo.setResponsabile(persona);
 
 
-        personaDAO.save(expectedPersona);
+        personaDAO.save(persona);
         userDAO.save(user);
-        supergruppoDAO.save(expectedGruppo);
-        supergruppoDAO.save(expectedCommissione);
+        supergruppoDAO.save(gruppo);
+        supergruppoDAO.save(commissione);
 
-        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", expectedCommissione.getId(), expectedPersona.getId())
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", commissione.getId(), persona.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -359,6 +348,8 @@ public class GruppoControllerIT {
     @MethodSource("provideRemoveMembroSupergruppo")
     public void removeMembroGruppo(final User user, final Persona persona, final Commissione commissione, final Gruppo gruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
+        user.setPersona(persona);
+        persona.setUser(user);
         // persona.setUser(user);
         //commissione.addPersona(persona);
         //commissione.setResponsabile(persona);
@@ -419,38 +410,36 @@ public class GruppoControllerIT {
 
 
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = persona;
-        expectedPersona.setUser(user);
-        Commissione expectedCommissione = commissione;
-        expectedCommissione.addPersona(expectedPersona);
-        expectedCommissione.setResponsabile(expectedPersona);
-        expectedPersona.addSupergruppo(expectedCommissione);
-        Gruppo expectedGruppo = gruppo;
-        expectedGruppo.addCommissione(expectedCommissione);
-        expectedGruppo.addPersona(expectedPersona);
-        expectedGruppo.setResponsabile(expectedPersona);
+        persona.setUser(user);
+        user.setPersona(persona);
+        commissione.addPersona(persona);
+        commissione.setResponsabile(persona);
+        persona.addSupergruppo(commissione);
+        gruppo.addCommissione(commissione);
+        gruppo.addPersona(persona);
+        gruppo.setResponsabile(persona);
 
-        expectedCommissione.addPersona(expectedPersona);
-        expectedCommissione.setResponsabile(expectedPersona);
-        expectedGruppo.addCommissione(expectedCommissione);
+        commissione.addPersona(persona);
+        commissione.setResponsabile(persona);
+        gruppo.addCommissione(commissione);
 
         List<Persona> persone = new ArrayList<>();
-        persone.add(expectedPersona);
+        persone.add(persona);
 
 
-        personaDAO.save(expectedPersona);
+        personaDAO.save(persona);
         userDAO.save(user);
-        supergruppoDAO.save(expectedGruppo);
-        supergruppoDAO.save(expectedCommissione);
+        supergruppoDAO.save(gruppo);
+        supergruppoDAO.save(commissione);
 
-        this.mockMvc.perform(get("/gruppi/{id}/commissione_detail/{id_commissione}", expectedGruppo.getId(), expectedCommissione.getId())
+        this.mockMvc.perform(get("/gruppi/{id}/commissione_detail/{id_commissione}", gruppo.getId(), commissione.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isCapogruppo", true))
                 .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("persone", persone))
                 .andExpect(model().attribute("supergruppo", commissione))
-                .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
+                .andExpect(model().attribute("personaLoggata", persona.getId()))
                 .andExpect(view().name("gruppo/commissione_detail"));
     }
 
@@ -467,6 +456,7 @@ public class GruppoControllerIT {
         Commissione commissione1 = new Commissione("Commissione", "Commissione", true, "");
         Commissione commissione2 = new Commissione("Commissione2", "Commissione", true, "");
 
+
         return Stream.of(
                 Arguments.of(user, persona1, commissione1, gruppo1),
                 Arguments.of(user1, persona2, commissione2, gruppo2)
@@ -478,39 +468,37 @@ public class GruppoControllerIT {
     public void closeCommissione(final User user, final Persona persona, final Commissione commissione, final Gruppo gruppo) throws Exception {
 
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = persona;
-        expectedPersona.setUser(user);
-        Commissione expectedCommissione = commissione;
-        expectedCommissione.addPersona(expectedPersona);
-        expectedCommissione.setResponsabile(expectedPersona);
-        expectedPersona.addSupergruppo(expectedCommissione);
-        Gruppo expectedGruppo = gruppo;
-        expectedGruppo.addCommissione(expectedCommissione);
-        expectedGruppo.addPersona(expectedPersona);
-        expectedGruppo.setResponsabile(expectedPersona);
+        persona.setUser(user);
+        user.setPersona(persona);
+        commissione.addPersona(persona);
+        commissione.setResponsabile(persona);
+        persona.addSupergruppo(commissione);
+        gruppo.addCommissione(commissione);
+        gruppo.addPersona(persona);
+        gruppo.setResponsabile(persona);
 
-        expectedCommissione.addPersona(expectedPersona);
-        expectedCommissione.setResponsabile(expectedPersona);
-        expectedGruppo.addCommissione(expectedCommissione);
+        commissione.addPersona(persona);
+        commissione.setResponsabile(persona);
+        gruppo.addCommissione(commissione);
 
         List<Persona> persone = new ArrayList<>();
-        persone.add(expectedPersona);
+        persone.add(persona);
 
 
-        personaDAO.save(expectedPersona);
+        personaDAO.save(persona);
         userDAO.save(user);
-        supergruppoDAO.save(expectedGruppo);
-        supergruppoDAO.save(expectedCommissione);
-        expectedCommissione.setState(false);
+        supergruppoDAO.save(gruppo);
+        supergruppoDAO.save(commissione);
+        commissione.setState(false);
 
-        this.mockMvc.perform(get("/gruppi/commissioni/{id2}/chiusura", expectedCommissione.getId())
+        this.mockMvc.perform(get("/gruppi/commissioni/{id2}/chiusura", commissione.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("isCapogruppo", true))
                 .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("persone", persone))
-                .andExpect(model().attribute("supergruppo", expectedCommissione))
-                .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
+                .andExpect(model().attribute("supergruppo", commissione))
+                .andExpect(model().attribute("personaLoggata", persona.getId()))
                 .andExpect(model().attribute("flagChiusura", 1))
                 .andExpect(view().name("gruppo/commissione_detail"));
     }
@@ -540,6 +528,7 @@ public class GruppoControllerIT {
     public void createCommissioneForm(final User user, final Persona persona, final Commissione commissione) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         persona.setUser(user);
+        user.setPersona(persona);
 
         commissione.addPersona(persona);
         commissione.setResponsabile(persona);
@@ -576,42 +565,41 @@ public class GruppoControllerIT {
     @MethodSource("provideNominaResponsabile")
     public void nominaResponsabile(final User user, final Persona persona, final Commissione commissione, final Gruppo gruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = persona;
-        expectedPersona.setUser(user);
-        Commissione expectedCommissione = commissione;
-        expectedCommissione.addPersona(expectedPersona);
-        expectedCommissione.setResponsabile(expectedPersona);
-        expectedPersona.addSupergruppo(expectedCommissione);
-        Gruppo expectedGruppo = gruppo;
-        expectedGruppo.addCommissione(expectedCommissione);
-        expectedGruppo.addPersona(expectedPersona);
-        expectedGruppo.setResponsabile(expectedPersona);
+        persona.setUser(user);
+        user.setPersona(persona);
+        commissione.addPersona(persona);
+        commissione.setResponsabile(persona);
+        persona.addSupergruppo(commissione);
+        gruppo.addCommissione(commissione);
+        gruppo.addPersona(persona);
+        gruppo.setResponsabile(persona);
 
-        expectedCommissione.addPersona(expectedPersona);
-        expectedGruppo.addCommissione(expectedCommissione);
+        commissione.addPersona(persona);
+        gruppo.addCommissione(commissione);
 
         List<Persona> persone = new ArrayList<>();
-        persone.add(expectedPersona);
+        persone.add(persona);
 
 
-        personaDAO.save(expectedPersona);
+        personaDAO.save(persona);
         userDAO.save(user);
-        supergruppoDAO.save(expectedGruppo);
-        supergruppoDAO.save(expectedCommissione);
+        supergruppoDAO.save(gruppo);
+        supergruppoDAO.save(commissione);
 
-        this.mockMvc.perform(get("/gruppi/commissioni/{idCommissione}/nominaResponsabile/{idPersona}", expectedCommissione.getId(), expectedPersona.getId())
+        this.mockMvc.perform(get("/gruppi/commissioni/{idCommissione}/nominaResponsabile/{idPersona}", commissione.getId(), persona.getId())
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("idCommissione", expectedCommissione.getId()))
+                .andExpect(model().attribute("idCommissione", commissione.getId()))
                 .andExpect(model().attribute("isCapogruppo", true))
                 .andExpect(model().attribute("isResponsabile", true))
                 .andExpect(model().attribute("persone", persone))
                 .andExpect(model().attribute("supergruppo", commissione))
-                .andExpect(model().attribute("personaLoggata", expectedPersona.getId()))
+                .andExpect(model().attribute("personaLoggata", persona.getId()))
                 .andExpect(model().attribute("flagNomina", 1))
-                .andExpect(model().attribute("responsabile", expectedPersona))
+                .andExpect(model().attribute("responsabile", persona))
                 .andExpect(view().name("gruppo/commissione_detail"));
     }
+
 
     private static Stream<Arguments> provideNominaResponsabile() {
         Persona persona1 = new Persona("persona1", "persona1", "persona");
@@ -632,5 +620,184 @@ public class GruppoControllerIT {
         );
     }
 
+    @Test
+    public void removeMembroGruppoWithoutPermissions() throws Exception {
+
+        Persona persona = new Persona("Persona", "Persona", "Persona");
+        User user = new User("ferrucci", "ferrucci");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        user.setPersona(persona);
+        persona.setUser(user);
+
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona2");
+        User user2 = new User("ferrucci2", "ferrucci2");
+        user2.setPersona(persona2);
+        persona2.setUser(user2);
+
+
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+
+        personaDAO.save(persona);
+        personaDAO.save(persona2);
+        supergruppoDAO.save(gruppo);
+
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/remove/{idPersona}", gruppo.getId(), persona.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(view().name("unauthorized"));
+    }
+
+    @Test
+    public void addMembroGruppoWithoutPermissions() throws Exception {
+
+        Persona persona = new Persona("Persona", "Persona", "Persona");
+        User user = new User("ferrucci", "ferrucci");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        user.setPersona(persona);
+        persona.setUser(user);
+
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona2");
+        User user2 = new User("ferrucci2", "ferrucci2");
+        user2.setPersona(persona2);
+        persona2.setUser(user2);
+
+
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+
+        personaDAO.save(persona);
+        personaDAO.save(persona2);
+        supergruppoDAO.save(gruppo);
+
+        this.mockMvc.perform(get("/gruppi/{idSupergruppo}/add/{idPersona}", gruppo.getId(), persona.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(view().name("unauthorized"));
+    }
+
+    @Test
+    public void closeCommissioneWithoutPermissions() throws Exception {
+
+        Persona persona = new Persona("Persona", "Persona", "Persona");
+        User user = new User("ferrucci", "ferrucci");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        user.setPersona(persona);
+        persona.setUser(user);
+
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona2");
+        User user2 = new User("ferrucci2", "ferrucci2");
+        user2.setPersona(persona2);
+        persona2.setUser(user2);
+
+
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+
+        Commissione commissione = new Commissione("Gruppo", "Gruppo", true, "");
+        commissione.addPersona(persona);
+        commissione.addPersona(persona2);
+        commissione.setResponsabile(persona2);
+        commissione.setGruppo(gruppo);
+        gruppo.addCommissione(commissione);
+
+        personaDAO.save(persona);
+        personaDAO.save(persona2);
+        supergruppoDAO.save(gruppo);
+        supergruppoDAO.save(commissione);
+
+        this.mockMvc.perform(get("/gruppi/commissioni/{id2}/chiusura", commissione.getId(), persona.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(view().name("unauthorized"));
+    }
+
+
+    @Test
+    public void nominaResponsabileWithoutPermissions() throws Exception {
+
+        Persona persona = new Persona("Persona", "Persona", "Persona");
+        User user = new User("ferrucci", "ferrucci");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        user.setPersona(persona);
+        persona.setUser(user);
+
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona2");
+        User user2 = new User("ferrucci2", "ferrucci2");
+        user2.setPersona(persona2);
+        persona2.setUser(user2);
+
+
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+
+        Commissione commissione = new Commissione("Gruppo", "Gruppo", true, "");
+        commissione.addPersona(persona);
+        commissione.addPersona(persona2);
+        commissione.setResponsabile(persona2);
+        commissione.setGruppo(gruppo);
+        gruppo.addCommissione(commissione);
+
+        personaDAO.save(persona);
+        personaDAO.save(persona2);
+        supergruppoDAO.save(gruppo);
+        supergruppoDAO.save(commissione);
+
+        this.mockMvc.perform(get("/gruppi/commissioni/{idCommissione}/nominaResponsabile/{idPersona}", commissione.getId(), persona.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(view().name("unauthorized"));
+    }
+
+    @Test
+    public void groupCandidatesList() throws Exception {
+        Persona persona = new Persona("Persona", "Persona", "Persona");
+        User user = new User("ferrucci", "ferrucci");
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        user.setPersona(persona);
+        persona.setUser(user);
+
+        Persona persona2 = new Persona("Persona2", "Persona2", "Persona2");
+        User user2 = new User("ferrucci2", "ferrucci2");
+        user2.setPersona(persona2);
+        persona2.setUser(user2);
+
+
+        Gruppo gruppo = new Gruppo("Gruppo", "Gruppo", true);
+        gruppo.addPersona(persona);
+        gruppo.addPersona(persona2);
+        gruppo.setResponsabile(persona2);
+
+        Commissione commissione = new Commissione("Gruppo", "Gruppo", true, "");
+        commissione.addPersona(persona);
+        commissione.addPersona(persona2);
+        commissione.setResponsabile(persona2);
+        commissione.setGruppo(gruppo);
+        gruppo.addCommissione(commissione);
+
+        personaDAO.save(persona);
+        personaDAO.save(persona2);
+        supergruppoDAO.save(gruppo);
+        supergruppoDAO.save(commissione);
+
+        this.mockMvc.perform(get("/gruppi/commissioni/{idSupergruppo}/candidati", commissione.getId(), persona.getId())
+                .with(user(userDetails)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(view().name("gruppo/aggiunta_membro_commissione"));
+
+    }
 
 }

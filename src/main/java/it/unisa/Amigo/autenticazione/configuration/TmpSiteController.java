@@ -20,17 +20,13 @@ public class TmpSiteController {
 
     private Persona persona;
 
-    /**
-     *
-     * @param model
-     * @return
-     */
     @GetMapping("/dashboard")
     @Transactional
     public String getDashboard(final Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         persona = personaDAO.findByUser_email(auth.getName());
         model.addAttribute("idPersona", persona.getId());
+        model.addAttribute("persona", persona);
         return "dashboard";
     }
 
