@@ -1,20 +1,16 @@
 package it.unisa.Amigo.repository.controller;
 
-import it.unisa.Amigo.autenticazione.domain.Role;
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.repository.services.RepositoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -25,7 +21,6 @@ import java.util.List;
 public class RepositoryController {
 
     private final RepositoryService repositoryService;
-    private final GruppoService gruppoService;
 
     private static final int MIN_SIZE_FILE = 0;
     private static final int MAX_SIZE_FILE = 10485760;
@@ -51,15 +46,6 @@ public class RepositoryController {
     }
 
     /**
-     * Permette di verificare se l'utente il Responsabile del PQA.
-     *
-     * @return true se l'utente è il Responsabile del PQA.
-     */
-    private boolean isResponsabilePQA() {
-        return gruppoService.findAllRoleOfPersona(gruppoService.getAuthenticatedUser().getId()).contains(Role.PQA_ROLE);
-    }
-
-    /**
      * Permette la ricerca di un documento @{@Link Documento} nella repository.
      *
      * @param model per salvare le informazioni da recuperare nell'html.
@@ -68,9 +54,7 @@ public class RepositoryController {
      */
     @GetMapping("/repository")
     public String getRepository(final Model model, @RequestParam(required = false) final String name) {
-        if (isResponsabilePQA()) {
-            model.addAttribute("flagPQA", 1);
-        }
+        model.addAttribute("flagPQA", 1);
         List<Documento> documenti = repositoryService.searchDocumentInRepository(name);
         model.addAttribute("documenti", documenti);
         return "repository/repository";
@@ -83,11 +67,6 @@ public class RepositoryController {
      */
     @GetMapping("/repository/uploadDocumento")
     public String uploadDocumento() {
-        if (gruppoService.getAuthenticatedUser() == null) {
-            return "redirect:/";
-        } else if (!isResponsabilePQA()) {
-            return "redirect:/dashboard";
-        }
         return "repository/aggiunta_documento_repository";
     }
 
@@ -99,7 +78,7 @@ public class RepositoryController {
      * @return il path della pagina su cui eseguire il redirect
      */
     @PostMapping("/repository/uploadDocumento")
-    public String uploadDocumento(final Model model, @RequestParam("file") final MultipartFile file) {
+    public String uploadDocumento(final Model model, @RequestPart("file") final MultipartFile file) {
         boolean addFlag = false;
         if (checkFile(file) && formatoFile(file)) {
             try {
@@ -108,7 +87,6 @@ public class RepositoryController {
                 e.printStackTrace();
             }
         }
-
         model.addAttribute("addFlag", addFlag);
         if (addFlag) {
             model.addAttribute("documentoNome", file.getOriginalFilename());
@@ -125,21 +103,19 @@ public class RepositoryController {
         return "repository/repository";
     }
 
-    /**
-     * Permette di scaricare un documento @{@Link Documento} dalla repository.
-     *
-     * @param idDocument id del documento da scaricare.
-     * @return documento.
-     */
-    @GetMapping("/repository/{idDocument}")
+    @GetMapping("/documento/{idDocument}")
     public ResponseEntity<Resource> downloadDocumento(@PathVariable("idDocument") final int idDocument) {
-
         Documento documento = repositoryService.findDocumentoById(idDocument);
-        Resource resource = repositoryService.downloadDocumento(documento);
-
+        if (documento == null) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        }
+        Resource resource = repositoryService.getDocumentoAsResource(documento);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(documento.getFormat()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
                 .body(resource);
     }
+
 }

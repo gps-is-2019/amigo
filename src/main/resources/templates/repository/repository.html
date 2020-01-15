@@ -40,7 +40,7 @@
             <div class="item" th:each="documento : ${documenti}">
                 <i class="large file alternate middle aligned icon"></i>
                 <div class="content">
-                    <a target=”_blank” th:href="@{'/repository/{idDocumento}' ( idDocumento=${documento.id})}">
+                    <a target=”_blank” th:href="@{'/documento/{idDocumento}' ( idDocumento=${documento.id})}">
                         <span th:text="${documento.nome}"></span>
                     </a>
                     <div class="description"><span th:text="${documento.dataInvio}"></span></div>

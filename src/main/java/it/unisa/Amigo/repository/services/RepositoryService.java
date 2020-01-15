@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface RepositoryService {
     boolean addDocumentoInRepository(String fileName, byte[] bytes, String mimeType);
-    Resource downloadDocumento(Documento documento);
+    Resource getDocumentoAsResource(Documento documento);
     List<Documento> searchDocumentInRepository(String nameDocumento);
     Documento findDocumentoById(int idDocumento);
 

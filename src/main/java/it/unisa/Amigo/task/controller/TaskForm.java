@@ -1,15 +1,12 @@
 package it.unisa.Amigo.task.controller;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 /**
  * Classe che si occuppa del passaggio di parametri dal Form html alla classe TaskController.
  */
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 @RequiredArgsConstructor
 public class TaskForm {
 
@@ -21,7 +18,6 @@ public class TaskForm {
     /**
      * Breve descrizione del task che verrà creato o modificato.
      */
-    @NonNull
     private String descrizione;
 
     /**
@@ -32,13 +28,11 @@ public class TaskForm {
     /**
      * Indica il nome del task che verrà creato o modificato.
      */
-    @NonNull
     private String nome;
 
     /**
      * indica lo stato del task che verrà creato o modificato.
      */
-    @NonNull
     private String stato;
 
     /**

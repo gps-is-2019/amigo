@@ -1,6 +1,5 @@
 package it.unisa.Amigo.task.controller;
 
-import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.consegna.services.ConsegnaService;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.service.DocumentoService;
@@ -12,6 +11,7 @@ import it.unisa.Amigo.task.services.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -40,21 +40,6 @@ public class TaskController {
      */
     private final TaskService taskService;
 
-    /**
-     * Gestisce la logica del sottosistema Gruppo.
-     */
-    private final GruppoService gruppoService;
-
-    /**
-     * Gestisce la logica del sottosistema Documento.
-     */
-    private final DocumentoService documentoService;
-
-    /**
-     * Gestisce la logica del sottosistema Consegna.
-     */
-    private final ConsegnaService consegnaService;
-
     private static final int FLAG_APPROVA = 1;
     private static final int FLAG_RIFIUTA = 2;
     private static final int FLAG_MODIFICA = 3;
@@ -69,13 +54,10 @@ public class TaskController {
      */
     @GetMapping("/gruppi/{idSupergruppo}/tasks")
     public String visualizzaListaTaskSupergruppo(final Model model, @PathVariable(name = "idSupergruppo") final int idSupergruppo) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
-
+        model.addAttribute("isResponsabile", taskService.currentPersonaCanCreateTask(idSupergruppo));
         model.addAttribute("idSupergruppo", Integer.toString(idSupergruppo));
         model.addAttribute("listaTask", taskService.visualizzaTaskSuperGruppo(idSupergruppo));
-
-        List<Documento> listaDocumenti = documentoService.approvedDocuments(idSupergruppo);
+        List<Documento> listaDocumenti = taskService.getApprovedDocumentiOfSupergruppo(idSupergruppo);
         model.addAttribute("documenti", listaDocumenti);
 
         return "task/tasks_supergruppo";
@@ -93,13 +75,12 @@ public class TaskController {
     public String definizioneTaskSupergruppo(@ModelAttribute final Task taskForm, final Model model,
                                              @PathVariable(name = "idSupergruppo") final int idSupergruppo) {
 
-      Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        if (gruppoService.findSupergruppo(idSupergruppo).getResponsabile().getId() != personaLoggata.getId()) {
-            return "error/403";
+        if (!taskService.currentPersonaCanCreateTask(idSupergruppo)) {
+            return "redirect:/403";
         }
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("taskForm", taskForm);
-        List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
+        List<Persona> persone = taskService.getPossibleTaskAssegnees(idSupergruppo);
         model.addAttribute("persone", persone);
 
         return "task/crea_task";
@@ -116,22 +97,16 @@ public class TaskController {
     @PostMapping(value = "/gruppi/{idSupergruppo}/tasks/create")
     public String saveTaskPost(@ModelAttribute final TaskForm taskForm, final Model model,
                                @PathVariable(name = "idSupergruppo") final int idSupergruppo) {
-        Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
-
         if (!taskVerify(taskForm)) {
-            List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
+            List<Persona> persone = taskService.getPossibleTaskAssegnees(idSupergruppo);
             model.addAttribute("persone", persone);
             model.addAttribute("flagCreazione", false);
             return "task/crea_task";
         } else {
-            Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
-
             LocalDate date = LocalDate.parse(taskForm.getDataScadenza());
             Task task = taskService.definizioneTaskSupergruppo(taskForm.getDescrizione(),
-                    date, taskForm.getNome(), "incompleto", supergruppo, persona);
-
-            Persona personaLoggata = gruppoService.getAuthenticatedUser();
-            model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+                    date, taskForm.getNome(), "incompleto", idSupergruppo, taskForm.getIdPersona());
+            model.addAttribute("isResponsabile", taskService.currentPersonaCanCreateTask(idSupergruppo));
             model.addAttribute("idSupergruppo", idSupergruppo);
             model.addAttribute("task", task);
             model.addAttribute("flagCreazione", true);
@@ -158,10 +133,10 @@ public class TaskController {
         if (taskForm.getDescrizione().matches("^(?!^.{255})^(.|\\s)*[a-zA-Z]+(.|\\s)*$"))
             descrizioneMatch = true;
 
-        if(taskForm.getNome().matches("^(?!^.{100})^(.|\\s)*[a-zA-Z]+(.|\\s)*$"))
+        if (taskForm.getNome().matches("^(?!^.{100})^(.|\\s)*[a-zA-Z]+(.|\\s)*$"))
             nomeMatch = true;
 
-        return  nomeMatch && descrizioneMatch && dateIsAfter && (taskForm.getIdPersona() != null);
+        return nomeMatch && descrizioneMatch && dateIsAfter && (taskForm.getIdPersona() != null);
     }
 
     /**
@@ -176,9 +151,7 @@ public class TaskController {
     public String visualizzaDettagliTaskSupergruppo(final Model model,
                                                     @PathVariable(name = "idSupergruppo") final int idSupergruppo,
                                                     @PathVariable(name = "idTask") final int idTask) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
-
+        model.addAttribute("isResponsabile", taskService.currentPersonaCanCreateTask(idSupergruppo));
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("task", taskService.getTaskById(idTask));
 
@@ -197,8 +170,7 @@ public class TaskController {
     public String approvazioneTask(final Model model,
                                    @PathVariable(name = "idSupergruppo") final int idSupergruppo,
                                    @PathVariable(name = "idTask") final int idTask) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+        model.addAttribute("isResponsabile", taskService.currentPersonaCanCreateTask(idSupergruppo));
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("task", taskService.getTaskById(idTask));
         taskService.accettazioneTask(idTask);
@@ -219,8 +191,7 @@ public class TaskController {
     public String rifiutoTask(final Model model,
                               @PathVariable(name = "idSupergruppo") final int idSupergruppo,
                               @PathVariable(name = "idTask") final int idTask) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+        model.addAttribute("isResponsabile", taskService.currentPersonaCanCreateTask(idSupergruppo));
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("task", taskService.getTaskById(idTask));
         taskService.rifiutoTask(idTask);
@@ -241,9 +212,7 @@ public class TaskController {
     public String completaTask(final Model model,
                                @PathVariable(name = "idSupergruppo") final int idSupergruppo,
                                @PathVariable(name = "idTask") final int idTask) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+        model.addAttribute("isResponsabile", taskService.currentPersonaCanCreateTask(idSupergruppo));
         model.addAttribute("idSupergruppo", idSupergruppo);
         model.addAttribute("task", taskService.getTaskById(idTask));
         model.addAttribute("flagAzione", FLAG_COMPLETA);
@@ -267,7 +236,6 @@ public class TaskController {
                                @PathVariable(name = "idSupergruppo") final int idSupergruppo,
                                @PathVariable(name = "idTask") final int idTask) {
 
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
         Task task = taskService.getTaskById(idTask);
         taskForm.setId(task.getId());
         taskForm.setNome(task.getNome());
@@ -278,10 +246,10 @@ public class TaskController {
         taskForm.setIdPersona(persona.getId());
         model.addAttribute("idTask", idTask);
         model.addAttribute("idSupergruppo", idSupergruppo);
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+        model.addAttribute("isResponsabile", taskService.currentPersonaCanCreateTask(idSupergruppo));
         model.addAttribute("taskForm", taskForm);
 
-        List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
+        List<Persona> persone = taskService.getPossibleTaskAssegnees(idSupergruppo);
         model.addAttribute("persone", persone);
         return "task/modifica_task";
     }
@@ -298,28 +266,25 @@ public class TaskController {
     public String saveModifyTask(@ModelAttribute final TaskForm taskForm, final Model model,
                                  @PathVariable(name = "idSupergruppo") final int idSupergruppo,
                                  @PathVariable(name = "idTask") final int idTask) {
-        if(taskVerify(taskForm)) {
+        if (taskVerify(taskForm)) {
 
             Task taskToUpdate = taskService.getTaskById(taskForm.getId());
-            Persona personaLoggata = gruppoService.getAuthenticatedUser();
             LocalDate date = LocalDate.parse(taskForm.getDataScadenza());
             taskToUpdate.setDataScadenza(date);
-            Supergruppo supergruppo = gruppoService.findSupergruppo(idSupergruppo);
-            taskToUpdate.setSupergruppo(supergruppo);
-            Persona persona = gruppoService.findPersona(taskForm.getIdPersona());
-            taskToUpdate.setPersona(persona);
+
             taskToUpdate.setNome(taskForm.getNome());
+
             taskToUpdate.setDescrizione(taskForm.getDescrizione());
-            taskService.updateTask(taskToUpdate);
+
+            taskService.updateTask(taskToUpdate, taskForm.getIdPersona());
             model.addAttribute("flagAzione", FLAG_MODIFICA);
-            model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+            model.addAttribute("isResponsabile", taskService.currentPersonaCanCreateTask(idSupergruppo));
             model.addAttribute("task", taskToUpdate);
             return "task/dettagli_task_supergruppo";
-        }else{
+
+        } else {
 
             model.addAttribute("flagCreazione", false);
-
-            Persona personaLoggata = gruppoService.getAuthenticatedUser();
             Task task = taskService.getTaskById(idTask);
             taskForm.setId(task.getId());
             taskForm.setNome(task.getNome());
@@ -330,10 +295,10 @@ public class TaskController {
             taskForm.setIdPersona(persona.getId());
             model.addAttribute("idTask", idTask);
             model.addAttribute("idSupergruppo", idSupergruppo);
-            model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+            model.addAttribute("isResponsabile", taskService.currentPersonaCanCreateTask(idSupergruppo));
             model.addAttribute("taskForm", taskForm);
 
-            List<Persona> persone = gruppoService.findAllMembriInSupergruppo(idSupergruppo);
+            List<Persona> persone = taskService.getPossibleTaskAssegnees(idSupergruppo);
             model.addAttribute("persone", persone);
             return "task/modifica_task";
         }
@@ -348,8 +313,7 @@ public class TaskController {
      */
     @GetMapping("/taskPersonali")
     public String visualizzaListaTaskPersonali(final Model model) {
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        List<Task> ris = taskService.visualizzaTaskUser(personaLoggata.getId());
+        List<Task> ris = taskService.visualizzaTaskUser();
         model.addAttribute("listaTask", ris);
 
         return "task/miei_task";
@@ -404,40 +368,17 @@ public class TaskController {
             return "task/dettagli_task_personali";
         }
 
-        Documento documento = null;
         try {
-            documento = documentoService.addDocumento(file.getOriginalFilename(), file.getBytes(), file.getContentType());
+            task = taskService.attachDocumentToTask(task, file.getOriginalFilename(), file.getBytes(), file.getContentType());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        task.setDocumento(documento);
-        taskService.updateTask(task);
-        documento.setTask(task);
-        documentoService.updateDocumento(documento);
 
         model.addAttribute("flagAggiunta", FLAG_APPROVA); //cambiare
         model.addAttribute("task", task);
-        model.addAttribute("documento", documento);
+        model.addAttribute("documento", task.getDocumento());
 
         return "task/dettagli_task_personali";
-    }
-
-    /**
-     * Permette il download di un documento @{@link Documento}.
-     *
-     * @param model      per salvare informazioni da recuperare nell'html
-     * @param idDocument identifica univocamente il documento da scaricare
-     * @return risorsa neccessaria per il download
-     */
-    @GetMapping("/documento/{idDocument}")
-    public ResponseEntity<Resource> downloadDocumento(final Model model, @PathVariable("idDocument") final int idDocument) {
-        Documento documento = documentoService.findDocumentoById(idDocument);
-        Resource resource = documentoService.loadAsResource(documento);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(documento.getFormat()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + documento.getNome() + "\"")
-                .body(resource);
     }
 
     /**
@@ -453,19 +394,36 @@ public class TaskController {
                              @PathVariable(name = "idSupergruppo") final int idSupergruppo,
                              @PathVariable(name = "idTask") final int idTask) {
 
-        Persona personaLoggata = gruppoService.getAuthenticatedUser();
-        Documento documento = taskService.getTaskById(idTask).getDocumento();
-        Consegna consegna = consegnaService.inoltraPQAfromGruppo(documento);
-        model.addAttribute("isResponsabile", gruppoService.isResponsabile(personaLoggata.getId(), idSupergruppo));
+        taskService.forwardApprovedTaskToPqa(idTask);
+        model.addAttribute("isResponsabile", taskService.currentPersonaCanCreateTask(idSupergruppo));
 
         model.addAttribute("idSupergruppo", Integer.toString(idSupergruppo));
         model.addAttribute("listaTask", taskService.visualizzaTaskSuperGruppo(idSupergruppo));
 
-        List<Documento> listaDocumenti = documentoService.approvedDocuments(idSupergruppo);
+        List<Documento> listaDocumenti = taskService.getApprovedDocumentiOfSupergruppo(idSupergruppo);
         model.addAttribute("documenti", listaDocumenti);
         model.addAttribute("flagInoltro", FLAG_APPROVA);
 
         return "task/tasks_supergruppo";
+    }
+
+    @GetMapping("/task/{idTask}/attachment")
+    public ResponseEntity<Resource> downloadDocumento(@PathVariable("idTask") final int idTask) {
+
+        if (taskService.currentPersonaCanViewTask(idTask)) {
+
+            Task currentTask = taskService.getTaskById(idTask);
+            Resource resource = taskService.getResourceFromTask(currentTask);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(currentTask.getDocumento().getFormat()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "filename=\"" + currentTask.getDocumento().getNome() + "\"")
+                    .body(resource);
+        } else {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        }
     }
 }
 

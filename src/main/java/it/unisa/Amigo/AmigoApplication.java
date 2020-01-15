@@ -86,13 +86,28 @@ public class AmigoApplication {
             Persona vincenzi = new Persona("Giovanni", "Vincenzi", "Professore Associato");
 
             ferrucci.setUser(userFerrucci);
+            userFerrucci.setPersona(ferrucci);
+
             scarano.setUser(userScarano);
+            userScarano.setPersona(scarano);
+
             malandrino.setUser(userMalandrino);
+            userMalandrino.setPersona(malandrino);
+
             dePrisco.setUser(userDePrisco);
+            userDePrisco.setPersona(dePrisco);
+
             polese.setUser(userPolese);
+            userPolese.setPersona(polese);
+
             gravino.setUser(userGravino);
+            userGravino.setPersona(gravino);
+
             rossi.setUser(userRossi);
+            userRossi.setPersona(rossi);
+
             vincenzi.setUser(userVincenzi);
+            userVincenzi.setPersona(vincenzi);
 
             Commissione commissioneAAL = new Commissione("Accompagnamento al lavoro", "Commissione", true, "");
             Commissione commissioneEL = new Commissione("Piattaforme EL", "Commissione", true, "");

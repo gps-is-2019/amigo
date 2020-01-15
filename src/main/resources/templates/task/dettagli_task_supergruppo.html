@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/html">
 <head>
@@ -60,7 +61,7 @@
                 <div class="header">Documento</div>
                 <div th:if="${task.getDocumento()}!=null" style="padding-top: 3%;padding-bottom: 2.5%;">
                     <a target="_blank" th:text="${task.documento.getNome()}"
-                       th:href="@{'/documento/{idDocumento}' ( idDocumento=${task.documento.getId()})}">
+                       th:href="@{'/task/{idTask}/attachment' ( idTask=${task.id})}">
                     </a>
                 </div>
                 <div th:if="${task.getDocumento()}==null" style="padding-top: 3%;padding-bottom: 2.5%;">

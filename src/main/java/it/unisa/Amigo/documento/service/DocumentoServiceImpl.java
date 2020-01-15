@@ -27,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DocumentoServiceImpl implements DocumentoService {
 
-    private static final String BASE_PATH = "src/main/resources/documents/";
+    private static String BASE_PATH = "src/main/resources/documents/";
 
     private final DocumentoDAO documentoDAO;
 
@@ -97,7 +97,6 @@ public class DocumentoServiceImpl implements DocumentoService {
     public List<Documento> approvedDocuments(final int idSupergruppo) {
         return documentoDAO.findAllByTask_Supergruppo_IdAndTask_Stato(idSupergruppo, "approvato");
     }
-
 
     /**
      * Ritorna il documento @{@link Documento} con id passato come parametro ricercandolo all'interno del database.

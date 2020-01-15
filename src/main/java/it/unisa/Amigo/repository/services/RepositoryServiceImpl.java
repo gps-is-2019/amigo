@@ -29,12 +29,10 @@ public class RepositoryServiceImpl implements RepositoryService {
      */
     @Override
     public boolean addDocumentoInRepository(final String fileName, final byte[] bytes, final String mimeType) {
-
-            Documento documento = documentoService.addDocumento(fileName, bytes, mimeType);
-            documento.setInRepository(true);
-            documentoService.updateDocumento(documento);
-            return true;
-
+        Documento documento = documentoService.addDocumento(fileName, bytes, mimeType);
+        documento.setInRepository(true);
+        documentoService.updateDocumento(documento);
+        return true;
     }
 
     /**
@@ -44,9 +42,8 @@ public class RepositoryServiceImpl implements RepositoryService {
      * @return Resource del documento associato.
      */
     @Override
-    public Resource downloadDocumento(final Documento documento) {
+    public Resource getDocumentoAsResource(final Documento documento) {
         return documentoService.loadAsResource(documento);
-
     }
 
     /**
@@ -57,7 +54,11 @@ public class RepositoryServiceImpl implements RepositoryService {
      */
     @Override
     public Documento findDocumentoById(final int idDocumento) {
-        return documentoService.findDocumentoById(idDocumento);
+        Documento example = new Documento();
+        example.setId(idDocumento);
+        example.setInRepository(true);
+        List<Documento> documenti = documentoService.searchDocumenti(example);
+        return documenti.size() > 0 ? documenti.get(0) : null;
     }
 
     /**
