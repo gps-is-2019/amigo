@@ -7,8 +7,7 @@ import it.unisa.Amigo.autenticazione.services.AuthService;
 import it.unisa.Amigo.consegna.dao.ConsegnaDAO;
 import it.unisa.Amigo.consegna.domain.Consegna;
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoServiceImpl;
-import it.unisa.Amigo.gruppo.domain.Commissione;
+import it.unisa.Amigo.documento.services.DocumentoServiceImpl;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.services.GruppoServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -345,7 +344,7 @@ class ConsegnaServiceImplTest {
     }
 
     @Test
-    public void getDestinatariByRoleString(){
+    public void getDestinatariByRoleString() {
         User user = new User("ferrucci@unisa.it", "ferrucci");
         user.addRole(new Role(Role.CAPOGRUPPO_ROLE));
         Persona persona = new Persona("Filomena", "Ferrucci", "Professore Associato");
@@ -360,19 +359,19 @@ class ConsegnaServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideCurrentPersona")
     public void currentPersonaCanOpen(Persona persona, Consegna consegna) {
-        User user  = new User("user", "user");
+        User user = new User("user", "user");
         Set<Role> roles = new HashSet<>();
         roles.add(new Role(Role.PQA_ROLE));
         user.setRoles(roles);
         user.setPersona(persona);
         persona.setUser(user);
-        when( gruppoService.getCurrentPersona()).thenReturn(persona);
+        when(gruppoService.getCurrentPersona()).thenReturn(persona);
         when(authService.getCurrentUserRoles()).thenReturn(roles);
         assertTrue(consegnaService.currentPersonaCanOpen(consegna));
 
     }
 
-    private static Stream<Arguments> provideCurrentPersona(){
+    private static Stream<Arguments> provideCurrentPersona() {
 
         Persona persona = new Persona("Filomena", "Ferrucci", "Professore Ordinario");
         Persona persona2 = new Persona("Vittorio", "Scarano", "Professore Ordianrio");
@@ -388,7 +387,7 @@ class ConsegnaServiceImplTest {
         consegna1.setLocazione(PQA_LOCAZIONE);
 
         return Stream.of(
-                Arguments.of(persona2,consegna),
+                Arguments.of(persona2, consegna),
                 Arguments.of(persona, consegna1),
                 Arguments.of(persona3, consegna)
         );

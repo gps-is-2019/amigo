@@ -3,7 +3,7 @@ package it.unisa.Amigo.repository.services;
 
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoServiceImpl;
+import it.unisa.Amigo.documento.services.DocumentoServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,9 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.net.MalformedURLException;
 import java.nio.file.Paths;

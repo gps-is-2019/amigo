@@ -1,7 +1,7 @@
 package it.unisa.Amigo.task.services;
 
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoServiceImpl;
+import it.unisa.Amigo.documento.services.DocumentoServiceImpl;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.gruppo.services.GruppoServiceImpl;
@@ -18,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 

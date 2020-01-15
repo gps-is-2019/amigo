@@ -203,7 +203,7 @@
                         <exclude>**/exceptions/*</exclude>
                         <exclude>**/TaskForm.class</exclude>
                         <exclude>**/GruppoFormCommand.class</exclude>
-                        <exclude>**/autenticazion/configuration/*</exclude>
+                        <exclude>**/autenticazione/configuration/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>

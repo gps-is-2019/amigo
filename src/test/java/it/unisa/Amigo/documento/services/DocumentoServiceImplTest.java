@@ -3,7 +3,6 @@ package it.unisa.Amigo.documento.services;
 import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.exceptions.StorageFileNotFoundException;
-import it.unisa.Amigo.documento.service.DocumentoServiceImpl;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.task.domain.Task;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.time.LocalDate;
