@@ -73,6 +73,7 @@ class TaskControllerIT {
     void visualizzaListaTaskSupergruppo(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task task) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         expectedPersona.addSupergruppoResponsabile(expectedSupergruppo);
@@ -128,6 +129,7 @@ class TaskControllerIT {
     void definizioneTaskSupergruppo(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         List<Persona> expectedPersone = new ArrayList<>();
@@ -173,6 +175,7 @@ class TaskControllerIT {
     void saveTaskPost(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, TaskForm taskForm, Task task, Boolean isResponsabile) throws Exception {
         user.addRole(new Role(Role.CAPOGRUPPO_ROLE));
         expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
@@ -227,6 +230,7 @@ class TaskControllerIT {
     void saveTaskPostError(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, TaskForm taskForm) throws Exception {
         user.addRole(new Role(Role.CAPOGRUPPO_ROLE));
         expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
         UserDetailImpl userDetails = new UserDetailImpl(user);
         List<Persona> expectedPersone = new ArrayList<>();
         expectedPersone.add(expectedPersona);
@@ -280,11 +284,13 @@ class TaskControllerIT {
                 Arguments.of(user3, persona3, gruppo3, taskForm3)
         );
     }
+
     @ParameterizedTest
     @MethodSource("provideVisualizzaDettagliTaskSupergruppo")
     void visualizzaDettagliTaskSupergruppo(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         expectedTask.setSupergruppo(expectedSupergruppo);
@@ -335,6 +341,7 @@ class TaskControllerIT {
     void approvazioneTask(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         expectedTask.setSupergruppo(expectedSupergruppo);
@@ -390,6 +397,7 @@ class TaskControllerIT {
     void rifiutoTask(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         expectedTask.setSupergruppo(expectedSupergruppo);
@@ -445,6 +453,7 @@ class TaskControllerIT {
     void completaTask(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         expectedTask.setSupergruppo(expectedSupergruppo);
@@ -498,6 +507,7 @@ class TaskControllerIT {
     void modificaTask(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task task) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         List<Persona> expectedPersone = new ArrayList<>();
@@ -564,6 +574,7 @@ class TaskControllerIT {
     void saveModifyTask(User user, Persona expectedPersona, Supergruppo expectedSupergruppo, TaskForm taskForm, Task task, Boolean isResponsabile) throws Exception {
         user.addRole(new Role(Role.CAPOGRUPPO_ROLE));
         expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
@@ -628,6 +639,7 @@ class TaskControllerIT {
     void visualizzaListaTaskPersonali(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task task) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
         expectedSupergruppo.addPersona(expectedPersona);
         task.setSupergruppo(expectedSupergruppo);
         expectedSupergruppo.addTask(task);
@@ -681,6 +693,7 @@ class TaskControllerIT {
     void visualizzaDettagliTaskPersonali(final User user, final Supergruppo expectedSupergruppo, final Persona expectedPersona, final Task expectedTask) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedTask.setPersona(expectedPersona);
         expectedTask.setSupergruppo(expectedSupergruppo);
@@ -783,6 +796,7 @@ class TaskControllerIT {
     void inoltroPQA(final User user, final Persona expectedPersona, final Supergruppo expectedSupergruppo, final Task task) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
         expectedPersona.setUser(user);
+        user.setPersona(expectedPersona);
         expectedSupergruppo.addPersona(expectedPersona);
         expectedSupergruppo.setResponsabile(expectedPersona);
         expectedPersona.addSupergruppoResponsabile(expectedSupergruppo);

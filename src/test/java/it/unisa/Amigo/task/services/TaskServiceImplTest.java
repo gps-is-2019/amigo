@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -591,7 +592,7 @@ class TaskServiceImplTest {
     /*@ParameterizedTest
     @MethodSource("provideForwardApprovedTaskToPqa")
     void forwardApprovedTaskToPqa(final Task task, Documento doc) {
-        when(taskDAO.findById(task.getId()).get().getDocumento()).thenReturn(doc);
+        when(Objects.requireNonNull(taskDAO.findById(task.getId()).orElse(null)).getDocumento()).thenReturn(doc);
         taskService.forwardApprovedTaskToPqa(task.getId());
         assertEquals(task.getDocumento(), doc);
     }
@@ -604,24 +605,36 @@ class TaskServiceImplTest {
         LocalDate date2 = LocalDate.of(2019, 12, 30);
         LocalDate date3 = LocalDate.of(2021, 1, 5);
         Task task1 = new Task("descrizione 1", tmpDate, "Task 1", "incompleto");
+        task1.setId(1);
         Task task2 = new Task("descrizione 2", tmpDate2, "Task 2", "in valutazione");
+        task2.setId(2);
         Task task3 = new Task("descrizione 3", tmpDate3, "Task 3", "respinto");
+        task3.setId(3);
         Task task4 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", date1, "task1", "completo");
+        task4.setId(4);
         Task task5 = new Task("t1", date2, "task2", "incompleto");
+        task5.setId(5);
         Task task6 = new Task("t1", date3, "chiamare azienda", "incompleto");
+        task6.setId(6);
 
         Documento doc1 = new Documento("src/main/resources/documents/1", LocalDate.now(), "test.txt", false, "text/plain");
         doc1.setId(1);
+        task1.setDocumento(doc1);
         Documento doc2 = new Documento("src/main/resources/documents/2", LocalDate.now(), "test.txt", false, "text/plain");
         doc2.setId(2);
+        task2.setDocumento(doc2);
         Documento doc3 = new Documento("src/main/resources/documents/3", LocalDate.now(), "test.txt", false, "text/plain");
         doc3.setId(3);
+        task3.setDocumento(doc3);
         Documento doc4 = new Documento("src/main/resources/documents/4", LocalDate.now(), "test.txt", false, "text/plain");
         doc1.setId(4);
+        task4.setDocumento(doc4);
         Documento doc5 = new Documento("src/main/resources/documents/5", LocalDate.now(), "test.txt", false, "text/plain");
         doc2.setId(5);
+        task5.setDocumento(doc5);
         Documento doc6 = new Documento("src/main/resources/documents/6", LocalDate.now(), "test.txt", false, "text/plain");
         doc3.setId(6);
+        task6.setDocumento(doc6);
 
         return Stream.of(
                 Arguments.of(task1, doc1),
