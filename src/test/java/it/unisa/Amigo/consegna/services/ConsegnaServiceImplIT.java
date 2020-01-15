@@ -16,8 +16,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDate;
@@ -28,6 +32,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class ConsegnaServiceImplIT {
@@ -49,6 +54,12 @@ public class ConsegnaServiceImplIT {
 
     @Autowired
     private UserDAO userDAO;
+
+    @Mock
+    private Authentication auth;
+
+    @Mock
+    private SecurityContext secCont;
 
     @AfterEach
     void afterEach() {
@@ -251,4 +262,81 @@ public class ConsegnaServiceImplIT {
         );
     }
     */
+
+    @ParameterizedTest
+    @MethodSource("provideinoltraPQAfromGruppo")
+    public void inoltraPQAfromGruppo(Documento documento, Persona persona, Consegna consegna) {
+        when(secCont.getAuthentication()).thenReturn(auth);
+        when(auth.getName()).thenReturn(persona.getUser().getEmail());
+        SecurityContextHolder.setContext(secCont);
+        personaDAO.save(persona);
+        documentoDAO.save(documento);
+        consegnaDAO.save(consegna);
+
+        Consegna actual = consegnaService.inoltraPQAfromGruppo(documento);
+        consegna.setId(actual.getId());
+
+        assertEquals(consegna, actual);
+    }
+
+    private static Stream<Arguments> provideinoltraPQAfromGruppo() {
+        User user1 = new User("admin", "admin");
+        User user2 = new User("admin", "admin");
+        User user3 = new User("admin", "admin");
+
+
+        Persona expectedPersona1 = new Persona("Admin", "123", "Administrator");
+        expectedPersona1.setUser(user1);
+        user1.setPersona(expectedPersona1);
+
+        Persona expectedPersona2 = new Persona("123", "null", "Administrator");
+        expectedPersona2.setUser(user2);
+        user2.setPersona(expectedPersona2);
+
+        Persona expectedPersona3 = new Persona("123", "null", "Administrator");
+        expectedPersona3.setUser(user3);
+        user3.setPersona(expectedPersona3);
+
+        LocalDate tmpDate;
+        tmpDate = LocalDate.of(2020, 4, 20);
+
+        Documento documento1 = new Documento();
+        documento1.setNome("Documento1");
+        Documento documento2 = new Documento();
+        documento1.setNome("Documento2");
+        Documento documento3 = new Documento();
+        documento1.setNome("Documento3");
+
+        Consegna consegna1 = new Consegna();
+        consegna1.setDataConsegna(LocalDate.now());
+        consegna1.setStato("DA_VALUTARE");
+        consegna1.setDocumento(documento1);
+        consegna1.setMittente(expectedPersona1);
+        consegna1.setLocazione(Consegna.PQA_LOCAZIONE);
+        documento1.setConsegna(consegna1);
+
+        Consegna consegna2 = new Consegna();
+        consegna2.setDataConsegna(LocalDate.now());
+        consegna2.setStato("DA_VALUTARE");
+        consegna2.setDocumento(documento2);
+        consegna2.setMittente(expectedPersona2);
+        consegna2.setLocazione(Consegna.PQA_LOCAZIONE);
+        documento2.setConsegna(consegna2);
+
+        Consegna consegna3 = new Consegna();
+        consegna3.setDataConsegna(LocalDate.now());
+        consegna3.setStato("DA_VALUTARE");
+        consegna3.setDocumento(documento3);
+        consegna3.setMittente(expectedPersona3);
+        consegna3.setLocazione(Consegna.PQA_LOCAZIONE);
+        documento3.setConsegna(consegna3);
+
+
+        return Stream.of(
+                Arguments.of(documento1, expectedPersona1, consegna1),
+                Arguments.of(documento2, expectedPersona2, consegna2),
+                Arguments.of(documento3, expectedPersona3, consegna3)
+
+        );
+    }
 }
