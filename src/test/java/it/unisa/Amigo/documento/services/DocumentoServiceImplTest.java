@@ -26,9 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -43,16 +41,12 @@ class DocumentoServiceImplTest {
     @ParameterizedTest
     @MethodSource("provideAddDocumento")
     void addDocumento(final Documento doc, final String fileName, final byte[] bytes, final String mimeType) throws NoSuchFieldException, IllegalAccessException {
-        final String TEST_PATH = "src/test/resources/documents/";
         Field path = documentoService.getClass().getDeclaredField("BASE_PATH");
         path.setAccessible(true);
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(path, path.getModifiers() & ~Modifier.FINAL);
-        path.set(documentoService, TEST_PATH);
+        path.set(documentoService, "src/test/resources/documents/");
         when(documentoDAO.save(any(Documento.class))).thenReturn(doc);
         documentoService.addDocumento(fileName, bytes, mimeType);
-        assertThat(documentoService.loadAsResource(doc).exists());
+        assertTrue(documentoService.loadAsResource(doc).exists());
     }
 
     private static Stream<Arguments> provideAddDocumento() {
