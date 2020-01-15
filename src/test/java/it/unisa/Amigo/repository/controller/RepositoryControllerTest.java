@@ -1,9 +1,34 @@
 package it.unisa.Amigo.repository.controller;
 
-/*
-TODO
 
-@RunWith(SpringRunner.class)
+import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
+import it.unisa.Amigo.autenticazione.domain.Role;
+import it.unisa.Amigo.autenticazione.domain.User;
+import it.unisa.Amigo.documento.domain.Documento;
+import it.unisa.Amigo.gruppo.domain.Persona;
+import it.unisa.Amigo.gruppo.services.GruppoService;
+import it.unisa.Amigo.repository.services.RepositoryService;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.Resource;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+
 @SpringBootTest
 @AutoConfigureMockMvc
 public class RepositoryControllerTest {
@@ -23,16 +48,10 @@ public class RepositoryControllerTest {
 
     @ParameterizedTest
     @MethodSource("provideRepository")
-    public void repository(User user, Persona expectedPersona) throws Exception {
-
-        user.addRole(new Role(Role.PQA_ROLE));
+    public void repository(User user) throws Exception {
         UserDetailImpl userDetails = new UserDetailImpl(user);
-        expectedPersona.setUser(user);
-
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona);
         List<Documento> documenti = new ArrayList<>();
         when(repositoryService.searchDocumentInRepository("")).thenReturn(documenti);
-
 
         this.mockMvc.perform(get("/repository")
                 .with(user(userDetails)))
@@ -43,22 +62,37 @@ public class RepositoryControllerTest {
     }
 
     private static Stream<Arguments> provideRepository() {
-        User user1 = new User("Admin", "Admin");
-        User user2 = new User(".", "pass");
-        User user3 = new User("bounty", ".");
-
-        Persona expectedPersona1 = new Persona("Admin", "Admin", "Administrator");
-        Persona expectedPersona2 = new Persona("123", ".", "Administrator");
-        Persona expectedPersona3 = new Persona("123", ".", ".");
+        User user1 = new User("admin", "admin");
+        User user2 = new User("admin1", "admin1");
 
         return Stream.of(
-                Arguments.of(user1, expectedPersona1),
-                Arguments.of(user2, expectedPersona2),
-                Arguments.of(user3, expectedPersona3)
+                Arguments.of(user1),
+                Arguments.of(user2)
         );
     }
 
     @ParameterizedTest
+    @MethodSource("provideUploadDocumento")
+    public void uploadDocumento(User user, int status, String expectedViewName) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+
+        this.mockMvc.perform(get("/repository/uploadDocumento")
+                .with(user(userDetails)))
+                .andExpect(status().is(status))
+                .andExpect(view().name(expectedViewName));
+    }
+    private static Stream<Arguments> provideUploadDocumento() {
+        User user1 = new User("admin", "admin");
+        user1.addRole(new Role(Role.PQA_ROLE));
+        User user2 = new User("admin1", "admin1");
+
+        return Stream.of(
+                Arguments.of(user1, 200,"repository/aggiunta_documento_repository")
+               // Arguments.of(user2, 403,"403")
+        );
+    }
+
+   /* @ParameterizedTest
     @MethodSource("provideUploadDocumento")
     public void uploadDocumento(User user, Persona expectedPersona) throws Exception {
 
@@ -91,7 +125,7 @@ public class RepositoryControllerTest {
                 Arguments.of(user6, expectedPersona6)
         );
     }
-/*
+
     @Test
     public void downloadDocumento() throws Exception {
         User user = new User("admin", "admin");
@@ -117,6 +151,7 @@ public class RepositoryControllerTest {
 
         System.out.println(expectedString);
         assertEquals(actualString,expectedString);
-    }
+    }*/
 
-*/
+
+}
