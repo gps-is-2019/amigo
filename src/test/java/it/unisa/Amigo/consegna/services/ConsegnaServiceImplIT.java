@@ -1,6 +1,5 @@
 package it.unisa.Amigo.consegna.services;
 
-import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
 import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domain.Role;
 import it.unisa.Amigo.autenticazione.domain.User;
@@ -16,9 +15,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,9 +30,16 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class ConsegnaServiceImplIT {
+
+    @Mock
+    private Authentication auth;
+
+    @Mock
+    private SecurityContext secCont;
 
     @Autowired
     private GruppoService gruppoService;
@@ -58,33 +67,44 @@ public class ConsegnaServiceImplIT {
         userDAO.deleteAll();
     }
 
-    @WithMockUser("ferrucci")
+    //TODO Rendere parametrico
     @Test
     void consegneInviate() {
+        User user = new User("ferrucci@unisa.it", "ferrucci");
+        Persona persona = new Persona("Filomena", "Ferrucci", "PQA");
+        Set<Role> ruoli = new HashSet<>();
+        ruoli.add(new Role(Role.CAPOGRUPPO_ROLE));
+        user.setRoles(ruoli);
+        persona.setUser(user);
+        user.setPersona(persona);
         Consegna consegna = new Consegna();
         Consegna consegna1 = new Consegna();
-        consegna.setMittente(gruppoService.getCurrentPersona());
-        consegna1.setMittente(gruppoService.getCurrentPersona());
+        consegna.setMittente(persona);
+        consegna1.setMittente(persona);
         List<Consegna> expectedConsegne = new ArrayList<>();
         expectedConsegne.add(consegna);
         expectedConsegne.add(consegna1);
-        consegnaDAO.save(consegna);
-        consegnaDAO.save(consegna1);
-        assertEquals(expectedConsegne, consegnaDAO.findAllByMittente(gruppoService.getCurrentPersona()));
-    }
 
-    @WithMockUser("ferrucci")
-    @Test
-    void consegneRicevute() {
-        User user = new User("ferrucci", "admin");
-        Set<Role> ruoli = new HashSet<Role>();
-        ruoli.add(new Role(Role.CAPOGRUPPO_ROLE));
-        user.setRoles(ruoli);
-        UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona persona = new Persona("persona", "persona", "PQA");
-        persona.setUser(user);
+        when(secCont.getAuthentication()).thenReturn(auth);
+        when(auth.getName()).thenReturn(persona.getUser().getEmail());
+        SecurityContextHolder.setContext(secCont);
         personaDAO.save(persona);
         userDAO.save(user);
+        consegnaDAO.save(consegna);
+        consegnaDAO.save(consegna1);
+        assertEquals(expectedConsegne, consegnaDAO.findAllByMittente(persona));
+    }
+
+    //TODO Rendere parametrico
+    @Test
+    void consegneRicevute() {
+        User user = new User("ferrucci@unisa.it", "ferrucci");
+        Persona persona = new Persona("Filomena", "Ferrucci", "PQA");
+        Set<Role> ruoli = new HashSet<>();
+        ruoli.add(new Role(Role.CAPOGRUPPO_ROLE));
+        user.setRoles(ruoli);
+        persona.setUser(user);
+        user.setPersona(persona);
         Consegna consegna = new Consegna();
         Consegna consegna1 = new Consegna();
         consegna.setDestinatario(persona);
@@ -92,6 +112,12 @@ public class ConsegnaServiceImplIT {
         List<Consegna> expectedConsegne = new ArrayList<>();
         expectedConsegne.add(consegna);
         expectedConsegne.add(consegna1);
+
+        when(secCont.getAuthentication()).thenReturn(auth);
+        when(auth.getName()).thenReturn(persona.getUser().getEmail());
+        SecurityContextHolder.setContext(secCont);
+        personaDAO.save(persona);
+        userDAO.save(user);
         consegnaDAO.save(consegna);
         consegnaDAO.save(consegna1);
         assertEquals(expectedConsegne, consegnaService.consegneRicevute());
@@ -100,18 +126,16 @@ public class ConsegnaServiceImplIT {
     @ParameterizedTest
     @MethodSource("provideDocumenti")
     void findConsegnaByDocumento(final Documento documento) {
-        Documento doc = documento;
-        doc.setDataInvio(LocalDate.now());
-
-        documentoDAO.save(doc);
+        documento.setDataInvio(LocalDate.now());
+        documentoDAO.save(documento);
 
         Consegna expectedConsegna = new Consegna();
         expectedConsegna.setDataConsegna(LocalDate.now());
         expectedConsegna.setStato("da valutare");
-        expectedConsegna.setDocumento(doc);
+        expectedConsegna.setDocumento(documento);
 
         consegnaDAO.save(expectedConsegna);
-        assertEquals(expectedConsegna, consegnaService.findConsegnaByDocumento(doc.getId()));
+        assertEquals(expectedConsegna, consegnaService.findConsegnaByDocumento(documento.getId()));
     }
 
     private static Stream<Arguments> provideDocumenti() {
@@ -129,22 +153,23 @@ public class ConsegnaServiceImplIT {
         );
     }
 
-    @WithMockUser("ferrucci")
     @ParameterizedTest
     @MethodSource("providePossibiliDestinatari")
     void possibiliDestinatari(final Role role) {
-        User user = new User("ferrucci", "admin");
-        Set<Role> ruoli = new HashSet<Role>();
+        User user = new User("ferrucci@unisa.it", "ferrucci");
+        Persona persona = new Persona("Filomena", "Ferrucci", "PQA");
+        Set<Role> ruoli = new HashSet<>();
         ruoli.add(role);
         user.setRoles(ruoli);
-        UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona persona = new Persona("persona", "persona", "PQA");
         persona.setUser(user);
+        user.setPersona(persona);
+        when(secCont.getAuthentication()).thenReturn(auth);
+        when(auth.getName()).thenReturn(persona.getUser().getEmail());
+        SecurityContextHolder.setContext(secCont);
         personaDAO.save(persona);
         userDAO.save(user);
 
         Set<String> expectedRuoli = new HashSet<>();
-
         if (role.getName().equalsIgnoreCase(Role.PQA_ROLE)) {
             expectedRuoli.add(Role.CAPOGRUPPO_ROLE);
             expectedRuoli.add(Role.NDV_ROLE);
@@ -161,13 +186,13 @@ public class ConsegnaServiceImplIT {
     }
 
     private static Stream<Arguments> providePossibiliDestinatari() {
-        Role role = new Role(Role.NDV_ROLE);
-        Role role1 = new Role(Role.CAPOGRUPPO_ROLE);
-        Role role2 = new Role(Role.CPDS_ROLE);
+        Role role1 = new Role(Role.NDV_ROLE);
+        Role role2 = new Role(Role.CAPOGRUPPO_ROLE);
+        Role role3 = new Role(Role.CPDS_ROLE);
         return Stream.of(
-                Arguments.of(role),
                 Arguments.of(role1),
-                Arguments.of(role2)
+                Arguments.of(role2),
+                Arguments.of(role3)
         );
     }
 

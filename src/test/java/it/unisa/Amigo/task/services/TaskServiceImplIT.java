@@ -12,8 +12,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,9 +26,16 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class TaskServiceImplIT {
+
+    @Mock
+    private Authentication auth;
+
+    @Mock
+    private SecurityContext secCont;
 
     @Autowired
     private TaskService taskService;
@@ -158,13 +169,15 @@ class TaskServiceImplIT {
     @ParameterizedTest
     @MethodSource("provideVisualizzaTaskUser")
     void visualizzaTaskUser(final Persona persona, final List<Task> expectedTasks) {
+        when(secCont.getAuthentication()).thenReturn(auth);
+        when(auth.getName()).thenReturn(persona.getUser().getEmail());
+        SecurityContextHolder.setContext(secCont);
         for (Task expectedTask : expectedTasks) {
             persona.addTask(expectedTask);
             taskDAO.save(expectedTask);
         }
         userDAO.save(persona.getUser());
         personaDAO.save(persona);
-
         assertEquals(expectedTasks, taskService.visualizzaTaskUser());
     }
 
@@ -172,40 +185,54 @@ class TaskServiceImplIT {
         LocalDate tmpDate = LocalDate.of(2020, 4, 20);
         LocalDate tmpDate2 = LocalDate.of(2029, 12, 31);
         LocalDate tmpDate3 = LocalDate.of(2120, 1, 1);
-        User user1 = new User("admin", "admin");
+        User user1 = new User("user", "user");
+        User user2 = new User("user", "user");
+        User user3 = new User("user", "user");
+        User user4 = new User("admin", "admin");
+        User user5 = new User("giomagi@magi.it", "tartufo");
+        User user6 = new User("vitsca@unisa.it", "scarano");
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
-        persona1.setUser(user1);
-        user1.setPersona(persona1);
         Persona persona2 = new Persona("Persona2", "2", "PQA");
         Persona persona3 = new Persona("Persona3", "3", "DePrisco");
         Persona persona4 = new Persona("Admin", "Admin", "Administrator");
         Persona persona5 = new Persona("giovanni", "magi", "Administrator");
         Persona persona6 = new Persona("Vittorio", "Scarano", "user");
+        user1.setPersona(persona1);
+        user2.setPersona(persona2);
+        user3.setPersona(persona3);
+        user4.setPersona(persona4);
+        user5.setPersona(persona5);
+        user6.setPersona(persona6);
+        persona1.setUser(user1);
+        persona2.setUser(user2);
+        persona3.setUser(user3);
+        persona4.setUser(user4);
+        persona5.setUser(user5);
+        persona6.setUser(user6);
         Task task1 = new Task("descrizione 1", tmpDate, "Task 1", "incompleto");
         Task task2 = new Task("descrizione 2", tmpDate2, "Task 2", "in valutazione");
         Task task3 = new Task("descrizione 3", tmpDate3, "Task 3", "respinto");
+        Task task4 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", tmpDate3, "task1", "completo");
+        Task task5 = new Task("t1", tmpDate, "task2", "incompleto");
+        Task task6 = new Task("t1", tmpDate2, "chiamare azienda", "incompleto");
         task1.setPersona(persona1);
         task2.setPersona(persona2);
         task3.setPersona(persona3);
-        Task task4 = new Task("descrizione lunga vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", tmpDate3, "task1", "completo");
         task4.setPersona(persona4);
-        Task task5 = new Task("t1", tmpDate, "task2", "incompleto");
         task5.setPersona(persona5);
-        Task task6 = new Task("t1", tmpDate2, "chiamare azienda", "incompleto");
         task6.setPersona(persona6);
         ArrayList<Task> persona1Tasks = new ArrayList<>();
-        persona1Tasks.add(task1);
         ArrayList<Task> persona2Tasks = new ArrayList<>();
-        persona2Tasks.add(task2);
         ArrayList<Task> persona3Tasks = new ArrayList<>();
-        persona3Tasks.add(task3);
         ArrayList<Task> persona4Tasks = new ArrayList<>();
-        persona4Tasks.add(task4);
         ArrayList<Task> persona5Tasks = new ArrayList<>();
-        persona5Tasks.add(task5);
         ArrayList<Task> persona6Tasks = new ArrayList<>();
+        persona1Tasks.add(task1);
+        persona2Tasks.add(task2);
+        persona3Tasks.add(task3);
+        persona4Tasks.add(task4);
+        persona5Tasks.add(task5);
         persona6Tasks.add(task6);
-
         return Stream.of(
                 Arguments.of(persona1, persona1Tasks),
                 Arguments.of(persona2, persona2Tasks),
