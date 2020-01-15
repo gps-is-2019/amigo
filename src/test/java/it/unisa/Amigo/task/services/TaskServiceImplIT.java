@@ -1,6 +1,9 @@
 package it.unisa.Amigo.task.services;
 
+import it.unisa.Amigo.autenticazione.dao.UserDAO;
+import it.unisa.Amigo.autenticazione.domain.User;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
+import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
 import it.unisa.Amigo.gruppo.domain.Persona;
 import it.unisa.Amigo.gruppo.domain.Supergruppo;
 import it.unisa.Amigo.task.dao.TaskDAO;
@@ -32,10 +35,18 @@ class TaskServiceImplIT {
     @Autowired
     private PersonaDAO personaDAO;
 
+    @Autowired
+    private SupergruppoDAO supergruppoDAO;
+
+    @Autowired
+    private UserDAO userDAO;
+
     @AfterEach
     void afterEach() {
         taskDAO.deleteAll();
         personaDAO.deleteAll();
+        supergruppoDAO.deleteAll();
+        userDAO.deleteAll();
     }
 
     @ParameterizedTest
@@ -88,6 +99,9 @@ class TaskServiceImplIT {
     @MethodSource("provideDefinizioneTaskSupergruppo")
     void definizioneTaskSupergruppo(final String descrizione, final LocalDate dataScadenza, final String nome, final String stato,
                                     final Supergruppo s, final Persona persona, final Task expectedTask) {
+        supergruppoDAO.save(s);
+        personaDAO.save(persona);
+
         Task actual = taskService.definizioneTaskSupergruppo(descrizione, dataScadenza, nome, stato, s.getId(), persona.getId());
         expectedTask.setId(actual.getId());
         assertEquals(expectedTask, actual);
@@ -145,9 +159,10 @@ class TaskServiceImplIT {
     @MethodSource("provideVisualizzaTaskUser")
     void visualizzaTaskUser(final Persona persona, final List<Task> expectedTasks) {
         for (Task expectedTask : expectedTasks) {
+            persona.addTask(expectedTask);
             taskDAO.save(expectedTask);
-            expectedTask.setPersona(persona);
         }
+        userDAO.save(persona.getUser());
         personaDAO.save(persona);
 
         assertEquals(expectedTasks, taskService.visualizzaTaskUser());
@@ -157,7 +172,10 @@ class TaskServiceImplIT {
         LocalDate tmpDate = LocalDate.of(2020, 4, 20);
         LocalDate tmpDate2 = LocalDate.of(2029, 12, 31);
         LocalDate tmpDate3 = LocalDate.of(2120, 1, 1);
+        User user1 = new User("admin", "admin");
         Persona persona1 = new Persona("Persona1", "Persona1", "Persona");
+        persona1.setUser(user1);
+        user1.setPersona(persona1);
         Persona persona2 = new Persona("Persona2", "2", "PQA");
         Persona persona3 = new Persona("Persona3", "3", "DePrisco");
         Persona persona4 = new Persona("Admin", "Admin", "Administrator");
