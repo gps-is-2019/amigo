@@ -17,8 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +30,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -61,8 +66,6 @@ class ConsegnaControllerTest {
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("possibiliDestinatari", possibiliDestinatari))
-                .andExpect(model().attribute("destinatari", destinatari))
-                .andExpect(model().attribute("ruoloDest", ruoloDest))
                 .andExpect(model().attribute("flagRuolo", flagRuolo))
                 .andExpect(view().name("consegna/destinatari"));
     }
@@ -90,7 +93,9 @@ class ConsegnaControllerTest {
 
         return Stream.of(
                 Arguments.of(possibiliDest1, destinatari1, pqaRole.getName(), true),
-                Arguments.of(possibiliDest2, destinatari2, capogruppoRole.getName(), false)
+                Arguments.of(possibiliDest2, destinatari2, capogruppoRole.getName(), false),
+                Arguments.of(possibiliDest2, destinatari2, null, false),
+                Arguments.of(possibiliDest1, destinatari1, "", true)
         );
     }
 
@@ -447,6 +452,89 @@ class ConsegnaControllerTest {
         );
 
     }
+
+    @ParameterizedTest
+    @MethodSource("provideDownloadDocumentoFalse")
+    void downloadDocumentoNull(User user, Documento documento, Consegna consegna, boolean consentito) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
+        ResponseEntity<Resource> expectedResponse = new ResponseEntity<>(headers, HttpStatus.FOUND);
+        consegna.setDocumento(documento);
+        when(consegnaService.findConsegnaByDocumento(documento.getId())).thenReturn(consegna);
+        when(consegnaService.currentPersonaCanOpen(consegna)).thenReturn(consentito);
+
+        this.mockMvc.perform(get("/consegna/miei-documenti/{idDocumento}",documento.getId())
+                .with(csrf())
+                .with(user(userDetails)))
+                .andExpect(status().is(302))
+                .andExpect(redirectedUrl("https://i.makeagif.com/media/6-18-2016/i4va3h.gif"));
+
+    }
+
+    private static Stream<Arguments> provideDownloadDocumentoFalse(){
+        User user1 = new User("ferrucci@unista.it", "ferrucci");
+        Documento documento = new Documento();
+        documento.setPath("/src/test/resources/documents/file.txt");
+        documento.setId(100);
+        documento.setNome("test.txt");
+        documento.setFormat("text/plain");
+
+        Documento documento2 = new Documento();
+        documento2.setPath("//src//test//resources//documents/file.txt");
+        documento2.setId(101);
+        documento2.setNome("test.txt");
+        documento2.setFormat("text/plain");
+
+        Consegna consegna = new Consegna();
+
+        return Stream.of(
+                Arguments.of(user1, documento, consegna, false)
+                );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideDownloadDocumentoTrue")
+    void downloadDocumento(User user, Documento documento, Consegna consegna, boolean consentito) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
+        ResponseEntity<Resource> expectedResponse = new ResponseEntity<>(headers, HttpStatus.FOUND);
+        consegna.setDocumento(documento);
+        when(consegnaService.findConsegnaByDocumento(documento.getId())).thenReturn(consegna);
+        when(consegnaService.currentPersonaCanOpen(consegna)).thenReturn(consentito);
+
+        this.mockMvc.perform(get("/consegna/miei-documenti/{idDocumento}",documento.getId())
+                .with(csrf())
+                .with(user(userDetails)))
+                .andExpect(status().is(200))
+                .andExpect(header().exists("Content-Disposition"));
+    }
+
+    private static Stream<Arguments> provideDownloadDocumentoTrue(){
+        User user1 = new User("ferrucci@unista.it", "ferrucci");
+        Documento documento = new Documento();
+        documento.setPath("/src/test/resources/documents/file.txt");
+        documento.setId(100);
+        documento.setNome("test.txt");
+        documento.setFormat("text/plain");
+
+        Documento documento2 = new Documento();
+        documento2.setPath("//src//test//resources//documents/file.txt");
+        documento2.setId(101);
+        documento2.setNome("test.txt");
+        documento2.setFormat("text/plain");
+
+        Consegna consegna = new Consegna();
+
+        return Stream.of(
+                Arguments.of(user1, documento, consegna, true),
+                Arguments.of(user1, documento2, consegna, true)
+
+        );
+    }
+
+
 
 
 }
