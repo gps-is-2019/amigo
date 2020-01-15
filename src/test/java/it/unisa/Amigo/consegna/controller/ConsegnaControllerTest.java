@@ -20,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.annotation.Resource;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -534,7 +536,48 @@ class ConsegnaControllerTest {
         );
     }
 
+    @ParameterizedTest
+    @MethodSource("provideSendDocumentoUnauthorized")
+    public void sendDocumentoUnauthorized(User user, MockMultipartFile multipartFile) throws Exception {
+
+        UserDetailImpl userDetail = new UserDetailImpl(user);
+        this.mockMvc.perform(multipart("/consegna").file(multipartFile).param("destinatariPost", "h2")
+                .with(csrf())
+                .with(user(userDetail)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/unauthorized"));
+    }
+
+    private static Stream<Arguments> provideSendDocumentoUnauthorized(){
+        User user = new User("admin", "admin");
+        user.addRole(new Role(Role.PQA_ROLE));
+        MockMultipartFile file = new MockMultipartFile("file", "test.side", "application/pdf", new byte[1]);
+        return Stream.of(
+                Arguments.of(user, file)
+        );
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideSendDocumento")
+    public void sendDocumento(User user, MockMultipartFile multipartFile) throws Exception {
+
+        UserDetailImpl userDetail = new UserDetailImpl(user);
+        this.mockMvc.perform(multipart("/consegna").file(multipartFile).param("destinatariPost", "h2")
+                .with(csrf())
+                .with(user(userDetail)))
+                .andExpect(status().is(302))
+                .andExpect(view().name("redirect:/consegna/inviati?name="));
+    }
+
+    private static Stream<Arguments> provideSendDocumento() {
+        User user = new User("admin", "admin");
+        user.addRole(new Role(Role.PQA_ROLE));
+        MockMultipartFile file = new MockMultipartFile("file", "test.txt", "application/pdf", new byte[1]);
+        return Stream.of(
+                Arguments.of(user, file)
+        );
 
 
-
+    }
 }
