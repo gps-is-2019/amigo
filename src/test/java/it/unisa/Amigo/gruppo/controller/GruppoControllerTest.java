@@ -829,34 +829,80 @@ public class GruppoControllerTest {
     private static Stream<Arguments> provideCreaCommissioneErrorForm() {
         Persona persona1 = new Persona("persona1", "persona1", "persona");
         Persona persona2 = new Persona("persona2", "persona2", "persona");
+        Persona persona3 = new Persona("persona3", "persona3", "persona");
+        Persona persona4 = new Persona("persona4", "persona4", "persona");
+        Persona persona5 = new Persona("persona5", "persona5", "persona");
 
         User user = new User("admin", "admin");
         User user1 = new User("admin1", "admin1");
+        User user2 = new User("admin2", "admin2");
+        User user3 = new User("admin3", "admin3");
+        User user4 = new User("admin4", "admin4");
 
         Gruppo gruppo1 = new Gruppo("GAQD- Informatica", "Gruppo", true);
         Gruppo gruppo2 = new Gruppo("GAQR- Informatica", "Gruppo", true);
+        Gruppo gruppo3 = new Gruppo("GAQ- Informatica", "Gruppo", true);
+        Gruppo gruppo4 = new Gruppo("GAQA- Informatica", "Gruppo", true);
+        Gruppo gruppo5 = new Gruppo("GAQB- Informatica", "Gruppo", true);
 
         Commissione commissione1 = new Commissione("c1", "Commissione", true, "descr");
         Commissione commissione2 = new Commissione("c2", "Commissione", true, "descr");
+        Commissione commissione3 = new Commissione("c3", "Commissione", true, "descr");
+        Commissione commissione4 = new Commissione("c4", "Commissione", true, "descr");
+        Commissione commissione5 = new Commissione("c5", "Commissione", true, "descr");
 
         persona1.setId(1);
         persona2.setId(2);
-        user.setId(3);
-        user1.setId(4);
-        gruppo1.setId(5);
-        gruppo2.setId(6);
-        commissione1.setId(7);
-        commissione2.setId(8);
+        persona3.setId(3);
+        persona4.setId(4);
+        persona5.setId(5);
+        user.setId(6);
+        user1.setId(7);
+        user2.setId(8);
+        user3.setId(9);
+        user4.setId(10);
+        gruppo1.setId(11);
+        gruppo2.setId(12);
+        gruppo3.setId(13);
+        gruppo4.setId(14);
+        gruppo5.setId(15);
+        commissione1.setId(16);
+        commissione2.setId(17);
+        commissione3.setId(18);
+        commissione4.setId(19);
+        commissione5.setId(20);
 
         GruppoFormCommand gruppoFormCommand = new GruppoFormCommand();
         gruppoFormCommand.setName("");
         gruppoFormCommand.setDescrizione("Descrizione");
-        gruppoFormCommand.setIdPersona(9);
+        gruppoFormCommand.setIdPersona(21);
 
+        GruppoFormCommand gruppoFormCommand2 = new GruppoFormCommand();
+        gruppoFormCommand2.setName("Nome");
+        gruppoFormCommand2.setDescrizione("");
+        gruppoFormCommand2.setIdPersona(22);
+
+        GruppoFormCommand gruppoFormCommand3 = new GruppoFormCommand();
+        gruppoFormCommand3.setName("a");
+        gruppoFormCommand3.setDescrizione("Ciao");
+        gruppoFormCommand3.setIdPersona(23);
+
+        GruppoFormCommand gruppoFormCommand4 = new GruppoFormCommand();
+        gruppoFormCommand4.setName("Ciao");
+        gruppoFormCommand4.setDescrizione("a");
+        gruppoFormCommand4.setIdPersona(24);
+
+        GruppoFormCommand gruppoFormCommand5 = new GruppoFormCommand();
+        gruppoFormCommand5.setName("Ciao");
+        gruppoFormCommand5.setDescrizione("Ciao");
+        gruppoFormCommand5.setIdPersona(0);
 
         return Stream.of(
-                Arguments.of(gruppoFormCommand, gruppo1, user, persona1, commissione1)
-                //Arguments.of(gruppoFormCommand2, gruppo2, user1, persona2, commissione2)
+                Arguments.of(gruppoFormCommand, gruppo1, user, persona1, commissione1),
+                Arguments.of(gruppoFormCommand2, gruppo2, user1, persona2, commissione2),
+                Arguments.of(gruppoFormCommand3, gruppo3, user2, persona3, commissione3),
+                Arguments.of(gruppoFormCommand4, gruppo4, user3, persona4, commissione4),
+                Arguments.of(gruppoFormCommand5, gruppo5, user4, persona5, commissione5)
         );
     }
 }
