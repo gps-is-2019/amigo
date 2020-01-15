@@ -15,15 +15,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +29,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -61,7 +56,7 @@ public class RepositoryControllerTest {
         this.mockMvc.perform(get("/repository")
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("flagPQA", 1))
+                .andExpect(model().attribute("flagPQA", false))
                 .andExpect(model().attribute("documenti", documenti))
                 .andExpect(view().name("repository/repository"));
     }
@@ -111,7 +106,7 @@ public class RepositoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("addFlag", flag))
                 .andExpect(model().attribute(nameModel, contentModel))
-                .andExpect(model().attribute("flagPQA", 1))
+                .andExpect(model().attribute("flagPQA", true))
                 .andExpect(model().attribute("documenti", documenti))
                 .andExpect(view().name("repository/repository"));
     }

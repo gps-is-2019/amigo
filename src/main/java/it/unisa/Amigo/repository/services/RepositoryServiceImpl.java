@@ -2,6 +2,7 @@ package it.unisa.Amigo.repository.services;
 
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.documento.services.DocumentoService;
+import it.unisa.Amigo.gruppo.services.GruppoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 public class RepositoryServiceImpl implements RepositoryService {
 
     private final DocumentoService documentoService;
+    private final GruppoService gruppoService;
 
     /**
      * Aggiunge un documento @{@link Documento} alla repository.
@@ -77,5 +79,14 @@ public class RepositoryServiceImpl implements RepositoryService {
         }
         List<Documento> documenti = documentoService.searchDocumenti(documentoExample);
         return documenti;
+    }
+
+    /**
+     * Permette di controllare se l'utente loggato è il responsabile del PQA
+     * @return true se è il responsabile del PQA altrimenti false
+     */
+    @Override
+    public boolean isPQA(){
+        return gruppoService.findAllByRuolo("PQA").contains(gruppoService.getCurrentPersona());
     }
 }

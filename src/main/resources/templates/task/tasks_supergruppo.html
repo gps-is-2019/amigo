@@ -59,7 +59,7 @@
                 <td th:text="${documento.dataInvio}"></td>
                 <td th:text="${documento.getTask().getNome()}"></td>
                 <td>
-                    <a class="ui teal button"
+                    <a class="ui teal button" target=”_blank”
                        th:href="@{'/task/{idTask}/attachment' ( idTask=${documento.task.getId()})}">Download</a>
                 </td>
                 <td>

@@ -69,7 +69,7 @@ public class RepositoryControllerIT {
         this.mockMvc.perform(get("/repository")
                 .with(user(userDetails)))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("flagPQA", 1))
+                .andExpect(model().attribute("flagPQA", false))
                 .andExpect(model().attribute("documenti", documenti))
                 .andExpect(view().name("repository/repository"));
     }
@@ -114,7 +114,7 @@ public class RepositoryControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("addFlag", flag))
                 .andExpect(model().attribute(nameModel, contentModel))
-                .andExpect(model().attribute("flagPQA", 1))
+                .andExpect(model().attribute("flagPQA", true))
                 .andExpect(model().attribute("documenti", hasSize(expectedRepositorySize)))
                 .andExpect(view().name("repository/repository"));
     }
