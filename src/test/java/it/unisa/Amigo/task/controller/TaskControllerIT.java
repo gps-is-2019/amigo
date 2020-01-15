@@ -4,6 +4,7 @@ import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
 import it.unisa.Amigo.autenticazione.dao.UserDAO;
 import it.unisa.Amigo.autenticazione.domain.Role;
 import it.unisa.Amigo.autenticazione.domain.User;
+import it.unisa.Amigo.documento.dao.DocumentoDAO;
 import it.unisa.Amigo.documento.domain.Documento;
 import it.unisa.Amigo.gruppo.dao.PersonaDAO;
 import it.unisa.Amigo.gruppo.dao.SupergruppoDAO;
@@ -13,6 +14,7 @@ import it.unisa.Amigo.gruppo.services.GruppoService;
 import it.unisa.Amigo.task.dao.TaskDAO;
 import it.unisa.Amigo.task.domain.Task;
 import it.unisa.Amigo.task.services.TaskService;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -20,20 +22,24 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.annotation.Resource;
+import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -53,6 +59,9 @@ class TaskControllerIT {
 
     @Autowired
     private SupergruppoDAO supergruppoDAO;
+
+    @Autowired
+    private DocumentoDAO documentoDAO;
 
     @Autowired
     private UserDAO userDAO;
@@ -859,33 +868,121 @@ class TaskControllerIT {
                 Arguments.of(user3, persona3, gruppo3, task3)
         );
     }
-/*
-    @Test
-    void uploadDocumentoTask() throws Exception {
-        LocalDate tmpDate;
-        tmpDate = LocalDate.of(2020, 4, 20);
-        Task expectedTask = new Task("t1", tmpDate, "task1", "incompleto");
-        User user = new User("admin", "admin");
-        UserDetailImpl userDetails = new UserDetailImpl(user);
-        Persona expectedPersona = new Persona("Admin", "Admin", "Administrator");
-        expectedPersona.setUser(user);
-        expectedTask.setPersona(expectedPersona);
-        Documento documento = new Documento("src/main/resources/documents/test.txt", LocalDate.now(),
-                "test.txt", false, "text/plain");
-        expectedTask.setDocumento(documento);
-        documento.setTask(expectedTask);
 
-        personaDAO.save(expectedPersona);
-        taskDAO.save(expectedTask);
+    /*@ParameterizedTest
+    @MethodSource("provideUploadDocumentoPost")
+    void uploadDocumento(User user, Task task, MockMultipartFile file, int flag, String nameModel, String contentModel) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        taskDAO.save(task);
+
+        if (flag == 1) {
+            this.mockMvc.perform(multipart("/taskPersonali/task_detail/{idTask}/uploadDocumento", task.getId()).file(file)
+                    .with(csrf())
+                    .with(user(userDetails)))
+                    .andExpect(status().isOk())
+                    .andExpect(model().attribute("documento", task.getDocumento()))
+                    .andExpect(model().attribute("flagAggiunta", flag))
+                    .andExpect(model().attribute("task", task))
+                    .andExpect(view().name("task/dettagli_task_personali"));
+        } else {
+            this.mockMvc.perform(multipart("/taskPersonali/task_detail/{idTask}/uploadDocumento", task.getId()).file(file)
+                    .with(csrf())
+                    .with(user(userDetails)))
+                    .andExpect(status().isOk())
+                    .andExpect(model().attribute("flagAggiunta", flag))
+                    .andExpect(model().attribute("task", task))
+                    .andExpect(view().name("task/dettagli_task_personali"));
+        }
+    }
+
+    private static Stream<Arguments> provideUploadDocumentoPost() {
+        User user = new User("admin", "admin");
+        user.addRole(new Role(Role.PQA_ROLE));
+        Persona persona1 = new Persona("Admin", "Admin", "Administrator");
+        Task task1 = new Task("adsfafsa", LocalDate.now(), "dadeqewdq", "incompleto");
+        task1.setPersona(persona1);
+        Task task2 = new Task("adsfafsa", LocalDate.now(), "dadeqewdq", "incompleto");
+        task1.setPersona(persona1);
+
+        MockMultipartFile file = new MockMultipartFile("file", "test.pdf", "application/pdf", new byte[1]);
+        MockMultipartFile file2 = new MockMultipartFile("file", "test.txt", "application/pdf", new byte[1]);
+        MockMultipartFile file3 = new MockMultipartFile("file", "test.zip", "application/pdf", new byte[1]);
+        MockMultipartFile file4 = new MockMultipartFile("file", "test.rar", "application/pdf", new byte[1]);
+        MockMultipartFile file5 = new MockMultipartFile("file", "test.exe", "application/pdf", new byte[1]);
+        MockMultipartFile file6 = new MockMultipartFile("file", "test.pdf", "application/pdf", new byte[0]);
+        MockMultipartFile file7 = new MockMultipartFile("file", "test.pdf", "application/pdf", new byte[10485761]);
+
+        return Stream.of(
+                Arguments.of(user, task1, file, 1, "documentoNome", file.getOriginalFilename()),
+                Arguments.of(user, task2, file2, 1, "documentoNome", file2.getOriginalFilename()),
+                Arguments.of(user, task1, file3, 1, "documentoNome", file3.getOriginalFilename()),
+                Arguments.of(user, task1, file4, 1, "documentoNome", file4.getOriginalFilename()),
+                Arguments.of(user, task1, file5, 1, "errorMessage", "Formato del file non supportato"),
+                Arguments.of(user, task1, file6, 0, "errorMessage", "Dimensioni del file non supportate"),
+                Arguments.of(user, task1, file7, 1, "errorMessage", "Dimensioni del file non supportate")
+
+        );
+    }*/
+
+/*
+    @ParameterizedTest
+    @MethodSource("provideDownloadDocumento")
+    void downloadDocumentoNull(User user, Task task, Documento documento) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        user.addRole(new Role(Role.PQA_ROLE));
+
+        taskDAO.save(task);
+        documentoDAO.save(documento);
         userDAO.save(user);
 
-        this.mockMvc.perform(post("/taskPersonali/task_detail/{idTask}/uploadDocumento", expectedTask.getId())
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
+        ResponseEntity<Resource> expectedResponse = new ResponseEntity<>(headers, HttpStatus.FOUND);
+
+        this.mockMvc.perform(get("/task/{idTask}/attachment", task.getId())
+                .with(csrf())
                 .with(user(userDetails)))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("flagAggiunta", 1))
-                .andExpect(model().attribute("task", expectedTask))
-                .andExpect(model().attribute("documento", documento))
-                .andExpect(view().name("task/paginaDettagliTaskPersonali"));
+                .andExpect(status().is(302))
+                .andExpect(redirectedUrl("https://i.makeagif.com/media/6-18-2016/i4va3h.gif"));
+
     }
-    */
+
+    @SneakyThrows
+    private static Stream<Arguments> provideDownloadDocumento() {
+        User user1 = new User("ferrucci@unista.it", "ferrucci");
+        Persona persona1 = new Persona("Admin", "Admin", "Administrator");
+        persona1.setUser(user1);
+        user1.setPersona(persona1);
+
+        Task task = new Task("t1", LocalDate.now(), "task1", "incompleto");
+        task.setPersona(persona1);
+
+        Documento documento = new Documento();
+        documento.setPath("src/test/resources/documents/file.txt");
+        documento.setNome("test.txt");
+        documento.setFormat("text/plain");
+        File file = new File("src/test/resources/documents/file.txt");
+        file.createNewFile();
+
+        task.setDocumento(documento);
+        documento.setTask(task);
+
+        return Stream.of(
+                Arguments.of(user1, task, documento)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideDownloadDocumento")
+    void downloadDocumento(User user, Task task, Documento documento) throws Exception {
+        UserDetailImpl userDetails = new UserDetailImpl(user);
+        documento = documentoDAO.save(documento);
+        taskDAO.save(task);
+        this.mockMvc.perform(get("/task/{idTask}/attachment", task.getId())
+                .with(csrf())
+                .with(user(userDetails)))
+                .andExpect(status().is(200))
+                .andExpect(header().exists("Content-Disposition"));
+
+    }*/
 }
