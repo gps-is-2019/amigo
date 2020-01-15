@@ -31,14 +31,15 @@ public class DocumentoServiceImpl implements DocumentoService {
 
     private final DocumentoDAO documentoDAO;
 
-    private String storeFile(final byte[] bytes, final int idDoc) {
-        Path path = Paths.get(BASE_PATH + idDoc);
+    private String storeFile(final byte[] bytes, String fileName) {
+        String first = BASE_PATH + System.currentTimeMillis() + "-" + fileName;
+        Path path = Paths.get(first);
         try {
             Files.write(path, bytes);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return BASE_PATH + idDoc;
+        return first;
     }
 
     /**
@@ -57,8 +58,7 @@ public class DocumentoServiceImpl implements DocumentoService {
         doc.setNome(fileName);
         doc.setInRepository(false);
         doc.setFormat(mimeType);
-        doc = documentoDAO.save(doc);
-        String path = storeFile(bytes, doc.getId());
+        String path = storeFile(bytes, fileName);
         doc.setPath(path);
         return updateDocumento(doc);
     }

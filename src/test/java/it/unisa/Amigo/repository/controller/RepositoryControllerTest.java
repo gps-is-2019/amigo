@@ -90,11 +90,10 @@ public class RepositoryControllerTest {
     private static Stream<Arguments> provideUploadDocumento() {
         User user1 = new User("admin", "admin");
         user1.addRole(new Role(Role.PQA_ROLE));
-        User user2 = new User("admin1", "admin1");
+
 
         return Stream.of(
                 Arguments.of(user1, 200, "repository/aggiunta_documento_repository")
-                // Arguments.of(user2, 403,"403")
         );
     }
 
@@ -177,8 +176,6 @@ public class RepositoryControllerTest {
         UserDetailImpl userDetails = new UserDetailImpl(user);
 
         when( repositoryService.findDocumentoById(documento.getId())).thenReturn(documento);
-        //when( repositoryService.getDocumentoAsResource(documento)).thenReturn();
-
         this.mockMvc.perform(get("/documento/{idDocument}",documento.getId())
                 .with(csrf())
                 .with(user(userDetails)))
@@ -186,6 +183,5 @@ public class RepositoryControllerTest {
                 .andExpect(header().exists("Content-Disposition"));
 
     }
-
 
 }
