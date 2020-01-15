@@ -19,6 +19,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Questa classe si occupa della logica di controllo del sottosistema Repository
+ */
+
 @Controller
 @RequiredArgsConstructor
 public class RepositoryController {
@@ -28,10 +32,22 @@ public class RepositoryController {
     private static final int MIN_SIZE_FILE = 0;
     private static final int MAX_SIZE_FILE = 10485760;
 
+    /**
+     * Controlla se il file rispetta i limiti di dimensione imposti dal sistema
+     * @param file da caricare
+     * @return true se il file rispetta i limiti, false altrimenti
+     */
     private boolean checkFile(final MultipartFile file) {
         return file.getSize() != MIN_SIZE_FILE && file.getSize() <= MAX_SIZE_FILE;
     }
 
+
+    /**
+     * Controlla se il formato del file rispetta i vincoli del sistema
+     *
+     * @param file da caricare
+     * @return true se il file rispetta i vincoli di formato, false altrimenti
+     */
     private boolean formatoFile(final MultipartFile file) {
         if (file.getOriginalFilename().contains(".pdf")) {
             return true;
@@ -106,6 +122,12 @@ public class RepositoryController {
         return "repository/repository";
     }
 
+    /**
+     * Ottiene il file relativo ad un documento @{@link Documento} della repository
+     *
+     * @param idDocument documento da cui prelevare il file
+     * @return response di tipo resource contenente una risorsa al file richiesto
+     */
     @GetMapping("/documento/{idDocument}")
     public ResponseEntity<Resource> downloadDocumento(@PathVariable("idDocument") final int idDocument) {
         Documento documento = repositoryService.findDocumentoById(idDocument);

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Questa classe implementa i metodi  per la logica di Business del sottositema "Gruppo".
+ * Questa classe implementa i metodi  per la logica di Business del sottositema "Task".
  */
 @Service
 @RequiredArgsConstructor
@@ -139,7 +139,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * Metodo che permette di camiare le informazioni di un task@{@link Task}.
+     * Metodo che permette di cambiare le informazioni di un task@{@link Task}.
+     *
      *  @param taskToUpdate task aggiornato
      * @param assegneeId
      */
@@ -150,6 +151,15 @@ public class TaskServiceImpl implements TaskService {
         taskDAO.save(taskToUpdate);
     }
 
+    /**
+     * Allega un documento @{@link Documento} ad un task @{@link Task}
+     *
+     * @param t task a cui allegare il documento
+     * @param fileName nome del file
+     * @param fileContent file da allegare
+     * @param type formato del file
+     * @return task
+     */
     @Override
     public Task attachDocumentToTask(Task t, String fileName, byte[] fileContent, String type){
         Documento documento = documentoService.addDocumento(fileName, fileContent, type);
@@ -157,36 +167,70 @@ public class TaskServiceImpl implements TaskService {
         return taskDAO.save(t);
     }
 
+    /**
+     * Controlla se l'utente loggato puà creare un task
+     *
+     * @param idSupergruppo supergruppo nel quale creare il task
+     * @return true se l'utente loggato ha i permessi, false altrimenti
+     */
     @Override
     public boolean currentPersonaCanCreateTask(Integer idSupergruppo){
         return gruppoService.isResponsabile(gruppoService.getCurrentPersona().getId(),idSupergruppo);
     }
 
+    /**
+     * Recupera i documenti approvati all'interno di un supergruppo
+     *
+     * @param idSupergruppo supergruppo dal quale prelevare i documenti approvati
+     * @return lista di documenti approvati
+     */
     @Override
     public List<Documento> getApprovedDocumentiOfSupergruppo(Integer idSupergruppo){
         return documentoService.approvedDocuments(idSupergruppo);
     }
 
+    /**
+     * Recupera i possibili assegnatari per un task all'interno di uno specifico supergruppo
+     *
+     * @param idSupergruppo supergruppo nel quale cercare i possibili assegnatari
+     * @return lista di possibili assegnatari
+     */
     @Override
     public List<Persona> getPossibleTaskAssegnees(Integer idSupergruppo) {
         return gruppoService.findAllMembriInSupergruppo(idSupergruppo);
     }
 
+    /**
+     * Inoltra un documento approvato al PQA
+     *
+     * @param taskId task contenente il documento da inoltrare al PQA
+     */
     @Override
     public void forwardApprovedTaskToPqa(Integer taskId){
         Documento documento = taskDAO.findById(taskId).get().getDocumento();
         consegnaService.inoltraPQAfromGruppo(documento);
     }
 
+    /**
+     * Controlla se l'utente loggato ha i permessi per vedere il task
+     *
+     * @param idTask task che si vuole visualizzare
+     * @return true se l'utente loggato ha i permessi, false altrimenti
+     */
     @Override
     public boolean currentPersonaCanViewTask(Integer idTask) {
         Persona currentPersona = gruppoService.getCurrentPersona();
         Task currentTask = taskDAO.findById(idTask).get();
 
         return  currentTask.getSupergruppo().getPersone().contains(currentPersona);
-
     }
 
+    /**
+     * Ottiene il documento allegato al task
+     *
+     * @param task dal quale prelevare il documento
+     * @return file sotto forma di resource
+     */
     @Override
     public Resource getResourceFromTask(Task t){
         return documentoService.loadAsResource(t.getDocumento());

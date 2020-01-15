@@ -115,10 +115,10 @@ public class TaskController {
     }
 
     /**
-     * Metodo che controlla i Parametri immessi nel form sia corretti.
+     * Controlla che i parametri immessi nel form siano corretti.
      *
      * @param taskForm valori immessi nel form
-     * @return boolean indicante l'esatezza
+     * @return true se i parametri sono corretti, false altrimenti
      */
     private boolean taskVerify(final TaskForm taskForm) {
         boolean dateIsAfter = false;
@@ -407,6 +407,12 @@ public class TaskController {
         return "task/tasks_supergruppo";
     }
 
+    /**
+     * Ottiene il file relativo ad un documento @{@link Documento} di un task
+     *
+     * @param idTask task dal quale ottenere il documento
+     * @return response di tipo resource contenente il file richiesto
+     */
     @GetMapping("/task/{idTask}/attachment")
     public ResponseEntity<Resource> downloadDocumento(@PathVariable("idTask") final int idTask) {
 

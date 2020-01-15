@@ -24,6 +24,7 @@ public class GruppoController {
 
     /***
      * Ritorna ad una pagina i membri @{@link Persona} di un supergruppo
+     *
      * @param model per salvare informazioni da recuperare nell'html
      * @param idSupergruppo id del supergruppo di cui si vogliono visualizzare i membri
      * @return il path della pagina su cui eseguire il redirect
@@ -43,6 +44,7 @@ public class GruppoController {
 
     /***
      * Ritorna ad una pagina i gruppi @{@link Supergruppo} di una persona @{@link Persona}
+     *
      * @param model per salvare informazioni da recuperare nell'html
      * @return il path della pagina su cui eseguire il redirect
      */
