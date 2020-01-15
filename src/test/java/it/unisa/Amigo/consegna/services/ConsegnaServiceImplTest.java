@@ -1,4 +1,3 @@
-/*
 package it.unisa.Amigo.consegna.services;
 
 import it.unisa.Amigo.autenticazione.configuration.UserDetailImpl;
@@ -19,8 +18,8 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -47,7 +46,7 @@ class ConsegnaServiceImplTest {
     @InjectMocks
     private ConsegnaServiceImpl consegnaService;
 
-    private static Stream<Arguments> provideDocumento() {
+    private static Stream<Arguments> provideDocumento() throws IOException {
 
         Persona expectedPersona1 = new Persona("Admin", "123", "Administrator");
         expectedPersona1.setId(1);
@@ -70,8 +69,8 @@ class ConsegnaServiceImplTest {
                         "<<pdf data>>".getBytes(StandardCharsets.UTF_8));
 
         return Stream.of(
-                Arguments.of(ids, NDV_LOCAZIONE, file),
-                Arguments.of(ids2, USER_LOCAZIONE, file)
+                Arguments.of(ids, NDV_LOCAZIONE, file.getOriginalFilename(), file.getBytes(), file.getContentType()),
+                Arguments.of(ids2, USER_LOCAZIONE, file.getOriginalFilename(), file.getBytes(), file.getContentType())
         );
     }
 
@@ -106,23 +105,23 @@ class ConsegnaServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideDocumento")
-    void sendDocumento(final int[] idDestinatari, final String locazione, final MultipartFile file) {
+    void sendDocumento(final int[] idDestinatari, final String locazione, final String fileName, final byte[] bytes, final String mimeType) {
         Persona expectedPersona1 = new Persona("Admin", "123", "Administrator");
         Persona expectedPersona2 = new Persona("123", "null", "Administrator");
 
         Documento doc = new Documento();
         doc.setDataInvio(LocalDate.now());
-        doc.setNome(file.getOriginalFilename());
+        doc.setNome(fileName);
         doc.setInRepository(false);
-        doc.setFormat(file.getContentType());
+        doc.setFormat(mimeType);
 
         Consegna consegna1 = new Consegna();
         consegna1.setDataConsegna(LocalDate.now());
         consegna1.setStato("da valutare");
         consegna1.setDocumento(doc);
 
-        when(documentoService.addDocumento(, , )).thenReturn(doc);
-        when(gruppoService.getAuthenticatedUser()).thenReturn(expectedPersona1);
+        when(documentoService.addDocumento(fileName, bytes, mimeType)).thenReturn(doc);
+        when(gruppoService.getCurrentPersona()).thenReturn(expectedPersona1);
         when(gruppoService.findPersona(expectedPersona1.getId())).thenReturn(expectedPersona1);
         when(gruppoService.findPersona(expectedPersona2.getId())).thenReturn(expectedPersona2);
 
@@ -135,18 +134,18 @@ class ConsegnaServiceImplTest {
                 consegna.setDataConsegna(LocalDate.now());
                 consegna.setStato("da valutare");
                 consegna.setDocumento(doc);
-                consegna.setMittente(gruppoService.getAuthenticatedUser());
+                consegna.setMittente(gruppoService.getCurrentPersona());
                 consegna.setLocazione(Consegna.USER_LOCAZIONE);
                 consegna.setDestinatario(gruppoService.findPersona(id));
                 expectedConsegne.add(consegna);
             }
-            assertEquals(expectedConsegne.size(), consegnaService.sendDocumento(idDestinatari, locazione, file, , ).size());
+            assertEquals(expectedConsegne.size(), consegnaService.sendDocumento(idDestinatari, locazione, fileName, bytes, mimeType).size());
         } else {
             Consegna consegna = new Consegna();
             consegna.setDataConsegna(LocalDate.now());
             consegna.setStato("da valutare");
             consegna.setDocumento(doc);
-            consegna.setMittente(gruppoService.getAuthenticatedUser());
+            consegna.setMittente(gruppoService.getCurrentPersona());
             if (locazione.equalsIgnoreCase(Consegna.PQA_LOCAZIONE)) {
                 consegna.setLocazione(Consegna.PQA_LOCAZIONE);
             }
@@ -154,7 +153,7 @@ class ConsegnaServiceImplTest {
                 consegna.setLocazione(Consegna.NDV_LOCAZIONE);
             }
             expectedConsegne.add(consegna);
-            assertEquals(expectedConsegne.size(), consegnaService.sendDocumento(idDestinatari, locazione, file, , ).size());
+            assertEquals(expectedConsegne.size(), consegnaService.sendDocumento(idDestinatari, locazione, fileName, bytes, mimeType).size());
         }
     }
 
@@ -174,9 +173,9 @@ class ConsegnaServiceImplTest {
         expectedConsegne.add(consegna);
         expectedConsegne.add(consegna1);
 
-        when(consegnaDAO.findAllByMittente(gruppoService.getAuthenticatedUser())).thenReturn(expectedConsegne);
+        when(consegnaDAO.findAllByMittente(gruppoService.getCurrentPersona())).thenReturn(expectedConsegne);
 
-        assertEquals(expectedConsegne, consegnaDAO.findAllByMittente(gruppoService.getAuthenticatedUser()));
+        assertEquals(expectedConsegne, consegnaDAO.findAllByMittente(gruppoService.getCurrentPersona()));
     }
 
     @Test
@@ -196,8 +195,8 @@ class ConsegnaServiceImplTest {
         expectedConsegne.add(consegna);
         expectedConsegne.add(consegna1);
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(persona);
-        when(consegnaDAO.findAllByMittente(gruppoService.getAuthenticatedUser())).thenReturn(expectedConsegne);
+        when(gruppoService.getCurrentPersona()).thenReturn(persona);
+        when(consegnaDAO.findAllByMittente(gruppoService.getCurrentPersona())).thenReturn(expectedConsegne);
         when(consegnaDAO.findAllByLocazione(Consegna.PQA_LOCAZIONE)).thenReturn(expectedConsegne);
         when(consegnaDAO.findAllByLocazione(Consegna.NDV_LOCAZIONE)).thenReturn(expectedConsegne);
 
@@ -247,7 +246,7 @@ class ConsegnaServiceImplTest {
         }
 
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(persona);
+        when(gruppoService.getCurrentPersona()).thenReturn(persona);
 
         assertEquals(expectedRuoli, consegnaService.possibiliDestinatari());
 
@@ -275,7 +274,7 @@ class ConsegnaServiceImplTest {
     @MethodSource("provideInoltraPQAfromGruppo")
     void inoltraPQAfromGruppo(final Documento doc, final Persona persona, final Consegna expectedConsegna) {
 
-        when(gruppoService.getAuthenticatedUser()).thenReturn(persona);
+        when(gruppoService.getCurrentPersona()).thenReturn(persona);
         assertEquals(expectedConsegna, consegnaService.inoltraPQAfromGruppo(doc));
     }
 
@@ -323,4 +322,3 @@ class ConsegnaServiceImplTest {
         );
     }
 }
-*/
