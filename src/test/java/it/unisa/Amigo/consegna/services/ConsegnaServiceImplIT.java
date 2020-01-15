@@ -59,13 +59,7 @@ public class ConsegnaServiceImplIT {
 
     @Autowired
     private UserDAO userDAO;
-
-    @Mock
-    private Authentication auth;
-
-    @Mock
-    private SecurityContext secCont;
-
+    
     @AfterEach
     void afterEach() {
         consegnaDAO.deleteAll();
@@ -318,8 +312,6 @@ public class ConsegnaServiceImplIT {
         expectedPersona3.setUser(user3);
         user3.setPersona(expectedPersona3);
 
-        LocalDate tmpDate;
-        tmpDate = LocalDate.of(2020, 4, 20);
 
         Documento documento1 = new Documento();
         documento1.setNome("Documento1");
