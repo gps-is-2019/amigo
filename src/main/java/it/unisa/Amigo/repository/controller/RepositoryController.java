@@ -90,7 +90,6 @@ public class RepositoryController {
                 e.printStackTrace();
             }
         }
-
         model.addAttribute("addFlag", addFlag);
         if (addFlag) {
             model.addAttribute("documentoNome", file.getOriginalFilename());
@@ -109,15 +108,12 @@ public class RepositoryController {
 
     @GetMapping("/documento/{idDocument}")
     public ResponseEntity<Resource> downloadDocumento(@PathVariable("idDocument") final int idDocument) {
-
         Documento documento = repositoryService.findDocumentoById(idDocument);
-
         if (documento == null) {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", "https://i.makeagif.com/media/6-18-2016/i4va3h.gif");
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
-
         Resource resource = repositoryService.getDocumentoAsResource(documento);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(documento.getFormat()))
