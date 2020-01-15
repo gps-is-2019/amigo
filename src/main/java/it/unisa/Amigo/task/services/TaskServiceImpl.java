@@ -111,6 +111,7 @@ public class TaskServiceImpl implements TaskService {
     public void accettazioneTask(final Integer idTask) {
         Task task = taskDAO.findById(idTask).get();
         task.setStato("approvato");
+        System.out.println(task.getDocumento());
         taskDAO.save(task);
     }
 
@@ -164,6 +165,7 @@ public class TaskServiceImpl implements TaskService {
     public Task attachDocumentToTask(Task t, String fileName, byte[] fileContent, String type){
         Documento documento = documentoService.addDocumento(fileName, fileContent, type);
         t.setDocumento(documento);
+        documento.setTask(t);
         return taskDAO.save(t);
     }
 
