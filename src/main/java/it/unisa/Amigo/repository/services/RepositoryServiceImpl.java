@@ -1,7 +1,7 @@
 package it.unisa.Amigo.repository.services;
 
 import it.unisa.Amigo.documento.domain.Documento;
-import it.unisa.Amigo.documento.service.DocumentoService;
+import it.unisa.Amigo.documento.services.DocumentoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
