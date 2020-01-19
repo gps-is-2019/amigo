@@ -12,9 +12,12 @@ The webapp is up and running on...(TBA)
 
 Follow these step:
 
-1. Clone this repo: `git clone https://github.com/gps-is-2019/amigo.git` 
-2. Go into amigo directory: `cd amigo`
-3. ...
+1. Clone this repo: `git clone https://github.com/gps-is-2019/amigo.git`;
+2. Go into amigo directory: `cd amigo`;
+3. Run `./mwnw (or .\mvnw.cmd if you're on windows) clean package`, wait for maven to build;
+4. Run `java -jar target/Amigo-0.0.1-SNAPSHOT.jar`;
+5. Open your browser on `localhost:8080`
+6. Login with "ferrucci@unisa.it","ferrucci" for a GAQD responsible or with "robdeo@unisa.it","dePrisco" for a PQA responsible.
 
 ## Working with the project
 
