@@ -83,7 +83,7 @@ public class ConsegnaController {
         int lastIndex = fileName.lastIndexOf('.');
         String substring = fileName.substring(lastIndex);
         if (file.getSize() >= MAX_FILE_SIZE || !fileExtentions.contains(substring)) {
-            return "/unauthorized";
+            return "unauthorized";
         }
 
         if (!Character.isDigit(destinatariPost.charAt(0))) {
