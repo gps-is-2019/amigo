@@ -545,7 +545,7 @@ class ConsegnaControllerTest {
                 .with(csrf())
                 .with(user(userDetail)))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/unauthorized"));
+                .andExpect(view().name("unauthorized"));
     }
 
     private static Stream<Arguments> provideSendDocumentoUnauthorized() {
